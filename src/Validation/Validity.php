@@ -89,7 +89,7 @@ class Validity implements ArrayableContract
      */
     public static function make(): self
     {
-        return new self();
+        return inject(self::class);
     }
 
     /**
