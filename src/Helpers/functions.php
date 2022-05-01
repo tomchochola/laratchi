@@ -989,3 +989,39 @@ if (! \function_exists('requestSignature')) {
         return new Tomchochola\Laratchi\Http\Requests\RequestSignature($data, $defaults);
     }
 }
+
+if (! \function_exists('envString')) {
+    /**
+     * Env string resolver.
+     */
+    function envString(string $key, ?string $default = null, bool $trim = true): ?string
+    {
+        $value = env($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert(\is_string($value));
+
+        if ($trim) {
+            return \trim($value);
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustEnvString')) {
+    /**
+     * Mandatory env string resolver.
+     */
+    function mustEnvString(string $key, ?string $default = null, bool $trim = true): string
+    {
+        $value = envString($key, $default, $trim);
+
+        \assert($value !== null);
+
+        return $value;
+    }
+}
