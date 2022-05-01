@@ -114,7 +114,7 @@ if (! \function_exists('mustTransJsonString')) {
     /**
      * Mandatory string json translation resolver.
      *
-     * @param array<int, string> $messageLocales
+     * @param array<string> $messageLocales
      * @param array<string, string> $replace
      *
      * @return non-empty-string
@@ -159,7 +159,7 @@ if (! \function_exists('pathJoin')) {
     /**
      * Join paths using directory separator.
      *
-     * @param array<int, string> $paths
+     * @param array<string> $paths
      */
     function pathJoin(array $paths): string
     {
@@ -886,7 +886,7 @@ if (! \function_exists('mustBeGuest')) {
     /**
      * Throw if authenticated.
      *
-     * @param array<int, string|null> $guards
+     * @param array<string|null> $guards
      */
     function mustBeGuest(array $guards = [null]): void
     {
@@ -904,7 +904,7 @@ if (! \function_exists('isGuest')) {
     /**
      * Check if authenticated.
      *
-     * @param array<int, string|null> $guards
+     * @param array<string|null> $guards
      */
     function isGuest(array $guards = [null]): bool
     {
@@ -926,7 +926,7 @@ if (! \function_exists('resolveUser')) {
      *
      * @template T
      *
-     * @param array<int, string|null> $guards
+     * @param array<string|null> $guards
      * @param class-string<T> $template
      *
      * @return (T&Illuminate\Contracts\Auth\Authenticatable)|null
@@ -955,7 +955,7 @@ if (! \function_exists('mustResolveUser')) {
      *
      * @template T
      *
-     * @param array<int, string|null> $guards
+     * @param array<string|null> $guards
      * @param class-string<T> $template
      *
      * @return T&Illuminate\Contracts\Auth\Authenticatable
