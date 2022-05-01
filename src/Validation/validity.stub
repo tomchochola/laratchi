@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use App\Http\Validation\Validity;
+
+class {{ class }}
+{
+    /**
+     * Attribute validation rules.
+     */
+    public function attribute(): Validity
+    {
+        return Validity::make()->defaultString();
+    }
+}

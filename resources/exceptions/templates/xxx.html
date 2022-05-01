@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="robots" content="noindex, nofollow" />
+
+    <title>Laratchi</title>
+
+    <link rel="icon" href="/favicon.ico" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;900&display=swap" rel="stylesheet" />
+
+    <link href="/css.css" rel="stylesheet" />
+
+    <style>
+      .button:hover,
+      .button:focus {
+        border-color: #6c63ff;
+        background-color: #6c63ff;
+      }
+    </style>
+  </head>
+  <body class="bg-white dark:bg-[#49454F] text-gray-900 antialiased">
+    <div class="px-4 py-8 min-h-screen relative flex overflow-hidden">
+      <div class="flex justify-center items-center lg:w-1/2 flex-grow">
+        <div class="z-30">
+          <div class="text-9xl md:text-[10rem] font-black mb-2">404</div>
+          <div class="w-1/2 border-b-8 rounded-lg mb-8" style="border-color: #6c63ff" role="presentation"></div>
+          <div class="text-3xl max-w-sm mb-8">Not Found</div>
+          <a
+            href="/"
+            class="button inline-block animate-bounce transition px-4 py-2 border border-gray-900 focus:outline-none focus:text-white rounded-lg hover:text-white text-2xl"
+          >
+            Go Home
+          </a>
+        </div>
+      </div>
+
+      <div class="justify-center items-center hidden lg:flex w-1/2" role="presentation">
+        <div class="w-4/6 relative z-30 flex justify-center items-center">
+          <img alt="Not Found" src="url(/illustrations/404.svg)" />
+        </div>
+      </div>
+
+      <div class="absolute inset-0 lg:w-1/2 z-20 bg-white opacity-50" role="presentation"></div>
+
+      <div class="dark:hidden absolute inset-0 lg:w-1/2 bg-cover bg-center bg-no-repeat z-10" style="background-image: url(/phases/day.svg)" role="presentation"></div>
+      <div class="hidden dark:block absolute inset-0 lg:w-1/2 bg-cover bg-center bg-no-repeat z-10" style="background-image: url(/phases/night.svg)" role="presentation"></div>
+    </div>
+  </body>
+</html>

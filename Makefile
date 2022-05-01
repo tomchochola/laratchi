@@ -48,6 +48,18 @@ clean:
 cold:
 	git clean -Xfd tools composer.lock vendor package-lock.json node_modules
 
+.PHONY: minify
+minify:
+	svgo -r -f resources --multipass --final-newline
+
+.PHONY: build
+build:
+	npx tailwindcss -c resources/exceptions/css/tailwind.config.js  -i resources/exceptions/css/index.css -o resources/exceptions/views/css.blade.php -m
+
+.PHONY: dev
+dev:
+	npx tailwindcss -c resources/exceptions/css/tailwind.config.js -i resources/exceptions/css/index.css -o resources/exceptions/views/css.css
+
 # Aliases
 .PHONY: ci
 ci: check

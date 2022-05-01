@@ -9,6 +9,9 @@ parameters:
   paths:
     - src
     - tests
+    - lang
+    - resources
+    - database
   disallowedFunctionCalls:
     -
       function: 'abort()'
@@ -181,178 +184,250 @@ parameters:
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Artisan'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Auth'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Blade'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Broadcast'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Bus'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Cache'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Config'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Cookie'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Crypt'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Date'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\DB'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Event'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\File'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Gate'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Hash'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Http'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Lang'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Log'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Mail'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Notification'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\ParallelTesting'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Password'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Queue'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\RateLimiter'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Redirect'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Redis'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Request'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Response'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Route'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Session'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Schema'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Storage'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\URL'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Validator'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\View'
       message: 'laravel facades are banned'
       allowIn:
         - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
