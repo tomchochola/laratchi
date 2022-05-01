@@ -1,11 +1,11 @@
 {
-  "name": "tomchochola/composer-library",
-  "description": "Composer library",
+  "name": "tomchochola/laravel-library",
+  "description": "Laravel library",
   "license": "proprietary",
   "type": "library",
   "keywords": [
     "tomchochola",
-    "composer-library"
+    "laravel-library"
   ],
   "authors": [
     {
@@ -14,25 +14,34 @@
     }
   ],
   "require": {
-    "php": "^8.1"
+    "php": "^8.1",
+    "laravel/framework": "^9.10"
   },
   "require-dev": {
     "composer/composer": "^2.0",
+    "orchestra/testbench": "^7.4",
     "phpunit/phpunit": "^9.5"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "autoload": {
     "psr-4": {
-      "Tomchochola\\ComposerLibrary\\": "src/"
+      "Tomchochola\\LaravelLibrary\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Tomchochola\\ComposerLibrary\\Tests\\": "tests/"
+      "Tomchochola\\LaravelLibrary\\Tests\\": "tests/"
     }
   },
   "config": {
     "sort-packages": true
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Tomchochola\\LaravelLibrary\\Support\\ServiceProvider"
+      ]
+    }
   }
 }
