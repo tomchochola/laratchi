@@ -13,7 +13,11 @@ MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_2_BIN}
 
 # Goals
 .PHONY: check
-check: lint test
+check: audit lint test
+
+.PHONY: audit
+audit: composer.lock tools
+	tools/local-php-security-checker/vendor/bin/local-php-security-checker
 
 .PHONY: lint
 lint: vendor tools
@@ -49,12 +53,12 @@ cold:
 ci: check
 
 # Dependencies
-tools: tools/prettier/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer tools/composer-normalize/vendor/bin/composer-normalize
+tools: tools/prettier/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer tools/composer-normalize/vendor/bin/composer-normalize tools/local-php-security-checker/vendor/bin/local-php-security-checker
 
 tools/prettier/node_modules/.bin/prettier:
 	npm --prefix=tools/prettier update
 
-vendor vendor/bin/phpunit:
+composer.lock vendor vendor/bin/phpunit:
 	${MAKE_COMPOSER} update
 
 tools/phpstan/vendor/bin/phpstan:
@@ -65,3 +69,6 @@ tools/php-cs-fixer/vendor/bin/php-cs-fixer:
 
 tools/composer-normalize/vendor/bin/composer-normalize:
 	${MAKE_COMPOSER} --working-dir=tools/composer-normalize update
+
+tools/local-php-security-checker/vendor/bin/local-php-security-checker:
+	${MAKE_COMPOSER} --working-dir=tools/local-php-security-checker update
