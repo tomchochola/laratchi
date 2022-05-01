@@ -1,11 +1,11 @@
 {
   "require-dev": {
-    "tomchochola/local-php-security-checker": "dev-master"
+    "tomchochola/local-php-security-checker": "dev-main"
   },
   "repositories": [
     {
-      "type": "path",
-      "url": "../../../local-php-security-checker"
+      "type": "vcs",
+      "url": "https://github.com/tomchochola/local-php-security-checker"
     }
   ],
   "minimum-stability": "dev",
