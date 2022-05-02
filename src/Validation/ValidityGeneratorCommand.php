@@ -40,7 +40,7 @@ class ValidityGeneratorCommand extends GeneratorCommand
 
         return \file_exists($customPath)
             ? $customPath
-            : __DIR__.'validity.stub';
+            : pathJoin([__DIR__, 'validity.stub']);
     }
 
     /**

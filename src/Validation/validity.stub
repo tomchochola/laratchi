@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use App\Http\Validation\Validity;
+use Tomchochola\Laratchi\Validation\Validity;
 
 class {{ class }}
 {
