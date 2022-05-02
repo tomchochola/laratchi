@@ -774,6 +774,16 @@ if (! \function_exists('resolveRouter')) {
     }
 }
 
+if (! \function_exists('resolveRouteRegistrar')) {
+    /**
+     * Resolve route registrar.
+     */
+    function resolveRouteRegistrar(): Illuminate\Routing\RouteRegistrar
+    {
+        return new Illuminate\Routing\RouteRegistrar(resolveRouter());
+    }
+}
+
 if (! \function_exists('resolveSchema')) {
     /**
      * Resolve schema.
