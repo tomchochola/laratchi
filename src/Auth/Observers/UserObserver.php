@@ -18,6 +18,7 @@ class UserObserver
     public function creating(User $user): void
     {
         $this->cycleRememberToken($user);
+        $this->setLocale($user);
     }
 
     /**
@@ -127,5 +128,15 @@ class UserObserver
     protected function logoutOtherDevices(User $user): void
     {
         inject(LogoutOtherDevicesAction::class)->handle($user);
+    }
+
+    /**
+     * Set current locale.
+     */
+    protected function setLocale(User $user): void
+    {
+        if ($user->locale === null) {
+            $user->locale = resolveApp()->getLocale();
+        }
     }
 }
