@@ -69,6 +69,8 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->loadViewsFrom(pathJoin([__DIR__, '..', '..', 'resources', 'exceptions', 'views']), 'exceptions');
 
+        $this->loadViewsFrom(pathJoin([__DIR__, '..', '..', 'resources', 'views']), 'laratchi');
+
         if (! $this->app->runningInConsole()) {
             return;
         }
