@@ -31,15 +31,15 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public static function registerRoutes(): void
     {
-        resolveRouter()->post('login', inject(LoginController::class)::class);
-        resolveRouter()->post('register', inject(RegisterController::class)::class);
-        resolveRouter()->post('password/forgot', inject(PasswordForgotController::class)::class);
-        resolveRouter()->post('password/reset', inject(PasswordResetController::class)::class);
-        resolveRouter()->post('password/update', inject(PasswordUpdateController::class)::class);
-        resolveRouter()->post('email_verification/resend', inject(EmailVerificationResendController::class)::class);
-        resolveRouter()->post('email_verification/verify/{id}/{hash}', inject(EmailVerificationVerifyController::class)::class);
-        resolveRouter()->post('logout/current', inject(LogoutCurrentDeviceController::class)::class);
-        resolveRouter()->post('logout/other', inject(LogoutOtherDevicesController::class)::class);
+        resolveRouter()->post('login', inject(LoginController::class)::class)->name('login');
+        resolveRouter()->post('register', inject(RegisterController::class)::class)->name('register');
+        resolveRouter()->post('password/forgot', inject(PasswordForgotController::class)::class)->name('password.forgot');
+        resolveRouter()->post('password/reset', inject(PasswordResetController::class)::class)->name('password.reset');
+        resolveRouter()->post('password/update', inject(PasswordUpdateController::class)::class)->name('password.update');
+        resolveRouter()->post('email_verification/resend', inject(EmailVerificationResendController::class)::class)->name('email_verification.resend');
+        resolveRouter()->post('email_verification/verify/{id}/{hash}', inject(EmailVerificationVerifyController::class)::class)->name('email_verification.verify');
+        resolveRouter()->post('logout/current', inject(LogoutCurrentDeviceController::class)::class)->name('logout.current');
+        resolveRouter()->post('logout/other', inject(LogoutOtherDevicesController::class)::class)->name('logout.other');
     }
 
     /**
