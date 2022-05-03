@@ -7,6 +7,8 @@ namespace Tomchochola\Laratchi\Support;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard as GuardContract;
 use Illuminate\Contracts\Validation\Factory as ValidationFactoryContract;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\LazyLoadingViolationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use Tomchochola\Laratchi\Auth\DatabaseTokenGuard;
@@ -82,6 +84,10 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->publishes([
             pathJoin([__DIR__, '..', '..', 'lang']) => $app->langPath(pathJoin(['vendor', 'exceptions'])),
         ], ['laratchi-exceptions-lang', 'laratchi-exceptions', 'lang']);
+
+        $this->publishes([
+            pathJoin([__DIR__, '..', '..', 'database', 'migrations']) => $app->databasePath('migrations'),
+        ], ['laratchi-migrations', 'migrations']);
 
         $this->loadMigrationsFrom(pathJoin([__DIR__, '..', '..', 'database', 'migrations']));
 
