@@ -14,9 +14,7 @@ class SecureValidator extends Validator
      *
      * @var array<int, string>
      */
-    public static array $excluded = [
-        '_method',
-    ];
+    public static array $excluded = [];
 
     /**
      * @inheritDoc
