@@ -32,16 +32,11 @@ class PasswordResetController extends TransactionController
     public static int $decay = 15;
 
     /**
-     * Throttle status.
-     */
-    public static int $throttleStatus = SymfonyResponse::HTTP_UNPROCESSABLE_ENTITY;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(PasswordResetRequest $request): SymfonyResponse
     {
-        [$hit] = $this->throttle($this->limit($request), $this->onThrottle($request));
+        [$hit] = $this->throttle($this->limit($request, 'status'), $this->onThrottle($request));
 
         $status = $this->resetPassword($request);
 
@@ -57,9 +52,9 @@ class PasswordResetController extends TransactionController
     /**
      * Throttle limit.
      */
-    protected function limit(PasswordResetRequest $request): Limit
+    protected function limit(PasswordResetRequest $request, string $key): Limit
     {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->hash());
+        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->hash());
     }
 
     /**
@@ -69,15 +64,8 @@ class PasswordResetController extends TransactionController
      */
     protected function onThrottle(PasswordResetRequest $request): ?Closure
     {
-        return static function (int $seconds) use ($request): never {
-            throw ValidationException::withMessages(
-                \array_map(static fn (): array => [
-                    mustTransString('auth.throttle', [
-                        'seconds' => (string) $seconds,
-                        'minutes' => (string) \ceil($seconds / 60),
-                    ]),
-                ], $request->credentials()),
-            )->status(static::$throttleStatus);
+        return function (int $seconds) use ($request): never {
+            $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
         };
     }
 

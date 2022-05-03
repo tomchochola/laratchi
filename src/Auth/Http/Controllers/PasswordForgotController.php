@@ -9,7 +9,6 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tomchochola\Laratchi\Auth\Http\Requests\PasswordForgotRequest;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
@@ -26,16 +25,11 @@ class PasswordForgotController extends TransactionController
     public static int $decay = 15;
 
     /**
-     * Throttle status.
-     */
-    public static int $throttleStatus = SymfonyResponse::HTTP_UNPROCESSABLE_ENTITY;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(PasswordForgotRequest $request): SymfonyResponse
     {
-        [$hit] = $this->throttle($this->limit($request), $this->onThrottle($request));
+        [$hit] = $this->throttle($this->limit($request, 'status'), $this->onThrottle($request));
 
         $status = $this->sendResetLink($request);
 
@@ -51,9 +45,9 @@ class PasswordForgotController extends TransactionController
     /**
      * Throttle limit.
      */
-    protected function limit(PasswordForgotRequest $request): Limit
+    protected function limit(PasswordForgotRequest $request, string $key): Limit
     {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->hash());
+        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->hash());
     }
 
     /**
@@ -63,8 +57,8 @@ class PasswordForgotController extends TransactionController
      */
     protected function onThrottle(PasswordForgotRequest $request): ?Closure
     {
-        return static function (): never {
-            throw new HttpException(static::$throttleStatus);
+        return function (int $seconds) use ($request): never {
+            $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
         };
     }
 

@@ -30,16 +30,11 @@ class RegisterController extends TransactionController
     public static int $decay = 15;
 
     /**
-     * Throttle status.
-     */
-    public static int $throttleStatus = SymfonyResponse::HTTP_UNPROCESSABLE_ENTITY;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(RegisterRequest $request): SymfonyResponse
     {
-        [$hit] = $this->throttle($this->limit($request), $this->onThrottle($request));
+        [$hit] = $this->throttle($this->limit($request, 'credentials'), $this->onThrottle($request));
 
         $user = $this->retrieveByCredentials($request);
 
@@ -49,7 +44,7 @@ class RegisterController extends TransactionController
             $this->throwDuplicateCredentialsError($request);
         }
 
-        $this->validateUnique($request, $hit);
+        $this->beforeCreating($request, $hit);
 
         $user = $this->createUser($request);
 
@@ -63,9 +58,9 @@ class RegisterController extends TransactionController
     /**
      * Throttle limit.
      */
-    protected function limit(RegisterRequest $request): Limit
+    protected function limit(RegisterRequest $request, string $key): Limit
     {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->hash());
+        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->hash());
     }
 
     /**
@@ -75,15 +70,8 @@ class RegisterController extends TransactionController
      */
     protected function onThrottle(RegisterRequest $request): ?Closure
     {
-        return static function (int $seconds) use ($request): never {
-            throw ValidationException::withMessages(
-                \array_map(static fn (): array => [
-                    mustTransString('auth.throttle', [
-                        'seconds' => (string) $seconds,
-                        'minutes' => (string) \ceil($seconds / 60),
-                    ]),
-                ], $request->credentials()),
-            )->status(static::$throttleStatus);
+        return function (int $seconds) use ($request): never {
+            $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
         };
     }
 
@@ -176,9 +164,9 @@ class RegisterController extends TransactionController
     }
 
     /**
-     * Validate unique data.
+     * Before creating callback.
      */
-    protected function validateUnique(RegisterRequest $request, Closure $hit): void
+    protected function beforeCreating(RegisterRequest $request, Closure $hit): void
     {
     }
 }

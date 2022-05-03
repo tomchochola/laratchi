@@ -32,11 +32,6 @@ class LoginController extends TransactionController
     public static int $decay = 15;
 
     /**
-     * Throttle status.
-     */
-    public static int $throttleStatus = SymfonyResponse::HTTP_UNPROCESSABLE_ENTITY;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(LoginRequest $request): SymfonyResponse
@@ -86,15 +81,8 @@ class LoginController extends TransactionController
      */
     protected function onCredentialsThrottle(LoginRequest $request): ?Closure
     {
-        return static function (int $seconds) use ($request): never {
-            throw ValidationException::withMessages(
-                \array_map(static fn (): array => [
-                    mustTransString('auth.throttle', [
-                        'seconds' => (string) $seconds,
-                        'minutes' => (string) \ceil($seconds / 60),
-                    ]),
-                ], $request->credentials()),
-            )->status(static::$throttleStatus);
+        return function (int $seconds) use ($request): never {
+            $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds, 'auth.throttle');
         };
     }
 
@@ -105,17 +93,10 @@ class LoginController extends TransactionController
      */
     protected function onPasswordThrottle(LoginRequest $request): ?Closure
     {
-        return static function (int $seconds) use ($request): never {
+        return function (int $seconds) use ($request): never {
             resolveEventDispatcher()->dispatch(new Lockout($request));
 
-            throw ValidationException::withMessages(
-                \array_map(static fn (): array => [
-                    mustTransString('auth.throttle', [
-                        'seconds' => (string) $seconds,
-                        'minutes' => (string) \ceil($seconds / 60),
-                    ]),
-                ], $request->password()),
-            )->status(static::$throttleStatus);
+            $this->throwThrottleValidationError(\array_keys($request->password()), $seconds, 'auth.throttle');
         };
     }
 

@@ -7,8 +7,8 @@ namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 use Closure;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tomchochola\Laratchi\Auth\Http\Requests\EmailVerificationVerifyRequest;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
@@ -25,16 +25,11 @@ class EmailVerificationVerifyController extends TransactionController
     public static int $decay = 15;
 
     /**
-     * Throttle status.
-     */
-    public static int $throttleStatus = SymfonyResponse::HTTP_UNPROCESSABLE_ENTITY;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(EmailVerificationVerifyRequest $request): SymfonyResponse
     {
-        $this->hit($this->limit($request), $this->onThrottle($request));
+        $this->hit($this->limit($request, ''), $this->onThrottle($request));
 
         $ok = $this->markEmailAsVerified($request);
 
@@ -48,9 +43,9 @@ class EmailVerificationVerifyController extends TransactionController
     /**
      * Throttle limit.
      */
-    protected function limit(EmailVerificationVerifyRequest $request): Limit
+    protected function limit(EmailVerificationVerifyRequest $request, string $key): Limit
     {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->user($request->retrieveUser())->hash());
+        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->user($request->retrieveUser())->hash());
     }
 
     /**
@@ -61,7 +56,7 @@ class EmailVerificationVerifyController extends TransactionController
     protected function onThrottle(EmailVerificationVerifyRequest $request): ?Closure
     {
         return static function (): never {
-            throw new HttpException(static::$throttleStatus);
+            throw new ThrottleRequestsException();
         };
     }
 

@@ -6,8 +6,8 @@ namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
 use Closure;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tomchochola\Laratchi\Auth\Http\Requests\EmailVerificationResendRequest;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
@@ -24,16 +24,11 @@ class EmailVerificationResendController extends TransactionController
     public static int $decay = 15;
 
     /**
-     * Throttle status.
-     */
-    public static int $throttleStatus = SymfonyResponse::HTTP_UNPROCESSABLE_ENTITY;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(EmailVerificationResendRequest $request): SymfonyResponse
     {
-        $this->hit($this->limit($request), $this->onThrottle($request));
+        $this->hit($this->limit($request, ''), $this->onThrottle($request));
 
         $this->sendEmailVerificationNotification($request);
 
@@ -43,9 +38,9 @@ class EmailVerificationResendController extends TransactionController
     /**
      * Throttle limit.
      */
-    protected function limit(EmailVerificationResendRequest $request): Limit
+    protected function limit(EmailVerificationResendRequest $request, string $key): Limit
     {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->user($request->retrieveUser())->hash());
+        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->user($request->retrieveUser())->hash());
     }
 
     /**
@@ -56,7 +51,7 @@ class EmailVerificationResendController extends TransactionController
     protected function onThrottle(EmailVerificationResendRequest $request): ?Closure
     {
         return static function (): never {
-            throw new HttpException(static::$throttleStatus);
+            throw new ThrottleRequestsException();
         };
     }
 

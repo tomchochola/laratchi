@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Routing\Controller as IlluminateController;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Controller extends IlluminateController
@@ -82,6 +83,23 @@ class Controller extends IlluminateController
                 $rateLimiter->clear($key);
             },
         ];
+    }
+
+    /**
+     * Throw throttle validation error.
+     *
+     * @param array<array-key> $keys
+     */
+    protected function throwThrottleValidationError(array $keys, int $seconds, string $trans = 'passwords.throttled'): never
+    {
+        throw ValidationException::withMessages(
+            \array_map(static fn (): array => [
+                mustTransString($trans, [
+                    'seconds' => (string) $seconds,
+                    'minutes' => (string) \ceil($seconds / 60),
+                ]),
+            ], \array_flip($keys)),
+        );
     }
 
     /**

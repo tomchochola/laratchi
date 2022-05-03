@@ -11,9 +11,9 @@ use Illuminate\Auth\Events\OtherDeviceLogout;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tomchochola\Laratchi\Auth\Actions\CycleRememberTokenAction;
 use Tomchochola\Laratchi\Auth\Actions\LogoutOtherDevicesAction;
 use Tomchochola\Laratchi\Auth\Actions\ReloginAction;
@@ -35,16 +35,11 @@ class LogoutOtherDevicesController extends TransactionController
     public static int $decay = 15;
 
     /**
-     * Throttle status.
-     */
-    public static int $throttleStatus = SymfonyResponse::HTTP_UNPROCESSABLE_ENTITY;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(LogoutOtherDevicesRequest $request): SymfonyResponse
     {
-        [$hit] = $this->throttle($this->limit($request), $this->onThrottle($request));
+        [$hit] = $this->throttle($this->limit($request, 'password'), $this->onThrottle($request));
 
         $ok = $this->validatePassword($request);
 
@@ -73,9 +68,9 @@ class LogoutOtherDevicesController extends TransactionController
     /**
      * Throttle limit.
      */
-    protected function limit(LogoutOtherDevicesRequest $request): Limit
+    protected function limit(LogoutOtherDevicesRequest $request, string $key): Limit
     {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->user($request->retrieveUser())->hash());
+        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->user($request->retrieveUser())->hash());
     }
 
     /**
@@ -85,21 +80,14 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function onThrottle(LogoutOtherDevicesRequest $request): ?Closure
     {
-        return static function (int $seconds) use ($request): never {
+        return function (int $seconds) use ($request): never {
             if (\count($request->password()) === 0) {
-                throw new HttpException(static::$throttleStatus);
+                throw new ThrottleRequestsException();
             }
 
             resolveEventDispatcher()->dispatch(new Lockout($request));
 
-            throw ValidationException::withMessages(
-                \array_map(static fn (): array => [
-                    mustTransString('auth.throttle', [
-                        'seconds' => (string) $seconds,
-                        'minutes' => (string) \ceil($seconds / 60),
-                    ]),
-                ], $request->password()),
-            )->status(static::$throttleStatus);
+            $this->throwThrottleValidationError(\array_keys($request->password()), $seconds);
         };
     }
 

@@ -33,16 +33,11 @@ class PasswordUpdateController extends TransactionController
     public static int $decay = 15;
 
     /**
-     * Throttle status.
-     */
-    public static int $throttleStatus = SymfonyResponse::HTTP_UNPROCESSABLE_ENTITY;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(PasswordUpdateRequest $request): SymfonyResponse
     {
-        [$hit] = $this->throttle($this->limit($request), $this->onThrottle($request));
+        [$hit] = $this->throttle($this->limit($request, 'password'), $this->onThrottle($request));
 
         $ok = $this->validatePassword($request);
 
@@ -69,9 +64,9 @@ class PasswordUpdateController extends TransactionController
     /**
      * Throttle limit.
      */
-    protected function limit(PasswordUpdateRequest $request): Limit
+    protected function limit(PasswordUpdateRequest $request, string $key): Limit
     {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->user($request->retrieveUser())->hash());
+        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->user($request->retrieveUser())->hash());
     }
 
     /**
@@ -81,17 +76,10 @@ class PasswordUpdateController extends TransactionController
      */
     protected function onThrottle(PasswordUpdateRequest $request): ?Closure
     {
-        return static function (int $seconds) use ($request): never {
+        return function (int $seconds) use ($request): never {
             resolveEventDispatcher()->dispatch(new Lockout($request));
 
-            throw ValidationException::withMessages(
-                \array_map(static fn (): array => [
-                    mustTransString('auth.throttle', [
-                        'seconds' => (string) $seconds,
-                        'minutes' => (string) \ceil($seconds / 60),
-                    ]),
-                ], $request->password()),
-            )->status(static::$throttleStatus);
+            $this->throwThrottleValidationError(\array_keys($request->password()), $seconds);
         };
     }
 
