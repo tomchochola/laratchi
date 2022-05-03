@@ -17,6 +17,7 @@ use Tomchochola\Laratchi\Auth\Http\Controllers\EmailVerificationVerifyController
 use Tomchochola\Laratchi\Auth\Http\Controllers\LoginController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\LogoutCurrentDeviceController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\LogoutOtherDevicesController;
+use Tomchochola\Laratchi\Auth\Http\Controllers\MeShowController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\PasswordForgotController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\PasswordResetController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\PasswordUpdateController;
@@ -42,6 +43,7 @@ class ServiceProvider extends IlluminateServiceProvider
         resolveRouter()->post('email_verification/verify/{id}/{hash}', inject(EmailVerificationVerifyController::class)::class)->name('email_verification.verify');
         resolveRouter()->post('logout/current', inject(LogoutCurrentDeviceController::class)::class)->name('logout.current');
         resolveRouter()->post('logout/other', inject(LogoutOtherDevicesController::class)::class)->name('logout.other');
+        resolveRouter()->get('me', inject(MeShowController::class)::class)->name('me.show');
     }
 
     /**
