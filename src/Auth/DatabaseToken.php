@@ -86,7 +86,7 @@ class DatabaseToken extends Model
 
         \assert($ok);
 
-        $databaseToken->bearer = $databaseToken->getKey().'|'.$hash;
+        $databaseToken->bearer = $databaseToken->getKey().'|'.$token;
 
         return $databaseToken;
     }
