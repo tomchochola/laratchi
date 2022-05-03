@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth;
 
-use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Contracts\Translation\HasLocalePreference as HasLocalePreferenceContract;
 use Illuminate\Foundation\Auth\User as IlluminateUser;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -21,7 +21,7 @@ use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
  * @property ?string $remember_token
  * @property string $locale
  */
-class User extends IlluminateUser implements DatabaseTokenableInterface, HasLocalePreference
+class User extends IlluminateUser implements DatabaseTokenableInterface, HasLocalePreferenceContract
 {
     use DatabaseTokenableTrait;
     use Notifiable;
