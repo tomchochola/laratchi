@@ -19,7 +19,7 @@ use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
  * @property string $name
  * @property string $password
  * @property ?string $remember_token
- * @property ?string $locale
+ * @property string $locale
  */
 class User extends IlluminateUser implements DatabaseTokenableInterface, HasLocalePreference
 {
@@ -33,6 +33,7 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
         'name',
         'email',
         'password',
+        'locale',
     ];
 
     /**

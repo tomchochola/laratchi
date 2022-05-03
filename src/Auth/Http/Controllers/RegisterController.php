@@ -158,7 +158,7 @@ class RegisterController extends TransactionController
         \assert(\is_string($password));
 
         $user->forceFill($request->data());
-        $user->forceFill(['password' => resolveHasher()->make($password)]);
+        $user->forceFill(['password' => resolveHasher()->make($password), 'locale' => $request->locale()]);
 
         $ok = $user->save();
 

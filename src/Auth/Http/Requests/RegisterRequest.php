@@ -85,4 +85,12 @@ class RegisterRequest extends SecureFormRequest
     {
         return $this->validatedInput()->mustBool('remember');
     }
+
+    /**
+     * Get locale.
+     */
+    public function locale(): string
+    {
+        return resolveApp()->getLocale();
+    }
 }
