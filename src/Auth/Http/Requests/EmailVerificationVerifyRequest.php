@@ -9,9 +9,9 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
+use Tomchochola\Laratchi\Http\Requests\SignedRequest;
 
-class EmailVerificationVerifyRequest extends SecureFormRequest
+class EmailVerificationVerifyRequest extends SignedRequest
 {
     /**
      * Determine if the user is authorized to make this request.
