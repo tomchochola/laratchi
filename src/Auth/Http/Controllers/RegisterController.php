@@ -44,7 +44,11 @@ class RegisterController extends TransactionController
             $this->throwDuplicateCredentialsError($request);
         }
 
-        $this->beforeCreating($request, $hit);
+        $response = $this->beforeCreating($request, $hit);
+
+        if ($response !== null) {
+            return $response;
+        }
 
         $user = $this->createUser($request);
 
@@ -164,9 +168,10 @@ class RegisterController extends TransactionController
     }
 
     /**
-     * Before creating callback.
+     * Before creating shortcut.
      */
-    protected function beforeCreating(RegisterRequest $request, Closure $hit): void
+    protected function beforeCreating(RegisterRequest $request, Closure $hit): ?SymfonyResponse
     {
+        return null;
     }
 }
