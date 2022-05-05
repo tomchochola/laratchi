@@ -24,6 +24,12 @@ class MeShowController extends Controller
      */
     protected function response(MeShowRequest $request): SymfonyResponse
     {
-        return inject(AuthService::class)->jsonApiResource($request->retrieveUser())->toResponse($request);
+        $user = $request->retrieveUser();
+
+        if ($user === null) {
+            return resolveResponseFactory()->noContent();
+        }
+
+        return inject(AuthService::class)->jsonApiResource($user)->toResponse($request);
     }
 }
