@@ -42,7 +42,7 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function cookieName(): string
     {
-        return Str::slug(mustConfigString('session.cookie').'_'.static::$cookieName."_{$this->guardName}", '_');
+        return '__Host-'.Str::slug(mustEnvString('APP_NAME', 'Laratchi').'_'.static::$cookieName."_{$this->guardName}", '_');
     }
 
     /**
@@ -179,7 +179,7 @@ class DatabaseTokenGuard implements GuardContract
     {
         $cookieJar = resolveCookieJar();
 
-        $cookieJar->queue($cookieJar->forever($this->cookieName(), $databaseToken->bearer));
+        $cookieJar->queue($cookieJar->forever($this->cookieName(), $databaseToken->bearer, '/', null, true, true, false, 'lax'));
     }
 
     /**
