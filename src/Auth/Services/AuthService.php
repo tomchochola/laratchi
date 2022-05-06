@@ -18,6 +18,13 @@ use Tomchochola\Laratchi\Http\Resources\JsonApiResource;
 class AuthService
 {
     /**
+     * Default user json api resource.
+     *
+     * @var class-string<UserJsonApiResource>
+     */
+    public static string $userJsonApiResource = UserJsonApiResource::class;
+
+    /**
      * Resolve user provider from guard.
      */
     public function userProvider(GuardContract $guard): UserProviderContract
@@ -34,6 +41,6 @@ class AuthService
     {
         \assert($user instanceof Model);
 
-        return new UserJsonApiResource($user);
+        return new static::$userJsonApiResource($user);
     }
 }
