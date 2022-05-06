@@ -11,4 +11,12 @@ use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
 class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
 {
     use Queueable;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct()
+    {
+        $this->afterCommit();
+    }
 }
