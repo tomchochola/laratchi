@@ -169,6 +169,8 @@ class RegisterController extends TransactionController
 
     /**
      * Before creating shortcut.
+     *
+     * @param Closure(): void $hit
      */
     protected function beforeCreating(RegisterRequest $request, Closure $hit): ?SymfonyResponse
     {

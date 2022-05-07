@@ -28,6 +28,10 @@ class Facade extends IlluminateFacade
 
     /**
      * After resolving callback.
+     *
+     * @template T of mixed
+     *
+     * @param Closure(T): void $closure
      */
     public static function afterResolving(string $facade, Closure $closure, bool $cache = true): void
     {

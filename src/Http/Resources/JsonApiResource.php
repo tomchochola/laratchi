@@ -78,7 +78,11 @@ abstract class JsonApiResource extends JsonResource
             }
 
             if (\is_array($relationship)) {
-                yield from $relationship;
+                foreach ($relationship as $nestedRelationship) {
+                    \assert($nestedRelationship instanceof self);
+
+                    yield $nestedRelationship;
+                }
             } else {
                 yield $relationship;
             }
@@ -134,7 +138,11 @@ abstract class JsonApiResource extends JsonResource
 
         if (\count($relationships) > 0) {
             foreach ($relationships as $name => $relationship) {
-                $data['relationships'][Str::snake($name)] = ['data' => $relationship === null ? null : (\is_array($relationship) ? \array_map(static fn (self $resource): array => $resource->getHeader(), $relationship) : $relationship->getHeader())];
+                $data['relationships'][Str::snake($name)] = ['data' => $relationship === null ? null : (\is_array($relationship) ? \array_map(static function (mixed $resource): array {
+                    \assert($resource instanceof self);
+
+                    return $resource->getHeader();
+                }, $relationship) : $relationship->getHeader())];
             }
         }
 

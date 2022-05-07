@@ -14,7 +14,11 @@ return new class() extends Migration {
         foreach (mustConfigArray('auth.passwords') as $config) {
             \assert(\is_array($config));
 
-            resolveSchema()->create($config['table'], static function (Blueprint $table): void {
+            $tableName = $config['table'];
+
+            \assert(\is_string($tableName));
+
+            resolveSchema()->create($tableName, static function (Blueprint $table): void {
                 $table->string('email')->index();
                 $table->string('token');
                 $table->timestamp('created_at')->nullable();

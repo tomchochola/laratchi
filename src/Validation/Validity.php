@@ -1074,6 +1074,8 @@ class Validity implements ArrayableContract
     /**
      * Add closure rule.
      *
+     * @param Closure(string, mixed, Closure(string): void): void $closure
+     *
      * @return $this
      */
     public function closure(Closure $closure): static
@@ -1083,6 +1085,8 @@ class Validity implements ArrayableContract
 
     /**
      * Add required_if rule.
+     *
+     * @param (callable(): bool)|bool $condition
      *
      * @return $this
      */
@@ -1242,6 +1246,8 @@ class Validity implements ArrayableContract
 
     /**
      * Add prohibited if rule.
+     *
+     * @param (callable(): bool)|bool $condition
      *
      * @return $this
      */
