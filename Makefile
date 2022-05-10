@@ -46,7 +46,7 @@ clean:
 
 .PHONY: cold
 cold:
-	git clean -Xfd tools composer.lock vendor package-lock.json node_modules
+	git clean -xfd tools composer.lock vendor package-lock.json node_modules
 
 .PHONY: minify
 minify:
