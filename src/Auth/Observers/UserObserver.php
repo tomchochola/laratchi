@@ -13,15 +13,6 @@ use Tomchochola\Laratchi\Auth\User;
 class UserObserver
 {
     /**
-     * Handle the User "creating" event.
-     */
-    public function creating(User $user): void
-    {
-        $this->cycleRememberToken($user);
-        $this->setLocale($user);
-    }
-
-    /**
      * Handle the User "updating" event.
      */
     public function updating(User $user): void
@@ -128,15 +119,5 @@ class UserObserver
     protected function logoutOtherDevices(User $user): void
     {
         inject(LogoutOtherDevicesAction::class)->handle($user);
-    }
-
-    /**
-     * Set current locale.
-     */
-    protected function setLocale(User $user): void
-    {
-        if ($user->locale === null) {
-            $user->locale = resolveApp()->getLocale();
-        }
     }
 }
