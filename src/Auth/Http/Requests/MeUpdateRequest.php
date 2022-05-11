@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Requests;
 
 use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
-class RegisterRequest extends SecureFormRequest
+class MeUpdateRequest extends SecureFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): Response|bool
     {
-        mustBeGuest([$this->guardName()]);
+        $this->retrieveUser();
 
         return true;
     }
@@ -33,9 +34,7 @@ class RegisterRequest extends SecureFormRequest
 
         return [
             'email' => $authValidity->email($guardName)->required(),
-            'password' => $authValidity->password($guardName)->confirmed()->required(),
             'name' => $authValidity->name($guardName)->required(),
-            'terms_accepted' => $authValidity->termsAccepted($guardName)->accepted(),
             'locale' => $authValidity->locale($guardName)->required(),
         ];
     }
@@ -59,22 +58,20 @@ class RegisterRequest extends SecureFormRequest
     }
 
     /**
-     * Get password.
-     *
-     * @return array<string, mixed>
-     */
-    public function password(): array
-    {
-        return $this->validatedInput()->only(['password']);
-    }
-
-    /**
      * Get data.
      *
      * @return array<string, mixed>
      */
     public function data(): array
     {
-        return $this->validatedInput()->except(['password', 'password_confirmation', 'terms_accepted']);
+        return $this->validatedInput()->all();
+    }
+
+    /**
+     * Retrieve user.
+     */
+    public function retrieveUser(): AuthenticatableContract
+    {
+        return mustResolveUser([$this->guardName()]);
     }
 }

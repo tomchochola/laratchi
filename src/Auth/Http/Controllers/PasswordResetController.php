@@ -13,6 +13,7 @@ use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\CycleRememberTokenAction;
+use Tomchochola\Laratchi\Auth\Actions\LoginAction;
 use Tomchochola\Laratchi\Auth\Actions\LogoutOtherDevicesAction;
 use Tomchochola\Laratchi\Auth\Actions\UpdatePasswordAction;
 use Tomchochola\Laratchi\Auth\Http\Requests\PasswordResetRequest;
@@ -32,11 +33,22 @@ class PasswordResetController extends TransactionController
     public static int $decay = 15;
 
     /**
+     * Resetted password user.
+     */
+    protected AuthenticatableContract & CanResetPasswordContract $user;
+
+    /**
      * Handle the incoming request.
      */
     public function __invoke(PasswordResetRequest $request): SymfonyResponse
     {
         [$hit] = $this->throttle($this->limit($request, 'status'), $this->onThrottle($request));
+
+        $response = $this->beforeResetting($request);
+
+        if ($response !== null) {
+            return $response;
+        }
 
         $status = $this->resetPassword($request);
 
@@ -45,6 +57,8 @@ class PasswordResetController extends TransactionController
 
             $this->throwInvalidStatus($request, $status);
         }
+
+        $this->login($request);
 
         return $this->response($request);
     }
@@ -75,11 +89,13 @@ class PasswordResetController extends TransactionController
     protected function resetPassword(PasswordResetRequest $request): string
     {
         $status = $this->passwordBroker($request)->reset($request->credentials(), function (AuthenticatableContract & CanResetPasswordContract $user, string $password) use ($request): void {
-            $this->updatePassword($request, $user, $password);
+            $this->user = $user;
 
-            $this->cycleRememberToken($request, $user);
+            $this->updatePassword($request, $password);
 
-            $this->logoutOtherDevices($request, $user);
+            $this->cycleRememberToken($request);
+
+            $this->logoutOtherDevices($request);
         });
 
         \assert(\is_string($status));
@@ -106,19 +122,19 @@ class PasswordResetController extends TransactionController
     /**
      * Update password.
      */
-    protected function updatePassword(PasswordResetRequest $request, CanResetPasswordContract & AuthenticatableContract $user, string $password): void
+    protected function updatePassword(PasswordResetRequest $request, string $password): void
     {
-        inject(UpdatePasswordAction::class)->handle($user, $password);
+        inject(UpdatePasswordAction::class)->handle($this->user, $password);
     }
 
     /**
      * Cycle remember token.
      */
-    protected function cycleRememberToken(PasswordResetRequest $request, CanResetPasswordContract & AuthenticatableContract $user): void
+    protected function cycleRememberToken(PasswordResetRequest $request): void
     {
-        inject(CycleRememberTokenAction::class)->handle($user);
+        inject(CycleRememberTokenAction::class)->handle($this->user);
 
-        $this->userProvider($request)->updateRememberToken($user, $user->getRememberToken());
+        $this->userProvider($request)->updateRememberToken($this->user, $this->user->getRememberToken());
     }
 
     /**
@@ -132,9 +148,9 @@ class PasswordResetController extends TransactionController
     /**
      * Logout other devices.
      */
-    protected function logoutOtherDevices(PasswordResetRequest $request, CanResetPasswordContract & AuthenticatableContract $user): void
+    protected function logoutOtherDevices(PasswordResetRequest $request): void
     {
-        inject(LogoutOtherDevicesAction::class)->handle($user);
+        inject(LogoutOtherDevicesAction::class)->handle($this->user);
     }
 
     /**
@@ -142,6 +158,22 @@ class PasswordResetController extends TransactionController
      */
     protected function response(PasswordResetRequest $request): SymfonyResponse
     {
-        return resolveResponseFactory()->noContent();
+        return inject(AuthService::class)->jsonApiResource($this->user)->toResponse($request);
+    }
+
+    /**
+     * Login.
+     */
+    protected function login(PasswordResetRequest $request): void
+    {
+        inject(LoginAction::class)->handle($request->guardName(), $this->user, false);
+    }
+
+    /**
+     * Before resetting shortcut.
+     */
+    protected function beforeResetting(PasswordResetRequest $request): ?SymfonyResponse
+    {
+        return null;
     }
 }

@@ -55,4 +55,12 @@ class AuthValidity
     {
         return Validity::make()->string()->size(72);
     }
+
+    /**
+     * Locale validation rules.
+     */
+    public function locale(string $guardName): Validity
+    {
+        return Validity::make()->string()->in(mustConfigArray('app.locales', [resolveApp()->getLocale()]));
+    }
 }

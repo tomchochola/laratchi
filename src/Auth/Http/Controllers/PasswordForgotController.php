@@ -31,6 +31,12 @@ class PasswordForgotController extends TransactionController
     {
         [$hit] = $this->throttle($this->limit($request, 'status'), $this->onThrottle($request));
 
+        $response = $this->beforeSending($request);
+
+        if ($response !== null) {
+            return $response;
+        }
+
         $status = $this->sendResetLink($request);
 
         if ($status !== PasswordBrokerContract::RESET_LINK_SENT) {
@@ -92,5 +98,13 @@ class PasswordForgotController extends TransactionController
     protected function response(PasswordForgotRequest $request): SymfonyResponse
     {
         return resolveResponseFactory()->noContent();
+    }
+
+    /**
+     * Before sending shortcut.
+     */
+    protected function beforeSending(PasswordForgotRequest $request): ?SymfonyResponse
+    {
+        return null;
     }
 }

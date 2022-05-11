@@ -5,19 +5,17 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
 use Closure;
-use Illuminate\Auth\EloquentUserProvider;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Tomchochola\Laratchi\Auth\Actions\LoginAction;
-use Tomchochola\Laratchi\Auth\Http\Requests\RegisterRequest;
+use Tomchochola\Laratchi\Auth\Http\Requests\MeUpdateRequest;
 use Tomchochola\Laratchi\Auth\Services\AuthService;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
-class RegisterController extends TransactionController
+class MeUpdateController extends TransactionController
 {
     /**
      * Throttle max attempts.
@@ -32,29 +30,25 @@ class RegisterController extends TransactionController
     /**
      * Handle the incoming request.
      */
-    public function __invoke(RegisterRequest $request): SymfonyResponse
+    public function __invoke(MeUpdateRequest $request): SymfonyResponse
     {
         $this->validateUnique($request);
 
-        $response = $this->beforeCreating($request);
+        $response = $this->beforeUpdating($request);
 
         if ($response !== null) {
             return $response;
         }
 
-        $user = $this->createUser($request);
+        $this->updateUser($request);
 
-        $this->fireRegisteredEvent($request, $user);
-
-        $this->login($request, $user);
-
-        return $this->response($request, $user);
+        return $this->response($request);
     }
 
     /**
      * Throttle limit.
      */
-    protected function limit(RegisterRequest $request, string $key): Limit
+    protected function limit(MeUpdateRequest $request, string $key): Limit
     {
         return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->hash());
     }
@@ -66,7 +60,7 @@ class RegisterController extends TransactionController
      *
      * @return (Closure(int): never)|null
      */
-    protected function onThrottle(RegisterRequest $request, array $credentials): ?Closure
+    protected function onThrottle(MeUpdateRequest $request, array $credentials): ?Closure
     {
         return function (int $seconds) use ($credentials): never {
             $this->throwThrottleValidationError(\array_keys($credentials), $seconds);
@@ -78,7 +72,7 @@ class RegisterController extends TransactionController
      *
      * @param array<string, mixed> $credentials
      */
-    protected function retrieveByCredentials(RegisterRequest $request, array $credentials): ?AuthenticatableContract
+    protected function retrieveByCredentials(MeUpdateRequest $request, array $credentials): ?AuthenticatableContract
     {
         return $this->userProvider($request)->retrieveByCredentials($credentials);
     }
@@ -86,25 +80,17 @@ class RegisterController extends TransactionController
     /**
      * Get user provider.
      */
-    protected function userProvider(RegisterRequest $request): UserProviderContract
+    protected function userProvider(MeUpdateRequest $request): UserProviderContract
     {
         return inject(AuthService::class)->userProvider(resolveAuthManager()->guard($request->guardName()));
     }
 
     /**
-     * Login.
-     */
-    protected function login(RegisterRequest $request, AuthenticatableContract $user): void
-    {
-        inject(LoginAction::class)->handle($request->guardName(), $user, false);
-    }
-
-    /**
      * Make response.
      */
-    protected function response(RegisterRequest $request, AuthenticatableContract $user): SymfonyResponse
+    protected function response(MeUpdateRequest $request): SymfonyResponse
     {
-        return inject(AuthService::class)->jsonApiResource($user)->toResponse($request);
+        return inject(AuthService::class)->jsonApiResource($request->retrieveUser())->toResponse($request);
     }
 
     /**
@@ -112,7 +98,7 @@ class RegisterController extends TransactionController
      *
      * @param array<string, mixed> $credentials
      */
-    protected function throwDuplicateCredentialsError(RegisterRequest $request, array $credentials): void
+    protected function throwDuplicateCredentialsError(MeUpdateRequest $request, array $credentials): void
     {
         $validator = resolveValidatorFactory()->make([], []);
 
@@ -124,44 +110,9 @@ class RegisterController extends TransactionController
     }
 
     /**
-     * Create new user.
+     * Before updating shortcut.
      */
-    protected function createUser(RegisterRequest $request): AuthenticatableContract
-    {
-        $userProvider = $this->userProvider($request);
-
-        \assert($userProvider instanceof EloquentUserProvider);
-
-        $user = $userProvider->createModel();
-
-        \assert($user instanceof AuthenticatableContract);
-
-        $password = $request->password()['password'];
-
-        \assert(\is_string($password));
-
-        $user->forceFill($request->data());
-        $user->forceFill(['password' => resolveHasher()->make($password)]);
-
-        $ok = $user->save();
-
-        \assert($ok);
-
-        return $user->refresh();
-    }
-
-    /**
-     * Fire registered event.
-     */
-    protected function fireRegisteredEvent(RegisterRequest $request, AuthenticatableContract $user): void
-    {
-        resolveEventDispatcher()->dispatch(new Registered($user));
-    }
-
-    /**
-     * Before creating shortcut.
-     */
-    protected function beforeCreating(RegisterRequest $request): ?SymfonyResponse
+    protected function beforeUpdating(MeUpdateRequest $request): ?SymfonyResponse
     {
         return null;
     }
@@ -169,7 +120,7 @@ class RegisterController extends TransactionController
     /**
      * Validate given credentials are unique.
      */
-    protected function validateUnique(RegisterRequest $request): void
+    protected function validateUnique(MeUpdateRequest $request): void
     {
         $credentialsArray = $request->credentials();
 
@@ -184,5 +135,21 @@ class RegisterController extends TransactionController
                 $this->throwDuplicateCredentialsError($request, $credentials);
             }
         }
+    }
+
+    /**
+     * Update user.
+     */
+    protected function updateUser(MeUpdateRequest $request): void
+    {
+        $user = $request->retrieveUser();
+
+        \assert($user instanceof Model);
+
+        $user->forceFill($request->data());
+
+        $ok = $user->save();
+
+        \assert($ok);
     }
 }

@@ -16,6 +16,12 @@ class LogoutCurrentDeviceController extends TransactionController
      */
     public function __invoke(LogoutCurrentDeviceRequest $request): SymfonyResponse
     {
+        $response = $this->beforeLogout($request);
+
+        if ($response !== null) {
+            return $response;
+        }
+
         $this->logoutCurrentDevice($request);
 
         return $this->response($request);
@@ -35,5 +41,13 @@ class LogoutCurrentDeviceController extends TransactionController
     protected function response(LogoutCurrentDeviceRequest $request): SymfonyResponse
     {
         return resolveResponseFactory()->noContent();
+    }
+
+    /**
+     * Before logout shortcut.
+     */
+    protected function beforeLogout(LogoutCurrentDeviceRequest $request): ?SymfonyResponse
+    {
+        return null;
     }
 }

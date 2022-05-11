@@ -61,6 +61,12 @@ class LoginController extends TransactionController
 
         $this->fireValidatedEvent($request, $user);
 
+        $response = $this->beforeLogin($request);
+
+        if ($response !== null) {
+            return $response;
+        }
+
         $this->login($request, $user);
 
         return $this->response($request, $user);
@@ -186,5 +192,13 @@ class LoginController extends TransactionController
     protected function response(LoginRequest $request, AuthenticatableContract $user): SymfonyResponse
     {
         return inject(AuthService::class)->jsonApiResource($user)->toResponse($request);
+    }
+
+    /**
+     * Before login shortcut.
+     */
+    protected function beforeLogin(LoginRequest $request): ?SymfonyResponse
+    {
+        return null;
     }
 }

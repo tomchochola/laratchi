@@ -52,6 +52,12 @@ class LogoutOtherDevicesController extends TransactionController
 
         $this->fireValidatedEvent($request);
 
+        $response = $this->beforeUpdatingPassword($request);
+
+        if ($response !== null) {
+            return $response;
+        }
+
         $this->updatePassword($request);
 
         $this->cycleRememberToken($request);
@@ -197,5 +203,13 @@ class LogoutOtherDevicesController extends TransactionController
     protected function fireValidatedEvent(LogoutOtherDevicesRequest $request): void
     {
         resolveEventDispatcher()->dispatch(new Validated($request->guardName(), $request->retrieveUser()));
+    }
+
+    /**
+     * Before updating password shortcut.
+     */
+    protected function beforeUpdatingPassword(LogoutOtherDevicesRequest $request): ?SymfonyResponse
+    {
+        return null;
     }
 }

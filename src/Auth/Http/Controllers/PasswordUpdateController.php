@@ -50,6 +50,12 @@ class PasswordUpdateController extends TransactionController
 
         $this->fireValidatedEvent($request);
 
+        $response = $this->beforeUpdatingPassword($request);
+
+        if ($response !== null) {
+            return $response;
+        }
+
         $this->updatePassword($request);
 
         $this->cycleRememberToken($request);
@@ -165,5 +171,13 @@ class PasswordUpdateController extends TransactionController
     protected function relogin(PasswordUpdateRequest $request): void
     {
         inject(ReloginAction::class)->handle($request->guardName());
+    }
+
+    /**
+     * Before updating password shortcut.
+     */
+    protected function beforeUpdatingPassword(PasswordUpdateRequest $request): ?SymfonyResponse
+    {
+        return null;
     }
 }

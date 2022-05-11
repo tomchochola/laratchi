@@ -30,6 +30,12 @@ class EmailVerificationResendController extends TransactionController
     {
         $this->hit($this->limit($request, ''), $this->onThrottle($request));
 
+        $response = $this->beforeSending($request);
+
+        if ($response !== null) {
+            return $response;
+        }
+
         $this->sendEmailVerificationNotification($request);
 
         return $this->response($request);
@@ -73,5 +79,13 @@ class EmailVerificationResendController extends TransactionController
     protected function response(EmailVerificationResendRequest $request): SymfonyResponse
     {
         return resolveResponseFactory()->noContent();
+    }
+
+    /**
+     * Before sending shortcut.
+     */
+    protected function beforeSending(EmailVerificationResendRequest $request): ?SymfonyResponse
+    {
+        return null;
     }
 }

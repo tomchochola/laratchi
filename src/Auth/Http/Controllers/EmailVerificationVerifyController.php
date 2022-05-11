@@ -31,6 +31,12 @@ class EmailVerificationVerifyController extends TransactionController
     {
         $this->hit($this->limit($request, ''), $this->onThrottle($request));
 
+        $response = $this->beforeVerifing($request);
+
+        if ($response !== null) {
+            return $response;
+        }
+
         $ok = $this->markEmailAsVerified($request);
 
         if ($ok) {
@@ -88,5 +94,13 @@ class EmailVerificationVerifyController extends TransactionController
     protected function response(EmailVerificationVerifyRequest $request): SymfonyResponse
     {
         return resolveResponseFactory()->noContent();
+    }
+
+    /**
+     * Before verifing shortcut.
+     */
+    protected function beforeVerifing(EmailVerificationVerifyRequest $request): ?SymfonyResponse
+    {
+        return null;
     }
 }
