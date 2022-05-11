@@ -17,9 +17,9 @@ class MeDestroyController extends Controller
      */
     public function __invoke(MeDestroyRequest $request): SymfonyResponse
     {
-        $this->logoutCurrentDevice($request);
-
         $this->destroyMe($request);
+
+        $this->logoutCurrentDevice($request);
 
         return $this->response($request);
     }
