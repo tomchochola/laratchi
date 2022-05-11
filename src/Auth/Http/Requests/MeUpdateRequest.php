@@ -7,9 +7,10 @@ namespace Tomchochola\Laratchi\Auth\Http\Requests;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
+use Tomchochola\Laratchi\Http\Requests\NonEmptySecureRequest;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
-class MeUpdateRequest extends SecureFormRequest
+class MeUpdateRequest extends NonEmptySecureRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,9 +34,9 @@ class MeUpdateRequest extends SecureFormRequest
         $guardName = $this->guardName();
 
         return [
-            'email' => $authValidity->email($guardName)->required(),
-            'name' => $authValidity->name($guardName)->required(),
-            'locale' => $authValidity->locale($guardName)->required(),
+            'email' => $authValidity->email($guardName)->sometimes()->required(),
+            'name' => $authValidity->name($guardName)->sometimes()->required(),
+            'locale' => $authValidity->locale($guardName)->sometimes()->required(),
         ];
     }
 
