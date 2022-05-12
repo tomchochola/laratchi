@@ -8,7 +8,6 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
 use Tomchochola\Laratchi\Http\Requests\NonEmptySecureRequest;
-use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
 class MeUpdateRequest extends NonEmptySecureRequest
 {
