@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tomchochola\Laratchi\Api\Http\Controllers;
+namespace Tomchochola\Laratchi\Swagger\Http\Controllers;
 
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
