@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation;
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
 
 class ValidatedInput extends IlluminateValidatedInput
@@ -13,7 +15,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function string(string $key, ?string $default = null, bool $trim = true): ?string
     {
-        $value = $this->resolve($key, $default);
+        $value = $this->get($key, $default);
 
         if ($value === null) {
             return null;
@@ -47,7 +49,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function bool(string $key, ?bool $default = null): ?bool
     {
-        $value = $this->resolve($key, $default);
+        $value = $this->get($key, $default);
 
         if ($value === null) {
             return null;
@@ -73,7 +75,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function int(string $key, ?int $default = null): ?int
     {
-        $value = $this->resolve($key, $default);
+        $value = $this->get($key, $default);
 
         if ($value === null) {
             return null;
@@ -103,7 +105,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function float(string $key, ?float $default = null): ?float
     {
-        $value = $this->resolve($key, $default);
+        $value = $this->get($key, $default);
 
         if ($value === null) {
             return null;
@@ -129,11 +131,75 @@ class ValidatedInput extends IlluminateValidatedInput
     }
 
     /**
+     * File resolver.
+     */
+    public function file(string $key, ?UploadedFile $default = null): ?UploadedFile
+    {
+        $value = $this->get($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert($value instanceof UploadedFile);
+
+        return $value;
+    }
+
+    /**
+     * Mandatory file resolver.
+     */
+    public function mustFile(string $key, ?UploadedFile $default = null): UploadedFile
+    {
+        $value = $this->file($key, $default);
+
+        \assert($value !== null);
+
+        return $value;
+    }
+
+    /**
+     * Array resolver.
+     *
+     * @param array<mixed>|null $default
+     *
+     * @return array<mixed>|null
+     */
+    public function array(string $key, ?array $default = null): ?array
+    {
+        $value = $this->get($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert(\is_array($value));
+
+        return $value;
+    }
+
+    /**
+     * Mandatory array resolver.
+     *
+     * @param array<mixed>|null $default
+     *
+     * @return array<mixed>
+     */
+    public function mustArray(string $key, ?array $default = null): array
+    {
+        $value = $this->array($key, $default);
+
+        \assert($value !== null);
+
+        return $value;
+    }
+
+    /**
      * Resolve value from data array.
      */
-    protected function resolve(string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
-        $value = $this[$key] ?? $default;
+        $value = Arr::get($this->input, $key, $default);
 
         if (\is_string($value) && \trim($value) === '') {
             return null;
