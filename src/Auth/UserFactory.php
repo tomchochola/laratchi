@@ -27,7 +27,7 @@ class UserFactory extends Factory
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => Carbon::now(),
-            'password' => resolveHasher()->make('password'),
+            'password' => Str::random(10),
             'remember_token' => Str::random(10),
             'locale' => $this->faker->randomElement(mustConfigArray('app.locales', [resolveApp()->getLocale()])),
         ];
