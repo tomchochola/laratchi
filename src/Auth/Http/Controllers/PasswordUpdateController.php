@@ -16,6 +16,7 @@ use Tomchochola\Laratchi\Auth\Actions\CycleRememberTokenAction;
 use Tomchochola\Laratchi\Auth\Actions\LogoutOtherDevicesAction;
 use Tomchochola\Laratchi\Auth\Actions\ReloginAction;
 use Tomchochola\Laratchi\Auth\Actions\UpdatePasswordAction;
+use Tomchochola\Laratchi\Auth\Events\PasswordUpdateEvent;
 use Tomchochola\Laratchi\Auth\Http\Requests\PasswordUpdateRequest;
 use Tomchochola\Laratchi\Auth\Services\AuthService;
 use Tomchochola\Laratchi\Routing\TransactionController;
@@ -61,6 +62,8 @@ class PasswordUpdateController extends TransactionController
         $this->cycleRememberToken($request);
 
         $this->logoutOtherDevices($request);
+
+        $this->firePasswordUpdateEvent($request);
 
         $this->relogin($request);
 
@@ -179,5 +182,13 @@ class PasswordUpdateController extends TransactionController
     protected function beforeUpdatingPassword(PasswordUpdateRequest $request): ?SymfonyResponse
     {
         return null;
+    }
+
+    /**
+     * Fire password update event.
+     */
+    protected function firePasswordUpdateEvent(PasswordUpdateRequest $request): void
+    {
+        resolveEventDispatcher()->dispatch(new PasswordUpdateEvent($request->retrieveUser()));
     }
 }
