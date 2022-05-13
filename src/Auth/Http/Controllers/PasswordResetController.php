@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
 use Closure;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
@@ -96,6 +97,8 @@ class PasswordResetController extends TransactionController
             $this->cycleRememberToken($request);
 
             $this->logoutOtherDevices($request);
+
+            $this->firePasswordResetEvent($request);
         });
 
         \assert(\is_string($status));
@@ -175,5 +178,13 @@ class PasswordResetController extends TransactionController
     protected function beforeResetting(PasswordResetRequest $request): ?SymfonyResponse
     {
         return null;
+    }
+
+    /**
+     * Fire password reset event.
+     */
+    protected function firePasswordResetEvent(PasswordResetRequest $request): void
+    {
+        resolveEventDispatcher()->dispatch(new PasswordReset($this->user));
     }
 }
