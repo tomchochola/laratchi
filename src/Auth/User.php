@@ -57,6 +57,26 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     ];
 
     /**
+     * Resolve user or null.
+     *
+     * @param array<string|null> $guards
+     */
+    public static function resolve(array $guards = [null]): ?static
+    {
+        return resolveUser($guards, static::class);
+    }
+
+    /**
+     * Resolve user or throw 401.
+     *
+     * @param array<string|null> $guards
+     */
+    public static function mustResolve(array $guards = [null]): static
+    {
+        return mustResolveUser($guards, static::class);
+    }
+
+    /**
      * @inheritDoc
      */
     public function getKey(): int

@@ -961,7 +961,7 @@ if (! \function_exists('resolveUser')) {
 
 if (! \function_exists('mustResolveUser')) {
     /**
-     * Resolve user or throw.
+     * Resolve user or throw 401.
      *
      * @template T
      *
