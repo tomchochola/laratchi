@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Validation;
 
+use Tomchochola\Laratchi\Validation\GenericValidity;
 use Tomchochola\Laratchi\Validation\Validity;
 
 class AuthValidity
@@ -61,6 +62,6 @@ class AuthValidity
      */
     public function locale(string $guardName): Validity
     {
-        return Validity::make()->string()->in(mustConfigArray('app.locales', [resolveApp()->getLocale()]));
+        return inject(GenericValidity::class)->locale();
     }
 }
