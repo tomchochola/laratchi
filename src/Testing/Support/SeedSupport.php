@@ -7,6 +7,7 @@ namespace Tomchochola\Laratchi\Testing\Support;
 use Illuminate\Http\Testing\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class SeedSupport
 {
@@ -15,7 +16,11 @@ class SeedSupport
      */
     public static function randomAvatarUrl(int $width = 100): string
     {
-        return "https://i.pravatar.cc/{$width}";
+        $query = \http_build_query([
+            'u' => Str::random(30),
+        ]);
+
+        return "https://i.pravatar.cc/{$width}?{$query}";
     }
 
     /**
@@ -67,11 +72,13 @@ class SeedSupport
      */
     public static function randomImageUrl(int $width = 100, ?int $height = null): string
     {
+        $seed = Str::random(30);
+
         if ($height !== null) {
-            return "https://picsum.photos/{$width}/{$height}";
+            return "https://picsum.photos/seed/{$seed}/{$width}/{$height}";
         }
 
-        return "https://picsum.photos/{$width}";
+        return "https://picsum.photos/seed/{$seed}/{$width}";
     }
 
     /**
@@ -81,6 +88,8 @@ class SeedSupport
      */
     public static function fakeImage(string $extension = 'webp', int $width = 10, int $height = 10): File
     {
-        return UploadedFile::fake()->image("image.{$extension}", $width, $height);
+        $randomName = Str::random(30);
+
+        return UploadedFile::fake()->image("{$randomName}.{$extension}", $width, $height);
     }
 }
