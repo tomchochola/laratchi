@@ -23,6 +23,10 @@ class UpdatePasswordAction
             $user->timestamps = false;
         }
 
+        if (! $user->isDirty()) {
+            return;
+        }
+
         $ok = $user->save();
 
         \assert($ok);

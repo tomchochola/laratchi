@@ -148,6 +148,10 @@ class MeUpdateController extends TransactionController
 
         $user->forceFill($request->data());
 
+        if (! $user->isDirty()) {
+            return;
+        }
+
         $ok = $user->save();
 
         \assert($ok);
