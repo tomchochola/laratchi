@@ -15,6 +15,36 @@ class Model extends IlluminateModel
 {
     /**
      * @inheritDoc
+     *
+     * @param array<mixed> $attributes
+     */
+    final public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+    }
+
+    /**
+     * Get qualified key column name.
+     */
+    public static function getKeyColumn(): string
+    {
+        $instance = new static();
+
+        return $instance->getQualifiedKeyName();
+    }
+
+    /**
+     * Get qualified route key column name.
+     */
+    public static function getRouteKeyColumn(): string
+    {
+        $instance = new static();
+
+        return $instance->qualifyColumn($instance->getRouteKeyName());
+    }
+
+    /**
+     * @inheritDoc
      */
     public function getKey(): int
     {
