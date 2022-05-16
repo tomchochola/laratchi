@@ -199,12 +199,6 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        $value = Arr::get($this->input, $key, $default);
-
-        if (\is_string($value) && \trim($value) === '') {
-            return null;
-        }
-
-        return $value;
+        return Arr::get($this->input, $key, $default);
     }
 }
