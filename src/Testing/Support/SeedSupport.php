@@ -30,29 +30,33 @@ class SeedSupport
      */
     public static function imageUrl(array $keywords): string
     {
-        $keyword = \implode(',', $keywords);
+        $json = once(static function () use ($keywords): array {
+            $keyword = \implode(',', $keywords);
 
-        $query = \http_build_query([
-            'method' => 'search',
-            'keyword' => $keyword,
-            'itemsperpage' => 100,
-            'itemsperpage_su' => 1,
-            'itemsperpage_free' => 1,
-        ]);
+            $query = \http_build_query([
+                'method' => 'search',
+                'keyword' => $keyword,
+                'itemsperpage' => 100,
+                'itemsperpage_su' => 1,
+                'itemsperpage_free' => 1,
+            ]);
 
-        $response = \file_get_contents("https://www.123rfapis.com?{$query}");
+            $response = \file_get_contents("https://www.123rfapis.com?{$query}");
 
-        if ($response === false) {
-            return static::randomImageUrl();
-        }
+            if ($response === false) {
+                return [];
+            }
 
-        $json = \json_decode($response, true);
+            $json = \json_decode($response, true);
 
-        if ($json === null) {
-            return static::randomImageUrl();
-        }
+            if ($json === null) {
+                return [];
+            }
 
-        \assert(\is_array($json));
+            \assert(\is_array($json));
+
+            return $json;
+        });
 
         $randomIndex = \random_int(0, 99);
 
