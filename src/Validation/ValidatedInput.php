@@ -26,7 +26,13 @@ class ValidatedInput extends IlluminateValidatedInput
         \assert($value !== false);
 
         if ($trim) {
-            return \trim($value);
+            $trimed = \trim($value);
+
+            if ($trimed === '') {
+                return $default;
+            }
+
+            return $trimed;
         }
 
         return $value;
@@ -199,6 +205,6 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        return Arr::get($this->input, $key, $default);
+        return Arr::get($this->input, $key) ?? $default;
     }
 }
