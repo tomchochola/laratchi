@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest as IlluminateFormRequest;
+use Illuminate\Routing\Route;
 use Tomchochola\Laratchi\Validation\ValidatedInput;
 
 class FormRequest extends IlluminateFormRequest
@@ -18,6 +19,11 @@ class FormRequest extends IlluminateFormRequest
      * All input cache.
      */
     protected ?ValidatedInput $allInput = null;
+
+    /**
+     * Route parameters cache.
+     */
+    protected ?ValidatedInput $routeParameters = null;
 
     /**
      * Get a validated input container for the validated input.
@@ -45,5 +51,21 @@ class FormRequest extends IlluminateFormRequest
         }
 
         return $this->allInput = new ValidatedInput($this->all());
+    }
+
+    /**
+     * Get route parameters.
+     */
+    public function routeParameters(): ValidatedInput
+    {
+        if ($this->routeParameters !== null) {
+            return $this->routeParameters;
+        }
+
+        $route = $this->route();
+
+        \assert($route instanceof Route);
+
+        return $this->routeParameters = new ValidatedInput($route->parameters());
     }
 }
