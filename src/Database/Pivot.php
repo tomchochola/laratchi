@@ -21,11 +21,11 @@ class Pivot extends IlluminatePivot
     /**
      * @inheritDoc
      */
-    public function getKey(): int
+    public function getKey(): int|string
     {
         $value = parent::getKey();
 
-        \assert(\is_int($value));
+        \assert(\is_int($value) || \is_string($value));
 
         return $value;
     }
@@ -33,12 +33,12 @@ class Pivot extends IlluminatePivot
     /**
      * @inheritDoc
      */
-    public function getRouteKey(): int
+    public function getRouteKey(): string
     {
         $value = parent::getRouteKey();
 
-        \assert(\is_int($value));
+        \assert(\is_scalar($value));
 
-        return $value;
+        return (string) $value;
     }
 }

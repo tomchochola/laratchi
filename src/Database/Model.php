@@ -44,13 +44,69 @@ class Model extends IlluminateModel
     }
 
     /**
+     * Find instance by key.
+     */
+    public static function findByKey(int|string $key): ?static
+    {
+        $instance = static::query()->find($key);
+
+        if ($instance === null) {
+            return null;
+        }
+
+        \assert($instance instanceof static);
+
+        return $instance;
+    }
+
+    /**
+     * Mandatory find instance by key.
+     */
+    public static function mustFindByKey(int|string $key): static
+    {
+        $instance = static::query()->findOrFail($key);
+
+        \assert($instance instanceof static);
+
+        return $instance;
+    }
+
+    /**
+     * Find instance by route key.
+     */
+    public static function findByRouteKey(string $key): ?static
+    {
+        $instance = static::query()->where(static::getRouteKeyColumn(), $key)->first();
+
+        if ($instance === null) {
+            return null;
+        }
+
+        \assert($instance instanceof static);
+
+        return $instance;
+    }
+
+    /**
+     * Mandatory find instance by route key.
+     */
+    public static function mustFindByRouteKey(string $key): static
+    {
+        $instance = static::query()->where(static::getRouteKeyColumn(), $key)->firstOrFail();
+
+        \assert($instance instanceof static);
+
+        return $instance;
+    }
+
+    /**
      * @inheritDoc
      */
-    public function getKey(): int
+    public function getKey(): int|string
     {
         $value = parent::getKey();
 
-        \assert(\is_int($value));
+        \assert(\is_int($value) || \is_string($value));
 
         return $value;
     }
