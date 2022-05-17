@@ -87,9 +87,9 @@ class Validity implements ArrayableContract
     /**
      * Create a new validity instance.
      */
-    public static function make(): self
+    public static function make(): static
     {
-        return inject(self::class);
+        return inject(static::class);
     }
 
     /**

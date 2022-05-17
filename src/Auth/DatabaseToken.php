@@ -41,7 +41,7 @@ class DatabaseToken extends Model
     /**
      * Find database token matching given bearer.
      */
-    public function find(string $bearer): ?self
+    public function find(string $bearer): ?static
     {
         if (! \str_contains($bearer, '|')) {
             return null;
@@ -55,7 +55,7 @@ class DatabaseToken extends Model
             return null;
         }
 
-        \assert($instance instanceof self);
+        \assert($instance instanceof static);
 
         if (! \hash_equals($instance->hash, \hash('sha256', $token))) {
             return null;
@@ -67,7 +67,7 @@ class DatabaseToken extends Model
     /**
      * Create a new database token instance.
      */
-    public function create(DatabaseTokenableInterface $user): self
+    public function create(DatabaseTokenableInterface $user): static
     {
         $token = Str::random(100);
         $hash = \hash('sha256', $token);
@@ -76,7 +76,7 @@ class DatabaseToken extends Model
 
         \assert(\is_scalar($authId));
 
-        $databaseToken = new self();
+        $databaseToken = new static();
 
         $databaseToken->hash = $hash;
         $databaseToken->provider = $user->getUserProviderName();
