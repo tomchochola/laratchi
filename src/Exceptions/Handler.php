@@ -174,7 +174,7 @@ class Handler extends IlluminateHandler
         return match (true) {
             $e instanceof BackedEnumCaseNotFoundException => static::httpException(404, $e, SymfonyResponse::$statusTexts[404]),
             $e instanceof ModelNotFoundException => static::httpException(404, $e, SymfonyResponse::$statusTexts[404]),
-            $e instanceof AuthorizationException => static::httpException(403, $e, $e->getMessage() !== '' ? $e->getMessage() : SymfonyResponse::$statusTexts[403]),
+            $e instanceof AuthorizationException => static::httpException(403, $e, $e->getMessage() !== '' && $e->getMessage() !== 'This action is unauthorized.' ? $e->getMessage() : SymfonyResponse::$statusTexts[403]),
             $e instanceof TokenMismatchException => static::httpException(419, $e, 'Csrf Token Mismatch'),
             $e instanceof SuspiciousOperationException => static::httpException(404, $e, 'Bad Hostname Provided'),
             $e instanceof RecordsNotFoundException => static::httpException(404, $e, SymfonyResponse::$statusTexts[404]),
