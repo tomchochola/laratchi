@@ -546,7 +546,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function exists(string $table, string $column, array $wheres): static
+    public function exists(string $table, string $column, array $wheres = []): static
     {
         return $this->addRule('exists', [$table, $column, ...$wheres]);
     }
@@ -1046,9 +1046,9 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unique(string $table, string $column, array $wheres): static
+    public function unique(string $table, string $column, mixed $id = null, ?string $idColumn = null, array $wheres = []): static
     {
-        return $this->addRule('unique', [$table, $column, ...$wheres]);
+        return $this->addRule('unique', [$table, $column, $id, $idColumn, ...$wheres]);
     }
 
     /**
