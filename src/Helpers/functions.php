@@ -934,12 +934,12 @@ if (! \function_exists('resolveUser')) {
     /**
      * Resolve user or null.
      *
-     * @template T
+     * @template T of Illuminate\Contracts\Auth\Authenticatable
      *
      * @param array<string|null> $guards
      * @param class-string<T> $template
      *
-     * @return (T&Illuminate\Contracts\Auth\Authenticatable)|null
+     * @return ?T
      */
     function resolveUser(array $guards = [null], string $template = Illuminate\Contracts\Auth\Authenticatable::class): ?Illuminate\Contracts\Auth\Authenticatable
     {
@@ -963,12 +963,12 @@ if (! \function_exists('mustResolveUser')) {
     /**
      * Resolve user or throw 401.
      *
-     * @template T
+     * @template T of Illuminate\Contracts\Auth\Authenticatable
      *
      * @param array<string|null> $guards
      * @param class-string<T> $template
      *
-     * @return T&Illuminate\Contracts\Auth\Authenticatable
+     * @return T
      */
     function mustResolveUser(array $guards = [null], string $template = Illuminate\Contracts\Auth\Authenticatable::class): Illuminate\Contracts\Auth\Authenticatable
     {
