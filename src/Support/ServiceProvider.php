@@ -102,11 +102,13 @@ class ServiceProvider extends IlluminateServiceProvider
             });
         });
 
-        $this->loadTranslationsFrom(pathJoin([__DIR__, '..', '..', 'lang']), 'exceptions');
+        $this->loadTranslationsFrom(pathJoin([__DIR__, '..', '..', 'lang', 'exceptions']), 'exceptions');
 
         $this->loadViewsFrom(pathJoin([__DIR__, '..', '..', 'resources', 'exceptions', 'views']), 'exceptions');
 
         $this->loadViewsFrom(pathJoin([__DIR__, '..', '..', 'resources', 'views']), 'laratchi');
+
+        $this->loadTranslationsFrom(pathJoin([__DIR__, '..', '..', 'lang', 'spatie_validation']), 'validationRules');
 
         if (! $this->app->runningInConsole()) {
             return;
@@ -117,7 +119,7 @@ class ServiceProvider extends IlluminateServiceProvider
         \assert($app instanceof Application);
 
         $this->publishes([
-            pathJoin([__DIR__, '..', '..', 'lang']) => $app->langPath(pathJoin(['vendor', 'exceptions'])),
+            pathJoin([__DIR__, '..', '..', 'lang', 'exceptions']) => $app->langPath(pathJoin(['vendor', 'exceptions'])),
         ], ['laratchi-exceptions-lang', 'laratchi-exceptions', 'lang']);
 
         $this->publishes([
