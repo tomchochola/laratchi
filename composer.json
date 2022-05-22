@@ -15,6 +15,7 @@
   ],
   "require": {
     "php": "^8.1",
+    "intervention/validation": "^3.2",
     "laravel/framework": "^9.10",
     "spatie/laravel-validation-rules": "^3.2",
     "spatie/once": "^3.1"

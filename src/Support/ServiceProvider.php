@@ -110,6 +110,8 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->loadTranslationsFrom(pathJoin([__DIR__, '..', '..', 'lang', 'spatie_validation']), 'validationRules');
 
+        $this->loadTranslationsFrom(pathJoin([__DIR__, '..', '..', 'lang', 'intervention_validation']), 'validation');
+
         if (! $this->app->runningInConsole()) {
             return;
         }
