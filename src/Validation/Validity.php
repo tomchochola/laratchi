@@ -6,16 +6,13 @@ namespace Tomchochola\Laratchi\Validation;
 
 use Closure;
 use Illuminate\Contracts\Support\Arrayable as ArrayableContract;
-use Illuminate\Contracts\Validation\Rule as RuleContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Dimensions;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rules\RequiredIf;
-use Tomchochola\Laratchi\Rules\DelimitedRule;
 use Tomchochola\Laratchi\Rules\ProhibitedIfRule;
-use Tomchochola\Laratchi\Rules\RecaptchaRule;
 
 /**
  * @implements ArrayableContract<int, mixed>
@@ -1232,19 +1229,6 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add delimited rule.
-     *
-     * @param string|array<string, mixed>|RuleContract $rules
-     * @param array<string, string> $customMessages
-     *
-     * @return $this
-     */
-    public function delimitedRule(string|array|RuleContract $rules, array $customMessages = []): static
-    {
-        return $this->addRule(new DelimitedRule($rules, $customMessages));
-    }
-
-    /**
      * Add prohibited if rule.
      *
      * @param (callable(): bool)|bool $condition
@@ -1254,23 +1238,6 @@ class Validity implements ArrayableContract
     public function prohibitedIfRule(bool|callable $condition): static
     {
         return $this->addRule(new ProhibitedIfRule($condition));
-    }
-
-    /**
-     * Add recaptcha rule.
-     *
-     * @return $this
-     */
-    public function recaptchaRule(): static
-    {
-        if (resolveApp()->runningUnitTests()) {
-            return $this;
-        }
-
-        $secret = mustConfigString('services.recaptcha.secret');
-        $message = mustTransString('validation.captcha');
-
-        return $this->addRule(new RecaptchaRule($secret, $message));
     }
 
     /**
