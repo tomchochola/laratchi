@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
 use Closure;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -13,6 +14,7 @@ use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
 use Tomchochola\Laratchi\Auth\Actions\CycleRememberTokenAction;
 use Tomchochola\Laratchi\Auth\Actions\LoginAction;
 use Tomchochola\Laratchi\Auth\Actions\LogoutOtherDevicesAction;
@@ -58,6 +60,8 @@ class PasswordResetController extends TransactionController
 
             $this->throwInvalidStatus($request, $status);
         }
+
+        $this->ensureCanLogin($request);
 
         $this->login($request);
 
@@ -186,5 +190,31 @@ class PasswordResetController extends TransactionController
     protected function firePasswordResetEvent(PasswordResetRequest $request): void
     {
         resolveEventDispatcher()->dispatch(new PasswordReset($this->user));
+    }
+
+    /**
+     * Check if user can login.
+     */
+    protected function ensureCanLogin(PasswordResetRequest $request): void
+    {
+        $response = inject(CanLoginAction::class)->authorize($this->user);
+
+        if ($response->denied()) {
+            $this->throwCanNotLoginError($request, $response);
+        }
+    }
+
+    /**
+     * Throw can not login error.
+     */
+    protected function throwCanNotLoginError(PasswordResetRequest $request, Response $response): never
+    {
+        $message = $response->message();
+
+        if ($message === null || \trim($message) === '') {
+            $message = mustTransString('auth.failed');
+        }
+
+        throw ValidationException::withMessages(\array_map(static fn (): array => [$message], $request->credentials()));
     }
 }

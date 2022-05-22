@@ -12,6 +12,7 @@ use Illuminate\Contracts\Auth\Guard as GuardContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Support\Str;
 use LogicException;
+use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
 
 class DatabaseTokenGuard implements GuardContract
 {
@@ -88,7 +89,7 @@ class DatabaseTokenGuard implements GuardContract
 
         $user = $databaseToken->user();
 
-        if ($user === null) {
+        if ($user === null || inject(CanLoginAction::class)->authorize($user)->denied()) {
             return $this->user = $this->databaseToken = null;
         }
 

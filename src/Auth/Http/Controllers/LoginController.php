@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
 use Closure;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Lockout;
@@ -14,6 +15,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
 use Tomchochola\Laratchi\Auth\Actions\LoginAction;
 use Tomchochola\Laratchi\Auth\Http\Requests\LoginRequest;
 use Tomchochola\Laratchi\Auth\Services\AuthService;
@@ -66,6 +68,8 @@ class LoginController extends TransactionController
         if ($response !== null) {
             return $response;
         }
+
+        $this->ensureCanLogin($request, $user);
 
         $this->login($request, $user);
 
@@ -200,5 +204,31 @@ class LoginController extends TransactionController
     protected function beforeLogin(LoginRequest $request): ?SymfonyResponse
     {
         return null;
+    }
+
+    /**
+     * Check if user can login.
+     */
+    protected function ensureCanLogin(LoginRequest $request, AuthenticatableContract $user): void
+    {
+        $response = inject(CanLoginAction::class)->authorize($user);
+
+        if ($response->denied()) {
+            $this->throwCanNotLoginError($request, $user, $response);
+        }
+    }
+
+    /**
+     * Throw can not login error.
+     */
+    protected function throwCanNotLoginError(LoginRequest $request, AuthenticatableContract $user, Response $response): never
+    {
+        $message = $response->message();
+
+        if ($message === null || \trim($message) === '') {
+            $message = mustTransString('auth.failed');
+        }
+
+        throw ValidationException::withMessages(\array_map(static fn (): array => [$message], $request->credentials()));
     }
 }
