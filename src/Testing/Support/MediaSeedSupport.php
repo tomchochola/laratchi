@@ -9,7 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class SeedSupport
+class MediaSeedSupport
 {
     /**
      * Generate random avatar url.
