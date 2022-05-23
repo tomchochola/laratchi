@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Http\Resources;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
@@ -66,16 +65,6 @@ class ModelJsonApiResource extends JsonApiResource
      */
     public function getRelationships(): array
     {
-        $relations = $this->resource->getRelations();
-
-        if (\count($this->resource->getVisible()) > 0) {
-            $relations = \array_intersect_key($relations, \array_flip($this->resource->getVisible()));
-        }
-
-        if (\count($this->resource->getHidden()) > 0) {
-            $relations = \array_diff_key($relations, \array_flip($this->resource->getHidden()));
-        }
-
-        return \array_map(static fn (Model|Collection|null $resource): null|array|self => $resource === null ? null : ($resource instanceof Collection ? $resource->mapInto(self::class)->all() : new self($resource)), $relations);
+        return [];
     }
 }
