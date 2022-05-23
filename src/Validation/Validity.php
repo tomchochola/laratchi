@@ -767,9 +767,9 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notInRule(array $values): static
+    public function notIn(array $values): static
     {
-        return $this->addRule('not_if', $values);
+        return $this->addRule('not_in', $values);
     }
 
     /**
