@@ -10,6 +10,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Dimensions;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\ExcludeIf;
+use Illuminate\Validation\Rules\In;
+use Illuminate\Validation\Rules\NotIn;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rules\RequiredIf;
 use Tomchochola\Laratchi\Rules\ProhibitedIfRule;
@@ -102,9 +105,13 @@ class Validity implements ArrayableContract
             $ruleName = Str::before($rule, ':');
 
             $level ??= static::$priority[$ruleName] ?? 5;
+
+            if ($arguments !== null && \count($arguments) > 0) {
+                $rule = $rule.(\str_contains($rule, ':') ? ',' : ':').$this->formatArguments($arguments);
+            }
         }
 
-        $this->rules[$level ?? 5][] = $arguments !== null ? [$rule, ...$arguments] : $rule;
+        $this->rules[$level ?? 5][] = $rule;
 
         return $this;
     }
@@ -515,6 +522,18 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add exclude_if rule.
+     *
+     * @param (Closure(): bool)|bool $condition
+     *
+     * @return $this
+     */
+    public function excludeIfRule(Closure|bool $condition): static
+    {
+        return $this->addRule(new ExcludeIf($condition));
+    }
+
+    /**
      * Add exclude_unless rule.
      *
      * @param array<int, mixed> $values
@@ -608,6 +627,18 @@ class Validity implements ArrayableContract
     public function in(array $values): static
     {
         return $this->addRule('in', $values);
+    }
+
+    /**
+     * Add in rule.
+     *
+     * @param array<int, mixed> $values
+     *
+     * @return $this
+     */
+    public function inRule(array $values): static
+    {
+        return $this->addRule(new In($values));
     }
 
     /**
@@ -770,6 +801,18 @@ class Validity implements ArrayableContract
     public function notIn(array $values): static
     {
         return $this->addRule('not_in', $values);
+    }
+
+    /**
+     * Add not_if rule.
+     *
+     * @param array<int, mixed> $values
+     *
+     * @return $this
+     */
+    public function notInRule(array $values): static
+    {
+        return $this->addRule(new NotIn($values));
     }
 
     /**
@@ -1498,5 +1541,15 @@ class Validity implements ArrayableContract
     public function toArray(): array
     {
         return Arr::flatten($this->rules, 1);
+    }
+
+    /**
+     * Format arguments.
+     *
+     * @param array<int, mixed> $arguments
+     */
+    protected function formatArguments(array $arguments): string
+    {
+        return \implode(',', $arguments);
     }
 }
