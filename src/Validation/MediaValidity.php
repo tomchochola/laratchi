@@ -11,8 +11,13 @@ class MediaValidity
         'image/jpeg',
         'image/png',
         'image/svg+xml',
+        'image/svg',
         'image/webp',
         'image/bmp',
+        'image/x-bmp',
+        'image/x-ms-bmp',
+        'image/heif',
+        'image/heic',
     ];
 
     public const MIME_TYPES_VIDEO = [
