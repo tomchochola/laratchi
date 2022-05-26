@@ -21,9 +21,9 @@ class JsonApiCollectionResponse extends AnonymousResourceCollection
      * @inheritDoc
      *
      * @param Collection<array-key, T>|AbstractPaginator|AbstractCursorPaginator $resource
-     * @param Closure(T): class-string<JsonApiResource> $collectsClosure
+     * @param (Closure(T): (class-string<JsonApiResource>|JsonApiResource))|class-string<JsonApiResource> $collectsClosure
      */
-    public function __construct(Collection|AbstractPaginator|AbstractCursorPaginator $resource, protected Closure $collectsClosure)
+    public function __construct(Collection|AbstractPaginator|AbstractCursorPaginator $resource, protected Closure|string $collectsClosure)
     {
         parent::__construct($resource, '');
     }
@@ -58,13 +58,27 @@ class JsonApiCollectionResponse extends AnonymousResourceCollection
         \assert($resource instanceof Collection || $resource instanceof AbstractCursorPaginator || $resource instanceof AbstractPaginator);
 
         $this->collection = $resource->map(function (mixed $object): object {
-            $class = ($this->collectsClosure)($object);
+            if (\is_string($this->collectsClosure)) {
+                $class = $this->collectsClosure;
 
-            if ($object instanceof $class) {
-                return $object;
+                if ($object instanceof $class) {
+                    return $object;
+                }
+
+                return new $class($object);
             }
 
-            return new $class($object);
+            $class = ($this->collectsClosure)($object);
+
+            if (\is_string($class)) {
+                if ($object instanceof $class) {
+                    return $object;
+                }
+
+                return new $class($object);
+            }
+
+            return $class;
         });
 
         return ($resource instanceof AbstractPaginator || $resource instanceof AbstractCursorPaginator)
