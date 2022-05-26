@@ -7,7 +7,7 @@ namespace Tomchochola\Laratchi\Auth\Http\Resources;
 use Tomchochola\Laratchi\Auth\DatabaseTokenableInterface;
 use Tomchochola\Laratchi\Http\Resources\ModelJsonApiResource;
 
-class UserJsonApiResource extends ModelJsonApiResource
+class MeJsonApiResource extends ModelJsonApiResource
 {
     /**
      * @inheritDoc

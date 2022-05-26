@@ -12,17 +12,17 @@ use Illuminate\Contracts\Auth\Guard as GuardContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Database\Eloquent\Model;
 use Tomchochola\Laratchi\Auth\DatabaseTokenGuard;
-use Tomchochola\Laratchi\Auth\Http\Resources\UserJsonApiResource;
+use Tomchochola\Laratchi\Auth\Http\Resources\MeJsonApiResource;
 use Tomchochola\Laratchi\Http\Resources\JsonApiResource;
 
 class AuthService
 {
     /**
-     * Default user json api resource.
+     * Default me json api resource.
      *
-     * @var class-string<UserJsonApiResource>
+     * @var class-string<JsonApiResource>
      */
-    public static string $userJsonApiResource = UserJsonApiResource::class;
+    public static string $jsonApiResource = MeJsonApiResource::class;
 
     /**
      * Resolve user provider from guard.
@@ -41,6 +41,6 @@ class AuthService
     {
         \assert($user instanceof Model);
 
-        return new static::$userJsonApiResource($user);
+        return new static::$jsonApiResource($user);
     }
 }
