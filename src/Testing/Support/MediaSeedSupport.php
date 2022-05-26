@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Testing\Support;
 
 use Illuminate\Http\Testing\File;
+use Illuminate\Http\Testing\FileFactory;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -95,5 +96,15 @@ class MediaSeedSupport
         $randomName = Str::random(30);
 
         return UploadedFile::fake()->image("{$randomName}.{$extension}", $width, $height);
+    }
+
+    /**
+     * Create fake svg.
+     */
+    public static function fakeSvg(int $width = 10, int $height = 10): File
+    {
+        $randomName = Str::random(30);
+
+        return (new FileFactory())->createWithContent("{$randomName}.svg", "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{$width}\" height=\"{$height}\"/>");
     }
 }
