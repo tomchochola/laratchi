@@ -13,32 +13,10 @@ use Illuminate\Support\Carbon;
  */
 class Pivot extends IlluminatePivot
 {
+    use ModelTrait;
+
     /**
      * @inheritDoc
      */
     public $incrementing = true;
-
-    /**
-     * @inheritDoc
-     */
-    public function getKey(): int|string
-    {
-        $value = parent::getKey();
-
-        \assert(\is_int($value) || \is_string($value));
-
-        return $value;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRouteKey(): string
-    {
-        $value = parent::getRouteKey();
-
-        \assert(\is_scalar($value));
-
-        return (string) $value;
-    }
 }

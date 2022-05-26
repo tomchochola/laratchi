@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Tomchochola\Laratchi\Auth\Notifications\ResetPasswordNotification;
 use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
+use Tomchochola\Laratchi\Database\ModelTrait;
 
 /**
  * @property ?Carbon $created_at
@@ -24,6 +25,7 @@ use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
 class User extends IlluminateUser implements DatabaseTokenableInterface, HasLocalePreferenceContract
 {
     use DatabaseTokenableTrait;
+    use ModelTrait;
     use Notifiable;
 
     /**
@@ -74,30 +76,6 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     public static function mustResolve(array $guards = [null]): static
     {
         return mustResolveUser($guards, static::class);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getKey(): int
-    {
-        $value = parent::getKey();
-
-        \assert(\is_int($value));
-
-        return $value;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRouteKey(): string
-    {
-        $value = parent::getRouteKey();
-
-        \assert(\is_scalar($value));
-
-        return (string) $value;
     }
 
     /**
