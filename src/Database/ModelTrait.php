@@ -126,6 +126,6 @@ trait ModelTrait
      */
     public function attributeLoaded(string $key): bool
     {
-        return array_key_exists($key, $this->attributes);
+        return \array_key_exists($key, $this->attributes);
     }
 }
