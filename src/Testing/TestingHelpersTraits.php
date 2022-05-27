@@ -8,4 +8,5 @@ trait TestingHelpersTraits
 {
     use AuthTestingHelpersTrait;
     use ExceptionsTestingHelpersTrait;
+    use JsonStructuresTestingHelpers;
 }
