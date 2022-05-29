@@ -22,6 +22,8 @@ class MeShowRequest extends SecureFormRequest
      */
     public function retrieveUser(): ?AuthenticatableContract
     {
-        return resolveUser([$this->guardName()]);
+        return once(function (): ?AuthenticatableContract {
+            return resolveUser([$this->guardName()]);
+        });
     }
 }

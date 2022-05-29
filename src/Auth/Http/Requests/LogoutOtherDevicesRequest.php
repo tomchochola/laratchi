@@ -60,6 +60,8 @@ class LogoutOtherDevicesRequest extends SecureFormRequest
      */
     public function retrieveUser(): AuthenticatableContract
     {
-        return mustResolveUser([$this->guardName()]);
+        return once(function (): AuthenticatableContract {
+            return mustResolveUser([$this->guardName()]);
+        });
     }
 }

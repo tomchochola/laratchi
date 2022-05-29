@@ -58,12 +58,14 @@ class EmailVerificationVerifyRequest extends SignedRequest
      */
     public function retrieveUser(): AuthenticatableContract & MustVerifyEmailContract
     {
-        $user = mustResolveUser([$this->guardName()]);
+        return once(function (): AuthenticatableContract & MustVerifyEmailContract {
+            $user = mustResolveUser([$this->guardName()]);
 
-        if (! $user instanceof MustVerifyEmailContract) {
-            throw new HttpException(SymfonyResponse::HTTP_FORBIDDEN);
-        }
+            if (! $user instanceof MustVerifyEmailContract) {
+                throw new HttpException(SymfonyResponse::HTTP_FORBIDDEN);
+            }
 
-        return $user;
+            return $user;
+        });
     }
 }

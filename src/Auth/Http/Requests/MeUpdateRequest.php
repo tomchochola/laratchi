@@ -72,6 +72,8 @@ class MeUpdateRequest extends NonEmptySecureRequest
      */
     public function retrieveUser(): AuthenticatableContract
     {
-        return mustResolveUser([$this->guardName()]);
+        return once(function (): AuthenticatableContract {
+            return mustResolveUser([$this->guardName()]);
+        });
     }
 }
