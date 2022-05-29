@@ -26,6 +26,11 @@ class FormRequest extends IlluminateFormRequest
     protected ?ValidatedInput $routeParameters = null;
 
     /**
+     * Query parameters cache.
+     */
+    protected ?ValidatedInput $queryParameters = null;
+
+    /**
      * Get a validated input container for the validated input.
      */
     public function validatedInput(): ValidatedInput
@@ -67,5 +72,21 @@ class FormRequest extends IlluminateFormRequest
         \assert($route instanceof Route);
 
         return $this->routeParameters = new ValidatedInput($route->parameters());
+    }
+
+    /**
+     * Get query parameters.
+     */
+    public function queryParameters(): ValidatedInput
+    {
+        if ($this->queryParameters !== null) {
+            return $this->queryParameters;
+        }
+
+        $data = $this->query();
+
+        \assert(\is_array($data));
+
+        return $this->queryParameters = new ValidatedInput($data);
     }
 }
