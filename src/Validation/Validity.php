@@ -14,8 +14,9 @@ use Illuminate\Validation\Rules\ExcludeIf;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Validation\Rules\NotIn;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rules\ProhibitedIf;
 use Illuminate\Validation\Rules\RequiredIf;
-use Tomchochola\Laratchi\Rules\ProhibitedIfRule;
+use Tomchochola\Laratchi\Rules\NullRule;
 
 /**
  * @implements ArrayableContract<int, mixed>
@@ -112,6 +113,36 @@ class Validity implements ArrayableContract
         }
 
         $this->rules[$level ?? 5][] = $rule;
+
+        return $this;
+    }
+
+    /**
+     * Conditionally add rule.
+     *
+     * @param Closure(static): void $closure
+     *
+     * @return $this
+     */
+    public function when(bool $condition, Closure $closure): static
+    {
+        if ($condition) {
+            $closure($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Call the given Closure with this instance then return the instance.
+     *
+     * @param Closure(static): void $callback
+     *
+     * @return $this
+     */
+    public function tap(Closure $callback): static
+    {
+        $callback($this);
 
         return $this;
     }
@@ -1194,6 +1225,16 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add null rule.
+     *
+     * @return $this
+     */
+    public function null(): static
+    {
+        return $this->addRule(new NullRule());
+    }
+
+    /**
      * Add null_with rule.
      *
      * @param array<int, string> $fields
@@ -1280,7 +1321,7 @@ class Validity implements ArrayableContract
      */
     public function prohibitedIfRule(bool|callable $condition): static
     {
-        return $this->addRule(new ProhibitedIfRule($condition));
+        return $this->addRule(new ProhibitedIf($condition));
     }
 
     /**
