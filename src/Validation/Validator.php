@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Validation;
 
 use Illuminate\Contracts\Translation\Translator as TranslatorContract;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Validator as IlluminateValidator;
 
 class Validator extends IlluminateValidator
@@ -323,5 +325,35 @@ class Validator extends IlluminateValidator
     protected function replaceStrlen(string $message, string $attribute, string $rule, array $parameters): string
     {
         return \str_replace(':size', (string) $parameters[0], $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getAttributeFromTranslations(mixed $name): string
+    {
+        $attributes = $this->translator->get('validation.attributes');
+
+        if ($attributes === 'validation.attributes') {
+            $attributes = [];
+        }
+
+        \assert(\is_array($attributes));
+
+        $attribute = Arr::get($attributes, $name);
+
+        if (\is_string($attribute)) {
+            return $attribute;
+        }
+
+        $name = Str::afterLast($name, '.');
+
+        $attribute = Arr::get($attributes, $name);
+
+        if (\is_string($attribute)) {
+            return $attribute;
+        }
+
+        return '';
     }
 }
