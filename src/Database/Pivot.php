@@ -19,4 +19,9 @@ class Pivot extends IlluminatePivot
      * @inheritDoc
      */
     public $incrementing = true;
+
+    /**
+     * @inheritDoc
+     */
+    public $preventsLazyLoading = true;
 }

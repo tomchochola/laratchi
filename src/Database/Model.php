@@ -14,4 +14,9 @@ use Illuminate\Support\Carbon;
 class Model extends IlluminateModel
 {
     use ModelTrait;
+
+    /**
+     * @inheritDoc
+     */
+    public $preventsLazyLoading = true;
 }

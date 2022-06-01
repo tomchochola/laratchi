@@ -31,6 +31,11 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     /**
      * @inheritDoc
      */
+    public $preventsLazyLoading = true;
+
+    /**
+     * @inheritDoc
+     */
     protected $fillable = [
         'name',
         'email',
