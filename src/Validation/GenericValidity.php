@@ -61,4 +61,12 @@ class GenericValidity
     {
         return Validity::make();
     }
+
+    /**
+     * Generic validation rules.
+     */
+    public function generic(): Validity
+    {
+        return Validity::make();
+    }
 }
