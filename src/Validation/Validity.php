@@ -246,6 +246,28 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add collection rule.
+     *
+     * @return $this
+     */
+    public function collection(int $minItems, int $maxItems): static
+    {
+        return $this->addRule('array')->min($minItems)->max($maxItems);
+    }
+
+    /**
+     * Add object rule.
+     *
+     * @param ?array<int, string> $keys
+     *
+     * @return $this
+     */
+    public function object(?array $keys = null): static
+    {
+        return $this->addRule('array', $keys);
+    }
+
+    /**
      * Add bail rule.
      *
      * @return $this
