@@ -72,9 +72,6 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         Model::unguard();
         Model::preventLazyLoading();
-        Model::handleLazyLoadingViolationUsing(static function (object $model, string $relation): never {
-            throw new LazyLoadingViolationException($model, $relation);
-        });
     }
 
     /**
