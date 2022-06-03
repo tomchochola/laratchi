@@ -108,15 +108,23 @@ abstract class JsonApiResource extends JsonResource
     /**
      * Get resource header.
      *
-     * @return array{id: string, slug: string, type: string}
+     * @return array{id: string, slug: string, type: string, meta?: array<mixed>}
      */
     public function getHeader(): array
     {
-        return [
+        $header = [
             'id' => $this->getKey(),
             'slug' => $this->getSlug(),
             'type' => $this->getType(),
         ];
+
+        $meta = $this->filter($this->getHeaderMeta());
+
+        if (\count($meta) > 0) {
+            $header['meta'] = $meta;
+        }
+
+        return $header;
     }
 
     /**
@@ -171,5 +179,15 @@ abstract class JsonApiResource extends JsonResource
         }
 
         return parent::with($request);
+    }
+
+    /**
+     * Get header meta.
+     *
+     * @return array<mixed>
+     */
+    public function getHeaderMeta(): array
+    {
+        return [];
     }
 }
