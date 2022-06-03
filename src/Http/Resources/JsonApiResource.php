@@ -56,7 +56,7 @@ abstract class JsonApiResource extends JsonResource
     /**
      * Get relationships.
      *
-     * @return array<string, self|array<self>|PotentiallyMissing|null>
+     * @return array<string, self|array<self>|PotentiallyMissing|JsonApiRelationship|null>
      */
     public function getRelationships(): array
     {
@@ -77,14 +77,20 @@ abstract class JsonApiResource extends JsonResource
                 continue;
             }
 
-            if (\is_array($relationship)) {
-                foreach ($relationship as $nestedRelationship) {
-                    \assert($nestedRelationship instanceof self);
+            $items = [];
 
-                    yield $nestedRelationship;
-                }
+            if ($relationship instanceof JsonApiRelationship) {
+                $items = $relationship->items()->all();
+            } elseif (\is_array($relationship)) {
+                $items = $relationship;
             } else {
-                yield $relationship;
+                $items = [$relationship];
+            }
+
+            foreach ($items as $item) {
+                \assert($item instanceof self);
+
+                yield $item;
             }
         }
     }
