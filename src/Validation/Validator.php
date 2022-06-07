@@ -198,31 +198,31 @@ class Validator extends IlluminateValidator
     /**
      * Validate the size of an attribute is less than a maximum value.
      *
-     * @param array{int} $parameters
+     * @param array{numeric} $parameters
      */
     public function validateStrlenMax(string $attribute, mixed $value, array $parameters): bool
     {
-        return \is_string($value) && \mb_strlen($value, 'ASCII') <= $parameters[0];
+        return \is_string($value) && \mb_strlen($value, 'ASCII') <= (int) $parameters[0];
     }
 
     /**
      * Validate the size of an attribute is less than a maximum value.
      *
-     * @param array{int} $parameters
+     * @param array{numeric} $parameters
      */
     public function validateStrlenMin(string $attribute, mixed $value, array $parameters): bool
     {
-        return \is_string($value) && \mb_strlen($value, 'ASCII') >= $parameters[0];
+        return \is_string($value) && \mb_strlen($value, 'ASCII') >= (int) $parameters[0];
     }
 
     /**
      * Validate the size of an attribute is less than a maximum value.
      *
-     * @param array{int} $parameters
+     * @param array{numeric} $parameters
      */
     public function validateStrlen(string $attribute, mixed $value, array $parameters): bool
     {
-        return \is_string($value) && \mb_strlen($value, 'ASCII') === $parameters[0];
+        return \is_string($value) && \mb_strlen($value, 'ASCII') === (int) $parameters[0];
     }
 
     /**
@@ -308,7 +308,7 @@ class Validator extends IlluminateValidator
     /**
      * Replace all place-holders for the strlen_max rule.
      *
-     * @param array{int} $parameters
+     * @param array{numeric} $parameters
      */
     protected function replaceStrlenMax(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -318,7 +318,7 @@ class Validator extends IlluminateValidator
     /**
      * Replace all place-holders for the strlen_min rule.
      *
-     * @param array{int} $parameters
+     * @param array{numeric} $parameters
      */
     protected function replaceStrlenMin(string $message, string $attribute, string $rule, array $parameters): string
     {
@@ -328,7 +328,7 @@ class Validator extends IlluminateValidator
     /**
      * Replace all place-holders for the strlen rule.
      *
-     * @param array{int} $parameters
+     * @param array{numeric} $parameters
      */
     protected function replaceStrlen(string $message, string $attribute, string $rule, array $parameters): string
     {
