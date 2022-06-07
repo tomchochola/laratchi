@@ -1352,7 +1352,7 @@ class Validity implements ArrayableContract
      */
     public function char(int $length): static
     {
-        return $this->string()->size($length);
+        return $this->string()->strlen($length);
     }
 
     /**

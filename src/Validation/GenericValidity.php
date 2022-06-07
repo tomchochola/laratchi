@@ -11,7 +11,7 @@ class GenericValidity
      */
     public function signature(): Validity
     {
-        return Validity::make()->string()->size(64);
+        return Validity::make()->char(64);
     }
 
     /**
@@ -19,7 +19,7 @@ class GenericValidity
      */
     public function expires(): Validity
     {
-        return Validity::make()->unsignedBigInt();
+        return Validity::make()->unsignedBigInt(1);
     }
 
     /**
@@ -27,7 +27,7 @@ class GenericValidity
      */
     public function id(): Validity
     {
-        return Validity::make()->unsignedBigInt();
+        return Validity::make()->unsignedBigInt(1);
     }
 
     /**
