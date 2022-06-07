@@ -45,8 +45,6 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
 
     /**
      * @inheritDoc
-     *
-     * @var array<mixed>
      */
     protected $hidden = [
         'password',

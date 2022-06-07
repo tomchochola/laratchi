@@ -30,8 +30,6 @@ class DatabaseToken extends Model
 
     /**
      * @inheritDoc
-     *
-     * @var array<mixed>
      */
     protected $hidden = [
         'hash',
