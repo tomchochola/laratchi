@@ -29,7 +29,7 @@ class Facade extends IlluminateFacade
     /**
      * After resolving callback.
      *
-     * @template T of mixed
+     * @template T
      *
      * @param Closure(T): void $closure
      */

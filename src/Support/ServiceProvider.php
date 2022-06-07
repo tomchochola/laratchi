@@ -8,7 +8,6 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard as GuardContract;
 use Illuminate\Contracts\Validation\Factory as ValidationFactoryContract;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\LazyLoadingViolationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;

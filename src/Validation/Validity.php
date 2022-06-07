@@ -16,7 +16,6 @@ use Illuminate\Validation\Rules\NotIn;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rules\ProhibitedIf;
 use Illuminate\Validation\Rules\RequiredIf;
-use Tomchochola\Laratchi\Rules\NullRule;
 
 /**
  * @implements ArrayableContract<int, mixed>
@@ -1253,7 +1252,7 @@ class Validity implements ArrayableContract
      */
     public function null(): static
     {
-        return $this->addRule(new NullRule());
+        return $this->addRule('null');
     }
 
     /**
@@ -1344,6 +1343,16 @@ class Validity implements ArrayableContract
     public function prohibitedIfRule(bool|callable $condition): static
     {
         return $this->addRule(new ProhibitedIf($condition));
+    }
+
+    /**
+     * Add char rules.
+     *
+     * @return $this
+     */
+    public function char(int $length): static
+    {
+        return $this->string()->size($length);
     }
 
     /**

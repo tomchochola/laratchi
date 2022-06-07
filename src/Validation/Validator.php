@@ -108,6 +108,14 @@ class Validator extends IlluminateValidator
     }
 
     /**
+     * Validate that an attribute is null.
+     */
+    public function validateNull(string $attribute, mixed $value): bool
+    {
+        return $value === null;
+    }
+
+    /**
      * Validate that an attribute is null when any other attribute exists.
      *
      * @param array<int, string> $parameters
