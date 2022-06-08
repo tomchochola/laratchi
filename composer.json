@@ -17,6 +17,7 @@
     "php": "^8.1",
     "intervention/validation": "^3.2",
     "laravel/framework": "^9.10",
+    "redeyeventures/geopattern": "^1.1",
     "spatie/laravel-validation-rules": "^3.2",
     "spatie/once": "^3.1"
   },
