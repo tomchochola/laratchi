@@ -9,6 +9,7 @@ use Illuminate\Http\Testing\FileFactory;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use RedeyeVentures\GeoPattern\GeoPattern;
 
 class MediaSeedSupport
 {
@@ -84,6 +85,16 @@ class MediaSeedSupport
         }
 
         return "https://picsum.photos/seed/{$seed}/{$width}";
+    }
+
+    /**
+     * Generate random svg.
+     */
+    public static function randomSvg(): File
+    {
+        $randomName = Str::random(30);
+
+        return UploadedFile::fake()->createWithContent("{$randomName}.svg", (new GeoPattern())->toSVG());
     }
 
     /**
