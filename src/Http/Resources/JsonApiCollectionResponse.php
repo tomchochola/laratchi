@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Http\Resources;
 
 use Closure;
+use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginatorContract;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\AbstractCursorPaginator;
 use Illuminate\Pagination\AbstractPaginator;
@@ -20,10 +21,10 @@ class JsonApiCollectionResponse extends AnonymousResourceCollection
     /**
      * @inheritDoc
      *
-     * @param Collection<array-key, T>|AbstractPaginator|AbstractCursorPaginator $resource
+     * @param Collection<array-key, T>|AbstractPaginator|AbstractCursorPaginator|CursorPaginatorContract $resource
      * @param (Closure(T): (class-string<JsonApiResource>|JsonApiResource))|class-string<JsonApiResource> $collectsClosure
      */
-    public function __construct(Collection|AbstractPaginator|AbstractCursorPaginator $resource, protected Closure|string $collectsClosure)
+    public function __construct(Collection|AbstractPaginator|AbstractCursorPaginator|CursorPaginatorContract $resource, protected Closure|string $collectsClosure)
     {
         parent::__construct($resource, '');
     }
