@@ -35,7 +35,7 @@ class RegisterRequest extends SecureFormRequest
             'email' => $authValidity->email($guardName)->required(),
             'password' => $authValidity->password($guardName)->confirmed()->required(),
             'name' => $authValidity->name($guardName)->required(),
-            'terms_accepted' => $authValidity->termsAccepted($guardName)->accepted(),
+            'terms_accepted' => $authValidity->termsAccepted($guardName)->required()->accepted(),
             'locale' => $authValidity->locale($guardName)->required(),
         ];
     }

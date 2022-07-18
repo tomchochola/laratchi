@@ -6,8 +6,6 @@ namespace Tomchochola\Laratchi\Validation;
 
 use Closure;
 use Illuminate\Contracts\Support\Arrayable as ArrayableContract;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Dimensions;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\ExcludeIf;
@@ -54,35 +52,31 @@ class Validity implements ArrayableContract
     public const LONG_TEXT_MAX = 4294967295;
 
     /**
-     * Rule priorities.
-     *
-     * @var array<string, int>
+     * Bail flag.
      */
-    public static array $priority = [
-        'bail' => 1,
-        'sometimes' => 2,
-        'nullable' => 3,
-        'required' => 4,
-    ];
+    public bool $bail = false;
+
+    /**
+     * Sometimes flag.
+     */
+    public bool $sometimes = false;
+
+    /**
+     * Nullable flag.
+     */
+    public bool $nullable = false;
+
+    /**
+     * Required flag.
+     */
+    public bool $required = false;
 
     /**
      * Rules.
      *
-     * @var array<int, array<int, mixed>>
+     * @var array<int, mixed>
      */
-    protected array $rules = [
-        0 => [],
-        1 => [],
-        2 => [],
-        3 => [],
-        4 => [],
-        5 => [],
-        6 => [],
-        7 => [],
-        8 => [],
-        9 => [],
-        10 => [],
-    ];
+    protected array $rules = [];
 
     /**
      * Create a new validity instance.
@@ -99,19 +93,15 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function addRule(mixed $rule, ?array $arguments = null, ?int $level = null): static
+    public function addRule(mixed $rule, ?array $arguments = null): static
     {
         if (\is_string($rule)) {
-            $ruleName = Str::before($rule, ':');
-
-            $level ??= static::$priority[$ruleName] ?? 5;
-
             if ($arguments !== null && \count($arguments) > 0) {
                 $rule = $rule.(\str_contains($rule, ':') ? ',' : ':').$this->formatArguments($arguments);
             }
         }
 
-        $this->rules[$level ?? 5][] = $rule;
+        $this->rules[] = $rule;
 
         return $this;
     }
@@ -249,9 +239,19 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function collection(int $minItems, int $maxItems): static
+    public function collection(int $minItems, ?int $maxItems = null): static
     {
-        return $this->addRule('array')->min($minItems)->max($maxItems);
+        \assert($minItems >= 0);
+
+        if ($minItems === 0) {
+            \assert($this->nullable === true, 'array must be nullable, multipart/form-data doest not have empty array');
+        }
+
+        if ($maxItems !== null) {
+            $this->max($maxItems);
+        }
+
+        return $this->addRule('array')->min($minItems);
     }
 
     /**
@@ -273,7 +273,9 @@ class Validity implements ArrayableContract
      */
     public function bail(): static
     {
-        return $this->addRule('bail');
+        $this->bail = true;
+
+        return $this;
     }
 
     /**
@@ -884,7 +886,11 @@ class Validity implements ArrayableContract
      */
     public function nullable(): static
     {
-        return $this->addRule('nullable');
+        \assert($this->required === false);
+
+        $this->nullable = true;
+
+        return $this;
     }
 
     /**
@@ -990,7 +996,11 @@ class Validity implements ArrayableContract
      */
     public function required(): static
     {
-        return $this->addRule('required');
+        \assert($this->nullable === false);
+
+        $this->required = true;
+
+        return $this;
     }
 
     /**
@@ -1194,7 +1204,9 @@ class Validity implements ArrayableContract
      */
     public function sometimes(): static
     {
-        return $this->addRule('sometimes');
+        $this->sometimes = true;
+
+        return $this;
     }
 
     /**
@@ -1336,11 +1348,11 @@ class Validity implements ArrayableContract
     /**
      * Add prohibited if rule.
      *
-     * @param (callable(): bool)|bool $condition
+     * @param (Closure(): bool)|bool $condition
      *
      * @return $this
      */
-    public function prohibitedIfRule(bool|callable $condition): static
+    public function prohibitedIfRule(bool|Closure $condition): static
     {
         return $this->addRule(new ProhibitedIf($condition));
     }
@@ -1612,7 +1624,27 @@ class Validity implements ArrayableContract
      */
     public function toArray(): array
     {
-        return Arr::flatten($this->rules, 1);
+        \assert($this->nullable || $this->required, 'field must be validated against nullable/required');
+
+        $rules = [];
+
+        if ($this->bail) {
+            $rules[] = 'bail';
+        }
+
+        if ($this->sometimes) {
+            $rules[] = 'sometimes';
+        }
+
+        if ($this->nullable) {
+            $rules[] = 'nullable';
+        }
+
+        if ($this->required) {
+            $rules[] = 'required';
+        }
+
+        return \array_merge($rules, $this->rules);
     }
 
     /**
