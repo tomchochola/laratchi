@@ -38,7 +38,7 @@ class PasswordResetController extends TransactionController
     /**
      * Resetted password user.
      */
-    protected AuthenticatableContract & CanResetPasswordContract $user;
+    protected AuthenticatableContract&CanResetPasswordContract $user;
 
     /**
      * Handle the incoming request.
@@ -93,7 +93,7 @@ class PasswordResetController extends TransactionController
      */
     protected function resetPassword(PasswordResetRequest $request): string
     {
-        $status = $this->passwordBroker($request)->reset($request->credentials(), function (AuthenticatableContract & CanResetPasswordContract $user, string $password) use ($request): void {
+        $status = $this->passwordBroker($request)->reset($request->credentials(), function (AuthenticatableContract&CanResetPasswordContract $user, string $password) use ($request): void {
             $this->user = $user;
 
             $this->updatePassword($request, $password);

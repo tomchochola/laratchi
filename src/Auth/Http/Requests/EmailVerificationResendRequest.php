@@ -34,9 +34,9 @@ class EmailVerificationResendRequest extends SecureFormRequest
     /**
      * Retrieve user.
      */
-    public function retrieveUser(): AuthenticatableContract & MustVerifyEmailContract
+    public function retrieveUser(): AuthenticatableContract&MustVerifyEmailContract
     {
-        return once(function (): AuthenticatableContract & MustVerifyEmailContract {
+        return once(function (): AuthenticatableContract&MustVerifyEmailContract {
             $user = mustResolveUser([$this->guardName()]);
 
             if (! $user instanceof MustVerifyEmailContract) {

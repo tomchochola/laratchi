@@ -69,7 +69,7 @@ class UserObserver
     /**
      * Clear email verified at field.
      */
-    protected function clearEmailVerifiedAt(User & MustVerifyEmailContract $user): void
+    protected function clearEmailVerifiedAt(User&MustVerifyEmailContract $user): void
     {
         $user->forceFill(['email_verified_at' => null]);
     }
@@ -85,7 +85,7 @@ class UserObserver
     /**
      * Send email verification notification.
      */
-    protected function sendEmailVerificationNotification(User & MustVerifyEmailContract $user): void
+    protected function sendEmailVerificationNotification(User&MustVerifyEmailContract $user): void
     {
         $user->sendEmailVerificationNotification();
     }
