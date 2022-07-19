@@ -12,6 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 trait DatabaseTokenableTrait
 {
     /**
+     * Database token.
+     */
+    public ?DatabaseToken $databaseToken = null;
+
+    /**
      * Get password broker name.
      */
     public function getPasswordBrokerName(): string
@@ -32,7 +37,7 @@ trait DatabaseTokenableTrait
      */
     public function setDatabaseToken(?DatabaseToken $databaseToken): void
     {
-        $this->setRelation('databaseToken', $databaseToken);
+        $this->databaseToken = $databaseToken;
     }
 
     /**
@@ -40,18 +45,6 @@ trait DatabaseTokenableTrait
      */
     public function getDatabaseToken(): ?DatabaseToken
     {
-        if (! $this->relationLoaded('databaseToken')) {
-            return null;
-        }
-
-        $databaseToken = $this->getRelation('databaseToken');
-
-        if ($databaseToken === null) {
-            return null;
-        }
-
-        \assert($databaseToken instanceof DatabaseToken);
-
-        return $databaseToken;
+        return $this->databaseToken;
     }
 }
