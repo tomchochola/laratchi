@@ -155,5 +155,7 @@ class MeUpdateController extends TransactionController
         $ok = $user->save();
 
         \assert($ok);
+
+        $user->refresh();
     }
 }
