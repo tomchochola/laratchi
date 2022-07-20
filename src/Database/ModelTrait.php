@@ -195,6 +195,16 @@ trait ModelTrait
     }
 
     /**
+     * Delete model from database.
+     */
+    public function mustDelete(): void
+    {
+        $ok = $this->delete();
+
+        \assert((bool) $ok);
+    }
+
+    /**
      * @inheritDoc
      */
     public function getKey(): int|string
