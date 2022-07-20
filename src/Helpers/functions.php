@@ -1038,11 +1038,11 @@ if (! \function_exists('mustEnvString')) {
 
 if (! \function_exists('validationException')) {
     /**
-     * Throw validation exception.
+     * Create validation exception.
      *
      * @param array<string, array<string>> $errors
      */
-    function validationException(array $errors): never
+    function validationException(array $errors): Illuminate\Validation\ValidationException
     {
         $validator = resolveValidatorFactory()->make([], []);
 
@@ -1052,6 +1052,6 @@ if (! \function_exists('validationException')) {
             }
         }
 
-        throw new Illuminate\Validation\ValidationException($validator);
+        return new Illuminate\Validation\ValidationException($validator);
     }
 }
