@@ -117,7 +117,7 @@ trait ModelTrait
      * @param array<mixed> $attributes
      * @param (Closure(static): void)|null $closure
      */
-    public static function store(array $attributes, ?Closure $closure = null): static
+    public static function mustCreate(array $attributes, ?Closure $closure = null): static
     {
         $model = new static($attributes);
 
@@ -125,11 +125,73 @@ trait ModelTrait
             $closure($model);
         }
 
-        $ok = $model->save();
+        $model->mustSave();
+
+        return $model;
+    }
+
+    /**
+     * Make new model.
+     *
+     * @param array<mixed> $attributes
+     * @param (Closure(static): void)|null $closure
+     */
+    public static function mustMake(array $attributes, ?Closure $closure = null): static
+    {
+        $model = new static($attributes);
+
+        if ($closure !== null) {
+            $closure($model);
+        }
+
+        return $model;
+    }
+
+    /**
+     * Update model.
+     *
+     * @param array<mixed> $attributes
+     * @param (Closure(static): void)|null $closure
+     *
+     * @return $this
+     */
+    public function mustUpdate(array $attributes, ?Closure $closure = null): static
+    {
+        $this->fill($attributes);
+
+        if ($closure !== null) {
+            $closure($this);
+        }
+
+        return $this->mustSaveIfDirty();
+    }
+
+    /**
+     * Save if dirty.
+     *
+     * @return $this
+     */
+    public function mustSaveIfDirty(): static
+    {
+        if ($this->isDirty()) {
+            return $this->mustSave();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Store into database.
+     *
+     * @return $this
+     */
+    public function mustSave(): static
+    {
+        $ok = $this->save();
 
         \assert($ok);
 
-        return $model;
+        return $this;
     }
 
     /**

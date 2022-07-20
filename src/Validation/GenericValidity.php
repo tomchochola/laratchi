@@ -69,4 +69,28 @@ class GenericValidity
     {
         return Validity::make();
     }
+
+    /**
+     * Filter validation rules.
+     */
+    public function filter(): Validity
+    {
+        return $this->object();
+    }
+
+    /**
+     * Object validation rules.
+     */
+    public function object(): Validity
+    {
+        return Validity::make()->object();
+    }
+
+    /**
+     * Collection validation rules.
+     */
+    public function collection(int $minItems, ?int $maxItems = null): Validity
+    {
+        return Validity::make()->collection($minItems, $maxItems);
+    }
 }

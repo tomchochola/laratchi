@@ -1035,3 +1035,23 @@ if (! \function_exists('mustEnvString')) {
         return $value;
     }
 }
+
+if (! \function_exists('validationException')) {
+    /**
+     * Throw validation exception.
+     *
+     * @param array<string, array<string>> $errors
+     */
+    function validationException(array $errors): never
+    {
+        $validator = resolveValidatorFactory()->make([], []);
+
+        foreach ($errors as $field => $exceptions) {
+            foreach ($exceptions as $exception) {
+                $validator->addFailure($field, $exception);
+            }
+        }
+
+        throw new Illuminate\Validation\ValidationException($validator);
+    }
+}
