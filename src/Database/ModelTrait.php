@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Database;
 
+use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -43,10 +45,13 @@ trait ModelTrait
 
     /**
      * Find instance by key.
+     *
+     * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByKey(int|string $key): ?static
+    public static function findByKey(int|string $key, ?Closure $closure = null): ?static
     {
-        $instance = static::query()->find($key);
+        $instance = static::query()->tap($closure ?? static function (): void {
+        })->find($key);
 
         if ($instance === null) {
             return null;
@@ -59,10 +64,13 @@ trait ModelTrait
 
     /**
      * Mandatory find instance by key.
+     *
+     * @param (Closure(Builder): void)|null $closure
      */
-    public static function mustFindByKey(int|string $key): static
+    public static function mustFindByKey(int|string $key, ?Closure $closure = null): static
     {
-        $instance = static::query()->findOrFail($key);
+        $instance = static::query()->tap($closure ?? static function (): void {
+        })->findOrFail($key);
 
         \assert($instance instanceof static);
 
@@ -71,10 +79,13 @@ trait ModelTrait
 
     /**
      * Find instance by route key.
+     *
+     * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByRouteKey(int|string $key): ?static
+    public static function findByRouteKey(int|string $key, ?Closure $closure = null): ?static
     {
-        $instance = static::query()->where(static::getRouteKeyColumn(), $key)->first();
+        $instance = static::query()->tap($closure ?? static function (): void {
+        })->where(static::getRouteKeyColumn(), $key)->first();
 
         if ($instance === null) {
             return null;
@@ -87,14 +98,38 @@ trait ModelTrait
 
     /**
      * Mandatory find instance by route key.
+     *
+     * @param (Closure(Builder): void)|null $closure
      */
-    public static function mustFindByRouteKey(int|string $key): static
+    public static function mustFindByRouteKey(int|string $key, ?Closure $closure = null): static
     {
-        $instance = static::query()->where(static::getRouteKeyColumn(), $key)->firstOrFail();
+        $instance = static::query()->tap($closure ?? static function (): void {
+        })->where(static::getRouteKeyColumn(), $key)->firstOrFail();
 
         \assert($instance instanceof static);
 
         return $instance;
+    }
+
+    /**
+     * Create new model.
+     *
+     * @param array<mixed> $attributes
+     * @param (Closure(static): void)|null $closure
+     */
+    public static function store(array $attributes, ?Closure $closure = null): static
+    {
+        $model = new static($attributes);
+
+        if ($closure !== null) {
+            $closure($model);
+        }
+
+        $ok = $model->save();
+
+        \assert($ok);
+
+        return $model;
     }
 
     /**
