@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Validation;
 
 use Illuminate\Contracts\Translation\Translator as TranslatorContract;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator as IlluminateValidator;
 
@@ -340,26 +339,14 @@ class Validator extends IlluminateValidator
      */
     protected function getAttributeFromTranslations(mixed $name): string
     {
-        $attributes = $this->translator->get('validation.attributes');
+        foreach ([$name, Str::afterLast($name, '.')] as $look) {
+            $lookup = "validation.attributes.{$look}";
 
-        if ($attributes === 'validation.attributes') {
-            $attributes = [];
-        }
+            $attribute = $this->translator->get($lookup);
 
-        \assert(\is_array($attributes));
-
-        $attribute = Arr::get($attributes, $name);
-
-        if (\is_string($attribute)) {
-            return $attribute;
-        }
-
-        $name = Str::afterLast($name, '.');
-
-        $attribute = Arr::get($attributes, $name);
-
-        if (\is_string($attribute)) {
-            return $attribute;
+            if (\is_string($attribute) && $attribute !== $lookup) {
+                return $attribute;
+            }
         }
 
         return '';

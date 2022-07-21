@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Support\Facades\Facade;
-use Tomchochola\Laratchi\Validation\SecureValidator;
+use Tomchochola\Laratchi\Validation\StrictSecureValidator;
 
 class SwapValidatorMiddleware
 {
@@ -21,7 +21,7 @@ class SwapValidatorMiddleware
      *
      * @var class-string<ValidatorContract>
      */
-    public static string $secureValidator = SecureValidator::class;
+    public static string $secureValidator = StrictSecureValidator::class;
 
     /**
      * Extend factory with custom resolver.

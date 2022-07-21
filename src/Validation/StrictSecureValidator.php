@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Validation;
 
 use Illuminate\Contracts\Translation\Translator as TranslatorContract;
+use Illuminate\Support\Str;
+use LogicException;
 
 class StrictSecureValidator extends SecureValidator
 {
@@ -27,7 +29,13 @@ class StrictSecureValidator extends SecureValidator
     {
         foreach (\array_keys($rules) as $attribute) {
             if ($this->getAttributeFromTranslations($attribute) === '') {
-                return false;
+                $afterDot = Str::afterLast($attribute, '.');
+
+                if ($afterDot === $attribute) {
+                    throw new LogicException("Missing validation attribute lang for: [{$attribute}].");
+                }
+
+                throw new LogicException("Missing validation attribute lang for: [{$attribute}], or [{$afterDot}].");
             }
         }
 
