@@ -4,12 +4,19 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation;
 
+use Illuminate\Http\Response as SymfonyResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidatedInput extends IlluminateValidatedInput
 {
+    /**
+     * What status is thrown on invalid cast.
+     */
+    public static int $castFailedStatus = SymfonyResponse::HTTP_UNPROCESSABLE_ENTITY;
+
     /**
      * String resolver.
      */
@@ -23,7 +30,9 @@ class ValidatedInput extends IlluminateValidatedInput
 
         $value = \filter_var($value);
 
-        \assert($value !== false);
+        if ($value === false) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         if ($trim) {
             $trimed = \trim($value);
@@ -45,7 +54,9 @@ class ValidatedInput extends IlluminateValidatedInput
     {
         $value = $this->string($key, $default, $trim);
 
-        \assert($value !== null);
+        if ($value === null) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         return $value;
     }
@@ -61,7 +72,13 @@ class ValidatedInput extends IlluminateValidatedInput
             return null;
         }
 
-        return \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
+        $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
+
+        if ($value === null) {
+            throw new HttpException(static::$castFailedStatus);
+        }
+
+        return $value;
     }
 
     /**
@@ -71,7 +88,9 @@ class ValidatedInput extends IlluminateValidatedInput
     {
         $value = $this->bool($key, $default);
 
-        \assert($value !== null);
+        if ($value === null) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         return $value;
     }
@@ -89,7 +108,9 @@ class ValidatedInput extends IlluminateValidatedInput
 
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
-        \assert($value !== false);
+        if ($value === false) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         return $value;
     }
@@ -101,7 +122,9 @@ class ValidatedInput extends IlluminateValidatedInput
     {
         $value = $this->int($key, $default);
 
-        \assert($value !== null);
+        if ($value === null) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         return $value;
     }
@@ -119,7 +142,9 @@ class ValidatedInput extends IlluminateValidatedInput
 
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
-        \assert($value !== false);
+        if ($value === false) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         return $value;
     }
@@ -131,7 +156,9 @@ class ValidatedInput extends IlluminateValidatedInput
     {
         $value = $this->float($key, $default);
 
-        \assert($value !== null);
+        if ($value === null) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         return $value;
     }
@@ -147,7 +174,9 @@ class ValidatedInput extends IlluminateValidatedInput
             return null;
         }
 
-        \assert($value instanceof UploadedFile);
+        if (! $value instanceof UploadedFile) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         return $value;
     }
@@ -159,7 +188,9 @@ class ValidatedInput extends IlluminateValidatedInput
     {
         $value = $this->file($key, $default);
 
-        \assert($value !== null);
+        if ($value === null) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         return $value;
     }
@@ -179,7 +210,9 @@ class ValidatedInput extends IlluminateValidatedInput
             return null;
         }
 
-        \assert(\is_array($value));
+        if (! \is_array($value)) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         return $value;
     }
@@ -195,7 +228,9 @@ class ValidatedInput extends IlluminateValidatedInput
     {
         $value = $this->array($key, $default);
 
-        \assert($value !== null);
+        if ($value === null) {
+            throw new HttpException(static::$castFailedStatus);
+        }
 
         return $value;
     }
