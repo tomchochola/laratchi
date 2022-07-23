@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tomchochola\LaravelLibrary\Tests;
+namespace Tomchochola\Laratchi\Tests;
 
 use Orchestra\Testbench\TestCase;
-use Tomchochola\LaravelLibrary\Support\ServiceProvider;
+use Tomchochola\Laratchi\Support\ServiceProvider;
+use Tomchochola\Laratchi\Testing\TestingHelpersTraits;
 
 class OrchestraTestCase extends TestCase
 {
+    use TestingHelpersTraits;
+
     /**
      * @inheritDoc
      */
