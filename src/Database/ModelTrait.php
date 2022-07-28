@@ -148,6 +148,32 @@ trait ModelTrait
     }
 
     /**
+     * Get clean instance.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     */
+    public static function clean(mixed $key, ?Closure $closure = null): static
+    {
+        $query = (new static())->newQueryWithoutScopes();
+
+        \assert($query instanceof Builder);
+
+        $query->whereKey($key);
+
+        $query->getQuery()->useWritePdo();
+
+        if ($closure !== null) {
+            $closure($query);
+        }
+
+        $instance = $query->firstOrFail();
+
+        \assert($instance instanceof static);
+
+        return $instance;
+    }
+
+    /**
      * Update model.
      *
      * @param array<mixed> $attributes
