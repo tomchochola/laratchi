@@ -6,6 +6,8 @@ namespace Tomchochola\Laratchi\Validation;
 
 use Closure;
 use Illuminate\Contracts\Support\Arrayable as ArrayableContract;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Validation\Rules\Dimensions;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\ExcludeIf;
@@ -14,6 +16,7 @@ use Illuminate\Validation\Rules\NotIn;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rules\ProhibitedIf;
 use Illuminate\Validation\Rules\RequiredIf;
+use Tomchochola\Laratchi\Rules\CallbackRule;
 
 /**
  * @implements ArrayableContract<int, mixed>
@@ -72,6 +75,18 @@ class Validity implements ArrayableContract
     public bool $required = false;
 
     /**
+     * Filled flag.
+     */
+    public bool $filled = false;
+
+    /**
+     * Blocked rules.
+     *
+     * @var array<int, string>
+     */
+    public array $blocked = [];
+
+    /**
      * Rules.
      *
      * @var array<int, mixed>
@@ -96,6 +111,8 @@ class Validity implements ArrayableContract
     public function addRule(mixed $rule, ?array $arguments = null): static
     {
         if (\is_string($rule)) {
+            \assert(! \in_array($rule, $this->blocked, true), 'rule is blocked by other rules');
+
             if ($arguments !== null && \count($arguments) > 0) {
                 $rule = $rule.(\str_contains($rule, ':') ? ',' : ':').$this->formatArguments($arguments);
             }
@@ -245,6 +262,9 @@ class Validity implements ArrayableContract
 
         if ($minItems === 0) {
             \assert($this->nullable === true, 'array must be nullable, multipart/form-data doest not have empty array');
+            \assert($this->filled === false, 'array must be nullable and not filled, multipart/form-data doest not have empty array');
+
+            $this->blocked[] = 'filled';
         }
 
         if ($maxItems !== null) {
@@ -638,7 +658,12 @@ class Validity implements ArrayableContract
      */
     public function filled(): static
     {
-        return $this->addRule('filled');
+        \assert($this->nullable === true);
+        \assert(! \in_array('filled', $this->blocked, true), 'rule is blocked by other rules');
+
+        $this->filled = true;
+
+        return $this;
     }
 
     /**
@@ -1620,6 +1645,66 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add callback rule.
+     *
+     * @param Closure(mixed, mixed=): bool $callback
+     *
+     * @return $this
+     */
+    public function callback(Closure $callback, string $message = 'validation.regex'): static
+    {
+        return $this->addRule(new CallbackRule($callback, $message));
+    }
+
+    /**
+     * Add query rule.
+     *
+     * @template T of Relation|Builder
+     *
+     * @param T $query
+     * @param (Closure(T, mixed=, mixed=): void)|null $callback
+     *
+     * @return $this
+     */
+    public function query(Relation|Builder $query, ?Closure $callback = null, string $message = 'validation.exists'): static
+    {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute) use ($query, $callback): bool {
+            $eloquent = $query instanceof Relation ? $query->getQuery() : $query;
+
+            if ($callback !== null) {
+                $callback($query, $value, $attribute);
+            }
+
+            return $eloquent->toBase()->exists();
+        }, $message));
+    }
+
+    /**
+     * Add query key rule.
+     *
+     * @template T of Relation|Builder
+     *
+     * @param T $query
+     * @param (Closure(T, mixed=, mixed=): void)|null $callback
+     *
+     * @return $this
+     */
+    public function queryKey(Relation|Builder $query, ?Closure $callback = null, string $message = 'validation.exists'): static
+    {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute) use ($query, $callback): bool {
+            $eloquent = $query instanceof Relation ? $query->getQuery() : $query;
+
+            $eloquent->whereKey($value);
+
+            if ($callback !== null) {
+                $callback($query, $value, $attribute);
+            }
+
+            return $eloquent->toBase()->exists();
+        }, $message));
+    }
+
+    /**
      * @inheritDoc
      */
     public function toArray(): array
@@ -1638,6 +1723,10 @@ class Validity implements ArrayableContract
 
         if ($this->nullable) {
             $rules[] = 'nullable';
+        }
+
+        if ($this->filled) {
+            $rules[] = 'filled';
         }
 
         if ($this->required) {
