@@ -1669,6 +1669,8 @@ class Validity implements ArrayableContract
     public function query(Relation|Builder $query, ?Closure $callback = null, string $message = 'validation.exists'): static
     {
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute) use ($query, $callback): bool {
+            $query = clone $query;
+
             $eloquent = $query instanceof Relation ? $query->getQuery() : $query;
 
             if ($callback !== null) {
@@ -1692,6 +1694,8 @@ class Validity implements ArrayableContract
     public function queryKey(Relation|Builder $query, ?Closure $callback = null, string $message = 'validation.exists'): static
     {
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute) use ($query, $callback): bool {
+            $query = clone $query;
+
             $eloquent = $query instanceof Relation ? $query->getQuery() : $query;
 
             $eloquent->whereKey($value);
