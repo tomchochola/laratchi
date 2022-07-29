@@ -170,6 +170,10 @@ trait ModelTrait
 
         \assert($instance instanceof static);
 
+        if ($key instanceof Model) {
+            $instance->wasRecentlyCreated = $key->wasRecentlyCreated;
+        }
+
         return $instance;
     }
 
