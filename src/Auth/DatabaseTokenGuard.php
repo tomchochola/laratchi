@@ -180,7 +180,7 @@ class DatabaseTokenGuard implements GuardContract
     {
         $cookieJar = resolveCookieJar();
 
-        $cookieJar->queue($cookieJar->forever($this->cookieName(), $databaseToken->bearer, '/', null, true, true, false, 'lax'));
+        $cookieJar->queue($cookieJar->forever($this->cookieName(), $databaseToken->bearer, '/', null, true, true, false, mustConfigString('session.same_site', 'lax')));
     }
 
     /**
