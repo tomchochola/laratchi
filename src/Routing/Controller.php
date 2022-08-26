@@ -6,10 +6,9 @@ namespace Tomchochola\Laratchi\Routing;
 
 use Closure;
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Routing\Controller as IlluminateController;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Support\ThrottleSupport;
 
 class Controller extends IlluminateController
 {
@@ -57,32 +56,7 @@ class Controller extends IlluminateController
      */
     protected function throttle(Limit $limit, ?Closure $onError = null): array
     {
-        $hash = $limit->key;
-
-        \assert(\is_string($hash));
-
-        $key = "throttle:{$hash}";
-
-        $rateLimiter = resolveRateLimiter();
-
-        $failed = $rateLimiter->tooManyAttempts($key, $limit->maxAttempts);
-
-        if ($failed) {
-            if ($onError === null) {
-                throw new ThrottleRequestsException();
-            }
-
-            $onError($rateLimiter->availableIn($key));
-        }
-
-        return [
-            static function () use ($key, $rateLimiter, $limit): void {
-                $rateLimiter->hit($key, $limit->decayMinutes * 60);
-            },
-            static function () use ($key, $rateLimiter): void {
-                $rateLimiter->clear($key);
-            },
-        ];
+        return ThrottleSupport::throttle($limit, $onError);
     }
 
     /**
@@ -92,14 +66,7 @@ class Controller extends IlluminateController
      */
     protected function throwThrottleValidationError(array $keys, int $seconds, string $trans = 'passwords.throttled'): never
     {
-        throw ValidationException::withMessages(
-            \array_map(static fn (): array => [
-                mustTransString($trans, [
-                    'seconds' => (string) $seconds,
-                    'minutes' => (string) \ceil($seconds / 60),
-                ]),
-            ], \array_flip($keys)),
-        );
+        ThrottleSupport::throwThrottleValidationError($keys, $seconds, $trans);
     }
 
     /**
@@ -111,10 +78,6 @@ class Controller extends IlluminateController
      */
     protected function hit(Limit $limit, ?Closure $onError = null): Closure
     {
-        [$hit, $clear] = $this->throttle($limit, $onError);
-
-        $hit();
-
-        return $clear;
+        return ThrottleSupport::hit($limit, $onError);
     }
 }
