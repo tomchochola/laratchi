@@ -13,6 +13,16 @@ use Tomchochola\Laratchi\Auth\User;
 class UserObserver
 {
     /**
+     * Handle the User "created" event.
+     */
+    public function created(User $user): void
+    {
+        if (blank($user->getAuthPassword())) {
+            $this->sendPasswordInit($user);
+        }
+    }
+
+    /**
      * Handle the User "updating" event.
      */
     public function updating(User $user): void
@@ -64,6 +74,18 @@ class UserObserver
         \assert($broker instanceof PasswordBroker);
 
         $broker->deleteToken($user);
+    }
+
+    /**
+     * Send password init.
+     */
+    protected function sendPasswordInit(User $user): void
+    {
+        $broker = resolvePasswordBrokerManager()->broker($user->getPasswordBrokerName());
+
+        \assert($broker instanceof PasswordBroker);
+
+        $broker->sendResetLink(['email' => $user->getEmailForPasswordReset()]);
     }
 
     /**

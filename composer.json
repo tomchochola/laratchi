@@ -46,11 +46,11 @@
   },
   "extra": {
     "laravel": {
-      "providers": [
-        "Tomchochola\\Laratchi\\Support\\ServiceProvider"
-      ],
       "dont-discover": [
         "intervention/validation"
+      ],
+      "providers": [
+        "Tomchochola\\Laratchi\\Support\\ServiceProvider"
       ]
     }
   }

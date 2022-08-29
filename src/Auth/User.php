@@ -8,6 +8,7 @@ use Illuminate\Contracts\Translation\HasLocalePreference as HasLocalePreferenceC
 use Illuminate\Foundation\Auth\User as IlluminateUser;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Tomchochola\Laratchi\Auth\Notifications\PasswordInitNotification;
 use Tomchochola\Laratchi\Auth\Notifications\ResetPasswordNotification;
 use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
 use Tomchochola\Laratchi\Database\ModelTrait;
@@ -86,7 +87,11 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
      */
     public function sendPasswordResetNotification(mixed $token): void
     {
-        $this->notify(new ResetPasswordNotification($token));
+        if (blank($this->getAuthPassword())) {
+            $this->notify(new PasswordInitNotification($token));
+        } else {
+            $this->notify(new ResetPasswordNotification($token));
+        }
     }
 
     /**
