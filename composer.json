@@ -48,6 +48,9 @@
     "laravel": {
       "providers": [
         "Tomchochola\\Laratchi\\Support\\ServiceProvider"
+      ],
+      "dont-discover": [
+        "intervention/validation"
       ]
     }
   }
