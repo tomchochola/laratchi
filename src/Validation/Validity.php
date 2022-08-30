@@ -352,6 +352,16 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add extended boolean rule.
+     *
+     * @return $this
+     */
+    public function extendedBoolean(): static
+    {
+        return $this->addRule('boolean')->in([true, false, 0, 1, '0', '1']);
+    }
+
+    /**
      * Add confirmed rule.
      *
      * @return $this
