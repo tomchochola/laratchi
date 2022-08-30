@@ -362,6 +362,30 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add true rule.
+     *
+     * @param array<int, mixed> $options
+     *
+     * @return $this
+     */
+    public function true(array $options = [1, '1', true]): static
+    {
+        return $this->in($options);
+    }
+
+    /**
+     * Add false rule.
+     *
+     * @param array<int, mixed> $options
+     *
+     * @return $this
+     */
+    public function false(array $options = [0, '0', false]): static
+    {
+        return $this->in($options);
+    }
+
+    /**
      * Add confirmed rule.
      *
      * @return $this
