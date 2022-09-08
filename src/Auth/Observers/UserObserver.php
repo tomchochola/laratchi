@@ -47,6 +47,10 @@ class UserObserver
 
         if ($user->wasChanged('email')) {
             $this->clearPasswordResetAfterEmailUpdate($user);
+
+            if (blank($user->getAuthPassword())) {
+                $this->sendPasswordInit($user);
+            }
         }
 
         if ($user->wasChanged('password')) {
