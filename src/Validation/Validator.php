@@ -11,6 +11,11 @@ use Illuminate\Validation\Validator as IlluminateValidator;
 class Validator extends IlluminateValidator
 {
     /**
+     * Use {{ attribute }} instead of real translations.
+     */
+    public static bool $usePlaceholderAttributes = false;
+
+    /**
      * @inheritDoc
      *
      * @param array<mixed> $data
@@ -339,6 +344,10 @@ class Validator extends IlluminateValidator
      */
     protected function getAttributeFromTranslations(mixed $name): string
     {
+        if (static::$usePlaceholderAttributes) {
+            return '{{ attribute }}';
+        }
+
         foreach ([$name, Str::afterLast($name, '.')] as $look) {
             $lookup = "validation.attributes.{$look}";
 
