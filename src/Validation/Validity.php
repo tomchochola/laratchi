@@ -712,7 +712,7 @@ class Validity implements ArrayableContract
      */
     public function filled(): static
     {
-        \assert($this->nullable === true);
+        \assert($this->nullable === true, 'rule must be nullable');
         \assert(! \in_array('filled', $this->blocked, true), 'rule is blocked by other rules');
 
         $this->filled = true;
@@ -965,7 +965,7 @@ class Validity implements ArrayableContract
      */
     public function nullable(): static
     {
-        \assert($this->required === false);
+        \assert($this->required === false, 'rule must not required');
 
         $this->nullable = true;
 
@@ -1075,7 +1075,7 @@ class Validity implements ArrayableContract
      */
     public function required(): static
     {
-        \assert($this->nullable === false);
+        \assert($this->nullable === false, 'rule must not be nullable');
 
         $this->required = true;
 

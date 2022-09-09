@@ -98,13 +98,13 @@ if (! \function_exists('mustTransString')) {
     {
         $resolved = resolveTranslator()->get($key, $replace, $locale, $fallback);
 
-        \assert(\is_string($resolved) && $resolved !== $key);
+        \assert(\is_string($resolved) && $resolved !== $key, "[{$key}] translation is missing");
 
         if ($trim) {
             $resolved = \trim($resolved);
         }
 
-        \assert($resolved !== '');
+        \assert($resolved !== '', "[{$key}] translation is empty");
 
         return $resolved;
     }
@@ -125,13 +125,13 @@ if (! \function_exists('mustTransJsonString')) {
 
         $resolved = $translator->get($message, $replace, $locale, $fallback);
 
-        \assert(\is_string($resolved) && ($resolved !== $message || \in_array($translator->getLocale(), $messageLocales, true)));
+        \assert(\is_string($resolved) && ($resolved !== $message || \in_array($translator->getLocale(), $messageLocales, true)), "[{$message}] json translation is missing");
 
         if ($trim) {
             $resolved = \trim($resolved);
         }
 
-        \assert($resolved !== '');
+        \assert($resolved !== '', "[{$message}] json translation is empty");
 
         return $resolved;
     }
@@ -149,7 +149,7 @@ if (! \function_exists('mustTransArray')) {
     {
         $resolved = resolveTranslator()->get($key, $replace, $locale, $fallback);
 
-        \assert(\is_array($resolved));
+        \assert(\is_array($resolved), "[{$key}] translation is not array");
 
         return $resolved;
     }
@@ -175,7 +175,7 @@ if (! \function_exists('configBool')) {
     {
         $value = resolveConfig()->get($key, $default);
 
-        \assert($value === null || \is_bool($value));
+        \assert($value === null || \is_bool($value), "[{$key}] config is not bool or null");
 
         return $value;
     }
@@ -189,7 +189,7 @@ if (! \function_exists('mustConfigBool')) {
     {
         $value = configBool($key, $default);
 
-        \assert($value !== null);
+        \assert($value !== null, "[{$key}] config is not bool");
 
         return $value;
     }
@@ -203,7 +203,7 @@ if (! \function_exists('configInt')) {
     {
         $value = resolveConfig()->get($key, $default);
 
-        \assert($value === null || \is_int($value));
+        \assert($value === null || \is_int($value), "[{$key}] config is not int or null");
 
         return $value;
     }
@@ -217,7 +217,7 @@ if (! \function_exists('mustConfigInt')) {
     {
         $value = configInt($key, $default);
 
-        \assert($value !== null);
+        \assert($value !== null, "[{$key}] config is not int");
 
         return $value;
     }
@@ -231,7 +231,7 @@ if (! \function_exists('configFloat')) {
     {
         $value = resolveConfig()->get($key, $default);
 
-        \assert($value === null || \is_float($value));
+        \assert($value === null || \is_float($value), "[{$key}] config is not float or null");
 
         return $value;
     }
@@ -245,7 +245,7 @@ if (! \function_exists('mustConfigFloat')) {
     {
         $value = configFloat($key, $default);
 
-        \assert($value !== null);
+        \assert($value !== null, "[{$key}] config is not float");
 
         return $value;
     }
@@ -263,7 +263,7 @@ if (! \function_exists('configArray')) {
     {
         $value = resolveConfig()->get($key, $default);
 
-        \assert($value === null || \is_array($value));
+        \assert($value === null || \is_array($value), "[{$key}] config is not array or null");
 
         return $value;
     }
@@ -281,7 +281,7 @@ if (! \function_exists('mustConfigArray')) {
     {
         $value = configArray($key, $default);
 
-        \assert($value !== null);
+        \assert($value !== null, "[{$key}] config is not array");
 
         return $value;
     }
@@ -299,7 +299,7 @@ if (! \function_exists('configString')) {
             return null;
         }
 
-        \assert(\is_string($value));
+        \assert(\is_string($value), "[{$key}] config is not string or null");
 
         if ($trim) {
             return \trim($value);
@@ -317,7 +317,7 @@ if (! \function_exists('mustConfigString')) {
     {
         $value = configString($key, $default, $trim);
 
-        \assert($value !== null);
+        \assert($value !== null, "[{$key}] config is not string");
 
         return $value;
     }
@@ -1012,7 +1012,7 @@ if (! \function_exists('envString')) {
             return null;
         }
 
-        \assert(\is_string($value));
+        \assert(\is_string($value), "[{$key}] env is not string or null");
 
         if ($trim) {
             return \trim($value);
@@ -1030,7 +1030,7 @@ if (! \function_exists('mustEnvString')) {
     {
         $value = envString($key, $default, $trim);
 
-        \assert($value !== null);
+        \assert($value !== null, "[{$key}] env is not string");
 
         return $value;
     }
