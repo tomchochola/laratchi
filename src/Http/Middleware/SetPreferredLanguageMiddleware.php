@@ -28,6 +28,14 @@ class SetPreferredLanguageMiddleware
      */
     public function handle(Request $request, Closure $next, string ...$locales): SymfonyResponse
     {
+        if (\count($locales) === 0) {
+            foreach (mustConfigArray('app.locales') as $locale) {
+                \assert(\is_string($locale));
+
+                $locales[] = $locale;
+            }
+        }
+
         \assert(\count($locales) > 0);
 
         $locale = $request->getPreferredLanguage($locales);

@@ -28,4 +28,16 @@ class Kernel extends ConsoleKernel
             $schedule->command("auth:clear-resets {$passwordBrokerName}")->dailyAt('04:00')->withoutOverlapping()->runInBackground();
         }
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function commands(): void
+    {
+        parent::commands();
+
+        $this->load(resolveApp()->basePath('app/Console/Commands'));
+
+        require resolveApp()->basePath('routes/console.php');
+    }
 }

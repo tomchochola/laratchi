@@ -29,6 +29,17 @@ class Handler extends IlluminateHandler
     final public const ERROR_MESSAGE_UNEXPECTED_ERROR = 'Unexpected Error';
 
     /**
+     * @inheritDoc
+     */
+    protected $dontFlash = [
+        'current_password',
+        'password',
+        'password_confirmation',
+        'new_password',
+        'new_password_confirmation',
+    ];
+
+    /**
      * Convert throwable to HTTP exception.
      */
     public static function httpException(int $status, Throwable $previous, string $message): HttpExceptionInterface

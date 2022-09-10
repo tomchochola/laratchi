@@ -6,7 +6,9 @@ namespace Tomchochola\Laratchi\Database;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @mixin Model
@@ -264,5 +266,311 @@ trait ModelTrait
     public function attributeLoaded(string $key): bool
     {
         return \array_key_exists($key, $this->attributes);
+    }
+
+    /**
+     * Get int key.
+     */
+    public function getIntKey(): int
+    {
+        $value = parent::getKey();
+
+        \assert(\is_int($value));
+
+        return $value;
+    }
+
+    /**
+     * Get int route key.
+     */
+    public function getIntRouteKey(): int
+    {
+        $value = parent::getRouteKey();
+
+        \assert(\is_int($value));
+
+        return $value;
+    }
+
+    /**
+     * Get string key.
+     */
+    public function getStringKey(): string
+    {
+        $value = parent::getKey();
+
+        \assert(\is_string($value));
+
+        return $value;
+    }
+
+    /**
+     * Get string route key.
+     */
+    public function getStringRouteKey(): string
+    {
+        $value = parent::getRouteKey();
+
+        \assert(\is_string($value));
+
+        return $value;
+    }
+
+    /**
+     * Get ?int attribute.
+     */
+    public function int(string $key): ?int
+    {
+        $value = $this->getAttribute($key);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert(\is_int($value));
+
+        return $value;
+    }
+
+    /**
+     * Get int attribute.
+     */
+    public function mustInt(string $key): int
+    {
+        $value = $this->getAttribute($key);
+
+        \assert(\is_int($value));
+
+        return $value;
+    }
+
+    /**
+     * Get ?float attribute.
+     */
+    public function float(string $key): ?float
+    {
+        $value = $this->getAttribute($key);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert(\is_float($value));
+
+        return $value;
+    }
+
+    /**
+     * Get float attribute.
+     */
+    public function mustFloat(string $key): float
+    {
+        $value = $this->getAttribute($key);
+
+        \assert(\is_float($value));
+
+        return $value;
+    }
+
+    /**
+     * Get ?string attribute.
+     */
+    public function string(string $key): ?string
+    {
+        $value = $this->getAttribute($key);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert(\is_string($value));
+
+        return $value;
+    }
+
+    /**
+     * Get string attribute.
+     */
+    public function mustString(string $key): string
+    {
+        $value = $this->getAttribute($key);
+
+        \assert(\is_string($value));
+
+        return $value;
+    }
+
+    /**
+     * Get ?bool attribute.
+     */
+    public function bool(string $key): ?bool
+    {
+        $value = $this->getAttribute($key);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert(\is_bool($value));
+
+        return $value;
+    }
+
+    /**
+     * Get bool attribute.
+     */
+    public function mustBool(string $key): bool
+    {
+        $value = $this->getAttribute($key);
+
+        \assert(\is_bool($value));
+
+        return $value;
+    }
+
+    /**
+     * Get ?array attribute.
+     *
+     * @return array<mixed>
+     */
+    public function array(string $key): ?array
+    {
+        $value = $this->getAttribute($key);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert(\is_array($value));
+
+        return $value;
+    }
+
+    /**
+     * Get array attribute.
+     *
+     * @return array<mixed>
+     */
+    public function mustArray(string $key): array
+    {
+        $value = $this->getAttribute($key);
+
+        \assert(\is_array($value));
+
+        return $value;
+    }
+
+    /**
+     * Get ?object attribute.
+     */
+    public function object(string $key): ?object
+    {
+        $value = $this->getAttribute($key);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert(\is_object($value));
+
+        return $value;
+    }
+
+    /**
+     * Get object attribute.
+     */
+    public function mustObject(string $key): object
+    {
+        $value = $this->getAttribute($key);
+
+        \assert(\is_object($value));
+
+        return $value;
+    }
+
+    /**
+     * Get ?Carbon attribute.
+     */
+    public function carbon(string $key): ?Carbon
+    {
+        $value = $this->getAttribute($key);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert($value instanceof Carbon);
+
+        return $value;
+    }
+
+    /**
+     * Get Carbon attribute.
+     */
+    public function mustCarbon(string $key): Carbon
+    {
+        $value = $this->getAttribute($key);
+
+        \assert($value instanceof Carbon);
+
+        return $value;
+    }
+
+    /**
+     * Resolve relationship.
+     *
+     * @template T of Model
+     *
+     * @param class-string<T> $type
+     *
+     * @return ?T
+     */
+    public function relation(string $key, string $type): ?Model
+    {
+        $value = $this->getRelationValue($key);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert($value instanceof $type);
+
+        return $value;
+    }
+
+    /**
+     * Must resolve relationship.
+     *
+     * @template T of Model
+     *
+     * @param class-string<T> $type
+     *
+     * @return T
+     */
+    public function mustRelation(string $key, string $type): Model
+    {
+        $value = $this->getRelationValue($key);
+
+        \assert($value instanceof $type);
+
+        return $value;
+    }
+
+    /**
+     * Must resolve relationship.
+     *
+     * @template T of Model
+     *
+     * @param class-string<T> $type
+     *
+     * @return Collection<array-key, T>
+     */
+    public function mustRelations(string $key, string $type): Collection
+    {
+        $value = $this->getRelationValue($key);
+
+        \assert($value instanceof Collection);
+
+        return $value;
     }
 }

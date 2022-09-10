@@ -1015,8 +1015,10 @@ if (! \function_exists('envString')) {
         \assert(\is_string($value), "[{$key}] env is not string or null");
 
         if ($trim) {
-            return \trim($value);
+            $value = \trim($value);
         }
+
+        \assert($value !== '', "[{$key}] env is empty string");
 
         return $value;
     }
@@ -1031,6 +1033,106 @@ if (! \function_exists('mustEnvString')) {
         $value = envString($key, $default, $trim);
 
         \assert($value !== null, "[{$key}] env is not string");
+
+        return $value;
+    }
+}
+
+if (! \function_exists('envBool')) {
+    /**
+     * Env bool resolver.
+     */
+    function envBool(string $key, ?bool $default = null): ?bool
+    {
+        $value = env($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        \assert(\is_bool($value), "[{$key}] env is not bool or null");
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustEnvBool')) {
+    /**
+     * Mandatory env bool resolver.
+     */
+    function mustEnvBool(string $key, ?bool $default = null): bool
+    {
+        $value = envBool($key, $default);
+
+        \assert($value !== null, "[{$key}] env is not bool");
+
+        return $value;
+    }
+}
+
+if (! \function_exists('envInt')) {
+    /**
+     * Env int resolver.
+     */
+    function envInt(string $key, ?int $default = null): ?int
+    {
+        $value = env($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_INT);
+
+        \assert($value !== false, "[{$key}] env is not int or null");
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustEnvInt')) {
+    /**
+     * Mandatory env int resolver.
+     */
+    function mustEnvInt(string $key, ?int $default = null): int
+    {
+        $value = envInt($key, $default);
+
+        \assert($value !== null, "[{$key}] env is not int");
+
+        return $value;
+    }
+}
+
+if (! \function_exists('envFloat')) {
+    /**
+     * Env float resolver.
+     */
+    function envFloat(string $key, ?float $default = null, bool $trim = true): ?float
+    {
+        $value = env($key, $default);
+
+        if ($value === null) {
+            return $default;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
+
+        \assert($value !== false, "[{$key}] env is not float or null");
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustEnvFloat')) {
+    /**
+     * Mandatory env float resolver.
+     */
+    function mustEnvFloat(string $key, ?float $default = null): float
+    {
+        $value = envFloat($key, $default);
+
+        \assert($value !== null, "[{$key}] env is not float");
 
         return $value;
     }
