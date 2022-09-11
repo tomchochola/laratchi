@@ -112,28 +112,4 @@ class DatabaseToken extends Model
 
         return $user;
     }
-
-    /**
-     * Provider getter.
-     */
-    public function getProvider(): string
-    {
-        return $this->mustString('provider');
-    }
-
-    /**
-     * Auth id getter.
-     */
-    public function getAuthId(): string
-    {
-        return $this->mustString('auth_id');
-    }
-
-    /**
-     * Hash getter.
-     */
-    public function getHash(): string
-    {
-        return $this->mustString('hash');
-    }
 }
