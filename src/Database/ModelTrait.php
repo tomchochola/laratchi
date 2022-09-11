@@ -221,7 +221,7 @@ trait ModelTrait
     {
         $ok = $this->save();
 
-        \assert($ok);
+        \assert($ok, 'model not saved correctly');
 
         return $this;
     }
@@ -233,7 +233,7 @@ trait ModelTrait
     {
         $ok = $this->delete();
 
-        \assert((bool) $ok);
+        \assert((bool) $ok, 'model not deleted correctly');
     }
 
     /**
@@ -241,9 +241,11 @@ trait ModelTrait
      */
     public function getKey(): int|string
     {
+        \assert($this->attributeLoaded($this->getKeyName()));
+
         $value = parent::getKey();
 
-        \assert(\is_int($value) || \is_string($value));
+        \assert(\is_int($value) || \is_string($value), 'model key is not int or string');
 
         return $value;
     }
@@ -253,9 +255,11 @@ trait ModelTrait
      */
     public function getRouteKey(): int|string
     {
+        \assert($this->attributeLoaded($this->getRouteKeyName()));
+
         $value = parent::getRouteKey();
 
-        \assert(\is_int($value) || \is_string($value));
+        \assert(\is_int($value) || \is_string($value), 'model route key is not int or string');
 
         return $value;
     }
@@ -273,11 +277,7 @@ trait ModelTrait
      */
     public function getIntKey(): int
     {
-        $value = parent::getKey();
-
-        \assert(\is_int($value));
-
-        return $value;
+        return $this->mustInt($this->getKeyName());
     }
 
     /**
@@ -285,11 +285,7 @@ trait ModelTrait
      */
     public function getIntRouteKey(): int
     {
-        $value = parent::getRouteKey();
-
-        \assert(\is_int($value));
-
-        return $value;
+        return $this->mustInt($this->getRouteKeyName());
     }
 
     /**
@@ -297,11 +293,7 @@ trait ModelTrait
      */
     public function getStringKey(): string
     {
-        $value = parent::getKey();
-
-        \assert(\is_string($value));
-
-        return $value;
+        return $this->mustString($this->getKeyName());
     }
 
     /**
@@ -309,11 +301,7 @@ trait ModelTrait
      */
     public function getStringRouteKey(): string
     {
-        $value = parent::getRouteKey();
-
-        \assert(\is_string($value));
-
-        return $value;
+        return $this->mustString($this->getRouteKeyName());
     }
 
     /**
@@ -321,13 +309,15 @@ trait ModelTrait
      */
     public function int(string $key): ?int
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
+
+        $value = $this->getAttributeValue($key);
 
         if ($value === null) {
             return null;
         }
 
-        \assert(\is_int($value));
+        \assert(\is_int($value), "[{$key}] attribute is not int or null");
 
         return $value;
     }
@@ -337,9 +327,11 @@ trait ModelTrait
      */
     public function mustInt(string $key): int
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
 
-        \assert(\is_int($value));
+        $value = $this->getAttributeValue($key);
+
+        \assert(\is_int($value), "[{$key}] attribute is not int");
 
         return $value;
     }
@@ -349,13 +341,15 @@ trait ModelTrait
      */
     public function float(string $key): ?float
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
+
+        $value = $this->getAttributeValue($key);
 
         if ($value === null) {
             return null;
         }
 
-        \assert(\is_float($value));
+        \assert(\is_float($value), "[{$key}] attribute is not float or null");
 
         return $value;
     }
@@ -365,9 +359,11 @@ trait ModelTrait
      */
     public function mustFloat(string $key): float
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
 
-        \assert(\is_float($value));
+        $value = $this->getAttributeValue($key);
+
+        \assert(\is_float($value), "[{$key}] attribute is not float");
 
         return $value;
     }
@@ -377,13 +373,15 @@ trait ModelTrait
      */
     public function string(string $key): ?string
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
+
+        $value = $this->getAttributeValue($key);
 
         if ($value === null) {
             return null;
         }
 
-        \assert(\is_string($value));
+        \assert(\is_string($value), "[{$key}] attribute is not string or null");
 
         return $value;
     }
@@ -393,9 +391,11 @@ trait ModelTrait
      */
     public function mustString(string $key): string
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
 
-        \assert(\is_string($value));
+        $value = $this->getAttributeValue($key);
+
+        \assert(\is_string($value), "[{$key}] attribute is not string");
 
         return $value;
     }
@@ -405,13 +405,15 @@ trait ModelTrait
      */
     public function bool(string $key): ?bool
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
+
+        $value = $this->getAttributeValue($key);
 
         if ($value === null) {
             return null;
         }
 
-        \assert(\is_bool($value));
+        \assert(\is_bool($value), "[{$key}] attribute is not bool or null");
 
         return $value;
     }
@@ -421,9 +423,11 @@ trait ModelTrait
      */
     public function mustBool(string $key): bool
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
 
-        \assert(\is_bool($value));
+        $value = $this->getAttributeValue($key);
+
+        \assert(\is_bool($value), "[{$key}] attribute is not bool");
 
         return $value;
     }
@@ -435,13 +439,15 @@ trait ModelTrait
      */
     public function array(string $key): ?array
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
+
+        $value = $this->getAttributeValue($key);
 
         if ($value === null) {
             return null;
         }
 
-        \assert(\is_array($value));
+        \assert(\is_array($value), "[{$key}] attribute is not array or null");
 
         return $value;
     }
@@ -453,9 +459,11 @@ trait ModelTrait
      */
     public function mustArray(string $key): array
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
 
-        \assert(\is_array($value));
+        $value = $this->getAttributeValue($key);
+
+        \assert(\is_array($value), "[{$key}] attribute is not array");
 
         return $value;
     }
@@ -465,13 +473,15 @@ trait ModelTrait
      */
     public function object(string $key): ?object
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
+
+        $value = $this->getAttributeValue($key);
 
         if ($value === null) {
             return null;
         }
 
-        \assert(\is_object($value));
+        \assert(\is_object($value), "[{$key}] attribute is not object or null");
 
         return $value;
     }
@@ -481,9 +491,11 @@ trait ModelTrait
      */
     public function mustObject(string $key): object
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
 
-        \assert(\is_object($value));
+        $value = $this->getAttributeValue($key);
+
+        \assert(\is_object($value), "[{$key}] attribute is not object");
 
         return $value;
     }
@@ -493,13 +505,15 @@ trait ModelTrait
      */
     public function carbon(string $key): ?Carbon
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
+
+        $value = $this->getAttributeValue($key);
 
         if ($value === null) {
             return null;
         }
 
-        \assert($value instanceof Carbon);
+        \assert($value instanceof Carbon, "[{$key}] attribute is not Carbon or null");
 
         return $value;
     }
@@ -509,9 +523,11 @@ trait ModelTrait
      */
     public function mustCarbon(string $key): Carbon
     {
-        $value = $this->getAttribute($key);
+        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
 
-        \assert($value instanceof Carbon);
+        $value = $this->getAttributeValue($key);
+
+        \assert($value instanceof Carbon, "[{$key}] attribute is not Carbon");
 
         return $value;
     }
@@ -527,13 +543,15 @@ trait ModelTrait
      */
     public function relation(string $key, string $type): ?Model
     {
+        \assert($this->relationLoaded($key), "[{$key}] relationsip is not loaded");
+
         $value = $this->getRelationValue($key);
 
         if ($value === null) {
             return null;
         }
 
-        \assert($value instanceof $type);
+        \assert($value instanceof $type, "[{$key}] relationship is not of type [{$type}]");
 
         return $value;
     }
@@ -549,9 +567,11 @@ trait ModelTrait
      */
     public function mustRelation(string $key, string $type): Model
     {
+        \assert($this->relationLoaded($key), "[{$key}] relationsip is not loaded");
+
         $value = $this->getRelationValue($key);
 
-        \assert($value instanceof $type);
+        \assert($value instanceof $type, "[{$key}] relationship is not of type [{$type}]");
 
         return $value;
     }
@@ -567,10 +587,36 @@ trait ModelTrait
      */
     public function mustRelations(string $key, string $type): Collection
     {
+        \assert($this->relationLoaded($key), "[{$key}] relationsip is not loaded");
+
         $value = $this->getRelationValue($key);
 
-        \assert($value instanceof Collection);
+        \assert($value instanceof Collection, "[{$key}] relationship is not of type [{$type}] and is not collection");
 
         return $value;
+    }
+
+    /**
+     * Id getter.
+     */
+    public function getId(): int
+    {
+        return $this->mustInt('id');
+    }
+
+    /**
+     * Created at getter.
+     */
+    public function getCreatedAt(): ?Carbon
+    {
+        return $this->carbon('created_at');
+    }
+
+    /**
+     * Updated at getter.
+     */
+    public function getUpdatedAt(): ?Carbon
+    {
+        return $this->carbon('updated_at');
     }
 }

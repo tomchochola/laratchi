@@ -78,7 +78,7 @@ if (! \function_exists('nonProductionThrow')) {
      */
     function nonProductionThrow(Throwable $throwable): void
     {
-        if (resolveApp()->environment(['production']) === false) {
+        if (resolveApp()->environment(['staging', 'production']) === false) {
             throw $throwable;
         }
 
@@ -170,12 +170,18 @@ if (! \function_exists('pathJoin')) {
 if (! \function_exists('configBool')) {
     /**
      * Config boolean resolver.
+     *
+     * @param array<mixed> $in
      */
-    function configBool(string $key, ?bool $default = null): ?bool
+    function configBool(string $key, ?bool $default = null, array $in = []): ?bool
     {
         $value = resolveConfig()->get($key, $default);
 
         \assert($value === null || \is_bool($value), "[{$key}] config is not bool or null");
+
+        if (\count($in) > 0) {
+            \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
+        }
 
         return $value;
     }
@@ -184,10 +190,12 @@ if (! \function_exists('configBool')) {
 if (! \function_exists('mustConfigBool')) {
     /**
      * Mandatory config boolean resolver.
+     *
+     * @param array<mixed> $in
      */
-    function mustConfigBool(string $key, ?bool $default = null): bool
+    function mustConfigBool(string $key, ?bool $default = null, array $in = []): bool
     {
-        $value = configBool($key, $default);
+        $value = configBool($key, $default, $in);
 
         \assert($value !== null, "[{$key}] config is not bool");
 
@@ -198,12 +206,18 @@ if (! \function_exists('mustConfigBool')) {
 if (! \function_exists('configInt')) {
     /**
      * Config int resolver.
+     *
+     * @param array<mixed> $in
      */
-    function configInt(string $key, ?int $default = null): ?int
+    function configInt(string $key, ?int $default = null, array $in = []): ?int
     {
         $value = resolveConfig()->get($key, $default);
 
         \assert($value === null || \is_int($value), "[{$key}] config is not int or null");
+
+        if (\count($in) > 0) {
+            \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
+        }
 
         return $value;
     }
@@ -212,10 +226,12 @@ if (! \function_exists('configInt')) {
 if (! \function_exists('mustConfigInt')) {
     /**
      * Mandatory config int resolver.
+     *
+     * @param array<mixed> $in
      */
-    function mustConfigInt(string $key, ?int $default = null): int
+    function mustConfigInt(string $key, ?int $default = null, array $in = []): int
     {
-        $value = configInt($key, $default);
+        $value = configInt($key, $default, $in);
 
         \assert($value !== null, "[{$key}] config is not int");
 
@@ -226,12 +242,18 @@ if (! \function_exists('mustConfigInt')) {
 if (! \function_exists('configFloat')) {
     /**
      * Config float resolver.
+     *
+     * @param array<mixed> $in
      */
-    function configFloat(string $key, ?float $default = null): ?float
+    function configFloat(string $key, ?float $default = null, array $in = []): ?float
     {
         $value = resolveConfig()->get($key, $default);
 
         \assert($value === null || \is_float($value), "[{$key}] config is not float or null");
+
+        if (\count($in) > 0) {
+            \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
+        }
 
         return $value;
     }
@@ -240,10 +262,12 @@ if (! \function_exists('configFloat')) {
 if (! \function_exists('mustConfigFloat')) {
     /**
      * Mandatory config float resolver.
+     *
+     * @param array<mixed> $in
      */
-    function mustConfigFloat(string $key, ?float $default = null): float
+    function mustConfigFloat(string $key, ?float $default = null, array $in = []): float
     {
-        $value = configFloat($key, $default);
+        $value = configFloat($key, $default, $in);
 
         \assert($value !== null, "[{$key}] config is not float");
 
@@ -290,19 +314,29 @@ if (! \function_exists('mustConfigArray')) {
 if (! \function_exists('configString')) {
     /**
      * Config string resolver.
+     *
+     * @param array<mixed> $in
      */
-    function configString(string $key, ?string $default = null, bool $trim = true): ?string
+    function configString(string $key, ?string $default = null, bool $trim = true, array $in = []): ?string
     {
         $value = resolveConfig()->get($key, $default);
 
         if ($value === null) {
+            if (\count($in) > 0) {
+                \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
+            }
+
             return null;
         }
 
         \assert(\is_string($value), "[{$key}] config is not string or null");
 
         if ($trim) {
-            return \trim($value);
+            $value = \trim($value);
+        }
+
+        if (\count($in) > 0) {
+            \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
         }
 
         return $value;
@@ -312,10 +346,12 @@ if (! \function_exists('configString')) {
 if (! \function_exists('mustConfigString')) {
     /**
      * Mandatory config string resolver.
+     *
+     * @param array<mixed> $in
      */
-    function mustConfigString(string $key, ?string $default = null, bool $trim = true): string
+    function mustConfigString(string $key, ?string $default = null, bool $trim = true, array $in = []): string
     {
-        $value = configString($key, $default, $trim);
+        $value = configString($key, $default, $trim, $in);
 
         \assert($value !== null, "[{$key}] config is not string");
 
@@ -1003,12 +1039,18 @@ if (! \function_exists('requestSignature')) {
 if (! \function_exists('envString')) {
     /**
      * Env string resolver.
+     *
+     * @param array<mixed> $in
      */
-    function envString(string $key, ?string $default = null, bool $trim = true): ?string
+    function envString(string $key, ?string $default = null, bool $trim = true, array $in = []): ?string
     {
         $value = env($key, $default);
 
         if ($value === null) {
+            if (\count($in) > 0) {
+                \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
+            }
+
             return null;
         }
 
@@ -1018,7 +1060,9 @@ if (! \function_exists('envString')) {
             $value = \trim($value);
         }
 
-        \assert($value !== '', "[{$key}] env is empty string");
+        if (\count($in) > 0) {
+            \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
+        }
 
         return $value;
     }
@@ -1027,10 +1071,12 @@ if (! \function_exists('envString')) {
 if (! \function_exists('mustEnvString')) {
     /**
      * Mandatory env string resolver.
+     *
+     * @param array<mixed> $in
      */
-    function mustEnvString(string $key, ?string $default = null, bool $trim = true): string
+    function mustEnvString(string $key, ?string $default = null, bool $trim = true, array $in = []): string
     {
-        $value = envString($key, $default, $trim);
+        $value = envString($key, $default, $trim, $in);
 
         \assert($value !== null, "[{$key}] env is not string");
 
@@ -1041,16 +1087,26 @@ if (! \function_exists('mustEnvString')) {
 if (! \function_exists('envBool')) {
     /**
      * Env bool resolver.
+     *
+     * @param array<mixed> $in
      */
-    function envBool(string $key, ?bool $default = null): ?bool
+    function envBool(string $key, ?bool $default = null, array $in = []): ?bool
     {
         $value = env($key, $default);
 
         if ($value === null) {
+            if (\count($in) > 0) {
+                \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
+            }
+
             return null;
         }
 
         \assert(\is_bool($value), "[{$key}] env is not bool or null");
+
+        if (\count($in) > 0) {
+            \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
+        }
 
         return $value;
     }
@@ -1059,10 +1115,12 @@ if (! \function_exists('envBool')) {
 if (! \function_exists('mustEnvBool')) {
     /**
      * Mandatory env bool resolver.
+     *
+     * @param array<mixed> $in
      */
-    function mustEnvBool(string $key, ?bool $default = null): bool
+    function mustEnvBool(string $key, ?bool $default = null, array $in = []): bool
     {
-        $value = envBool($key, $default);
+        $value = envBool($key, $default, $in);
 
         \assert($value !== null, "[{$key}] env is not bool");
 
@@ -1073,18 +1131,28 @@ if (! \function_exists('mustEnvBool')) {
 if (! \function_exists('envInt')) {
     /**
      * Env int resolver.
+     *
+     * @param array<mixed> $in
      */
-    function envInt(string $key, ?int $default = null): ?int
+    function envInt(string $key, ?int $default = null, array $in = []): ?int
     {
         $value = env($key, $default);
 
         if ($value === null) {
+            if (\count($in) > 0) {
+                \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
+            }
+
             return null;
         }
 
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
         \assert($value !== false, "[{$key}] env is not int or null");
+
+        if (\count($in) > 0) {
+            \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
+        }
 
         return $value;
     }
@@ -1093,10 +1161,12 @@ if (! \function_exists('envInt')) {
 if (! \function_exists('mustEnvInt')) {
     /**
      * Mandatory env int resolver.
+     *
+     * @param array<mixed> $in
      */
-    function mustEnvInt(string $key, ?int $default = null): int
+    function mustEnvInt(string $key, ?int $default = null, array $in = []): int
     {
-        $value = envInt($key, $default);
+        $value = envInt($key, $default, $in);
 
         \assert($value !== null, "[{$key}] env is not int");
 
@@ -1107,18 +1177,28 @@ if (! \function_exists('mustEnvInt')) {
 if (! \function_exists('envFloat')) {
     /**
      * Env float resolver.
+     *
+     * @param array<mixed> $in
      */
-    function envFloat(string $key, ?float $default = null, bool $trim = true): ?float
+    function envFloat(string $key, ?float $default = null, array $in = []): ?float
     {
         $value = env($key, $default);
 
         if ($value === null) {
+            if (\count($in) > 0) {
+                \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
+            }
+
             return $default;
         }
 
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
         \assert($value !== false, "[{$key}] env is not float or null");
+
+        if (\count($in) > 0) {
+            \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
+        }
 
         return $value;
     }
@@ -1127,10 +1207,12 @@ if (! \function_exists('envFloat')) {
 if (! \function_exists('mustEnvFloat')) {
     /**
      * Mandatory env float resolver.
+     *
+     * @param array<mixed> $in
      */
-    function mustEnvFloat(string $key, ?float $default = null): float
+    function mustEnvFloat(string $key, ?float $default = null, array $in = []): float
     {
-        $value = envFloat($key, $default);
+        $value = envFloat($key, $default, $in);
 
         \assert($value !== null, "[{$key}] env is not float");
 
