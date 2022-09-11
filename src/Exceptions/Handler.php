@@ -29,6 +29,11 @@ class Handler extends IlluminateHandler
     final public const ERROR_MESSAGE_UNEXPECTED_ERROR = 'Unexpected Error';
 
     /**
+     * Use errors without message and title.
+     */
+    public static bool $genericErrors = false;
+
+    /**
      * @inheritDoc
      */
     protected $dontFlash = [
@@ -318,20 +323,21 @@ class Handler extends IlluminateHandler
 
         $data = parent::convertExceptionToArray($previous);
 
+        unset($data['message']);
+
         $message = static::message($e);
 
         if ($debug) {
             $data['internal'] = $previous->getMessage() !== '' ? $previous->getMessage() : $message;
         }
 
-        $normalizedMessage = static::normalizeMessage($message);
-
-        $title = static::title($e);
-
         $data['status'] = $e->getStatusCode();
         $data['code'] = $e->getCode();
-        $data['title'] = $title;
-        $data['message'] = $normalizedMessage;
+
+        if (static::$genericErrors === false) {
+            $data['title'] = static::title($e);
+            $data['message'] = static::normalizeMessage($message);
+        }
 
         return $data;
     }
