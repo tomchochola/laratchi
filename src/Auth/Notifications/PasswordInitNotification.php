@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Auth\Notifications;
 
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
 use Illuminate\Notifications\Messages\MailMessage;
 
@@ -34,5 +35,20 @@ class PasswordInitNotification extends ResetPassword implements ShouldQueueContr
             ->action(mustTransJsonString('Init Password'), $url)
             ->line(mustTransJsonString('This password init link will expire in :count minutes.', ['en'], ['count' => (string) mustConfigInt('auth.passwords.'.mustConfigString('auth.defaults.passwords').'.expire')]))
             ->line(mustTransJsonString('If you did not request a password init, no further action is required.'));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function resetUrl(mixed $notifiable): string
+    {
+        \assert($notifiable instanceof CanResetPassword);
+
+        $query = \http_build_query([
+            'token' => $this->token,
+            'email' => $notifiable->getEmailForPasswordReset(),
+        ]);
+
+        return mustTransString('spa.password_init_url').'?'.$query;
     }
 }
