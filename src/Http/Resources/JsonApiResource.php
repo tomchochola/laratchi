@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Arrayable as ArrayableContract;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\PotentiallyMissing;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use JsonSerializable;
 
@@ -22,7 +23,7 @@ abstract class JsonApiResource extends JsonResource
     public static function withIncluded(iterable $included, array &$map, Request $request): void
     {
         foreach ($included as $resource) {
-            $map[$resource->getKey().':'.$resource->getType()] = $resource->toArray($request);
+            $map[$resource->getKey().':'.$resource->getType()] = Arr::except($resource->getArray($request), ['meta']);
 
             static::withIncluded($resource->getIncluded(), $map, $request);
         }
@@ -96,16 +97,6 @@ abstract class JsonApiResource extends JsonResource
     }
 
     /**
-     * Get meta.
-     *
-     * @return array<string, mixed>
-     */
-    public function getMeta(): array
-    {
-        return [];
-    }
-
-    /**
      * Get resource header.
      *
      * @return array{id: string, slug: string, type: string, meta?: array<mixed>}
@@ -134,18 +125,22 @@ abstract class JsonApiResource extends JsonResource
      */
     public function toArray(mixed $request): array|ArrayableContract|JsonSerializable
     {
+        return $this->getArray($request);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @return array<string, mixed>
+     */
+    public function getArray(Request $request): array
+    {
         $data = $this->getHeader();
 
         $attributes = $this->filter($this->getAttributes());
 
         if (\count($attributes) > 0) {
             $data['attributes'] = $attributes;
-        }
-
-        $meta = $this->filter($this->getMeta());
-
-        if (\count($meta) > 0) {
-            $data['meta'] = $meta;
         }
 
         $relationships = $this->filter($this->getRelationships());
