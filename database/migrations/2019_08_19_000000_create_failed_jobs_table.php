@@ -13,6 +13,7 @@ return new class() extends Migration {
     {
         resolveSchema()->create('failed_jobs', static function (Blueprint $table): void {
             $table->id();
+
             $table->string('uuid')->unique();
             $table->text('connection');
             $table->text('queue');

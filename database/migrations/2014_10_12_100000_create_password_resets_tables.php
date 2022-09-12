@@ -19,9 +19,12 @@ return new class() extends Migration {
             \assert(\is_string($tableName));
 
             resolveSchema()->create($tableName, static function (Blueprint $table): void {
+                $table->id();
+
                 $table->string('email')->index();
                 $table->string('token');
-                $table->timestamp('created_at')->nullable();
+
+                $table->timestamp('created_at');
             });
         }
     }

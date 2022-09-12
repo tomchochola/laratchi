@@ -13,11 +13,14 @@ return new class() extends Migration {
     {
         resolveSchema()->create('notifications', static function (Blueprint $table): void {
             $table->uuid('id')->primary();
+
             $table->string('type');
             $table->morphs('notifiable');
             $table->text('data');
             $table->timestamp('read_at')->nullable();
-            $table->timestamps();
+
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at');
         });
     }
 };

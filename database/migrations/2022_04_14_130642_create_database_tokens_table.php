@@ -13,10 +13,13 @@ return new class() extends Migration {
     {
         resolveSchema()->create('database_tokens', static function (Blueprint $table): void {
             $table->id();
+
             $table->string('provider');
             $table->string('auth_id');
             $table->char('hash', 64);
-            $table->timestamps();
+
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at');
         });
     }
 };
