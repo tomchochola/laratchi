@@ -57,7 +57,7 @@ class ModelJsonApiResource extends JsonApiResource
      */
     public function getAttributes(): array
     {
-        return $this->resource->attributesToArray();
+        return [];
     }
 
     /**

@@ -7,22 +7,11 @@ namespace Tomchochola\Laratchi\Auth;
 use Illuminate\Contracts\Translation\HasLocalePreference as HasLocalePreferenceContract;
 use Illuminate\Foundation\Auth\User as IlluminateUser;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Tomchochola\Laratchi\Auth\Notifications\PasswordInitNotification;
 use Tomchochola\Laratchi\Auth\Notifications\ResetPasswordNotification;
 use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
 use Tomchochola\Laratchi\Database\ModelTrait;
 
-/**
- * @property ?Carbon $created_at
- * @property ?Carbon $updated_at
- * @property ?Carbon $email_verified_at
- * @property string $email
- * @property string $name
- * @property string $password
- * @property ?string $remember_token
- * @property string $locale
- */
 class User extends IlluminateUser implements DatabaseTokenableInterface, HasLocalePreferenceContract
 {
     use DatabaseTokenableTrait;
@@ -33,16 +22,6 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
      * @inheritDoc
      */
     public $preventsLazyLoading = true;
-
-    /**
-     * @inheritDoc
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'locale',
-    ];
 
     /**
      * @inheritDoc
@@ -105,8 +84,8 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     /**
      * @inheritDoc
      */
-    public function preferredLocale(): ?string
+    public function preferredLocale(): string
     {
-        return $this->locale;
+        return $this->mustString('locale');
     }
 }

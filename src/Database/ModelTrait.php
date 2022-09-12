@@ -607,16 +607,16 @@ trait ModelTrait
     /**
      * Created at getter.
      */
-    public function getCreatedAt(): ?Carbon
+    public function getCreatedAt(): Carbon
     {
-        return $this->carbon('created_at');
+        return $this->mustCarbon('created_at');
     }
 
     /**
      * Updated at getter.
      */
-    public function getUpdatedAt(): ?Carbon
+    public function getUpdatedAt(): Carbon
     {
-        return $this->carbon('updated_at');
+        return $this->mustCarbon('updated_at');
     }
 }

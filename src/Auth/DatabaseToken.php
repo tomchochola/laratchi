@@ -7,26 +7,12 @@ namespace Tomchochola\Laratchi\Auth;
 use Illuminate\Support\Str;
 use Tomchochola\Laratchi\Database\Model;
 
-/**
- * @property string $provider
- * @property string $auth_id
- * @property string $hash
- */
 class DatabaseToken extends Model
 {
     /**
      * Plain text bearer.
      */
     public string $bearer = '';
-
-    /**
-     * @inheritDoc
-     */
-    protected $fillable = [
-        'provider',
-        'auth_id',
-        'hash',
-    ];
 
     /**
      * @inheritDoc
@@ -55,7 +41,7 @@ class DatabaseToken extends Model
 
         \assert($instance instanceof static);
 
-        if (! \hash_equals($instance->hash, \hash('sha256', $token))) {
+        if (! \hash_equals($instance->getHash(), \hash('sha256', $token))) {
             return null;
         }
 
@@ -76,9 +62,9 @@ class DatabaseToken extends Model
 
         $databaseToken = new static();
 
-        $databaseToken->hash = $hash;
-        $databaseToken->provider = $user->getUserProviderName();
-        $databaseToken->auth_id = (string) $authId;
+        $databaseToken->setHash($hash);
+        $databaseToken->setProvider($user->getUserProviderName());
+        $databaseToken->setAuthId((string) $authId);
 
         $ok = $databaseToken->save();
 
@@ -102,7 +88,7 @@ class DatabaseToken extends Model
      */
     public function user(): ?DatabaseTokenableInterface
     {
-        $user = resolveAuthManager()->createUserProvider($this->provider)?->retrieveById($this->auth_id);
+        $user = resolveAuthManager()->createUserProvider($this->getProvider())?->retrieveById($this->getAuthId());
 
         if ($user === null) {
             return null;
@@ -111,5 +97,53 @@ class DatabaseToken extends Model
         \assert($user instanceof DatabaseTokenableInterface);
 
         return $user;
+    }
+
+    /**
+     * Hash getter.
+     */
+    public function getHash(): string
+    {
+        return $this->mustString('hash');
+    }
+
+    /**
+     * Provider getter.
+     */
+    public function getProvider(): string
+    {
+        return $this->mustString('provider');
+    }
+
+    /**
+     * Auth id getter.
+     */
+    public function getAuthId(): string
+    {
+        return $this->mustString('auth_id');
+    }
+
+    /**
+     * Hash setter.
+     */
+    public function setHash(string $value): void
+    {
+        $this->setAttribute('hash', $value);
+    }
+
+    /**
+     * Provider getter.
+     */
+    public function setProvider(string $value): void
+    {
+        $this->setAttribute('provider', $value);
+    }
+
+    /**
+     * Auth id setter.
+     */
+    public function setAuthId(string $value): void
+    {
+        $this->setAttribute('auth_id', $value);
     }
 }
