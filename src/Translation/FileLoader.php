@@ -15,12 +15,16 @@ class FileLoader extends \Illuminate\Translation\FileLoader
      */
     public function load(mixed $locale, mixed $group, mixed $namespace = null): array
     {
-        if ($group === 'validation' && $namespace === 'validation' && UsePlainErrorsMiddleware::$enabled) {
+        if ($group === 'validation' && $namespace === 'validation' && UsePlainErrorsMiddleware::$on) {
             $group = 'validation_api';
-        } elseif ($group === 'messages' && $namespace === 'validationRules' && UsePlainErrorsMiddleware::$enabled) {
+        } elseif ($group === 'messages' && $namespace === 'validationRules' && UsePlainErrorsMiddleware::$on) {
             $group = 'messages_api';
-        } elseif ($group === 'validation' && ($namespace === '*' || $namespace === null) && UsePlainErrorsMiddleware::$enabled) {
+        } elseif ($group === 'validation' && ($namespace === '*' || $namespace === null) && UsePlainErrorsMiddleware::$on) {
             $group = 'validation_api';
+        } elseif ($group === 'auth' && ($namespace === '*' || $namespace === null) && UsePlainErrorsMiddleware::$on) {
+            $group = 'auth_api';
+        } elseif ($group === 'passwords' && ($namespace === '*' || $namespace === null) && UsePlainErrorsMiddleware::$on) {
+            $group = 'passwords_api';
         }
 
         return parent::load($locale, $group, $namespace);

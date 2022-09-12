@@ -13,7 +13,12 @@ class UsePlainErrorsMiddleware
     /**
      * Plain errors are enabled.
      */
-    public static bool $enabled = false;
+    public static bool $enabled = true;
+
+    /**
+     * Plain errors are on.
+     */
+    public static bool $on = false;
 
     /**
      * Handle an incoming request.
@@ -22,7 +27,9 @@ class UsePlainErrorsMiddleware
      */
     public function handle(Request $request, Closure $next): SymfonyResponse
     {
-        static::$enabled = true;
+        if (static::$enabled) {
+            static::$on = true;
+        }
 
         return $next($request);
     }

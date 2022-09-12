@@ -345,7 +345,7 @@ class Validator extends IlluminateValidator
      */
     protected function getAttributeFromTranslations(mixed $name): string
     {
-        if (UsePlainErrorsMiddleware::$enabled) {
+        if (UsePlainErrorsMiddleware::$on) {
             return $name;
         }
 
