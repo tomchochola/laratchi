@@ -31,7 +31,7 @@ class Handler extends IlluminateHandler
     /**
      * Use errors without message and title.
      */
-    public static bool $genericErrors = false;
+    public static bool $genericErrors = true;
 
     /**
      * @inheritDoc
