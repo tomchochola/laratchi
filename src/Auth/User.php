@@ -84,7 +84,7 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     /**
      * @inheritDoc
      */
-    public function preferredLocale(): string
+    public function preferredLocale(): ?string
     {
         return $this->mustString('locale');
     }
@@ -92,7 +92,7 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     /**
      * @inheritDoc
      */
-    public function getAuthIdentifier(): int
+    public function getAuthIdentifier(): int|string
     {
         return $this->getKey();
     }

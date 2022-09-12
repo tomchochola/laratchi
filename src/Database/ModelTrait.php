@@ -239,23 +239,29 @@ trait ModelTrait
     /**
      * @inheritDoc
      */
-    public function getKey(): int
+    public function getKey(): int|string
     {
-        return $this->mustInt($this->getKeyName());
+        \assert($this->attributeLoaded($this->getKeyName()));
+
+        $value = $this->getAttributeValue($this->getKeyName());
+
+        \assert(\is_int($value) || \is_string($value), 'model key is not int or string');
+
+        return $value;
     }
 
     /**
      * @inheritDoc
      */
-    public function getRouteKey(): string
+    public function getRouteKey(): int|string
     {
         \assert($this->attributeLoaded($this->getRouteKeyName()));
 
-        $value = parent::getRouteKey();
+        $value = $this->getAttributeValue($this->getRouteKeyName());
 
         \assert(\is_int($value) || \is_string($value), 'model route key is not int or string');
 
-        return (string) $value;
+        return $value;
     }
 
     /**
@@ -556,14 +562,6 @@ trait ModelTrait
         \assert($value instanceof Collection, "[{$key}] relationship is not of type [{$type}] and is not collection");
 
         return $value;
-    }
-
-    /**
-     * Id getter.
-     */
-    public function getId(): int
-    {
-        return $this->mustInt('id');
     }
 
     /**
