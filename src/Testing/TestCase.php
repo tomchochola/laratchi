@@ -27,6 +27,16 @@ abstract class TestCase extends BaseTestCase
     /**
      * @inheritDoc
      */
+    protected $encryptCookies = false;
+
+    /**
+     * @inheritDoc
+     */
+    protected $withCredentials = true;
+
+    /**
+     * @inheritDoc
+     */
     protected function setUp(): void
     {
         parent::setUp();
