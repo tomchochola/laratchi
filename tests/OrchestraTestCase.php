@@ -11,13 +11,10 @@ use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Exceptions\Handler;
 use Tomchochola\Laratchi\Http\Middleware\SwapValidatorMiddleware;
 use Tomchochola\Laratchi\Support\ServiceProvider;
-use Tomchochola\Laratchi\Testing\TestingHelpersTraits;
 use Tomchochola\Laratchi\Validation\SecureValidator;
 
 class OrchestraTestCase extends TestCase
 {
-    use TestingHelpersTraits;
-
     /**
      * @inheritDoc
      */
