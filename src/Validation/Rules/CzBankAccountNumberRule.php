@@ -12,7 +12,12 @@ class CzBankAccountNumberRule implements RuleContract
 
     public const BASE_WEIGHTS = [6, 3, 7, 9, 10, 5, 8, 4, 2, 1];
 
-    public const BANK_CODES = [
+    /**
+     * Bank codes.
+     *
+     * @var array<int, string>
+     */
+    public static array $bankCodes = [
         '0100',
         '0300',
         '0600',
@@ -108,7 +113,7 @@ class CzBankAccountNumberRule implements RuleContract
             return true;
         }
 
-        return \in_array($parts[4], static::BANK_CODES, true);
+        return \in_array($parts[4], static::$bankCodes, true);
     }
 
     /**

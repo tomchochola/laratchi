@@ -6,7 +6,12 @@ namespace Tomchochola\Laratchi\Validation;
 
 class MediaValidity
 {
-    public const MIME_TYPES_IMAGE = [
+    /**
+     * Mime types for images.
+     *
+     * @var array<int, string>
+     */
+    public static array $mimeTypesImage = [
         'image/gif',
         'image/jpeg',
         'image/png',
@@ -20,7 +25,12 @@ class MediaValidity
         'image/heic',
     ];
 
-    public const MIME_TYPES_VIDEO = [
+    /**
+     * Mime types for videos.
+     *
+     * @var array<int, string>
+     */
+    public static array $mimeTypesVideo = [
         'video/mp4',
         'video/mpeg',
         'video/ogg',
@@ -28,16 +38,29 @@ class MediaValidity
         'video/webm',
     ];
 
-    public const MAX_IMAGE = 10240;
-    public const MAX_VIDEO = 10240;
-    public const MAX_FILE = 10240;
+    /**
+     * Mime types for files.
+     *
+     * @var array<int, string>
+     */
+    public static array $mimeTypesFile = [];
+
+    public static int $maxImage = 10240;
+    public static int $maxVideo = 10240;
+    public static int $maxFile = 10240;
 
     /**
      * Image validation rules.
      */
     public function image(): Validity
     {
-        return Validity::make()->file()->mimetypes(static::MIME_TYPES_IMAGE)->max(static::MAX_IMAGE);
+        $validity = Validity::make()->file()->max(static::$maxImage);
+
+        if (\count(static::$mimeTypesImage) > 0) {
+            $validity->mimetypes(static::$mimeTypesImage);
+        }
+
+        return $validity;
     }
 
     /**
@@ -45,7 +68,13 @@ class MediaValidity
      */
     public function video(): Validity
     {
-        return Validity::make()->file()->mimetypes(static::MIME_TYPES_VIDEO)->max(static::MAX_VIDEO);
+        $validity = Validity::make()->file()->max(static::$maxVideo);
+
+        if (\count(static::$mimeTypesVideo) > 0) {
+            $validity->mimetypes(static::$mimeTypesVideo);
+        }
+
+        return $validity;
     }
 
     /**
@@ -53,6 +82,12 @@ class MediaValidity
      */
     public function file(): Validity
     {
-        return Validity::make()->file()->max(static::MAX_FILE);
+        $validity = Validity::make()->file()->max(static::$maxFile);
+
+        if (\count(static::$mimeTypesFile) > 0) {
+            $validity->mimetypes(static::$mimeTypesFile);
+        }
+
+        return $validity;
     }
 }

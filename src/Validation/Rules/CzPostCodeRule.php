@@ -8,7 +8,12 @@ use Intervention\Validation\Rules\Postalcode;
 
 class CzPostCodeRule extends Postalcode
 {
-    public const POST_CODES = [
+    /**
+     * Post codes.
+     *
+     * @var array<int, string>
+     */
+    public static array $postCodes = [
         '100 00',
         '101 00',
         '102 00',
@@ -2715,7 +2720,7 @@ class CzPostCodeRule extends Postalcode
             return true;
         }
 
-        return \in_array($value, static::POST_CODES, true);
+        return \in_array($value, static::$postCodes, true);
     }
 
     /**

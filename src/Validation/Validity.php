@@ -45,7 +45,7 @@ class Validity implements ArrayableContract
 
     public const BIG_INT_MAX = \PHP_INT_MAX;
     public const BIG_INT_MIN = \PHP_INT_MIN;
-    public const UNSIGNED_BIG_INT_MAX = '18446744073709551615';
+    public const UNSIGNED_BIG_INT_MAX = \PHP_INT_MAX;
     public const UNSIGNED_BIG_INT_MIN = 0;
 
     public const STRING_MAX = 255;
