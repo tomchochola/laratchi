@@ -43,7 +43,7 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function cookieName(): string
     {
-        return (resolveApp()->isLocal() ? '' : '__Host-').Str::slug(mustEnvString('APP_NAME', 'Laratchi').'_'.static::$cookieName."_{$this->guardName}", '_');
+        return (resolveApp()->isLocal() ? '' : '__Host-').Str::slug(mustConfigString('app.name').'_'.mustConfigString('app.env').'_'.static::$cookieName."_{$this->guardName}", '_');
     }
 
     /**
