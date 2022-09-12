@@ -51,15 +51,7 @@ class GenericValidity
      */
     public function locale(): Validity
     {
-        return Validity::make()->string()->in(mustConfigArray('app.locales', [resolveApp()->getLocale()]));
-    }
-
-    /**
-     * Mark attribute as unvalidated.
-     */
-    public function unvalidated(): Validity
-    {
-        return Validity::make();
+        return Validity::make()->string()->in(mustConfigArray('app.locales'));
     }
 
     /**
@@ -75,22 +67,6 @@ class GenericValidity
      */
     public function filter(): Validity
     {
-        return $this->object();
-    }
-
-    /**
-     * Object validation rules.
-     */
-    public function object(): Validity
-    {
-        return Validity::make()->object();
-    }
-
-    /**
-     * Collection validation rules.
-     */
-    public function collection(int $minItems, ?int $maxItems = null): Validity
-    {
-        return Validity::make()->collection($minItems, $maxItems);
+        return $this->generic()->object();
     }
 }

@@ -49,14 +49,6 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Get a all input container for the all input.
      */
-    public function unvalidatedInput(): ValidatedInput
-    {
-        return $this->allInput();
-    }
-
-    /**
-     * Get a all input container for the all input.
-     */
     public function allInput(): ValidatedInput
     {
         if ($this->allInput !== null) {
