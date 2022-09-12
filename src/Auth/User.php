@@ -88,4 +88,52 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     {
         return $this->mustString('locale');
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAuthIdentifier(): int
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAuthPassword(): string
+    {
+        return $this->string('password') ?? '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRememberToken(): string
+    {
+        return $this->string($this->getRememberTokenName()) ?? '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEmailForPasswordReset(): string
+    {
+        return $this->mustString('email');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return $this->carbon('email_verified_at') !== null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEmailForVerification(): string
+    {
+        return $this->mustString('email');
+    }
 }

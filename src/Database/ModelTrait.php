@@ -239,21 +239,15 @@ trait ModelTrait
     /**
      * @inheritDoc
      */
-    public function getKey(): int|string
+    public function getKey(): int
     {
-        \assert($this->attributeLoaded($this->getKeyName()));
-
-        $value = parent::getKey();
-
-        \assert(\is_int($value) || \is_string($value), 'model key is not int or string');
-
-        return $value;
+        return $this->mustInt($this->getKeyName());
     }
 
     /**
      * @inheritDoc
      */
-    public function getRouteKey(): int|string
+    public function getRouteKey(): string
     {
         \assert($this->attributeLoaded($this->getRouteKeyName()));
 
@@ -261,7 +255,7 @@ trait ModelTrait
 
         \assert(\is_int($value) || \is_string($value), 'model route key is not int or string');
 
-        return $value;
+        return (string) $value;
     }
 
     /**
@@ -270,38 +264,6 @@ trait ModelTrait
     public function attributeLoaded(string $key): bool
     {
         return \array_key_exists($key, $this->attributes);
-    }
-
-    /**
-     * Get int key.
-     */
-    public function getIntKey(): int
-    {
-        return $this->mustInt($this->getKeyName());
-    }
-
-    /**
-     * Get int route key.
-     */
-    public function getIntRouteKey(): int
-    {
-        return $this->mustInt($this->getRouteKeyName());
-    }
-
-    /**
-     * Get string key.
-     */
-    public function getStringKey(): string
-    {
-        return $this->mustString($this->getKeyName());
-    }
-
-    /**
-     * Get string route key.
-     */
-    public function getStringRouteKey(): string
-    {
-        return $this->mustString($this->getRouteKeyName());
     }
 
     /**

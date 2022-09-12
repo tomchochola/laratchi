@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'email_verified_at' => Carbon::now(),
             'password' => Str::random(10),
             'remember_token' => Str::random(10),
-            'locale' => $this->faker->randomElement(mustConfigArray('app.locales', [resolveApp()->getLocale()])),
+            'locale' => $this->faker->randomElement(mustConfigArray('app.locales')),
         ];
     }
 
