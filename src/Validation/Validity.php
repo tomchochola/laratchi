@@ -334,41 +334,13 @@ class Validity implements ArrayableContract
     /**
      * Add boolean rule.
      *
-     * @return $this
-     */
-    public function boolean(): static
-    {
-        return $this->addRule('boolean');
-    }
-
-    /**
-     * Add int boolean rule.
+     * @param array<int, mixed> $in
      *
      * @return $this
      */
-    public function intBoolean(): static
+    public function boolean(array $in = ['0', '1']): static
     {
-        return $this->addRule('boolean')->in([0, 1, '0', '1']);
-    }
-
-    /**
-     * Add extended boolean rule.
-     *
-     * @return $this
-     */
-    public function extendedBoolean(): static
-    {
-        return $this->addRule('boolean')->in([true, false, 0, 1, '0', '1']);
-    }
-
-    /**
-     * Add integer boolean rule.
-     *
-     * @return $this
-     */
-    public function integerBoolean(): static
-    {
-        return $this->addRule('integer')->in(['0', '1']);
+        return $this->addRule('integer')->in($in);
     }
 
     /**
@@ -378,7 +350,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function true(array $options = [1, '1', true]): static
+    public function true(array $options = ['1']): static
     {
         return $this->in($options);
     }
@@ -390,7 +362,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function false(array $options = [0, '0', false]): static
+    public function false(array $options = ['0']): static
     {
         return $this->in($options);
     }
