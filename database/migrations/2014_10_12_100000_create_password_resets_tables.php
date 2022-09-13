@@ -22,7 +22,7 @@ return new class() extends Migration {
                 $table->id();
 
                 $table->string('email')->index();
-                $table->string('token');
+                $table->char('token', 64);
 
                 $table->timestamp('created_at');
             });
