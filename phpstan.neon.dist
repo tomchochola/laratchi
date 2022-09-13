@@ -9,7 +9,6 @@ parameters:
   level: max
   paths:
     - src
-    - tests
     - lang
     - resources
     - database
@@ -185,251 +184,215 @@ parameters:
       namespace: 'Illuminate\Support\Facades\App'
       message: 'Illuminate\Support\Facades\App is banned, use resolveApp() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Artisan'
       message: 'Illuminate\Support\Facades\Artisan is banned, use resolveArtisan() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Auth'
       message: 'Illuminate\Support\Facades\Auth is banned, use resolveAuthManager() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Blade'
       message: 'Illuminate\Support\Facades\Blade is banned, use resolveBlade() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Broadcast'
       message: 'Illuminate\Support\Facades\Broadcast is banned, use resolveBroadcastManager() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Bus'
       message: 'Illuminate\Support\Facades\Bus is banned, use resolveBus() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Cache'
       message: 'Illuminate\Support\Facades\Cache is banned, use resolveCacheManager() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Config'
       message: 'Illuminate\Support\Facades\Config is banned, use resolveConfig() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Cookie'
       message: 'Illuminate\Support\Facades\Cookie is banned, use resolveCookieJar() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Crypt'
       message: 'Illuminate\Support\Facades\Crypt is banned, use resolveEncrypter() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Date'
       message: 'Illuminate\Support\Facades\Date is banned, use Illuminate\Support\Carbon::xxx() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\DB'
       message: 'Illuminate\Support\Facades\DB is banned, use resolveDatabaseManager() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Event'
       message: 'Illuminate\Support\Facades\Event is banned, use resolveEventDispatcher() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\File'
       message: 'Illuminate\Support\Facades\File is banned, use resolveFilesystem() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Gate'
       message: 'Illuminate\Support\Facades\Gate is banned, use resolveGate() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Hash'
       message: 'Illuminate\Support\Facades\Hash is banned, use resolveHashManager() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Http'
       message: 'Illuminate\Support\Facades\Http is banned, use resolveHttp() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Lang'
       message: 'Illuminate\Support\Facades\Lang is banned, use resolveTranslator() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Log'
       message: 'Illuminate\Support\Facades\Log is banned, use resolveLogger() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Mail'
       message: 'Illuminate\Support\Facades\Mail is banned, use resolveMailManager() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Notification'
       message: 'Illuminate\Support\Facades\Notification is banned, use resolveNotificator() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\ParallelTesting'
       message: 'Illuminate\Support\Facades\ParallelTesting is banned, use resolveParallelTesting() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Password'
       message: 'Illuminate\Support\Facades\Password is banned, use resolvePasswordBrokerManager() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Queue'
       message: 'Illuminate\Support\Facades\Queue is banned, use resolveQueueManager() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\RateLimiter'
       message: 'Illuminate\Support\Facades\RateLimiter is banned, use resolveRateLimiter() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Redirect'
       message: 'Illuminate\Support\Facades\Redirect is banned, use resolveRedirector() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Redis'
       message: 'Illuminate\Support\Facades\Redis is banned, use resolveRedisManager() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Request'
       message: 'Illuminate\Support\Facades\Request is banned, use resolveRequest() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Response'
       message: 'Illuminate\Support\Facades\Response is banned, use resolveResponseFactory() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Route'
       message: 'Illuminate\Support\Facades\Route is banned, use resolveRouter() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Session'
       message: 'Illuminate\Support\Facades\Session is banned, use resolveSession() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Schema'
       message: 'Illuminate\Support\Facades\Schema is banned, use resolveSchema() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Storage'
       message: 'Illuminate\Support\Facades\Storage is banned, use resolveFilesystemManager() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\URL'
       message: 'Illuminate\Support\Facades\URL is banned, use resolveUrlFactory() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Validator'
       message: 'Illuminate\Support\Facades\Validator is banned, use resolveValidatorFactory() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\View'
       message: 'Illuminate\Support\Facades\View is banned, use resolveViewFactory() instead'
       allowIn:
-        - tests/*
         - src/Helpers/functions.php
         - src/Testing/*

@@ -13,7 +13,7 @@ MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_2_BIN}
 
 # Goals
 .PHONY: check
-check: audit lint test
+check: audit lint
 
 .PHONY: audit
 audit: composer.lock tools
@@ -26,10 +26,6 @@ lint: vendor tools
 	${MAKE_PHP} tools/phpstan/vendor/bin/phpstan analyse
 	set -e; for file in composer.json tools/*/composer.json; do ${MAKE_PHP} tools/composer-normalize/vendor/bin/composer-normalize $$file --dry-run --diff --indent-size=2 --indent-style=space; done
 	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
-
-.PHONY: test
-test: vendor vendor/bin/phpunit
-	${MAKE_PHP} vendor/bin/phpunit
 
 .PHONY: fix
 fix: tools
@@ -70,7 +66,7 @@ tools: tools/prettier/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpsta
 tools/prettier/node_modules/.bin/prettier:
 	npm --prefix=tools/prettier update
 
-composer.lock vendor vendor/bin/phpunit:
+composer.lock vendor:
 	${MAKE_COMPOSER} update
 
 tools/phpstan/vendor/bin/phpstan:

@@ -36,11 +36,6 @@
       "src/Helpers/functions.php"
     ]
   },
-  "autoload-dev": {
-    "psr-4": {
-      "Tomchochola\\Laratchi\\Tests\\": "tests/"
-    }
-  },
   "config": {
     "sort-packages": true
   },
