@@ -54,7 +54,7 @@ class AuthValidity
      */
     public function passwordResetToken(string $guardName): Validity
     {
-        return Validity::make()->string()->size(64);
+        return Validity::make()->defaultString();
     }
 
     /**

@@ -11,7 +11,7 @@ class GenericValidity
      */
     public function signature(): Validity
     {
-        return Validity::make()->char(64);
+        return Validity::make()->defaultString();
     }
 
     /**
