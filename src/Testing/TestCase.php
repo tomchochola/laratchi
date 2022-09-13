@@ -223,10 +223,11 @@ abstract class TestCase extends BaseTestCase
      * Resource json structure.
      *
      * @param array<mixed> $attributes
+     * @param array<mixed> $meta
      *
      * @return array<mixed>
      */
-    protected function jsonStructureResource(array $attributes = []): array
+    protected function jsonStructureResource(array $attributes = [], array $meta = []): array
     {
         $structure = [
             'id',
@@ -236,6 +237,10 @@ abstract class TestCase extends BaseTestCase
 
         if (\count($attributes) > 0) {
             $structure['attributes'] = $attributes;
+        }
+
+        if (\count($meta) > 0) {
+            $structure['meta'] = $meta;
         }
 
         return $structure;
