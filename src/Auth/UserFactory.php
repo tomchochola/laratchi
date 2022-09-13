@@ -9,10 +9,14 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
- * @extends Factory<User>
+ * @template T of User
+ *
+ * @extends Factory<T>
  */
 class UserFactory extends Factory
 {
+    public const VALID_PASSWORD = 'password';
+
     /**
      * @inheritDoc
      */
