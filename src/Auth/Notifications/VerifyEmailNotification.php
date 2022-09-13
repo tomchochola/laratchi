@@ -9,8 +9,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
-use Illuminate\Support\Carbon;
 use Tomchochola\Laratchi\Auth\Http\Controllers\EmailVerificationVerifyController;
+use Tomchochola\Laratchi\Support\SignedUrlSupport;
 
 class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
 {
@@ -35,16 +35,11 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
         $parameters = [
             'id' => $notifiable->getAuthIdentifier(),
             'hash' => \hash('sha256', $notifiable->getEmailForVerification()),
-            'expires' => Carbon::now()->addMinutes(mustConfigInt('auth.verification.expire'))->getTimestamp(),
         ];
 
-        \ksort($parameters);
+        $expires = mustConfigInt('auth.verification.expire');
 
-        $controllers = inject(EmailVerificationVerifyController::class)::class;
-
-        $signedUrl = resolveUrlFactory()->action($controllers, \array_merge($parameters, [
-            'signature' => \hash_hmac('sha256', resolveUrlFactory()->action($controllers, $parameters), mustConfigString('app.key')),
-        ]));
+        $signedUrl = SignedUrlSupport::make(inject(EmailVerificationVerifyController::class)::class, $parameters, $expires);
 
         $query = \http_build_query([
             'url' => $signedUrl,
