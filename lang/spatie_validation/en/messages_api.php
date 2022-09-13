@@ -9,8 +9,8 @@ return [
     'country_code' => 'country_code',
     'currency' => 'currency',
     'delimited' => [
-        'unique' => 'delimited.unique',
-        'min' => 'delimited.min::min',
-        'max' => 'delimited.max::max',
+        'unique' => 'delimited_unique',
+        'min' => 'delimited_min::min',
+        'max' => 'delimited_max::max',
     ],
 ];
