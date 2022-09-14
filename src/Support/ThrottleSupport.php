@@ -53,7 +53,7 @@ class ThrottleSupport
      *
      * @param array<array-key> $keys
      */
-    public static function throwThrottleValidationError(array $keys, int $seconds, string $trans = 'passwords.throttled'): never
+    public static function throwThrottleValidationError(array $keys, int $seconds, string $trans = 'validation.throttled'): never
     {
         throw ValidationException::withMessages(
             \array_map(static fn (): array => [

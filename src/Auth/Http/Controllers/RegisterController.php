@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
 use Closure;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -12,6 +14,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
 use Tomchochola\Laratchi\Auth\Actions\LoginAction;
 use Tomchochola\Laratchi\Auth\Http\Requests\RegisterRequest;
 use Tomchochola\Laratchi\Auth\Services\AuthService;
@@ -30,6 +33,11 @@ class RegisterController extends TransactionController
     public static int $decay = 15;
 
     /**
+     * Login user after register.
+     */
+    public static bool $loginAfterRegister = true;
+
+    /**
      * Handle the incoming request.
      */
     public function __invoke(RegisterRequest $request): SymfonyResponse
@@ -45,6 +53,12 @@ class RegisterController extends TransactionController
         $user = $this->createUser($request);
 
         $this->fireRegisteredEvent($request, $user);
+
+        if ($this->loginAfterRegister() === false) {
+            return resolveResponseFactory()->noContent();
+        }
+
+        $this->ensureCanLogin($request, $user);
 
         $this->login($request, $user);
 
@@ -184,5 +198,45 @@ class RegisterController extends TransactionController
                 $this->throwDuplicateCredentialsError($request, $credentials);
             }
         }
+    }
+
+    /**
+     * Check if user can login.
+     */
+    protected function ensureCanLogin(RegisterRequest $request, AuthenticatableContract $user): void
+    {
+        $response = inject(CanLoginAction::class)->authorize($user);
+
+        if ($response->denied()) {
+            $this->throwCanNotLoginError($request, $user, $response);
+        }
+    }
+
+    /**
+     * Throw can not login error.
+     */
+    protected function throwCanNotLoginError(RegisterRequest $request, AuthenticatableContract $user, Response $response): never
+    {
+        $message = $response->message();
+
+        if ($message === null || \trim($message) === '') {
+            $message = mustTransString('auth.blocked');
+        }
+
+        if ($response->code() === null) {
+            throw ValidationException::withMessages(\array_map(static fn (): array => [$message], $request->credentials()))->status($response->status() ?? 422);
+        }
+
+        throw (new AuthorizationException($message, $response->code()))
+            ->setResponse($response)
+            ->withStatus($response->status());
+    }
+
+    /**
+     * If should login after register.
+     */
+    protected function loginAfterRegister(): bool
+    {
+        return static::$loginAfterRegister;
     }
 }

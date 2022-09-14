@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
 use Closure;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
@@ -226,9 +227,15 @@ class LoginController extends TransactionController
         $message = $response->message();
 
         if ($message === null || \trim($message) === '') {
-            $message = mustTransString('auth.failed');
+            $message = mustTransString('auth.blocked');
         }
 
-        throw ValidationException::withMessages(\array_map(static fn (): array => [$message], $request->credentials()));
+        if ($response->code() === null) {
+            throw ValidationException::withMessages(\array_map(static fn (): array => [$message], $request->credentials()))->status($response->status() ?? 422);
+        }
+
+        throw (new AuthorizationException($message, $response->code()))
+            ->setResponse($response)
+            ->withStatus($response->status());
     }
 }

@@ -43,6 +43,6 @@ class RecaptchaRule implements RuleContract
      */
     public function message(): string|array
     {
-        return $this->message;
+        return mustTransString($this->message);
     }
 }
