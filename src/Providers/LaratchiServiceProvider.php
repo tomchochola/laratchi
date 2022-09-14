@@ -16,7 +16,14 @@ class LaratchiServiceProvider extends ServiceProvider
     {
         parent::register();
 
-        // Unguard models and prevent lazy loading
+        $this->modelRestrictions();
+    }
+
+    /**
+     * Unguard models and prevent lazy loading.
+     */
+    protected function modelRestrictions(): void
+    {
         VendorLaratchiServiceProvider::modelRestrictions();
     }
 }
