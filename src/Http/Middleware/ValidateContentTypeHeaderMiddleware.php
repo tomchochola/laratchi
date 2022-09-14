@@ -29,10 +29,6 @@ class ValidateContentTypeHeaderMiddleware
             return $next($request);
         }
 
-        if (blank($request->getContent()) && $request->request->count() === 0 && $request->query->count() === 0 && $request->files->count() === 0) {
-            return $next($request);
-        }
-
         $contentType = $request->getContentType();
 
         if (! \in_array($contentType, $contentTypes, true)) {
