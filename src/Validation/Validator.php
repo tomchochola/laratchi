@@ -350,7 +350,7 @@ class Validator extends IlluminateValidator
         }
 
         if (static::$usePlaceholderAttributes) {
-            return '{{ attribute }}';
+            return "{{ {$name} }}";
         }
 
         foreach ([$name, Str::afterLast($name, '.')] as $look) {
