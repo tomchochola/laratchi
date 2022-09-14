@@ -48,7 +48,6 @@ class Validity implements ArrayableContract
     public const UNSIGNED_BIG_INT_MAX = \PHP_INT_MAX;
     public const UNSIGNED_BIG_INT_MIN = 0;
 
-    public const STRING_MAX = 255;
     public const TINY_TEXT_MAX = 256;
     public const TEXT_MAX = 65535;
     public const MEDIUM_TEXT_MAX = 16777215;
@@ -80,13 +79,6 @@ class Validity implements ArrayableContract
     public bool $filled = false;
 
     /**
-     * Blocked rules.
-     *
-     * @var array<int, string>
-     */
-    public array $blocked = [];
-
-    /**
      * Rules.
      *
      * @var array<int, mixed>
@@ -111,14 +103,14 @@ class Validity implements ArrayableContract
     public function addRule(mixed $rule, ?array $arguments = null): static
     {
         if (\is_string($rule)) {
-            \assert(! \in_array($rule, $this->blocked, true), 'rule is blocked by other rules');
-
             if ($arguments !== null && \count($arguments) > 0) {
                 $rule = $rule.(\str_contains($rule, ':') ? ',' : ':').$this->formatArguments($arguments);
             }
         }
 
-        $this->rules[] = $rule;
+        if (! \in_array($rule, $this->rules, true)) {
+            $this->rules[] = $rule;
+        }
 
         return $this;
     }
@@ -240,38 +232,17 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add array rule.
-     *
-     * @param ?array<int, string> $keys
-     *
-     * @return $this
-     */
-    public function array(?array $keys = null): static
-    {
-        return $this->addRule('array', $keys);
-    }
-
-    /**
      * Add collection rule.
      *
      * @return $this
      */
-    public function collection(int $minItems, ?int $maxItems = null): static
+    public function collection(int $minItems, int $maxItems): static
     {
         \assert($minItems >= 0);
+        \assert($maxItems > 0);
+        \assert($maxItems >= $minItems);
 
-        if ($minItems === 0) {
-            \assert($this->nullable === true, 'array must be nullable, multipart/form-data doest not have empty array');
-            \assert($this->filled === false, 'array must be nullable and not filled, multipart/form-data doest not have empty array');
-
-            $this->blocked[] = 'filled';
-        }
-
-        if ($maxItems !== null) {
-            $this->max($maxItems);
-        }
-
-        return $this->addRule('array')->min($minItems);
+        return $this->addRule('array')->min($minItems)->max($maxItems);
     }
 
     /**
@@ -321,50 +292,43 @@ class Validity implements ArrayableContract
     /**
      * Add between rule.
      *
-     * @param int|float|numeric-string $min
-     * @param int|float|numeric-string $max
-     *
      * @return $this
      */
-    public function between(int|float|string $min, int|float|string $max): static
+    public function between(int|float $min, int|float $max): static
     {
+        \assert($max >= $min);
+
         return $this->addRule('between', [$min, $max]);
     }
 
     /**
      * Add boolean rule.
      *
-     * @param array<int, mixed> $in
-     *
      * @return $this
      */
-    public function boolean(array $in = ['0', '1']): static
+    public function boolean(): static
     {
-        return $this->addRule('integer')->in($in);
+        return $this->addRule('integer')->in(['0', '1']);
     }
 
     /**
      * Add true rule.
      *
-     * @param array<int, mixed> $options
-     *
      * @return $this
      */
-    public function true(array $options = ['1']): static
+    public function true(): static
     {
-        return $this->in($options);
+        return $this->boolean()->in(['1']);
     }
 
     /**
      * Add false rule.
      *
-     * @param array<int, mixed> $options
-     *
      * @return $this
      */
-    public function false(array $options = ['0']): static
+    public function false(): static
     {
-        return $this->in($options);
+        return $this->boolean()->in(['0']);
     }
 
     /**
@@ -476,6 +440,8 @@ class Validity implements ArrayableContract
      */
     public function digitsBetween(int $minLength, int $maxLength): static
     {
+        \assert($maxLength >= $minLength);
+
         return $this->addRule('digits_between', [$minLength, $maxLength]);
     }
 
@@ -670,11 +636,13 @@ class Validity implements ArrayableContract
     /**
      * Add file rule.
      *
+     * @param array<int, string> $mimeTypes
+     *
      * @return $this
      */
-    public function file(): static
+    public function file(array $mimeTypes, int $max): static
     {
-        return $this->addRule('file');
+        return $this->addRule('mimetypes', $mimeTypes)->max($max);
     }
 
     /**
@@ -684,9 +652,6 @@ class Validity implements ArrayableContract
      */
     public function filled(): static
     {
-        \assert($this->nullable === true, 'rule must be nullable');
-        \assert(! \in_array('filled', $this->blocked, true), 'rule is blocked by other rules');
-
         $this->filled = true;
 
         return $this;
@@ -715,11 +680,25 @@ class Validity implements ArrayableContract
     /**
      * Add image rule.
      *
+     * @param array<int, string> $mimeTypes
+     *
      * @return $this
      */
-    public function image(): static
+    public function image(array $mimeTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/svg', 'image/webp', 'image/bmp', 'image/x-bmp', 'image/x-ms-bmp', 'image/heif', 'image/heic'], int $max = 10240): static
     {
-        return $this->addRule('image');
+        return $this->file($mimeTypes, $max);
+    }
+
+    /**
+     * Add video rule.
+     *
+     * @param array<int, string> $mimeTypes
+     *
+     * @return $this
+     */
+    public function video(array $mimeTypes = ['video/mp4', 'video/mpeg', 'video/ogg', 'video/quicktime', 'video/webm'], int $max = 10240): static
+    {
+        return $this->file($mimeTypes, $max);
     }
 
     /**
@@ -761,9 +740,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function integer(): static
+    public function integer(int $min, int $max): static
     {
-        return $this->addRule('integer');
+        \assert($max >= $min);
+
+        return $this->addRule('integer')->min($min)->max($max);
     }
 
     /**
@@ -839,47 +820,19 @@ class Validity implements ArrayableContract
     /**
      * Add max rule.
      *
-     * @param int|float|numeric-string $max
-     *
      * @return $this
      */
-    public function max(int|float|string $max): static
+    public function max(int|float $max): static
     {
         return $this->addRule('max', [$max]);
     }
 
     /**
-     * Add mimetypes rule.
-     *
-     * @param array<int, string> $mimeTypes
-     *
-     * @return $this
-     */
-    public function mimetypes(array $mimeTypes): static
-    {
-        return $this->addRule('mimetypes', $mimeTypes);
-    }
-
-    /**
-     * Add mimes rule.
-     *
-     * @param array<int, string> $extensions
-     *
-     * @return $this
-     */
-    public function mimes(array $extensions): static
-    {
-        return $this->addRule('mimes', $extensions);
-    }
-
-    /**
      * Add min rule.
      *
-     * @param int|float|numeric-string $min
-     *
      * @return $this
      */
-    public function min(int|float|string $min): static
+    public function min(int|float $min): static
     {
         return $this->addRule('min', [$min]);
     }
@@ -887,11 +840,9 @@ class Validity implements ArrayableContract
     /**
      * Add multiple_of rule.
      *
-     * @param int|float|numeric-string $multipleOf
-     *
      * @return $this
      */
-    public function multipleOf(int|float|string $multipleOf): static
+    public function multipleOf(int|float $multipleOf): static
     {
         return $this->addRule('multiple_of', [$multipleOf]);
     }
@@ -937,8 +888,6 @@ class Validity implements ArrayableContract
      */
     public function nullable(): static
     {
-        \assert($this->required === false, 'rule must not required');
-
         $this->nullable = true;
 
         return $this;
@@ -965,11 +914,11 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add default password rule.
+     * Add password rule.
      *
      * @return $this
      */
-    public function defaultPassword(): static
+    public function password(): static
     {
         return $this->addRule(Password::default());
     }
@@ -1047,8 +996,6 @@ class Validity implements ArrayableContract
      */
     public function required(): static
     {
-        \assert($this->nullable === false, 'rule must not be nullable');
-
         $this->required = true;
 
         return $this;
@@ -1151,11 +1098,9 @@ class Validity implements ArrayableContract
     /**
      * Add size rule.
      *
-     * @param int|float|numeric-string $size
-     *
      * @return $this
      */
-    public function size(int|float|string $size): static
+    public function size(int|float $size): static
     {
         return $this->addRule('size', [$size]);
     }
@@ -1177,9 +1122,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function string(): static
+    public function string(int $max = 255): static
     {
-        return $this->addRule('string');
+        \assert($max > 0);
+
+        return $this->addRule('string')->max($max);
     }
 
     /**
@@ -1373,6 +1320,8 @@ class Validity implements ArrayableContract
      */
     public function strlen(int $length): static
     {
+        \assert($length > 0);
+
         return $this->addRule('strlen', [$length]);
     }
 
@@ -1383,6 +1332,8 @@ class Validity implements ArrayableContract
      */
     public function strlenMax(int $max): static
     {
+        \assert($max > 0);
+
         return $this->addRule('strlen_max', [$max]);
     }
 
@@ -1391,9 +1342,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function strlenMin(int $max): static
+    public function strlenMin(int $min): static
     {
-        return $this->addRule('strlen_min', [$max]);
+        \assert($min > 0);
+
+        return $this->addRule('strlen_min', [$min]);
     }
 
     /**
@@ -1415,21 +1368,7 @@ class Validity implements ArrayableContract
      */
     public function char(int $length): static
     {
-        return $this->string()->strlen($length);
-    }
-
-    /**
-     * Add default string rules.
-     *
-     * @return $this
-     */
-    public function defaultString(?int $max = null): static
-    {
-        $max ??= static::STRING_MAX;
-
-        \assert($max <= static::STRING_MAX);
-
-        return $this->string()->max($max);
+        return $this->addRule('string')->strlen($length);
     }
 
     /**
@@ -1443,7 +1382,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::TINY_TEXT_MAX);
 
-        return $this->string()->strlenMax($max);
+        return $this->addRule('string')->strlenMax($max);
     }
 
     /**
@@ -1457,7 +1396,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::TEXT_MAX);
 
-        return $this->string()->strlenMax($max);
+        return $this->addRule('string')->strlenMax($max);
     }
 
     /**
@@ -1471,7 +1410,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::MEDIUM_TEXT_MAX);
 
-        return $this->string()->strlenMax($max);
+        return $this->addRule('string')->strlenMax($max);
     }
 
     /**
@@ -1485,7 +1424,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::LONG_TEXT_MAX);
 
-        return $this->string()->strlenMax($max);
+        return $this->addRule('string')->strlenMax($max);
     }
 
     /**
@@ -1503,7 +1442,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::TINY_INT_MAX);
 
-        return $this->integer()->min($min)->max($max);
+        return $this->integer($min, $max);
     }
 
     /**
@@ -1521,7 +1460,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::UNSIGNED_TINY_INT_MAX);
 
-        return $this->integer()->min($min)->max($max);
+        return $this->integer($min, $max);
     }
 
     /**
@@ -1539,7 +1478,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::SMALL_INT_MAX);
 
-        return $this->integer()->min($min)->max($max);
+        return $this->integer($min, $max);
     }
 
     /**
@@ -1557,7 +1496,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::UNSIGNED_SMALL_INT_MAX);
 
-        return $this->integer()->min($min)->max($max);
+        return $this->integer($min, $max);
     }
 
     /**
@@ -1575,7 +1514,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::MEDIUM_INT_MAX);
 
-        return $this->integer()->min($min)->max($max);
+        return $this->integer($min, $max);
     }
 
     /**
@@ -1593,7 +1532,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::UNSIGNED_MEDIUM_INT_MAX);
 
-        return $this->integer()->min($min)->max($max);
+        return $this->integer($min, $max);
     }
 
     /**
@@ -1611,7 +1550,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::INT_MAX);
 
-        return $this->integer()->min($min)->max($max);
+        return $this->integer($min, $max);
     }
 
     /**
@@ -1629,7 +1568,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::UNSIGNED_INT_MAX);
 
-        return $this->integer()->min($min)->max($max);
+        return $this->integer($min, $max);
     }
 
     /**
@@ -1647,17 +1586,15 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::BIG_INT_MAX);
 
-        return $this->integer()->min($min)->max($max);
+        return $this->integer($min, $max);
     }
 
     /**
      * Add unsigned big int rules.
      *
-     * @param int|numeric-string|null $max
-     *
      * @return $this
      */
-    public function unsignedBigInt(?int $min = null, int|string $max = null): static
+    public function unsignedBigInt(?int $min = null, ?int $max = null): static
     {
         $min ??= static::UNSIGNED_BIG_INT_MIN;
 
@@ -1667,7 +1604,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::UNSIGNED_BIG_INT_MAX);
 
-        return $this->integer()->min($min)->max($max);
+        return $this->integer($min, $max);
     }
 
     /**

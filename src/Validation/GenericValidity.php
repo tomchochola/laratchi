@@ -11,7 +11,7 @@ class GenericValidity
      */
     public function signature(): Validity
     {
-        return Validity::make()->defaultString();
+        return Validity::make()->string();
     }
 
     /**
@@ -35,7 +35,7 @@ class GenericValidity
      */
     public function slug(): Validity
     {
-        return Validity::make()->defaultString();
+        return Validity::make()->string();
     }
 
     /**
@@ -43,7 +43,7 @@ class GenericValidity
      */
     public function method(): Validity
     {
-        return Validity::make()->string()->in(['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'PATCH', 'PURGE', 'TRACE']);
+        return Validity::make()->string(7)->in(['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'PATCH', 'PURGE', 'TRACE']);
     }
 
     /**
@@ -51,7 +51,7 @@ class GenericValidity
      */
     public function locale(): Validity
     {
-        return Validity::make()->string()->in(mustConfigArray('app.locales'));
+        return Validity::make()->char(2)->in(mustConfigArray('app.locales'));
     }
 
     /**
@@ -67,6 +67,6 @@ class GenericValidity
      */
     public function filter(): Validity
     {
-        return $this->generic()->object();
+        return Validity::make()->object();
     }
 }

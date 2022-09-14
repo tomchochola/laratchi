@@ -30,7 +30,7 @@ class AuthValidity
      */
     public function name(string $guardName): Validity
     {
-        return Validity::make()->defaultString();
+        return Validity::make()->string();
     }
 
     /**
@@ -38,7 +38,7 @@ class AuthValidity
      */
     public function email(string $guardName): Validity
     {
-        return Validity::make()->defaultString()->email();
+        return Validity::make()->string()->email();
     }
 
     /**
@@ -46,7 +46,7 @@ class AuthValidity
      */
     public function password(string $guardName): Validity
     {
-        return Validity::make()->string()->max(1024)->defaultPassword();
+        return Validity::make()->string(1024)->password();
     }
 
     /**
@@ -54,7 +54,7 @@ class AuthValidity
      */
     public function passwordResetToken(string $guardName): Validity
     {
-        return Validity::make()->defaultString();
+        return Validity::make()->string();
     }
 
     /**
