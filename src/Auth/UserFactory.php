@@ -42,10 +42,14 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(static function (): array {
-            return [
-                'email_verified_at' => null,
-            ];
-        });
+        return $this->set('email_verified_at', null);
+    }
+
+    /**
+     * Create model with valid password filled.
+     */
+    public function withValidPassword(): static
+    {
+        return $this->set('password', resolveHasher()->make(static::VALID_PASSWORD));
     }
 }
