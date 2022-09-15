@@ -1676,8 +1676,6 @@ class Validity implements ArrayableContract
      */
     public function toArray(): array
     {
-        \assert($this->nullable || $this->required, 'field must be validated against nullable/required');
-
         $rules = [];
 
         if ($this->bail) {
@@ -1700,7 +1698,11 @@ class Validity implements ArrayableContract
             $rules[] = 'required';
         }
 
-        return \array_merge($rules, $this->rules);
+        $rules = \array_merge($rules, $this->rules);
+
+        \assert(\in_array('nullable', $rules, true) || \in_array('required', $rules, true), 'field must be validated against nullable/required');
+
+        return $rules;
     }
 
     /**
