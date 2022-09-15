@@ -138,6 +138,22 @@ abstract class TestCase extends BaseTestCase
 
         $databaseToken = $guard->createToken($user);
 
+        return $this->withHeader('Authorization', "Bearer {$databaseToken->bearer}");
+    }
+
+    /**
+     *  Login user with database token set.
+     *
+     * @return $this
+     */
+    protected function beWithDatabaseToken(DatabaseTokenableInterface $user, string $guardName): static
+    {
+        $guard = resolveAuthManager()->guard($guardName);
+
+        \assert($guard instanceof DatabaseTokenGuard);
+
+        $databaseToken = $guard->createToken($user);
+
         $user->setDatabaseToken($databaseToken);
 
         $guard->databaseToken = $databaseToken;
