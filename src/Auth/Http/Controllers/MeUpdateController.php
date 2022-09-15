@@ -98,7 +98,7 @@ class MeUpdateController extends TransactionController
      *
      * @param array<string, mixed> $credentials
      */
-    protected function throwDuplicateCredentialsError(MeUpdateRequest $request, array $credentials): void
+    protected function throwDuplicateCredentialsError(MeUpdateRequest $request, array $credentials): never
     {
         $validator = resolveValidatorFactory()->make([], []);
 

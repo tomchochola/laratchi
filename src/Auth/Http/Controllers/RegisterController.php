@@ -126,7 +126,7 @@ class RegisterController extends TransactionController
      *
      * @param array<string, mixed> $credentials
      */
-    protected function throwDuplicateCredentialsError(RegisterRequest $request, array $credentials): void
+    protected function throwDuplicateCredentialsError(RegisterRequest $request, array $credentials): never
     {
         $validator = resolveValidatorFactory()->make([], []);
 
