@@ -7,7 +7,6 @@ namespace Tomchochola\Laratchi\Validation;
 use Illuminate\Contracts\Translation\Translator as TranslatorContract;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Validator as IlluminateValidator;
-use Tomchochola\Laratchi\Http\Middleware\UsePlainErrorsMiddleware;
 
 class Validator extends IlluminateValidator
 {
@@ -15,6 +14,11 @@ class Validator extends IlluminateValidator
      * Use {{ attribute }} instead of real translations.
      */
     public static bool $usePlaceholderAttributes = true;
+
+    /**
+     * Plain errors are enabled.
+     */
+    public static bool $usePlainErrors = true;
 
     /**
      * @inheritDoc
@@ -345,7 +349,7 @@ class Validator extends IlluminateValidator
      */
     protected function getAttributeFromTranslations(mixed $name): string
     {
-        if (UsePlainErrorsMiddleware::$on) {
+        if (static::$usePlainErrors && resolveRequest()->getRequestFormat() === 'json') {
             return $name;
         }
 

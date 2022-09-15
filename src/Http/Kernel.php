@@ -27,7 +27,6 @@ use Tomchochola\Laratchi\Http\Middleware\MustBeGuestMiddleware;
 use Tomchochola\Laratchi\Http\Middleware\SetPreferredLanguageMiddleware;
 use Tomchochola\Laratchi\Http\Middleware\SetRequestFormatMiddleware;
 use Tomchochola\Laratchi\Http\Middleware\TrimStrings;
-use Tomchochola\Laratchi\Http\Middleware\UsePlainErrorsMiddleware;
 use Tomchochola\Laratchi\Http\Middleware\ValidateAcceptHeaderMiddleware;
 use Tomchochola\Laratchi\Http\Middleware\ValidateContentTypeHeaderMiddleware;
 
@@ -62,7 +61,6 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            UsePlainErrorsMiddleware::class,
             SetRequestFormatMiddleware::class.':json',
             ValidateAcceptHeaderMiddleware::class.':application/json',
             ValidateContentTypeHeaderMiddleware::class.':form',

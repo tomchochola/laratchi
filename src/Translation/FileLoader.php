@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Translation;
 
-use Tomchochola\Laratchi\Http\Middleware\UsePlainErrorsMiddleware;
+use Tomchochola\Laratchi\Validation\Validator;
 
 class FileLoader extends \Illuminate\Translation\FileLoader
 {
@@ -15,7 +15,7 @@ class FileLoader extends \Illuminate\Translation\FileLoader
      */
     public function load(mixed $locale, mixed $group, mixed $namespace = null): array
     {
-        if (UsePlainErrorsMiddleware::$on) {
+        if (Validator::$usePlainErrors && resolveRequest()->getRequestFormat() === 'json') {
             if ($group === 'validation' && $namespace === 'validation') {
                 $group = 'validation_api';
             } elseif ($group === 'messages' && $namespace === 'validationRules') {
