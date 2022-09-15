@@ -13,6 +13,6 @@ class {{ class }}
      */
     public function attribute(): Validity
     {
-        return Validity::make()->defaultString();
+        return Validity::make()->string();
     }
 }
