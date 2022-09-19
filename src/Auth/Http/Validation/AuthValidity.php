@@ -18,14 +18,6 @@ class AuthValidity
     }
 
     /**
-     * Terms accepted validation rules.
-     */
-    public function termsAccepted(string $guardName): Validity
-    {
-        return Validity::make()->boolean();
-    }
-
-    /**
      * Name validation rules.
      */
     public function name(string $guardName): Validity

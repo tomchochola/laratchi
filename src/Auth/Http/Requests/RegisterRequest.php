@@ -35,7 +35,6 @@ class RegisterRequest extends SecureFormRequest
             'email' => $authValidity->email($guardName)->required(),
             'password' => $authValidity->password($guardName)->confirmed()->required(),
             'name' => $authValidity->name($guardName)->required(),
-            'terms_accepted' => $authValidity->termsAccepted($guardName)->required()->accepted(),
             'locale' => $authValidity->locale($guardName)->required(),
         ];
     }
@@ -75,6 +74,6 @@ class RegisterRequest extends SecureFormRequest
      */
     public function data(): array
     {
-        return $this->validatedInput()->except(['password', 'password_confirmation', 'terms_accepted']);
+        return $this->validatedInput()->except(['password', 'password_confirmation']);
     }
 }
