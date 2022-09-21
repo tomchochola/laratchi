@@ -23,7 +23,15 @@ abstract class JsonApiResource extends JsonResource
     public static function withIncluded(iterable $included, array &$map, Request $request): void
     {
         foreach ($included as $resource) {
-            $map[$resource->getKey().':'.$resource->getType()] = Arr::except($resource->getArray($request), ['meta']);
+            $data = $resource->getArray($request);
+
+            unset($data['meta']);
+
+            if (\array_key_exists('attributes', $data) === false && \array_key_exists('relationships', $data) === false) {
+                continue;
+            }
+
+            $map[$resource->getKey().':'.$resource->getType()] = \array_merge($map[$resource->getKey().':'.$resource->getType()] ?? [], $data);
 
             static::withIncluded($resource->getIncluded(), $map, $request);
         }
