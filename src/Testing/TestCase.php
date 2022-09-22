@@ -310,7 +310,7 @@ abstract class TestCase extends BaseTestCase
      * @param array<mixed> $dataStructure
      * @param array<mixed> $includedStructure
      */
-    protected function assertJsonApiResponse(TestResponse $response, array $dataStructure = [], int $includedCount = -1, array $includedStructure = []): void
+    protected function assertJsonApiResponse(TestResponse $response, array $dataStructure = [], int $includedCount = 0, array $includedStructure = []): void
     {
         if (\count($dataStructure) === 0) {
             $dataStructure = $this->jsonStructureResource();
@@ -343,7 +343,7 @@ abstract class TestCase extends BaseTestCase
      * @param array<mixed> $dataStructure
      * @param array<mixed> $includedStructure
      */
-    protected function assertJsonApiCollectionResponse(TestResponse $response, array $dataStructure = [], int $dataCount = 1, int $includedCount = -1, array $includedStructure = []): void
+    protected function assertJsonApiCollectionResponse(TestResponse $response, array $dataStructure = [], int $dataCount = 1, int $includedCount = 0, array $includedStructure = []): void
     {
         if (\count($dataStructure) === 0) {
             $dataStructure = $this->jsonStructureResource();
