@@ -6,8 +6,8 @@ namespace Tomchochola\Laratchi\Auth\Notifications;
 
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
 use Tomchochola\Laratchi\Auth\Http\Controllers\EmailVerificationVerifyController;
 use Tomchochola\Laratchi\Support\SignedUrlSupport;
@@ -29,8 +29,8 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
      */
     protected function verificationUrl(mixed $notifiable): string
     {
-        \assert($notifiable instanceof MustVerifyEmail);
-        \assert($notifiable instanceof Authenticatable);
+        \assert($notifiable instanceof MustVerifyEmailContract);
+        \assert($notifiable instanceof AuthenticatableContract);
 
         $parameters = [
             'id' => $notifiable->getAuthIdentifier(),

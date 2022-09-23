@@ -6,7 +6,7 @@ namespace Tomchochola\Laratchi\Auth\Notifications;
 
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
 
 class ResetPasswordNotification extends ResetPassword implements ShouldQueueContract
@@ -28,7 +28,7 @@ class ResetPasswordNotification extends ResetPassword implements ShouldQueueCont
      */
     protected function resetUrl(mixed $notifiable): string
     {
-        \assert($notifiable instanceof CanResetPassword);
+        \assert($notifiable instanceof CanResetPasswordContract);
 
         $query = \http_build_query([
             'token' => $this->token,

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Translation;
 
+use Illuminate\Translation\FileLoader as IlluminateFileLoader;
 use Tomchochola\Laratchi\Validation\Validator;
 
-class FileLoader extends \Illuminate\Translation\FileLoader
+class FileLoader extends IlluminateFileLoader
 {
     /**
      * @inheritDoc
