@@ -17,6 +17,11 @@ class SecureValidator extends Validator
     public static array $excluded = [];
 
     /**
+     * Bail on every attribute.
+     */
+    public static bool $bail = true;
+
+    /**
      * @inheritDoc
      */
     public function passes(): bool
@@ -47,5 +52,17 @@ class SecureValidator extends Validator
         }
 
         return $this->messages->isEmpty() && $passes;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function shouldStopValidating($attribute): bool
+    {
+        if (static::$bail) {
+            return true;
+        }
+
+        return parent::shouldStopValidating($attribute);
     }
 }
