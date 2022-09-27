@@ -33,9 +33,9 @@ class MeUpdateRequest extends NonEmptySecureRequest
         $guardName = $this->guardName();
 
         return [
-            'email' => $authValidity->email($guardName)->sometimes()->required(),
-            'name' => $authValidity->name($guardName)->sometimes()->required(),
-            'locale' => $authValidity->locale($guardName)->sometimes()->required(),
+            'email' => $authValidity->email($guardName)->nullable()->filled(),
+            'name' => $authValidity->name($guardName)->nullable()->filled(),
+            'locale' => $authValidity->locale($guardName)->nullable()->filled(),
         ];
     }
 
