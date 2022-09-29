@@ -963,7 +963,6 @@ if (! \function_exists('isGuest')) {
         }
 
         return true;
-
     }
 }
 
