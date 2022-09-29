@@ -88,17 +88,15 @@ class DatabaseToken extends Model
      */
     public function user(): ?DatabaseTokenableInterface
     {
-        return once(function (): ?DatabaseTokenableInterface {
-            $user = resolveAuthManager()->createUserProvider($this->getProvider())?->retrieveById($this->getAuthId());
+        $user = resolveAuthManager()->createUserProvider($this->getProvider())?->retrieveById($this->getAuthId());
 
-            if ($user === null) {
-                return null;
-            }
+        if ($user === null) {
+            return null;
+        }
 
-            \assert($user instanceof DatabaseTokenableInterface);
+        \assert($user instanceof DatabaseTokenableInterface);
 
-            return $user;
-        });
+        return $user;
     }
 
     /**
