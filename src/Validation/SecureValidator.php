@@ -60,7 +60,7 @@ class SecureValidator extends Validator
     protected function shouldStopValidating($attribute): bool
     {
         if (static::$bail) {
-            return true;
+            return $this->messages->has($this->replacePlaceholderInString($attribute));
         }
 
         return parent::shouldStopValidating($attribute);
