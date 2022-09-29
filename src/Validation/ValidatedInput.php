@@ -15,7 +15,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * What status is thrown on invalid cast.
      */
-    public static int $castFailedStatus = 0;
+    public static int $castFailedStatus = 400;
 
     /**
      * String resolver.
@@ -248,12 +248,14 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     protected function throw(string $message): never
     {
+        $logicException = new LogicException($message);
+
         if (static::$castFailedStatus === 0) {
-            throw new LogicException($message);
+            throw $logicException;
         }
 
         \assert(static::$castFailedStatus >= 400 && static::$castFailedStatus <= 599);
 
-        throw new HttpException(static::$castFailedStatus);
+        throw new HttpException(static::$castFailedStatus, previous: $logicException);
     }
 }
