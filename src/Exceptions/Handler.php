@@ -307,7 +307,6 @@ class Handler extends IlluminateHandler
             \array_replace($this->convertHttpExceptionToArray($e), $data),
             $e->getStatusCode(),
             $e->getHeaders(),
-            \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES,
         );
     }
 
