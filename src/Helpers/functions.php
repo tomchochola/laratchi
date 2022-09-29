@@ -936,13 +936,15 @@ if (! \function_exists('mustBeGuest')) {
      */
     function mustBeGuest(array $guards = [null]): void
     {
-        $authManager = resolveAuthManager();
+        once(static function () use ($guards): void {
+            $authManager = resolveAuthManager();
 
-        foreach ($guards as $guard) {
-            if (! $authManager->guard($guard)->guest()) {
-                throw new Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException();
+            foreach ($guards as $guard) {
+                if (! $authManager->guard($guard)->guest()) {
+                    throw new Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException();
+                }
             }
-        }
+        });
     }
 }
 
@@ -954,15 +956,17 @@ if (! \function_exists('isGuest')) {
      */
     function isGuest(array $guards = [null]): bool
     {
-        $authManager = resolveAuthManager();
+        return once(static function () use ($guards): bool {
+            $authManager = resolveAuthManager();
 
-        foreach ($guards as $guard) {
-            if (! $authManager->guard($guard)->guest()) {
-                return false;
+            foreach ($guards as $guard) {
+                if (! $authManager->guard($guard)->guest()) {
+                    return false;
+                }
             }
-        }
 
-        return true;
+            return true;
+        });
     }
 }
 
@@ -979,19 +983,21 @@ if (! \function_exists('resolveUser')) {
      */
     function resolveUser(array $guards = [null], string $template = Illuminate\Contracts\Auth\Authenticatable::class): ?Illuminate\Contracts\Auth\Authenticatable
     {
-        $authManager = resolveAuthManager();
+        return once(static function () use ($guards, $template): ?Illuminate\Contracts\Auth\Authenticatable {
+            $authManager = resolveAuthManager();
 
-        foreach ($guards as $guard) {
-            $user = $authManager->guard($guard)->user();
+            foreach ($guards as $guard) {
+                $user = $authManager->guard($guard)->user();
 
-            if ($user !== null) {
-                \assert($user instanceof $template);
+                if ($user !== null) {
+                    \assert($user instanceof $template);
 
-                return $user;
+                    return $user;
+                }
             }
-        }
 
-        return null;
+            return null;
+        });
     }
 }
 
@@ -1008,19 +1014,21 @@ if (! \function_exists('mustResolveUser')) {
      */
     function mustResolveUser(array $guards = [null], string $template = Illuminate\Contracts\Auth\Authenticatable::class): Illuminate\Contracts\Auth\Authenticatable
     {
-        $authManager = resolveAuthManager();
+        return once(static function () use ($guards, $template): Illuminate\Contracts\Auth\Authenticatable {
+            $authManager = resolveAuthManager();
 
-        foreach ($guards as $guard) {
-            $user = $authManager->guard($guard)->user();
+            foreach ($guards as $guard) {
+                $user = $authManager->guard($guard)->user();
 
-            if ($user !== null) {
-                \assert($user instanceof $template);
+                if ($user !== null) {
+                    \assert($user instanceof $template);
 
-                return $user;
+                    return $user;
+                }
             }
-        }
 
-        throw new Illuminate\Auth\AuthenticationException();
+            throw new Illuminate\Auth\AuthenticationException();
+        });
     }
 }
 
