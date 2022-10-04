@@ -12,6 +12,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
@@ -157,6 +158,8 @@ class RegisterController extends TransactionController
         $user->forceFill($request->data());
         $user->forceFill(['password' => resolveHasher()->make($password)]);
 
+        $this->makeChanges($request, $user);
+
         $ok = $user->save();
 
         \assert($ok);
@@ -238,5 +241,12 @@ class RegisterController extends TransactionController
     protected function loginAfterRegister(): bool
     {
         return static::$loginAfterRegister;
+    }
+
+    /**
+     * Make changes.
+     */
+    protected function makeChanges(RegisterRequest $request, Model&AuthenticatableContract $user): void
+    {
     }
 }

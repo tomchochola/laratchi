@@ -124,12 +124,14 @@ class MeUpdateController extends TransactionController
     {
         $credentialsArray = $request->credentials();
 
+        $me = $request->retrieveUser();
+
         foreach ($credentialsArray as $index => $credentials) {
             [$hit] = $this->throttle($this->limit($request, "credentials.{$index}"), $this->onThrottle($request, $credentials));
 
             $user = $this->retrieveByCredentials($request, $credentials);
 
-            if ($user !== null) {
+            if ($user !== null && $user->getAuthIdentifier() !== $me->getAuthIdentifier()) {
                 $hit();
 
                 $this->throwDuplicateCredentialsError($request, $credentials);
@@ -148,6 +150,8 @@ class MeUpdateController extends TransactionController
 
         $user->forceFill($request->data());
 
+        $this->makeChanges($request, $user);
+
         if (! $user->isDirty()) {
             return;
         }
@@ -157,5 +161,12 @@ class MeUpdateController extends TransactionController
         \assert($ok);
 
         $user->refresh();
+    }
+
+    /**
+     * Make changes.
+     */
+    protected function makeChanges(MeUpdateRequest $request, Model&AuthenticatableContract $user): void
+    {
     }
 }
