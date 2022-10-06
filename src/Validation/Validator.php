@@ -353,7 +353,7 @@ class Validator extends IlluminateValidator
             return $name;
         }
 
-        if (static::$usePlaceholderAttributes) {
+        if (static::$usePlaceholderAttributes && resolveRequest()->getRequestFormat() === 'json') {
             return "{{ {$name} }}";
         }
 
