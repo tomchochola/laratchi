@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation\Rules;
 
-use Intervention\Validation\Rules\Postalcode;
-
-class CzPostCodeRule extends Postalcode
+class CzPostCodeRule extends PostCodeRule
 {
     /**
      * Post codes.
@@ -2721,13 +2719,5 @@ class CzPostCodeRule extends Postalcode
         }
 
         return \in_array($value, static::$postCodes, true);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function message(): string
-    {
-        return mustTransString('validation.regex');
     }
 }
