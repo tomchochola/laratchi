@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;
 
 /**
@@ -68,13 +69,19 @@ trait ModelTrait
      * Mandatory find instance by key.
      *
      * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(): never)|null $onError
      */
-    public static function mustFindByKey(int|string $key, ?Closure $closure = null): static
+    public static function mustFindByKey(int|string $key, ?Closure $closure = null, ?Closure $onError = null): static
     {
-        $instance = static::query()->tap($closure ?? static function (): void {
-        })->findOrFail($key);
+        $instance = static::findByKey($key, $closure);
 
-        \assert($instance instanceof static);
+        if ($instance === null) {
+            if ($onError !== null) {
+                $onError();
+            }
+
+            throw (new ModelNotFoundException())->setModel(static::class, $key);
+        }
 
         return $instance;
     }
@@ -102,13 +109,19 @@ trait ModelTrait
      * Mandatory find instance by route key.
      *
      * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(): never)|null $onError
      */
-    public static function mustFindByRouteKey(int|string $key, ?Closure $closure = null): static
+    public static function mustFindByRouteKey(int|string $key, ?Closure $closure = null, ?Closure $onError = null): static
     {
-        $instance = static::query()->tap($closure ?? static function (): void {
-        })->where(static::getRouteKeyColumn(), $key)->firstOrFail();
+        $instance = static::findByRouteKey($key, $closure);
 
-        \assert($instance instanceof static);
+        if ($instance === null) {
+            if ($onError !== null) {
+                $onError();
+            }
+
+            throw (new ModelNotFoundException())->setModel(static::class, $key);
+        }
 
         return $instance;
     }

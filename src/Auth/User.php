@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth;
 
+use Closure;
 use Illuminate\Contracts\Translation\HasLocalePreference as HasLocalePreferenceContract;
 use Illuminate\Foundation\Auth\User as IlluminateUser;
 use Illuminate\Notifications\Notifiable;
@@ -55,10 +56,11 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
      * Resolve user or throw 401.
      *
      * @param array<string|null> $guards
+     * @param (Closure(): never)|null $onError
      */
-    public static function mustResolve(array $guards = [null]): static
+    public static function mustResolve(array $guards = [null], ?Closure $onError = null): static
     {
-        return mustResolveUser($guards, static::class);
+        return mustResolveUser($guards, static::class, $onError);
     }
 
     /**

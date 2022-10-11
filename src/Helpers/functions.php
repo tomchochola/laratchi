@@ -933,13 +933,18 @@ if (! \function_exists('mustBeGuest')) {
      * Throw if authenticated.
      *
      * @param array<string|null> $guards
+     * @param (Closure(): never)|null $onError
      */
-    function mustBeGuest(array $guards = [null]): void
+    function mustBeGuest(array $guards = [null], ?Closure $onError = null): void
     {
         $authManager = resolveAuthManager();
 
         foreach ($guards as $guard) {
             if (! $authManager->guard($guard)->guest()) {
+                if ($onError !== null) {
+                    $onError();
+                }
+
                 throw new Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException();
             }
         }
@@ -1003,10 +1008,11 @@ if (! \function_exists('mustResolveUser')) {
      *
      * @param array<string|null> $guards
      * @param class-string<T> $template
+     * @param (Closure(): never)|null $onError
      *
      * @return T
      */
-    function mustResolveUser(array $guards = [null], string $template = Illuminate\Contracts\Auth\Authenticatable::class): Illuminate\Contracts\Auth\Authenticatable
+    function mustResolveUser(array $guards = [null], string $template = Illuminate\Contracts\Auth\Authenticatable::class, ?Closure $onError = null): Illuminate\Contracts\Auth\Authenticatable
     {
         $authManager = resolveAuthManager();
 
@@ -1018,6 +1024,10 @@ if (! \function_exists('mustResolveUser')) {
 
                 return $user;
             }
+        }
+
+        if ($onError !== null) {
+            $onError();
         }
 
         throw new Illuminate\Auth\AuthenticationException();
@@ -1224,7 +1234,7 @@ if (! \function_exists('validationException')) {
     /**
      * Create validation exception.
      *
-     * @param array<string, array<string>> $errors
+     * @param array<string, array<array<string>>> $errors
      */
     function validationException(array $errors): Illuminate\Validation\ValidationException
     {
@@ -1232,7 +1242,7 @@ if (! \function_exists('validationException')) {
 
         foreach ($errors as $field => $exceptions) {
             foreach ($exceptions as $exception) {
-                $validator->addFailure($field, $exception);
+                $validator->addFailure($field, $exception[0], \array_slice($exception, 1));
             }
         }
 
