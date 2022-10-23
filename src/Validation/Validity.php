@@ -80,13 +80,6 @@ class Validity implements ArrayableContract
     public bool $filled = false;
 
     /**
-     * Blocked rules.
-     *
-     * @var array<int, string>
-     */
-    public array $blocked = [];
-
-    /**
      * Rules.
      *
      * @var array<int, mixed>
@@ -111,8 +104,6 @@ class Validity implements ArrayableContract
     public function addRule(mixed $rule, ?array $arguments = null): static
     {
         if (\is_string($rule)) {
-            \assert(! \in_array($rule, $this->blocked, true), 'rule is blocked by other rules');
-
             if ($arguments !== null && \count($arguments) > 0) {
                 $rule = $rule.(\str_contains($rule, ':') ? ',' : ':').$this->formatArguments($arguments);
             }
@@ -259,13 +250,6 @@ class Validity implements ArrayableContract
     public function collection(int $minItems, ?int $maxItems = null): static
     {
         \assert($minItems >= 0);
-
-        if ($minItems === 0) {
-            \assert($this->nullable === true, 'array must be nullable, multipart/form-data doest not have empty array');
-            \assert($this->filled === false, 'array must be nullable and not filled, multipart/form-data doest not have empty array');
-
-            $this->blocked[] = 'filled';
-        }
 
         if ($maxItems !== null) {
             $this->max($maxItems);
@@ -712,9 +696,6 @@ class Validity implements ArrayableContract
      */
     public function filled(): static
     {
-        \assert($this->nullable === true, 'rule must be nullable');
-        \assert(! \in_array('filled', $this->blocked, true), 'rule is blocked by other rules');
-
         $this->filled = true;
 
         return $this;
@@ -965,8 +946,6 @@ class Validity implements ArrayableContract
      */
     public function nullable(): static
     {
-        \assert($this->required === false, 'rule must not required');
-
         $this->nullable = true;
 
         return $this;
@@ -1075,8 +1054,6 @@ class Validity implements ArrayableContract
      */
     public function required(): static
     {
-        \assert($this->nullable === false, 'rule must not be nullable');
-
         $this->required = true;
 
         return $this;
@@ -1767,8 +1744,6 @@ class Validity implements ArrayableContract
      */
     public function toArray(): array
     {
-        \assert($this->nullable || $this->required, 'field must be validated against nullable/required');
-
         $rules = [];
 
         if ($this->bail) {
