@@ -17,7 +17,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
     use Queueable;
 
     /**
-     * @inheritDoc
+     * Create a new notification.
      */
     public function __construct()
     {

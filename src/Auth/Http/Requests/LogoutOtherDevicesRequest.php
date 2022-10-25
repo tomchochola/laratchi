@@ -32,9 +32,9 @@ class LogoutOtherDevicesRequest extends SecureFormRequest
 
         $guardName = $this->guardName();
 
-        return [
+        return \array_merge(parent::rules(), [
             'password' => $authValidity->password($guardName)->nullable()->filled(),
-        ];
+        ]);
     }
 
     /**

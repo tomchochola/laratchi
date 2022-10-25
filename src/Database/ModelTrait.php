@@ -416,7 +416,7 @@ trait ModelTrait
     /**
      * Get ?array attribute.
      *
-     * @return array<mixed>
+     * @return array<mixed>|null
      */
     public function array(string $key): ?array
     {

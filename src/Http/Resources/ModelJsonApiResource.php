@@ -51,20 +51,4 @@ class ModelJsonApiResource extends JsonApiResource
     {
         return Str::snake($this->resource->getTable());
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAttributes(): array
-    {
-        return [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRelationships(): array
-    {
-        return [];
-    }
 }

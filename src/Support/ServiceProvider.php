@@ -74,14 +74,6 @@ class ServiceProvider extends IlluminateServiceProvider
     }
 
     /**
-     * @inheritDoc
-     */
-    public function register(): void
-    {
-        parent::register();
-    }
-
-    /**
      * Bootstrap services.
      */
     public function boot(): void

@@ -31,9 +31,9 @@ class PasswordForgotRequest extends SecureFormRequest
 
         $guardName = $this->guardName();
 
-        return [
+        return \array_merge(parent::rules(), [
             'email' => $authValidity->email($guardName)->required(),
-        ];
+        ]);
     }
 
     /**

@@ -31,11 +31,11 @@ class PasswordResetRequest extends SecureFormRequest
 
         $guardName = resolveAuthManager()->getDefaultDriver();
 
-        return [
+        return \array_merge(parent::rules(), [
             'token' => $authValidity->passwordResetToken($guardName)->required(),
             'email' => $authValidity->email($guardName)->required(),
             'password' => $authValidity->password($guardName)->required()->confirmed(),
-        ];
+        ]);
     }
 
     /**

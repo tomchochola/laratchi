@@ -136,7 +136,7 @@ abstract class JsonApiResource extends JsonResource
     }
 
     /**
-     * @inheritDoc
+     * Get array.
      *
      * @return array<string, mixed>
      */

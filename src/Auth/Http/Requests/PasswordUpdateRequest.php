@@ -32,10 +32,10 @@ class PasswordUpdateRequest extends SecureFormRequest
 
         $guardName = resolveAuthManager()->getDefaultDriver();
 
-        return [
+        return \array_merge(parent::rules(), [
             'password' => $authValidity->password($guardName)->required(),
             'new_password' => $authValidity->password($guardName)->required()->confirmed(),
-        ];
+        ]);
     }
 
     /**

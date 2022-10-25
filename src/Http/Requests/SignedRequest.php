@@ -28,9 +28,9 @@ class SignedRequest extends SecureFormRequest
     {
         $genericValidity = inject(GenericValidity::class);
 
-        return [
+        return \array_merge(parent::rules(), [
             'signature' => $genericValidity->signature()->nullable(),
             'expires' => $genericValidity->expires()->nullable(),
-        ];
+        ]);
     }
 }

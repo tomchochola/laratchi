@@ -32,11 +32,11 @@ class MeUpdateRequest extends NonEmptySecureRequest
 
         $guardName = $this->guardName();
 
-        return [
+        return \array_merge(parent::rules(), [
             'email' => $authValidity->email($guardName)->nullable()->filled(),
             'name' => $authValidity->name($guardName)->nullable()->filled(),
             'locale' => $authValidity->locale($guardName)->nullable()->filled(),
-        ];
+        ]);
     }
 
     /**

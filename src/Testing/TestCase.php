@@ -68,21 +68,23 @@ abstract class TestCase extends BaseTestCase
      */
     public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null): TestResponse
     {
-        $this->transformParameters($parameters);
+        $params = $this->transformParameters($parameters);
 
-        return parent::call($method, $uri, $parameters, $cookies, $files, $server, $content);
+        return parent::call($method, $uri, $params, $cookies, $files, $server, $content);
     }
 
     /**
      * Transform parameters.
      *
      * @param array<mixed> $parameters
+     *
+     * @return array<mixed>
      */
-    protected function transformParameters(array &$parameters): void
+    protected function transformParameters(array $parameters): array
     {
         foreach ($parameters as $key => $value) {
             if (\is_array($value)) {
-                $this->transformParameters($value);
+                $parameters[$key] = $this->transformParameters($value);
             } elseif ($value instanceof UploadedFile) {
                 continue;
             } elseif (\is_bool($value)) {
@@ -99,6 +101,8 @@ abstract class TestCase extends BaseTestCase
                 $parameters[$key] = (string) $value;
             }
         }
+
+        return $parameters;
     }
 
     /**
