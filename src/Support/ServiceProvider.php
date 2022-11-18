@@ -50,18 +50,18 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public static function registerRoutes(string $login = LoginController::class, string $register = RegisterController::class, string $passwordForgot = PasswordForgotController::class, string $passwordReset = PasswordResetController::class, string $passwordUpdate = PasswordUpdateController::class, string $emailResend = EmailVerificationResendController::class, string $emailVerify = EmailVerificationVerifyController::class, string $logoutCurrent = LogoutCurrentDeviceController::class, string $logoutOther = LogoutOtherDevicesController::class, string $meShow = MeShowController::class, string $meDestroy = MeDestroyController::class, string $meUpdate = MeUpdateController::class): void
     {
-        resolveRouter()->post('login', $login)->name('login');
-        resolveRouter()->post('register', $register)->name('register');
-        resolveRouter()->post('password/forgot', $passwordForgot)->name('password.forgot');
-        resolveRouter()->post('password/reset', $passwordReset)->name('password.reset');
-        resolveRouter()->post('password/update', $passwordUpdate)->name('password.update');
-        resolveRouter()->post('email_verification/resend', $emailResend)->name('email_verification.resend');
-        resolveRouter()->post('email_verification/verify/{id}/{hash}', $emailVerify)->name('email_verification.verify');
-        resolveRouter()->post('logout/current', $logoutCurrent)->name('logout.current');
-        resolveRouter()->post('logout/other', $logoutOther)->name('logout.other');
-        resolveRouter()->get('me', $meShow)->name('me.show');
-        resolveRouter()->post('me/destroy', $meDestroy)->name('me.destroy');
-        resolveRouter()->post('me/update', $meUpdate)->name('me.update');
+        resolveRouter()->post('login', $login);
+        resolveRouter()->post('register', $register);
+        resolveRouter()->post('password/forgot', $passwordForgot);
+        resolveRouter()->post('password/reset', $passwordReset);
+        resolveRouter()->post('password/update', $passwordUpdate);
+        resolveRouter()->post('email_verification/resend', $emailResend);
+        resolveRouter()->post('email_verification/verify/{id}/{hash}', $emailVerify);
+        resolveRouter()->post('logout/current', $logoutCurrent);
+        resolveRouter()->post('logout/other', $logoutOther);
+        resolveRouter()->get('me', $meShow);
+        resolveRouter()->post('me/destroy', $meDestroy);
+        resolveRouter()->post('me/update', $meUpdate);
     }
 
     /**
