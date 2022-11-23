@@ -19,7 +19,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
     /**
      * Create a new notification.
      */
-    public function __construct()
+    public function __construct(protected string $guardName)
     {
         $this->afterCommit();
     }
@@ -35,6 +35,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
         $parameters = [
             'id' => $notifiable->getAuthIdentifier(),
             'hash' => \hash('sha256', $notifiable->getEmailForVerification()),
+            'guard' => $this->guardName,
         ];
 
         $expires = mustConfigInt('auth.verification.expire');

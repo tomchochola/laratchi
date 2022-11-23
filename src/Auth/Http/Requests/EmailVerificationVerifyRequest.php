@@ -7,8 +7,10 @@ namespace Tomchochola\Laratchi\Auth\Http\Requests;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
+use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Tomchochola\Laratchi\Auth\Services\AuthService;
 use Tomchochola\Laratchi\Http\Requests\SignedRequest;
 
 class EmailVerificationVerifyRequest extends SignedRequest
@@ -23,15 +25,6 @@ class EmailVerificationVerifyRequest extends SignedRequest
         }
 
         $user = $this->retrieveUser();
-
-        $routeId = $this->route('id');
-        $authId = $user->getAuthIdentifier();
-
-        \assert(\is_string($routeId) && \is_scalar($authId));
-
-        if (! \hash_equals($routeId, (string) $authId)) {
-            return false;
-        }
 
         $routeHash = $this->route('hash');
         $authEmail = $user->getEmailForVerification();
@@ -50,7 +43,7 @@ class EmailVerificationVerifyRequest extends SignedRequest
      */
     public function guardName(): string
     {
-        return resolveAuthManager()->getDefaultDriver();
+        return $this->allInput()->mustString('guard');
     }
 
     /**
@@ -59,7 +52,11 @@ class EmailVerificationVerifyRequest extends SignedRequest
     public function retrieveUser(): AuthenticatableContract&MustVerifyEmailContract
     {
         return once(function (): AuthenticatableContract&MustVerifyEmailContract {
-            $user = mustResolveUser([$this->guardName()]);
+            $id = $this->route('id');
+
+            \assert(\is_string($id));
+
+            $user = $this->userProvider()->retrieveById($id);
 
             if (! $user instanceof MustVerifyEmailContract) {
                 throw new HttpException(SymfonyResponse::HTTP_FORBIDDEN);
@@ -67,5 +64,13 @@ class EmailVerificationVerifyRequest extends SignedRequest
 
             return $user;
         });
+    }
+
+    /**
+     * Get user provider.
+     */
+    protected function userProvider(): UserProviderContract
+    {
+        return inject(AuthService::class)->userProvider(resolveAuthManager()->guard($this->guardName()));
     }
 }

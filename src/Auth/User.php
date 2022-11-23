@@ -80,7 +80,7 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
      */
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new VerifyEmailNotification());
+        $this->notify(new VerifyEmailNotification($this->getUserProviderName()));
     }
 
     /**
