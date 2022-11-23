@@ -10,11 +10,24 @@ use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
 use Tomchochola\Laratchi\Auth\Services\AuthService;
 use Tomchochola\Laratchi\Http\Requests\SignedRequest;
 
 class EmailVerificationVerifyRequest extends SignedRequest
 {
+    /**
+     * @inheritDoc
+     */
+    public function rules(): array
+    {
+        $authValidity = inject(AuthValidity::class);
+
+        return \array_merge(parent::rules(), [
+            'guard' => $authValidity->guard()->required(),
+        ]);
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */

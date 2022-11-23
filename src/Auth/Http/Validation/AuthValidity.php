@@ -56,4 +56,12 @@ class AuthValidity
     {
         return inject(GenericValidity::class)->locale();
     }
+
+    /**
+     * Guard name validation rules.
+     */
+    public function guard(): Validity
+    {
+        return Validity::make()->string();
+    }
 }
