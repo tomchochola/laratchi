@@ -25,6 +25,22 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
     }
 
     /**
+     * Make signed url.
+     */
+    public function signedUrl(MustVerifyEmailContract&AuthenticatableContract $user): string
+    {
+        $parameters = [
+            'id' => $user->getAuthIdentifier(),
+            'email' => $user->getEmailForVerification(),
+            'guard' => $this->guardName,
+        ];
+
+        $expires = mustConfigInt('auth.verification.expire');
+
+        return SignedUrlSupport::make(inject(EmailVerificationVerifyController::class)::class, $parameters, $expires);
+    }
+
+    /**
      * @inheritDoc
      */
     protected function verificationUrl(mixed $notifiable): string
@@ -32,15 +48,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
         \assert($notifiable instanceof MustVerifyEmailContract);
         \assert($notifiable instanceof AuthenticatableContract);
 
-        $parameters = [
-            'id' => $notifiable->getAuthIdentifier(),
-            'hash' => \hash('sha256', $notifiable->getEmailForVerification()),
-            'guard' => $this->guardName,
-        ];
-
-        $expires = mustConfigInt('auth.verification.expire');
-
-        $signedUrl = SignedUrlSupport::make(inject(EmailVerificationVerifyController::class)::class, $parameters, $expires);
+        $signedUrl = $this->signedUrl($notifiable);
 
         $query = \http_build_query([
             'url' => $signedUrl,

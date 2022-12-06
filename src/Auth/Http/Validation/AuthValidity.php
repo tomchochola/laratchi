@@ -62,6 +62,6 @@ class AuthValidity
      */
     public function guard(): Validity
     {
-        return Validity::make()->string();
+        return Validity::make()->string()->in(['users']);
     }
 }

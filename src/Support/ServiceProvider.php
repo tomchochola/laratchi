@@ -56,7 +56,7 @@ class ServiceProvider extends IlluminateServiceProvider
         resolveRouter()->post('password/reset', $passwordReset);
         resolveRouter()->post('password/update', $passwordUpdate);
         resolveRouter()->post('email_verification/resend', $emailResend);
-        resolveRouter()->post('email_verification/verify/{id}/{hash}', $emailVerify);
+        resolveRouter()->post('email_verification/verify/{id}/{email}', $emailVerify);
         resolveRouter()->post('logout/current', $logoutCurrent);
         resolveRouter()->post('logout/other', $logoutOther);
         resolveRouter()->get('me', $meShow);

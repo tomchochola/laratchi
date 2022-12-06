@@ -32,6 +32,7 @@ class LoginRequest extends SecureFormRequest
         $guardName = $this->guardName();
 
         return \array_merge(parent::rules(), [
+            'guard' => $authValidity->guard()->nullable()->filled(),
             'remember' => $authValidity->remember($guardName)->required(),
             'email' => $authValidity->email($guardName)->required(),
             'password' => $authValidity->password($guardName)->required(),
@@ -43,6 +44,10 @@ class LoginRequest extends SecureFormRequest
      */
     public function guardName(): string
     {
+        if ($this->has('guard')) {
+            return $this->str('guard')->value();
+        }
+
         return resolveAuthManager()->getDefaultDriver();
     }
 

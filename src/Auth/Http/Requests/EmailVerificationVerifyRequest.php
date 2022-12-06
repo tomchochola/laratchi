@@ -17,18 +17,6 @@ use Tomchochola\Laratchi\Http\Requests\SignedRequest;
 class EmailVerificationVerifyRequest extends SignedRequest
 {
     /**
-     * @inheritDoc
-     */
-    public function rules(): array
-    {
-        $authValidity = inject(AuthValidity::class);
-
-        return \array_merge(parent::rules(), [
-            'guard' => $authValidity->guard()->required(),
-        ]);
-    }
-
-    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): Response|bool
@@ -39,12 +27,12 @@ class EmailVerificationVerifyRequest extends SignedRequest
 
         $user = $this->retrieveUser();
 
-        $routeHash = $this->route('hash');
+        $routeEmail = $this->route('email');
         $authEmail = $user->getEmailForVerification();
 
-        \assert(\is_string($routeHash));
+        \assert(\is_string($routeEmail));
 
-        if (! \hash_equals($routeHash, \hash('sha256', $authEmail))) {
+        if ($routeEmail !== $authEmail) {
             return false;
         }
 
@@ -52,11 +40,27 @@ class EmailVerificationVerifyRequest extends SignedRequest
     }
 
     /**
+     * @inheritDoc
+     */
+    public function rules(): array
+    {
+        $authValidity = inject(AuthValidity::class);
+
+        return \array_merge(parent::rules(), [
+            'guard' => $authValidity->guard()->nullable()->filled(),
+        ]);
+    }
+
+    /**
      * Get guard name.
      */
     public function guardName(): string
     {
-        return $this->allInput()->mustString('guard');
+        if ($this->has('guard')) {
+            return $this->str('guard')->value();
+        }
+
+        return resolveAuthManager()->getDefaultDriver();
     }
 
     /**
@@ -65,11 +69,11 @@ class EmailVerificationVerifyRequest extends SignedRequest
     public function retrieveUser(): AuthenticatableContract&MustVerifyEmailContract
     {
         return once(function (): AuthenticatableContract&MustVerifyEmailContract {
-            $id = $this->route('id');
+            $user = $this->retrieveById();
 
-            \assert(\is_string($id));
-
-            $user = $this->userProvider()->retrieveById($id);
+            if ($user === null) {
+                throw new HttpException(SymfonyResponse::HTTP_UNAUTHORIZED);
+            }
 
             if (! $user instanceof MustVerifyEmailContract) {
                 throw new HttpException(SymfonyResponse::HTTP_FORBIDDEN);
@@ -85,5 +89,13 @@ class EmailVerificationVerifyRequest extends SignedRequest
     protected function userProvider(): UserProviderContract
     {
         return inject(AuthService::class)->userProvider(resolveAuthManager()->guard($this->guardName()));
+    }
+
+    /**
+     * Retrieve user by id.
+     */
+    protected function retrieveById(): ?AuthenticatableContract
+    {
+        return $this->userProvider()->retrieveById($this->route('id'));
     }
 }

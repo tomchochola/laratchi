@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Auth\Http\Requests;
 
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
 class MeDestroyRequest extends SecureFormRequest
@@ -21,10 +22,26 @@ class MeDestroyRequest extends SecureFormRequest
     }
 
     /**
+     * @inheritDoc
+     */
+    public function rules(): array
+    {
+        $authValidity = inject(AuthValidity::class);
+
+        return \array_merge(parent::rules(), [
+            'guard' => $authValidity->guard()->nullable()->filled(),
+        ]);
+    }
+
+    /**
      * Get guard name.
      */
     public function guardName(): string
     {
+        if ($this->has('guard')) {
+            return $this->str('guard')->value();
+        }
+
         return resolveAuthManager()->getDefaultDriver();
     }
 

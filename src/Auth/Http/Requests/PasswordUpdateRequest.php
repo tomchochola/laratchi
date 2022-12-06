@@ -33,6 +33,7 @@ class PasswordUpdateRequest extends SecureFormRequest
         $guardName = resolveAuthManager()->getDefaultDriver();
 
         return \array_merge(parent::rules(), [
+            'guard' => $authValidity->guard()->nullable()->filled(),
             'password' => $authValidity->password($guardName)->required(),
             'new_password' => $authValidity->password($guardName)->required()->confirmed(),
         ]);
@@ -43,6 +44,10 @@ class PasswordUpdateRequest extends SecureFormRequest
      */
     public function guardName(): string
     {
+        if ($this->has('guard')) {
+            return $this->str('guard')->value();
+        }
+
         return resolveAuthManager()->getDefaultDriver();
     }
 
