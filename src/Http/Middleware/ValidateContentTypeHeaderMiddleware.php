@@ -29,7 +29,7 @@ class ValidateContentTypeHeaderMiddleware
             return $next($request);
         }
 
-        $contentType = $request->getContentType();
+        $contentType = $request->getContentTypeFormat();
 
         if (! \in_array($contentType, $contentTypes, true)) {
             throw new HttpException(static::ERROR_STATUS);
