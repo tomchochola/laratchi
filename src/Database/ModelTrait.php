@@ -524,7 +524,7 @@ trait ModelTrait
      */
     public function relation(string $key, string $type): ?Model
     {
-        \assert($this->relationLoaded($key), "[{$key}] relationsip is not loaded");
+        \assert($this->relationLoaded($key), "[{$key}] relationship is not loaded");
 
         $value = $this->getRelationValue($key);
 
@@ -548,7 +548,7 @@ trait ModelTrait
      */
     public function mustRelation(string $key, string $type): Model
     {
-        \assert($this->relationLoaded($key), "[{$key}] relationsip is not loaded");
+        \assert($this->relationLoaded($key), "[{$key}] relationship is not loaded");
 
         $value = $this->getRelationValue($key);
 
@@ -568,7 +568,7 @@ trait ModelTrait
      */
     public function mustRelations(string $key, string $type): Collection
     {
-        \assert($this->relationLoaded($key), "[{$key}] relationsip is not loaded");
+        \assert($this->relationLoaded($key), "[{$key}] relationship is not loaded");
 
         $value = $this->getRelationValue($key);
 
