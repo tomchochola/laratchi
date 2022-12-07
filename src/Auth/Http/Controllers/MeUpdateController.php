@@ -9,6 +9,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\MeUpdateRequest;
@@ -26,6 +27,11 @@ class MeUpdateController extends TransactionController
      * Throttle decay in minutes.
      */
     public static int $decay = 15;
+
+    /**
+     * Throw simple throttle errors.
+     */
+    public static bool $simpleThrottle = false;
 
     /**
      * Handle the incoming request.
@@ -63,6 +69,10 @@ class MeUpdateController extends TransactionController
     protected function onThrottle(MeUpdateRequest $request, array $credentials): ?Closure
     {
         return function (int $seconds) use ($credentials): never {
+            if (static::$simpleThrottle) {
+                throw new ThrottleRequestsException();
+            }
+
             $this->throwThrottleValidationError(\array_keys($credentials), $seconds);
         };
     }

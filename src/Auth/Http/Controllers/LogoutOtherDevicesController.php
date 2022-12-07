@@ -11,6 +11,7 @@ use Illuminate\Auth\Events\OtherDeviceLogout;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\CycleRememberTokenAction;
@@ -32,6 +33,11 @@ class LogoutOtherDevicesController extends TransactionController
      * Throttle decay in minutes.
      */
     public static int $decay = 15;
+
+    /**
+     * Throw simple throttle errors.
+     */
+    public static bool $simpleThrottle = false;
 
     /**
      * Handle the incoming request.
@@ -87,6 +93,10 @@ class LogoutOtherDevicesController extends TransactionController
     {
         return function (int $seconds) use ($request): never {
             resolveEventDispatcher()->dispatch(new Lockout($request));
+
+            if (static::$simpleThrottle) {
+                throw new ThrottleRequestsException();
+            }
 
             $this->throwThrottleValidationError(\array_keys($request->password()), $seconds);
         };

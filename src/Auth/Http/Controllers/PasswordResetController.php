@@ -13,6 +13,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
@@ -40,6 +41,11 @@ class PasswordResetController extends TransactionController
      * Login user after reset.
      */
     public static bool $loginAfterReset = true;
+
+    /**
+     * Throw simple throttle errors.
+     */
+    public static bool $simpleThrottle = false;
 
     /**
      * Resetted password user.
@@ -94,6 +100,10 @@ class PasswordResetController extends TransactionController
     protected function onThrottle(PasswordResetRequest $request): ?Closure
     {
         return function (int $seconds) use ($request): never {
+            if (static::$simpleThrottle) {
+                throw new ThrottleRequestsException();
+            }
+
             $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
         };
     }

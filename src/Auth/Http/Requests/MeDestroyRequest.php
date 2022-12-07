@@ -38,8 +38,12 @@ class MeDestroyRequest extends SecureFormRequest
      */
     public function guardName(): string
     {
-        if ($this->has('guard')) {
-            return $this->str('guard')->value();
+        if ($this->filled('guard')) {
+            $guardName = $this->str('guard')->value();
+
+            if (\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true)) {
+                return $guardName;
+            }
         }
 
         return resolveAuthManager()->getDefaultDriver();

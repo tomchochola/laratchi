@@ -14,6 +14,7 @@ use Illuminate\Auth\Events\Validated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
@@ -33,6 +34,11 @@ class LoginController extends TransactionController
      * Throttle decay in minutes.
      */
     public static int $decay = 15;
+
+    /**
+     * Throw simple throttle errors.
+     */
+    public static bool $simpleThrottle = false;
 
     /**
      * Handle the incoming request.
@@ -93,6 +99,10 @@ class LoginController extends TransactionController
     protected function onCredentialsThrottle(LoginRequest $request): ?Closure
     {
         return function (int $seconds) use ($request): never {
+            if (static::$simpleThrottle) {
+                throw new ThrottleRequestsException();
+            }
+
             $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds, 'auth.throttle');
         };
     }
@@ -106,6 +116,10 @@ class LoginController extends TransactionController
     {
         return function (int $seconds) use ($request): never {
             resolveEventDispatcher()->dispatch(new Lockout($request));
+
+            if (static::$simpleThrottle) {
+                throw new ThrottleRequestsException();
+            }
 
             $this->throwThrottleValidationError(\array_keys($request->password()), $seconds, 'auth.throttle');
         };

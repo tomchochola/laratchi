@@ -13,6 +13,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
@@ -37,6 +38,11 @@ class RegisterController extends TransactionController
      * Login user after register.
      */
     public static bool $loginAfterRegister = true;
+
+    /**
+     * Throw simple throttle errors.
+     */
+    public static bool $simpleThrottle = false;
 
     /**
      * Handle the incoming request.
@@ -84,6 +90,10 @@ class RegisterController extends TransactionController
     protected function onThrottle(RegisterRequest $request, array $credentials): ?Closure
     {
         return function (int $seconds) use ($credentials): never {
+            if (static::$simpleThrottle) {
+                throw new ThrottleRequestsException();
+            }
+
             $this->throwThrottleValidationError(\array_keys($credentials), $seconds);
         };
     }

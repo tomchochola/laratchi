@@ -7,6 +7,7 @@ namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 use Closure;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\PasswordForgotRequest;
@@ -23,6 +24,11 @@ class PasswordForgotController extends TransactionController
      * Throttle decay in minutes.
      */
     public static int $decay = 15;
+
+    /**
+     * Throw simple throttle errors.
+     */
+    public static bool $simpleThrottle = false;
 
     /**
      * Handle the incoming request.
@@ -64,6 +70,10 @@ class PasswordForgotController extends TransactionController
     protected function onThrottle(PasswordForgotRequest $request): ?Closure
     {
         return function (int $seconds) use ($request): never {
+            if (static::$simpleThrottle) {
+                throw new ThrottleRequestsException();
+            }
+
             $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
         };
     }
