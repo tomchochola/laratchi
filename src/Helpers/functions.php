@@ -335,6 +335,10 @@ if (! \function_exists('configString')) {
             $value = \trim($value);
         }
 
+        if ($value === '') {
+            $value = $default;
+        }
+
         if (\count($in) > 0) {
             \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
         }
@@ -1068,6 +1072,10 @@ if (! \function_exists('envString')) {
 
         if ($trim) {
             $value = \trim($value);
+        }
+
+        if ($value === '') {
+            $value = $default;
         }
 
         if (\count($in) > 0) {
