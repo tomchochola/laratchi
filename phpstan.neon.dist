@@ -4,15 +4,14 @@ includes:
     - tools/phpstan/vendor/spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
     - tools/phpstan/vendor/spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
     - tools/phpstan/vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - tools/phpstan/vendor/tomchochola/phpstan-rules/phpstan-rules.neon
 
 parameters:
-  level: max
   paths:
     - src
     - lang
     - resources
     - database
-  checkMissingCallableSignature: true
   disallowedFunctionCalls:
     -
       function: 'abort()'
