@@ -66,7 +66,7 @@ abstract class TestCase extends BaseTestCase
      * @param array<mixed> $files
      * @param array<mixed> $server
      */
-    public function call($method, $uri, $parameters = [], $cookies = [], $files = [], $server = [], $content = null): TestResponse
+    public function call(mixed $method, mixed $uri, mixed $parameters = [], mixed $cookies = [], mixed $files = [], mixed $server = [], mixed $content = null): TestResponse
     {
         $params = $this->transformParameters($parameters);
 

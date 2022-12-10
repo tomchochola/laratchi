@@ -57,7 +57,7 @@ class SecureValidator extends Validator
     /**
      * @inheritDoc
      */
-    protected function shouldStopValidating($attribute): bool
+    protected function shouldStopValidating(mixed $attribute): bool
     {
         if (static::$bail) {
             return $this->messages->has($this->replacePlaceholderInString($attribute));

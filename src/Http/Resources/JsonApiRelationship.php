@@ -35,7 +35,7 @@ class JsonApiRelationship extends JsonResource
      *
      * @return array<string, mixed>|ArrayableContract<string, mixed>|JsonSerializable
      */
-    public function toArray($request): array|ArrayableContract|JsonSerializable
+    public function toArray(mixed $request): array|ArrayableContract|JsonSerializable
     {
         $data = [
             'data' => $this->getData(),

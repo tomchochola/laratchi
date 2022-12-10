@@ -68,7 +68,7 @@ if (! \function_exists('randomFloat')) {
      */
     function randomFloat(float $min, float $max): float
     {
-        return $min + \mt_rand() / \mt_getrandmax() * ($max - $min);
+        return $min + \random_int(0, \mt_getrandmax()) / \mt_getrandmax() * ($max - $min);
     }
 }
 

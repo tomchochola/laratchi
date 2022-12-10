@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Providers;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Translation\TranslationServiceProvider as IlluminateTranslationServiceProvider;
 use Tomchochola\Laratchi\Translation\FileLoader;
 
@@ -21,7 +22,7 @@ class TranslationServiceProvider extends IlluminateTranslationServiceProvider
      */
     protected function registerLoader(): void
     {
-        $this->app->singleton('translation.loader', static function ($app): FileLoader {
+        $this->app->singleton('translation.loader', static function (Application $app): FileLoader {
             return new static::$fileLoader($app['files'], $app['path.lang']);
         });
     }
