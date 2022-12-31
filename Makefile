@@ -2,39 +2,39 @@
 SHELL := /bin/bash
 
 # Variables
-MAKE_PHP_8_1_BIN ?= php8.1
-MAKE_COMPOSER_2_BIN ?= /usr/local/bin/composer2
+MAKE_PHP_8_BIN ?= php8.2
+MAKE_COMPOSER_BIN ?= /usr/local/bin/composer
 
-MAKE_PHP ?= ${MAKE_PHP_8_1_BIN}
-MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_2_BIN}
+MAKE_PHP ?= ${MAKE_PHP_8_BIN}
+MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_BIN}
 
 # Default goal
 .DEFAULT_GOAL := check
 
 # Goals
+.PHONY: local
+local:
+	${MAKE_COMPOSER} update -o
+
 .PHONY: check
 check: audit lint
 
 .PHONY: audit
-audit: composer.lock tools
+audit: vendor tools
 	tools/local-php-security-checker/vendor/bin/local-php-security-checker
+	${MAKE_COMPOSER} audit
 
 .PHONY: lint
 lint: vendor tools
 	tools/prettier/node_modules/.bin/prettier --ignore-path .gitignore -c . '!**/*.svg'
 	${MAKE_COMPOSER} validate --strict
 	${MAKE_PHP} tools/phpstan/vendor/bin/phpstan analyse
-	set -e; for file in composer.json tools/*/composer.json; do ${MAKE_PHP} tools/composer-normalize/vendor/bin/composer-normalize $$file --dry-run --diff --indent-size=2 --indent-style=space; done
 	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
 
 .PHONY: fix
 fix: tools
 	tools/prettier/node_modules/.bin/prettier --ignore-path .gitignore -w . '!**/*.svg'
 	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
-
-.PHONY: composer-normalize
-composer-normalize: tools
-	set -e; for file in composer.json tools/*/composer.json; do ${MAKE_PHP} tools/composer-normalize/vendor/bin/composer-normalize $$file --indent-size=2 --indent-style=space; done
 
 .PHONY: clean
 clean:
@@ -61,22 +61,19 @@ dev:
 ci: check
 
 # Dependencies
-tools: tools/prettier/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer tools/composer-normalize/vendor/bin/composer-normalize tools/local-php-security-checker/vendor/bin/local-php-security-checker
+tools: tools/prettier/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer tools/local-php-security-checker/vendor/bin/local-php-security-checker
 
 tools/prettier/node_modules/.bin/prettier:
 	npm --prefix=tools/prettier update
 
-composer.lock vendor:
-	${MAKE_COMPOSER} update
+vendor:
+	${MAKE_COMPOSER} update -o
 
 tools/phpstan/vendor/bin/phpstan:
-	${MAKE_COMPOSER} --working-dir=tools/phpstan update
+	${MAKE_COMPOSER} --working-dir=tools/phpstan update -o
 
 tools/php-cs-fixer/vendor/bin/php-cs-fixer:
-	${MAKE_COMPOSER} --working-dir=tools/php-cs-fixer update
-
-tools/composer-normalize/vendor/bin/composer-normalize:
-	${MAKE_COMPOSER} --working-dir=tools/composer-normalize update
+	${MAKE_COMPOSER} --working-dir=tools/php-cs-fixer update -o
 
 tools/local-php-security-checker/vendor/bin/local-php-security-checker:
-	${MAKE_COMPOSER} --working-dir=tools/local-php-security-checker update
+	${MAKE_COMPOSER} --working-dir=tools/local-php-security-checker update -o
