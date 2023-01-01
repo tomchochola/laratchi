@@ -53,6 +53,8 @@ class Validity implements ArrayableContract
     public const MEDIUM_TEXT_MAX = 16777215;
     public const LONG_TEXT_MAX = 4294967295;
 
+    public const VARCHAR_MAX = 65535;
+
     /**
      * Bail flag.
      */
@@ -379,16 +381,6 @@ class Validity implements ArrayableContract
     public function dateFormat(string $dateFormat = 'Y-m-d'): static
     {
         return $this->addRule('date_format', [$dateFormat]);
-    }
-
-    /**
-     * Add iso8601 rule.
-     *
-     * @return $this
-     */
-    public function iso8601(): static
-    {
-        return $this->dateFormat('Y-m-d\\TH:i:sP');
     }
 
     /**
@@ -1130,6 +1122,30 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add varchar rule.
+     *
+     * @return $this
+     */
+    public function varchar(?int $max = null): static
+    {
+        $max ??= static::VARCHAR_MAX;
+
+        \assert($max > 0 && $max <= static::VARCHAR_MAX);
+
+        return $this->addRule('string')->max($max);
+    }
+
+    /**
+     * Add raw rule.
+     *
+     * @return $this
+     */
+    public function raw(): static
+    {
+        return $this->addRule('string');
+    }
+
+    /**
      * Add timezone rule.
      *
      * @return $this
@@ -1605,6 +1621,26 @@ class Validity implements ArrayableContract
         \assert($max <= static::UNSIGNED_BIG_INT_MAX);
 
         return $this->integer($min, $max);
+    }
+
+    /**
+     * Add unsigned rules.
+     *
+     * @return $this
+     */
+    public function unsigned(?int $min = null, ?int $max = null): static
+    {
+        return $this->unsignedBigInt($min, $max);
+    }
+
+    /**
+     * Add signed rules.
+     *
+     * @return $this
+     */
+    public function signed(?int $min = null, ?int $max = null): static
+    {
+        return $this->bigInt($min, $max);
     }
 
     /**
