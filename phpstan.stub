@@ -1,0 +1,8 @@
+<?php
+
+namespace Illuminate\Http\Client {
+  /**
+   * @method PendingRequest acceptJson()
+   */
+  class Factory {}
+}

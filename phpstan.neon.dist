@@ -13,3 +13,5 @@ parameters:
     - lang
     - resources
     - src
+  stubFiles:
+    - phpstan.stub
