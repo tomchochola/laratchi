@@ -70,7 +70,7 @@ class ServiceProvider extends IlluminateServiceProvider
     public static function modelRestrictions(): void
     {
         Model::unguard();
-        Model::preventLazyLoading();
+        Model::shouldBeStrict();
     }
 
     /**
