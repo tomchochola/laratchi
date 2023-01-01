@@ -89,4 +89,20 @@ class FormRequest extends IlluminateFormRequest
 
         return $this->queryParameters = new ValidatedInput($data);
     }
+
+    /**
+     * Slug getter.
+     */
+    public function slug(string $key, ?string $default = null): ?string
+    {
+        return $this->routeParameters()->string($key, $default);
+    }
+
+    /**
+     * Mandatory slug getter.
+     */
+    public function mustSlug(string $key, ?string $default = null): string
+    {
+        return $this->routeParameters()->mustString($key, $default);
+    }
 }
