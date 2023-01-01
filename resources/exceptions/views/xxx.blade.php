@@ -21,7 +21,7 @@
 
   $illustration = 'data:image/svg+xml;utf8,'.\rawurlencode($viewFactory->first(["exceptions::illustrations.{$statusCode}", 'exceptions::illustrations.'.\substr($statusCode, 0, -2).'xx', 'exceptions::illustrations.5xx'], ['color' => $color])->render());
 
-  $background = 'data:image/svg+xml;utf8,'.\rawurlencode($viewFactory->make('exceptions::phases.day')->render());
+  $background = 'data:image/svg+xml;utf8,'.\rawurlencode($viewFactory->make("exceptions::phases.{$phase}")->render());
   $nightBackground = 'data:image/svg+xml;utf8,'.\rawurlencode($viewFactory->make('exceptions::phases.night')->render());
 @endphp
 
@@ -72,7 +72,7 @@
 
       <div class="justify-center items-center hidden lg:flex w-1/2" role="presentation">
         <div class="w-4/6 relative z-30 flex justify-center items-center">
-          <img alt="{{ $title }}" src="{{ $illustration }}" />
+          <img alt="{{ $title }}" src="{{ $illustration }}" style="width: 100%;" />
         </div>
       </div>
 
