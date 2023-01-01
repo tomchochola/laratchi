@@ -40,7 +40,7 @@ class SetPreferredLanguageMiddleware
 
         $locale = $request->getPreferredLanguage($locales);
 
-        if ($locale === null && $request->expectsJson()) {
+        if ($locale === null && $request->getRequestFormat() === 'json') {
             throw new HttpException(static::ERROR_STATUS, static::ERROR_MESSAGE);
         }
 

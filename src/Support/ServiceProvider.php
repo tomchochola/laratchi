@@ -24,7 +24,6 @@ use Tomchochola\Laratchi\Auth\Http\Controllers\PasswordForgotController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\PasswordResetController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\PasswordUpdateController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\RegisterController;
-use Tomchochola\Laratchi\Http\Middleware\SetPreferredLanguageMiddleware;
 use Tomchochola\Laratchi\Http\Middleware\SwapValidatorMiddleware;
 use Tomchochola\Laratchi\Support\Facades\Facade;
 use Tomchochola\Laratchi\Validation\Validator;
@@ -78,8 +77,6 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public function boot(): void
     {
-        resolveKernel()->prependToMiddlewarePriority(SetPreferredLanguageMiddleware::class);
-
         Facade::afterResolving('validator', static function (ValidationFactoryContract $factory): void {
             SwapValidatorMiddleware::extend($factory, Validator::class);
         });
