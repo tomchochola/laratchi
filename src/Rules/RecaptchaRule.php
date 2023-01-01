@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Rules;
 
 use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Illuminate\Http\Client\Response;
 
 class RecaptchaRule implements RuleContract
 {
@@ -28,6 +29,8 @@ class RecaptchaRule implements RuleContract
             'secret' => $this->secret,
             'response' => $value,
         ]);
+
+        \assert($response instanceof Response);
 
         if ($response->successful()) {
             return $response->json('success') === true;
