@@ -2,19 +2,18 @@
 SHELL := /bin/bash
 
 # Variables
-MAKE_PHP_8_BIN ?= php8.2
-MAKE_COMPOSER_BIN ?= /usr/local/bin/composer
+MAKE_PHP_8_1_BIN ?= php8.1
+MAKE_COMPOSER_2_BIN ?= /usr/local/bin/composer2
 
-MAKE_PHP ?= ${MAKE_PHP_8_BIN}
-MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_BIN}
+MAKE_PHP ?= ${MAKE_PHP_8_1_BIN}
+MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_2_BIN}
 
 # Default goal
 .DEFAULT_GOAL := check
 
 # Goals
 .PHONY: local
-local:
-	${MAKE_COMPOSER} update -o
+local: update
 
 .PHONY: check
 check: audit lint
@@ -55,6 +54,17 @@ build:
 .PHONY: dev
 dev:
 	npx tailwindcss -c resources/exceptions/css/tailwind.config.js -i resources/exceptions/css/index.css -o resources/exceptions/views/css.css
+
+.PHONY: clean-tools
+clean-tools:
+	git clean -xfd tools
+
+.PHONY: update-tools
+update-tools: clean-tools tools
+
+.PHONY: update
+update:
+	${MAKE_COMPOSER} update -o
 
 # Aliases
 .PHONY: ci
