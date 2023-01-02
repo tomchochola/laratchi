@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Testing;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,9 @@ use Stringable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tomchochola\Laratchi\Auth\DatabaseTokenableInterface;
 use Tomchochola\Laratchi\Auth\DatabaseTokenGuard;
+use Tomchochola\Laratchi\Exceptions\Handler;
+use Tomchochola\Laratchi\Validation\SecureValidator;
+use Tomchochola\Laratchi\Validation\Validity;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -96,7 +100,7 @@ abstract class TestCase extends BaseTestCase
             } elseif (\is_scalar($value)) {
                 $parameters[$key] = (string) $value;
             } else {
-                \assert($value instanceof Stringable);
+                \assert($value instanceof Stringable, "Can not convert [{$key}] to multipart/form-data.");
 
                 $parameters[$key] = (string) $value;
             }
@@ -177,15 +181,14 @@ abstract class TestCase extends BaseTestCase
             'code',
         ];
 
-        if ($message !== null) {
+        if (Handler::$genericErrors === false) {
             $keys[] = 'message';
-        }
-
-        if ($title !== null) {
             $keys[] = 'title';
         }
 
-        if (resolveApp()->hasDebugModeEnabled()) {
+        $debug = resolveApp()->hasDebugModeEnabled();
+
+        if ($debug) {
             $keys = \array_merge($keys, [
                 'exception',
                 'file',
@@ -211,6 +214,29 @@ abstract class TestCase extends BaseTestCase
         }
 
         $response->assertJson($data, true);
+
+        $json = $response->json();
+
+        \assert(\is_array($json));
+
+        $this->validate(resolveValidatorFactory()->make($json, [
+            'status' => Validity::make()->required()->unsigned(100, 599),
+            'code' => Validity::make()->required()->unsigned(),
+            'message' => Validity::make()->nullable()->filled()->raw()->requiredWith(['title']),
+            'title' => Validity::make()->nullable()->filled()->raw()->requiredWith(['message']),
+            'internal' => Validity::make()->nullable()->filled()->raw()->requiredIfRule($debug),
+            'exception' => Validity::make()->nullable()->filled()->raw()->requiredIfRule($debug),
+            'file' => Validity::make()->nullable()->filled()->raw()->requiredIfRule($debug),
+            'line' => Validity::make()->nullable()->filled()->unsigned()->requiredIfRule($debug),
+            'trace' => Validity::make()->collection(0, \PHP_INT_MAX)->requiredIfRule($debug),
+            'trace.*' => Validity::make()->required()->object(),
+            'trace.*.function' => Validity::make()->nullable()->raw(),
+            'trace.*.line' => Validity::make()->nullable()->unsigned(),
+            'trace.*.file' => Validity::make()->nullable()->raw(),
+            'trace.*.class' => Validity::make()->nullable()->raw(),
+            'trace.*.object' => Validity::make()->nullable()->object(),
+            'trace.*.type' => Validity::make()->nullable()->raw(),
+        ]));
     }
 
     /**
@@ -226,7 +252,7 @@ abstract class TestCase extends BaseTestCase
 
         $response->assertJsonValidationErrors($errors);
 
-        $json = $response->json() ?? [];
+        $json = $response->json();
 
         \assert(\is_array($json));
 
@@ -237,6 +263,12 @@ abstract class TestCase extends BaseTestCase
         }
 
         static::assertCount(0, $jsonErrors, 'Unexpected validation errors occured: '.\json_encode($jsonErrors).'.');
+
+        $this->validate(resolveValidatorFactory()->make($json, [
+            'errors' => Validity::make()->required()->object(),
+            'errors.*' => Validity::make()->required()->collection(1, \PHP_INT_MAX),
+            'errors.*.*' => Validity::make()->required()->raw(),
+        ]));
     }
 
     /**
@@ -339,6 +371,36 @@ abstract class TestCase extends BaseTestCase
 
             $response->assertJsonCount($includedCount, 'included');
         }
+
+        $json = $response->json();
+
+        \assert(\is_array($json));
+
+        $this->validate(resolveValidatorFactory()->make($json, [
+            'data' => Validity::make()->nullable()->object()->requiredArrayKeys(['id', 'type', 'slug']),
+            'data.id' => Validity::make()->nullable()->filled()->raw(),
+            'data.type' => Validity::make()->nullable()->filled()->raw(),
+            'data.slug' => Validity::make()->nullable()->filled()->raw(),
+            'data.attributes' => Validity::make()->nullable()->filled()->object(),
+            'data.meta' => Validity::make()->nullable()->filled()->object(),
+            'data.relationships' => Validity::make()->nullable()->filled()->object(),
+            'data.relationships.*' => Validity::make()->required()->object()->requiredArrayKeys(['data']),
+            'data.relationships.*.data' => Validity::make()->nullable()->object(),
+            'data.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'data.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
+            'included' => Validity::make()->nullable()->filled()->collection(1, \PHP_INT_MAX),
+            'included.*' => Validity::make()->required()->object()->requiredArrayKeys(['id', 'type', 'slug']),
+            'included.*.id' => Validity::make()->required()->raw(),
+            'included.*.type' => Validity::make()->required()->raw(),
+            'included.*.slug' => Validity::make()->required()->raw(),
+            'included.*.attributes' => Validity::make()->nullable()->filled()->object(),
+            'included.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships.*' => Validity::make()->required()->object()->requiredArrayKeys(['data']),
+            'included.*.relationships.*.data' => Validity::make()->nullable()->object(),
+            'included.*.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
+        ]));
     }
 
     /**
@@ -377,6 +439,242 @@ abstract class TestCase extends BaseTestCase
             ]);
 
             $response->assertJsonCount($includedCount, 'included');
+        }
+
+        $json = $response->json();
+
+        \assert(\is_array($json));
+
+        $this->validate(resolveValidatorFactory()->make($json, [
+            'data' => Validity::make()->collection(0, \PHP_INT_MAX),
+            'data.*' => Validity::make()->required()->object()->requiredArrayKeys(['id', 'type', 'slug']),
+            'data.*.id' => Validity::make()->required()->raw(),
+            'data.*.type' => Validity::make()->required()->raw(),
+            'data.*.slug' => Validity::make()->required()->raw(),
+            'data.*.attributes' => Validity::make()->nullable()->filled()->object(),
+            'data.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'data.*.relationships' => Validity::make()->nullable()->filled()->object(),
+            'data.*.relationships.*' => Validity::make()->required()->object()->requiredArrayKeys(['data']),
+            'data.*.relationships.*.data' => Validity::make()->nullable()->object(),
+            'data.*.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'data.*.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
+            'included' => Validity::make()->nullable()->filled()->collection(1, \PHP_INT_MAX),
+            'included.*' => Validity::make()->required()->object()->requiredArrayKeys(['id', 'type', 'slug']),
+            'included.*.id' => Validity::make()->required()->raw(),
+            'included.*.type' => Validity::make()->required()->raw(),
+            'included.*.slug' => Validity::make()->required()->raw(),
+            'included.*.attributes' => Validity::make()->nullable()->filled()->object(),
+            'included.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships.*' => Validity::make()->required()->object()->requiredArrayKeys(['data']),
+            'included.*.relationships.*.data' => Validity::make()->nullable()->object(),
+            'included.*.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
+        ]));
+    }
+
+    /**
+     * Make json api validator.
+     *
+     * @param ?array<string, mixed> $attributes
+     * @param ?array<string, mixed> $meta
+     */
+    protected function jsonApiValidator(string $type, ?array $attributes = null, ?array $meta = null): JsonApiValidator
+    {
+        return new JsonApiValidator($type, $attributes, $meta);
+    }
+
+    /**
+     * Json api response validation.
+     *
+     * @param array<int, JsonApiValidator> $includedValidators
+     */
+    protected function validateJsonApiResponse(TestResponse $response, ?JsonApiValidator $validator, array $includedValidators): void
+    {
+        $response->assertJsonStructure(['data']);
+
+        if ($validator !== null) {
+            $response->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'type',
+                    'slug',
+                ],
+            ]);
+        } else {
+            $response->assertJsonPath('data', null);
+        }
+
+        $includedCount = \count($includedValidators);
+
+        if ($includedCount === 0) {
+            $response->assertJsonMissingPath('included');
+        } else {
+            $response->assertJsonStructure([
+                'included' => [
+                    '*' => [
+                        'id',
+                        'type',
+                        'slug',
+                    ],
+                ],
+            ]);
+
+            $response->assertJsonCount($includedCount, 'included');
+        }
+
+        $json = $response->json();
+
+        \assert(\is_array($json));
+
+        $this->validate(resolveValidatorFactory()->make($json, [
+            'data' => Validity::make()->nullable()->object()->requiredArrayKeys(['id', 'type', 'slug']),
+            'data.id' => Validity::make()->nullable()->filled()->raw(),
+            'data.type' => Validity::make()->nullable()->filled()->raw(),
+            'data.slug' => Validity::make()->nullable()->filled()->raw(),
+            'data.attributes' => Validity::make()->nullable()->filled()->object(),
+            'data.meta' => Validity::make()->nullable()->filled()->object(),
+            'data.relationships' => Validity::make()->nullable()->filled()->object(),
+            'data.relationships.*' => Validity::make()->required()->object()->requiredArrayKeys(['data']),
+            'data.relationships.*.data' => Validity::make()->nullable()->object(),
+            'data.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'data.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
+            'included' => Validity::make()->nullable()->filled()->collection(1, \PHP_INT_MAX),
+            'included.*' => Validity::make()->required()->object()->requiredArrayKeys(['id', 'type', 'slug']),
+            'included.*.id' => Validity::make()->required()->raw(),
+            'included.*.type' => Validity::make()->required()->raw(),
+            'included.*.slug' => Validity::make()->required()->raw(),
+            'included.*.attributes' => Validity::make()->nullable()->filled()->object(),
+            'included.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships.*' => Validity::make()->required()->object()->requiredArrayKeys(['data']),
+            'included.*.relationships.*.data' => Validity::make()->nullable()->object(),
+            'included.*.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
+        ]));
+
+        if ($validator !== null) {
+            $resource = $response->json('data');
+
+            \assert(\is_array($resource));
+
+            $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, $validator->rules()));
+        }
+
+        $included = $response->json('included') ?? [];
+
+        \assert(\is_array($included));
+
+        foreach ($includedValidators as $index => $includedValidator) {
+            $resource = $included[$index];
+
+            \assert(\is_array($resource));
+
+            $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, $includedValidator->rules()));
+        }
+    }
+
+    /**
+     * Json api collection response validation.
+     *
+     * @param JsonApiValidator|array<int, JsonApiValidator> $validators
+     * @param array<int, JsonApiValidator> $includedValidators
+     */
+    protected function validateJsonApiCollectionResponse(TestResponse $response, JsonApiValidator|array $validators, array $includedValidators): void
+    {
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'id',
+                    'type',
+                    'slug',
+                ],
+            ],
+        ]);
+
+        if (\is_array($validators)) {
+            $response->assertJsonCount(\count($validators), 'data');
+        }
+
+        $includedCount = \count($includedValidators);
+
+        if ($includedCount === 0) {
+            $response->assertJsonMissingPath('included');
+        } else {
+            $response->assertJsonStructure([
+                'included' => [
+                    '*' => [
+                        'id',
+                        'type',
+                        'slug',
+                    ],
+                ],
+            ]);
+
+            $response->assertJsonCount($includedCount, 'included');
+        }
+
+        $json = $response->json();
+
+        \assert(\is_array($json));
+
+        $this->validate(resolveValidatorFactory()->make($json, [
+            'data' => Validity::make()->collection(0, \PHP_INT_MAX),
+            'data.*' => Validity::make()->required()->object()->requiredArrayKeys(['id', 'type', 'slug']),
+            'data.*.id' => Validity::make()->required()->raw(),
+            'data.*.type' => Validity::make()->required()->raw(),
+            'data.*.slug' => Validity::make()->required()->raw(),
+            'data.*.attributes' => Validity::make()->nullable()->filled()->object(),
+            'data.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'data.*.relationships' => Validity::make()->nullable()->filled()->object(),
+            'data.*.relationships.*' => Validity::make()->required()->object()->requiredArrayKeys(['data']),
+            'data.*.relationships.*.data' => Validity::make()->nullable()->object(),
+            'data.*.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'data.*.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
+            'included' => Validity::make()->nullable()->filled()->collection(1, \PHP_INT_MAX),
+            'included.*' => Validity::make()->required()->object()->requiredArrayKeys(['id', 'type', 'slug']),
+            'included.*.id' => Validity::make()->required()->raw(),
+            'included.*.type' => Validity::make()->required()->raw(),
+            'included.*.slug' => Validity::make()->required()->raw(),
+            'included.*.attributes' => Validity::make()->nullable()->filled()->object(),
+            'included.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships.*' => Validity::make()->required()->object()->requiredArrayKeys(['data']),
+            'included.*.relationships.*.data' => Validity::make()->nullable()->object(),
+            'included.*.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
+        ]));
+
+        $collection = $response->json('data');
+
+        \assert(\is_array($collection));
+
+        foreach ($collection as $index => $resource) {
+            \assert(\is_array($resource));
+
+            $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, \is_array($validators) ? $validators[$index]->rules() : $validators->rules()));
+        }
+
+        $included = $response->json('included') ?? [];
+
+        \assert(\is_array($included));
+
+        foreach ($includedValidators as $index => $includedValidator) {
+            $resource = $included[$index];
+
+            \assert(\is_array($resource));
+
+            $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, $includedValidator->rules()));
+        }
+    }
+
+    /**
+     * Validate validator.
+     */
+    protected function validate(Validator $validator): void
+    {
+        if ($validator->fails()) {
+            static::assertEmpty($validator->failed(), 'Json api response validation failed: '.\json_encode($validator->failed()));
         }
     }
 }
