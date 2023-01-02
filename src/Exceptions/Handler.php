@@ -91,7 +91,9 @@ class Handler extends IlluminateHandler
             return mustTransString("exceptions::titles.{$normalizedMessage}");
         }
 
-        return $message;
+        $normalizedMessage = SymfonyResponse::$statusTexts[$e->getStatusCode()] ?? $normalizedMessage;
+
+        return mustTransString("exceptions::titles.{$normalizedMessage}");
     }
 
     /**
