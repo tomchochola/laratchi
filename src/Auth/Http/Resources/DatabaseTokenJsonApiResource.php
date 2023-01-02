@@ -28,7 +28,7 @@ class DatabaseTokenJsonApiResource extends ModelJsonApiResource
         return \array_merge(parent::getAttributes(), [
             'provider' => $this->resource->getProvider(),
             'auth_id' => $this->resource->getAuthId(),
-            'bearer' => $this->when($this->resource->bearer !== '', $this->resource->bearer),
+            'bearer' => $this->resource->bearer === '' ? null : $this->resource->bearer,
         ]);
     }
 }
