@@ -17,6 +17,6 @@ class {{ class }} extends ResourceCollection
      */
     public function toArray(mixed $request): array|ArrayableContract|JsonSerializable
     {
-        return parent::toArray($request);
+        return [];
     }
 }
