@@ -65,4 +65,12 @@ class SecureValidator extends Validator
 
         return parent::shouldStopValidating($attribute);
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getAttributeFromTranslations(mixed $name): string
+    {
+        return $name;
+    }
 }

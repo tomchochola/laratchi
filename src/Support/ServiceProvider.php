@@ -24,8 +24,6 @@ use Tomchochola\Laratchi\Auth\Http\Controllers\PasswordForgotController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\PasswordResetController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\PasswordUpdateController;
 use Tomchochola\Laratchi\Auth\Http\Controllers\RegisterController;
-use Tomchochola\Laratchi\Http\Middleware\SwapValidatorMiddleware;
-use Tomchochola\Laratchi\Support\Facades\Facade;
 use Tomchochola\Laratchi\Validation\Validator;
 use Tomchochola\Laratchi\Validation\ValidityGeneratorCommand;
 
@@ -73,20 +71,28 @@ class ServiceProvider extends IlluminateServiceProvider
     }
 
     /**
-     * Bootstrap services.
+     * @inheritDoc
      */
-    public function boot(): void
+    public function register(): void
     {
-        Facade::afterResolving('validator', static function (ValidationFactoryContract $factory): void {
-            SwapValidatorMiddleware::extend($factory, Validator::class);
+        parent::register();
+
+        $this->app->afterResolving('validator', static function (ValidationFactoryContract $factory): void {
+            Validator::extend($factory);
         });
 
-        Facade::afterResolving('auth', static function (AuthManager $authManager): void {
+        $this->app->afterResolving('auth', static function (AuthManager $authManager): void {
             $authManager->extend('database_token', static function (Application $app, string $name, array $config): GuardContract {
                 return new DatabaseTokenGuard($name, $config['provider']);
             });
         });
+    }
 
+    /**
+     * Bootstrap services.
+     */
+    public function boot(): void
+    {
         $this->loadTranslationsFrom(pathJoin([__DIR__, '..', '..', 'lang', 'exceptions']), 'exceptions');
 
         $this->loadViewsFrom(pathJoin([__DIR__, '..', '..', 'resources', 'exceptions', 'views']), 'exceptions');

@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Validation;
 
 use Illuminate\Contracts\Translation\Translator as TranslatorContract;
+use Illuminate\Contracts\Validation\Factory as ValidationFactoryContract;
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator as IlluminateValidator;
 
 class Validator extends IlluminateValidator
@@ -42,6 +45,33 @@ class Validator extends IlluminateValidator
             'NullWithout',
             'NullWithoutAll',
         ]);
+    }
+
+    /**
+     * Extend factory with custom resolver.
+     */
+    public static function extend(ValidationFactoryContract $factory): void
+    {
+        \assert($factory instanceof ValidationFactory);
+
+        $factory->resolver(static function (TranslatorContract $translator, array $data, array $rules, array $messages, array $attributes): ValidatorContract {
+            return new self($translator, $data, $rules, $messages, $attributes);
+        });
+    }
+
+    /**
+     * Inject factory with custom resolver.
+     */
+    public static function clone(ValidationFactoryContract $factory): ValidationFactoryContract
+    {
+        \assert($factory instanceof ValidationFactory);
+
+        // Prevent global factory override.
+        $clonedFactory = clone $factory;
+
+        static::extend($clonedFactory);
+
+        return $clonedFactory;
     }
 
     /**

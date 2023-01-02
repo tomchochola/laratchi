@@ -1734,11 +1734,7 @@ class Validity implements ArrayableContract
             $rules[] = 'required';
         }
 
-        $rules = \array_merge($rules, $this->rules);
-
-        \assert(\in_array('nullable', $rules, true) || \in_array('required', $rules, true), 'field must be validated against nullable/required');
-
-        return $rules;
+        return \array_merge($rules, $this->rules);
     }
 
     /**

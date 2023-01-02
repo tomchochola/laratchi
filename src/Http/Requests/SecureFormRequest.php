@@ -6,7 +6,7 @@ namespace Tomchochola\Laratchi\Http\Requests;
 
 use Illuminate\Contracts\Validation\Factory as ValidationFactoryContract;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
-use Tomchochola\Laratchi\Http\Middleware\SwapValidatorMiddleware;
+use Tomchochola\Laratchi\Validation\SecureValidator;
 
 class SecureFormRequest extends FormRequest
 {
@@ -25,21 +25,6 @@ class SecureFormRequest extends FormRequest
      */
     protected function createDefaultValidator(ValidationFactoryContract $factory): ValidatorContract
     {
-        // Prevent global factory override.
-        $clonedFactory = clone $factory;
-
-        SwapValidatorMiddleware::extend($clonedFactory, $this->secureValidator());
-
-        return parent::createDefaultValidator($clonedFactory);
-    }
-
-    /**
-     * Secure validator class string.
-     *
-     * @return class-string<ValidatorContract>
-     */
-    protected function secureValidator(): string
-    {
-        return SwapValidatorMiddleware::$secureValidator;
+        return parent::createDefaultValidator(SecureValidator::clone($factory));
     }
 }
