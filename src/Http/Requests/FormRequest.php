@@ -95,7 +95,15 @@ class FormRequest extends IlluminateFormRequest
      */
     public function slug(string $key, ?string $default = null): ?string
     {
-        return $this->routeParameters()->string($key, $default);
+        $route = $this->route();
+
+        \assert($route instanceof Route);
+
+        $value = $route->parameter($key, $default);
+
+        \assert($value === null || \is_string($value));
+
+        return $value;
     }
 
     /**
@@ -103,6 +111,10 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustSlug(string $key, ?string $default = null): string
     {
-        return $this->routeParameters()->mustString($key, $default);
+        $value = $this->slug($key, $default);
+
+        \assert($value !== null);
+
+        return $value;
     }
 }
