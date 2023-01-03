@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Contracts\Translation\HasLocalePreference as HasLocalePreferenceContract;
 use Illuminate\Foundation\Auth\User as IlluminateUser;
 use Illuminate\Notifications\Notifiable;
+use Tomchochola\Laratchi\Auth\Http\Controllers\EmailVerificationVerifyController;
 use Tomchochola\Laratchi\Auth\Notifications\PasswordInitNotification;
 use Tomchochola\Laratchi\Auth\Notifications\ResetPasswordNotification;
 use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
@@ -80,7 +81,7 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
      */
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new VerifyEmailNotification($this->getUserProviderName()));
+        $this->notify(new VerifyEmailNotification($this->getUserProviderName(), EmailVerificationVerifyController::class));
     }
 
     /**

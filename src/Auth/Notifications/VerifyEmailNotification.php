@@ -9,7 +9,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
-use Tomchochola\Laratchi\Auth\Http\Controllers\EmailVerificationVerifyController;
 use Tomchochola\Laratchi\Support\SignedUrlSupport;
 
 class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
@@ -19,7 +18,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
     /**
      * Create a new notification.
      */
-    public function __construct(protected string $guardName)
+    public function __construct(protected string $guardName, protected string $action)
     {
         $this->afterCommit();
     }
@@ -37,7 +36,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
 
         $expires = mustConfigInt('auth.verification.expire');
 
-        return SignedUrlSupport::make(inject(EmailVerificationVerifyController::class)::class, $parameters, $expires);
+        return SignedUrlSupport::make($this->action, $parameters, $expires);
     }
 
     /**
