@@ -22,6 +22,11 @@ class SecureValidator extends Validator
     public static bool $bail = true;
 
     /**
+     * Use {{ attribute }} instead of real translations.
+     */
+    public static bool $usePlaceholderAttributes = true;
+
+    /**
      * @inheritDoc
      */
     public function passes(): bool
@@ -71,6 +76,10 @@ class SecureValidator extends Validator
      */
     protected function getAttributeFromTranslations(mixed $name): string
     {
+        if (static::$usePlaceholderAttributes) {
+            return "{{ {$name} }}";
+        }
+
         return $name;
     }
 }
