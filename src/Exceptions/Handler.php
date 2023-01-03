@@ -29,11 +29,6 @@ class Handler extends IlluminateHandler
     final public const ERROR_MESSAGE_UNEXPECTED_ERROR = 'Unexpected Error';
 
     /**
-     * Use errors without message and title.
-     */
-    public static bool $genericErrors = true;
-
-    /**
      * @inheritDoc
      */
     protected $dontFlash = [
@@ -85,15 +80,19 @@ class Handler extends IlluminateHandler
     {
         $message = static::message($e);
 
-        $normalizedMessage = static::normalizeMessage($message);
-
-        if (resolveTranslator()->has("exceptions::titles.{$normalizedMessage}")) {
-            return mustTransString("exceptions::titles.{$normalizedMessage}");
+        if (resolveTranslator()->has("exceptions::titles.{$message}")) {
+            return mustTransString("exceptions::titles.{$message}");
         }
 
-        $normalizedMessage = SymfonyResponse::$statusTexts[$e->getStatusCode()] ?? $normalizedMessage;
+        $message = static::normalizeMessage($message);
 
-        return mustTransString("exceptions::titles.{$normalizedMessage}");
+        if (resolveTranslator()->has("exceptions::titles.{$message}")) {
+            return mustTransString("exceptions::titles.{$message}");
+        }
+
+        $message = SymfonyResponse::$statusTexts[$e->getStatusCode()] ?? static::ERROR_MESSAGE_UNEXPECTED_ERROR;
+
+        return mustTransString("exceptions::titles.{$message}");
     }
 
     /**
@@ -168,7 +167,7 @@ class Handler extends IlluminateHandler
      */
     protected static function normalizeMessage(string $message): string
     {
-        return Str::title(\trim($message, " \t\n\r\0\x0B."));
+        return Str::title(extendedTrim($message, '.'));
     }
 
     /**
@@ -334,11 +333,6 @@ class Handler extends IlluminateHandler
 
         $data['status'] = $e->getStatusCode();
         $data['code'] = $e->getCode();
-
-        if (static::$genericErrors === false) {
-            $data['title'] = static::title($e);
-            $data['message'] = static::normalizeMessage($message);
-        }
 
         return $data;
     }
