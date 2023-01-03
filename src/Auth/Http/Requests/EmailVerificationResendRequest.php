@@ -20,10 +20,10 @@ class EmailVerificationResendRequest extends SecureFormRequest
 
         $guest = resolveAuthManager()->guard($guardName)->guest();
 
-        return \array_merge(parent::rules(), [
+        return [
             'guard' => $authValidity->guard()->nullable()->filled(),
             'email' => $authValidity->email($guardName)->nullable()->filled()->requiredIfRule($guest),
-        ]);
+        ];
     }
 
     /**

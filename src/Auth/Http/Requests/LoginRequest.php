@@ -31,12 +31,12 @@ class LoginRequest extends SecureFormRequest
 
         $guardName = $this->guardName();
 
-        return \array_merge(parent::rules(), [
+        return [
             'guard' => $authValidity->guard()->nullable()->filled(),
             'remember' => $authValidity->remember($guardName)->required(),
             'email' => $authValidity->email($guardName)->required(),
             'password' => $authValidity->password($guardName)->required(),
-        ]);
+        ];
     }
 
     /**

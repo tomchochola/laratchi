@@ -31,13 +31,13 @@ class RegisterRequest extends SecureFormRequest
 
         $guardName = $this->guardName();
 
-        return \array_merge(parent::rules(), [
+        return [
             'guard' => $authValidity->guard()->nullable()->filled(),
             'email' => $authValidity->email($guardName)->required(),
             'password' => $authValidity->password($guardName)->confirmed()->required(),
             'name' => $authValidity->name($guardName)->required(),
             'locale' => $authValidity->locale($guardName)->required(),
-        ]);
+        ];
     }
 
     /**

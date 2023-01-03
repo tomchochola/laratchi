@@ -6,7 +6,6 @@ namespace Tomchochola\Laratchi\Auth\Http\Requests;
 
 use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
 use Tomchochola\Laratchi\Http\Requests\SignedRequest;
-use Tomchochola\Laratchi\Validation\GenericValidity;
 
 class EmailVerificationVerifyRequest extends SignedRequest
 {
@@ -16,14 +15,13 @@ class EmailVerificationVerifyRequest extends SignedRequest
     public function rules(): array
     {
         $authValidity = inject(AuthValidity::class);
-        $genericValidity = inject(GenericValidity::class);
 
         $guardName = $this->guardName();
 
-        return \array_merge(parent::rules(), [
+        return \array_replace(parent::rules(), [
             'guard' => $authValidity->guard()->nullable()->filled(),
             'email' => $authValidity->email($guardName)->required(),
-            'id' => $genericValidity->id()->required(),
+            'id' => $authValidity->id($guardName)->required(),
         ]);
     }
 

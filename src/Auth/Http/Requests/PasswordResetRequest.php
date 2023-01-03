@@ -29,14 +29,14 @@ class PasswordResetRequest extends SecureFormRequest
     {
         $authValidity = inject(AuthValidity::class);
 
-        $guardName = resolveAuthManager()->getDefaultDriver();
+        $guardName = $this->guardName();
 
-        return \array_merge(parent::rules(), [
+        return [
             'guard' => $authValidity->guard()->nullable()->filled(),
             'token' => $authValidity->passwordResetToken($guardName)->required(),
             'email' => $authValidity->email($guardName)->required(),
             'password' => $authValidity->password($guardName)->required()->confirmed(),
-        ]);
+        ];
     }
 
     /**
@@ -70,6 +70,6 @@ class PasswordResetRequest extends SecureFormRequest
      */
     public function passwordBrokerName(): string
     {
-        return resolvePasswordBrokerManager()->getDefaultDriver();
+        return $this->guardName();
     }
 }

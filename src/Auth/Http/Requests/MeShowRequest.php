@@ -17,9 +17,9 @@ class MeShowRequest extends SecureFormRequest
     {
         $authValidity = inject(AuthValidity::class);
 
-        return \array_merge(parent::rules(), [
+        return [
             'guard' => $authValidity->guard()->nullable()->filled(),
-        ]);
+        ];
     }
 
     /**

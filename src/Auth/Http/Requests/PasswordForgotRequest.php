@@ -31,10 +31,10 @@ class PasswordForgotRequest extends SecureFormRequest
 
         $guardName = $this->guardName();
 
-        return \array_merge(parent::rules(), [
+        return [
             'guard' => $authValidity->guard()->nullable()->filled(),
             'email' => $authValidity->email($guardName)->required(),
-        ]);
+        ];
     }
 
     /**
@@ -68,6 +68,6 @@ class PasswordForgotRequest extends SecureFormRequest
      */
     public function passwordBrokerName(): string
     {
-        return resolvePasswordBrokerManager()->getDefaultDriver();
+        return $this->guardName();
     }
 }
