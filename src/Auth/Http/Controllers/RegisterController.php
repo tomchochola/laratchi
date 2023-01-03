@@ -14,12 +14,12 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
 use Tomchochola\Laratchi\Auth\Actions\LoginAction;
 use Tomchochola\Laratchi\Auth\Http\Requests\RegisterRequest;
 use Tomchochola\Laratchi\Auth\Services\AuthService;
+use Tomchochola\Laratchi\Providers\LaratchiServiceProvider;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class RegisterController extends TransactionController
@@ -89,12 +89,12 @@ class RegisterController extends TransactionController
      */
     protected function onThrottle(RegisterRequest $request, array $credentials): ?Closure
     {
-        return function (int $seconds) use ($credentials): never {
+        return static function (int $seconds) use ($credentials, $request): never {
             if (static::$simpleThrottle) {
                 throw new ThrottleRequestsException();
             }
 
-            $this->throwThrottleValidationError(\array_keys($credentials), $seconds);
+            $request->throwThrottleValidationError(\array_keys($credentials), $seconds);
         };
     }
 
@@ -129,7 +129,7 @@ class RegisterController extends TransactionController
      */
     protected function response(RegisterRequest $request, AuthenticatableContract $user): SymfonyResponse
     {
-        return inject(AuthService::class)->jsonApiResource($user)->toResponse($request);
+        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
     }
 
     /**
@@ -139,13 +139,7 @@ class RegisterController extends TransactionController
      */
     protected function throwDuplicateCredentialsError(RegisterRequest $request, array $credentials): never
     {
-        $validator = resolveValidatorFactory()->make([], []);
-
-        foreach ($credentials as $key => $value) {
-            $validator->addFailure($key, 'unique');
-        }
-
-        throw new ValidationException($validator);
+        $request->throwValidationException(\array_map(static fn (): array => ['Unique' => []], $credentials));
     }
 
     /**
@@ -233,11 +227,17 @@ class RegisterController extends TransactionController
         $message = $response->message();
 
         if ($message === null || \trim($message) === '') {
-            $message = mustTransString('auth.blocked');
+            $message = 'auth.blocked';
         }
 
         if ($response->code() === null) {
-            throw ValidationException::withMessages(\array_map(static fn (): array => [$message], $request->credentials()))->status($response->status() ?? 422);
+            $keys = [];
+
+            foreach ($request->credentials() as $credentials) {
+                $keys = \array_merge($keys, $credentials);
+            }
+
+            $request->throwValidationException(\array_map(static fn (): array => [$message => []], $keys), $response->status() ?? 422);
         }
 
         throw (new AuthorizationException($message, $response->code()))

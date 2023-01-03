@@ -6,7 +6,7 @@ namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\MeShowRequest;
-use Tomchochola\Laratchi\Auth\Services\AuthService;
+use Tomchochola\Laratchi\Providers\LaratchiServiceProvider;
 use Tomchochola\Laratchi\Routing\Controller;
 
 class MeShowController extends Controller
@@ -30,6 +30,6 @@ class MeShowController extends Controller
             return resolveResponseFactory()->noContent();
         }
 
-        return inject(AuthService::class)->jsonApiResource($user)->toResponse($request);
+        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
     }
 }

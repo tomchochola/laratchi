@@ -10,10 +10,10 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\MeUpdateRequest;
 use Tomchochola\Laratchi\Auth\Services\AuthService;
+use Tomchochola\Laratchi\Providers\LaratchiServiceProvider;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class MeUpdateController extends TransactionController
@@ -68,12 +68,12 @@ class MeUpdateController extends TransactionController
      */
     protected function onThrottle(MeUpdateRequest $request, array $credentials): ?Closure
     {
-        return function (int $seconds) use ($credentials): never {
+        return static function (int $seconds) use ($credentials, $request): never {
             if (static::$simpleThrottle) {
                 throw new ThrottleRequestsException();
             }
 
-            $this->throwThrottleValidationError(\array_keys($credentials), $seconds);
+            $request->throwThrottleValidationError(\array_keys($credentials), $seconds);
         };
     }
 
@@ -100,7 +100,7 @@ class MeUpdateController extends TransactionController
      */
     protected function response(MeUpdateRequest $request): SymfonyResponse
     {
-        return inject(AuthService::class)->jsonApiResource($request->retrieveUser())->toResponse($request);
+        return (new LaratchiServiceProvider::$meJsonApiResource($request->retrieveUser()))->toResponse($request);
     }
 
     /**
@@ -110,13 +110,7 @@ class MeUpdateController extends TransactionController
      */
     protected function throwDuplicateCredentialsError(MeUpdateRequest $request, array $credentials): never
     {
-        $validator = resolveValidatorFactory()->make([], []);
-
-        foreach ($credentials as $key => $value) {
-            $validator->addFailure($key, 'unique');
-        }
-
-        throw new ValidationException($validator);
+        $request->throwValidationException(\array_map(static fn (): array => ['Unique' => []], $credentials));
     }
 
     /**

@@ -8,7 +8,6 @@ use Closure;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\PasswordForgotRequest;
 use Tomchochola\Laratchi\Routing\TransactionController;
@@ -69,12 +68,12 @@ class PasswordForgotController extends TransactionController
      */
     protected function onThrottle(PasswordForgotRequest $request): ?Closure
     {
-        return function (int $seconds) use ($request): never {
+        return static function (int $seconds) use ($request): never {
             if (static::$simpleThrottle) {
                 throw new ThrottleRequestsException();
             }
 
-            $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
+            $request->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
         };
     }
 
@@ -99,7 +98,7 @@ class PasswordForgotController extends TransactionController
      */
     protected function throwInvalidStatus(PasswordForgotRequest $request, string $status): never
     {
-        throw ValidationException::withMessages(\array_map(static fn (): array => [mustTransString($status)], $request->credentials()));
+        $request->throwValidationException(\array_map(static fn (): array => [$status => []], $request->credentials()));
     }
 
     /**

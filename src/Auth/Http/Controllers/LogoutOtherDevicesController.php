@@ -12,7 +12,6 @@ use Illuminate\Auth\Events\Validated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\CycleRememberTokenAction;
 use Tomchochola\Laratchi\Auth\Actions\LogoutOtherDevicesAction;
@@ -20,6 +19,7 @@ use Tomchochola\Laratchi\Auth\Actions\ReloginAction;
 use Tomchochola\Laratchi\Auth\Actions\UpdatePasswordAction;
 use Tomchochola\Laratchi\Auth\Http\Requests\LogoutOtherDevicesRequest;
 use Tomchochola\Laratchi\Auth\Services\AuthService;
+use Tomchochola\Laratchi\Providers\LaratchiServiceProvider;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class LogoutOtherDevicesController extends TransactionController
@@ -91,14 +91,14 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function onThrottle(LogoutOtherDevicesRequest $request): ?Closure
     {
-        return function (int $seconds) use ($request): never {
+        return static function (int $seconds) use ($request): never {
             resolveEventDispatcher()->dispatch(new Lockout($request));
 
             if (static::$simpleThrottle) {
                 throw new ThrottleRequestsException();
             }
 
-            $this->throwThrottleValidationError(\array_keys($request->password()), $seconds);
+            $request->throwThrottleValidationError(\array_keys($request->password()), $seconds);
         };
     }
 
@@ -127,11 +127,7 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function throwValidatePasswordFailedError(LogoutOtherDevicesRequest $request): never
     {
-        throw ValidationException::withMessages(
-            \array_map(static fn (): array => [
-                mustTransString('auth.password'),
-            ], $request->password()),
-        );
+        $request->throwValidationException(\array_map(static fn (): array => ['auth.password' => []], $request->password()));
     }
 
     /**
@@ -199,7 +195,7 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function response(LogoutOtherDevicesRequest $request): SymfonyResponse
     {
-        return inject(AuthService::class)->jsonApiResource($request->retrieveUser())->toResponse($request);
+        return (new LaratchiServiceProvider::$meJsonApiResource($request->retrieveUser()))->toResponse($request);
     }
 
     /**

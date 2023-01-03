@@ -15,12 +15,12 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
 use Tomchochola\Laratchi\Auth\Actions\LoginAction;
 use Tomchochola\Laratchi\Auth\Http\Requests\LoginRequest;
 use Tomchochola\Laratchi\Auth\Services\AuthService;
+use Tomchochola\Laratchi\Providers\LaratchiServiceProvider;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class LoginController extends TransactionController
@@ -98,12 +98,12 @@ class LoginController extends TransactionController
      */
     protected function onCredentialsThrottle(LoginRequest $request): ?Closure
     {
-        return function (int $seconds) use ($request): never {
+        return static function (int $seconds) use ($request): never {
             if (static::$simpleThrottle) {
                 throw new ThrottleRequestsException();
             }
 
-            $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds, 'auth.throttle');
+            $request->throwThrottleValidationError(\array_keys($request->credentials()), $seconds, 'auth.throttle');
         };
     }
 
@@ -114,14 +114,14 @@ class LoginController extends TransactionController
      */
     protected function onPasswordThrottle(LoginRequest $request): ?Closure
     {
-        return function (int $seconds) use ($request): never {
+        return static function (int $seconds) use ($request): never {
             resolveEventDispatcher()->dispatch(new Lockout($request));
 
             if (static::$simpleThrottle) {
                 throw new ThrottleRequestsException();
             }
 
-            $this->throwThrottleValidationError(\array_keys($request->password()), $seconds, 'auth.throttle');
+            $request->throwThrottleValidationError(\array_keys($request->password()), $seconds, 'auth.throttle');
         };
     }
 
@@ -162,7 +162,7 @@ class LoginController extends TransactionController
      */
     protected function throwRetrieveByCredentialsFailedError(LoginRequest $request, ?AuthenticatableContract $user): never
     {
-        throw ValidationException::withMessages(\array_map(static fn (): array => [mustTransString('auth.failed')], $request->credentials()));
+        $request->throwValidationException(\array_map(static fn (): array => ['auth.failed' => []], $request->credentials()));
     }
 
     /**
@@ -186,7 +186,7 @@ class LoginController extends TransactionController
      */
     protected function throwValidatePasswordFailedError(LoginRequest $request, ?AuthenticatableContract $user): never
     {
-        throw ValidationException::withMessages(\array_map(static fn (): array => [mustTransString('auth.password')], $request->password()));
+        $request->throwValidationException(\array_map(static fn (): array => ['auth.password' => []], $request->password()));
     }
 
     /**
@@ -210,7 +210,7 @@ class LoginController extends TransactionController
      */
     protected function response(LoginRequest $request, AuthenticatableContract $user): SymfonyResponse
     {
-        return inject(AuthService::class)->jsonApiResource($user)->toResponse($request);
+        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
     }
 
     /**
@@ -241,11 +241,11 @@ class LoginController extends TransactionController
         $message = $response->message();
 
         if ($message === null || \trim($message) === '') {
-            $message = mustTransString('auth.blocked');
+            $message = 'auth.blocked';
         }
 
         if ($response->code() === null) {
-            throw ValidationException::withMessages(\array_map(static fn (): array => [$message], $request->credentials()))->status($response->status() ?? 422);
+            $request->throwValidationException(\array_map(static fn (): array => [$message => []], $request->credentials()), $response->status() ?? 422);
         }
 
         throw (new AuthorizationException($message, $response->code()))

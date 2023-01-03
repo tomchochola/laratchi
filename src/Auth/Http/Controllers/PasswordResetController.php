@@ -14,7 +14,6 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
 use Tomchochola\Laratchi\Auth\Actions\CycleRememberTokenAction;
@@ -23,6 +22,7 @@ use Tomchochola\Laratchi\Auth\Actions\LogoutOtherDevicesAction;
 use Tomchochola\Laratchi\Auth\Actions\UpdatePasswordAction;
 use Tomchochola\Laratchi\Auth\Http\Requests\PasswordResetRequest;
 use Tomchochola\Laratchi\Auth\Services\AuthService;
+use Tomchochola\Laratchi\Providers\LaratchiServiceProvider;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class PasswordResetController extends TransactionController
@@ -99,12 +99,12 @@ class PasswordResetController extends TransactionController
      */
     protected function onThrottle(PasswordResetRequest $request): ?Closure
     {
-        return function (int $seconds) use ($request): never {
+        return static function (int $seconds) use ($request): never {
             if (static::$simpleThrottle) {
                 throw new ThrottleRequestsException();
             }
 
-            $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
+            $request->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
         };
     }
 
@@ -143,7 +143,7 @@ class PasswordResetController extends TransactionController
      */
     protected function throwInvalidStatus(PasswordResetRequest $request, string $status): never
     {
-        throw ValidationException::withMessages(\array_map(static fn (): array => [mustTransString($status)], $request->credentials()));
+        $request->throwValidationException(\array_map(static fn (): array => [$status => []], $request->credentials()));
     }
 
     /**
@@ -185,7 +185,7 @@ class PasswordResetController extends TransactionController
      */
     protected function response(PasswordResetRequest $request): SymfonyResponse
     {
-        return inject(AuthService::class)->jsonApiResource($this->user)->toResponse($request);
+        return (new LaratchiServiceProvider::$meJsonApiResource($this->user))->toResponse($request);
     }
 
     /**
@@ -232,11 +232,11 @@ class PasswordResetController extends TransactionController
         $message = $response->message();
 
         if ($message === null || \trim($message) === '') {
-            $message = mustTransString('auth.blocked');
+            $message = 'auth.blocked';
         }
 
         if ($response->code() === null) {
-            throw ValidationException::withMessages(\array_map(static fn (): array => [$message], $request->credentials()))->status($response->status() ?? 422);
+            $request->throwValidationException(\array_map(static fn (): array => [$message => []], $request->credentials()), $response->status() ?? 422);
         }
 
         throw (new AuthorizationException($message, $response->code()))

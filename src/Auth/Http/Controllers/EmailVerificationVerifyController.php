@@ -11,7 +11,6 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tomchochola\Laratchi\Auth\Http\Requests\EmailVerificationVerifyRequest;
@@ -92,12 +91,12 @@ class EmailVerificationVerifyController extends TransactionController
      */
     protected function onThrottle(EmailVerificationVerifyRequest $request): ?Closure
     {
-        return function (int $seconds) use ($request): never {
+        return static function (int $seconds) use ($request): never {
             if (static::$simpleThrottle) {
                 throw new ThrottleRequestsException();
             }
 
-            $this->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
+            $request->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
         };
     }
 
@@ -158,6 +157,6 @@ class EmailVerificationVerifyController extends TransactionController
      */
     protected function throwRetrieveByCredentialsFailedError(EmailVerificationVerifyRequest $request): never
     {
-        throw ValidationException::withMessages(\array_map(static fn (): array => [mustTransString('auth.failed')], $request->credentials()));
+        $request->throwValidationException(\array_map(static fn (): array => ['auth.failed' => []], $request->credentials()));
     }
 }
