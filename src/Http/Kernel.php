@@ -9,7 +9,6 @@ use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Auth\Middleware\RequirePassword;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
@@ -21,7 +20,6 @@ use Illuminate\Http\Middleware\SetCacheHeaders;
 use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
-use Illuminate\Routing\Router;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -86,15 +84,4 @@ class Kernel extends HttpKernel
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
     ];
-
-    /**
-     * @inheritDoc
-     */
-    public function __construct(Application $app, Router $router)
-    {
-        \array_unshift($this->middlewarePriority, SetPreferredLanguageMiddleware::class);
-        \array_unshift($this->middlewarePriority, SetRequestFormatMiddleware::class);
-
-        parent::__construct($app, $router);
-    }
 }
