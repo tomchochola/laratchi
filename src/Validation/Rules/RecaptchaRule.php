@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tomchochola\Laratchi\Rules;
+namespace Tomchochola\Laratchi\Validation\Rules;
 
 use Illuminate\Contracts\Validation\Rule as RuleContract;
 use Illuminate\Http\Client\Response;

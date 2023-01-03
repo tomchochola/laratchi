@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation\Rules;
 
-use Intervention\Validation\Rules\Postalcode;
+use Illuminate\Contracts\Validation\Rule as RuleContract;
 use League\ISO3166\ISO3166;
 
-class PostCodeRule extends Postalcode
+class PostCodeRule implements RuleContract
 {
     /**
      * Enums.
@@ -2957,11 +2957,10 @@ class PostCodeRule extends Postalcode
     ];
 
     /**
-     * @inheritDoc
+     * PostCodeRule constructor.
      */
-    public function __construct(string $countrycode, protected bool $validateEnum = true)
+    public function __construct(protected string $countryCode, protected bool $validateEnum = true)
     {
-        parent::__construct($countrycode);
     }
 
     /**
@@ -2981,15 +2980,23 @@ class PostCodeRule extends Postalcode
             return false;
         }
 
-        $passes = parent::passes($attribute, $value);
-
-        if (! $passes) {
-            return false;
+        if ($this->countryCode === '') {
+            return true;
         }
 
         $iso2 = $this->getCountryCode();
 
-        if ($this->validateEnum && $iso2 !== null && \array_key_exists($iso2, static::$enums)) {
+        $pattern = static::$patterns[$iso2] ?? null;
+
+        if ($pattern === null) {
+            return false;
+        }
+
+        if (\preg_match($pattern, $value) !== 1) {
+            return false;
+        }
+
+        if ($this->validateEnum && \array_key_exists($iso2, static::$enums)) {
             return \in_array($value, static::$enums[$iso2], true);
         }
 
@@ -2999,36 +3006,12 @@ class PostCodeRule extends Postalcode
     /**
      * Get country code.
      */
-    protected function getCountryCode(): ?string
+    protected function getCountryCode(): string
     {
-        $value = parent::getCountryCode();
-
-        if ($value === null) {
-            return $value;
+        if (\mb_strlen($this->countryCode) === 3) {
+            return (new ISO3166())->alpha3($this->countryCode)[ISO3166::KEY_ALPHA2];
         }
 
-        if (\mb_strlen($value) === 3) {
-            $iso3 = (new ISO3166())->alpha3($value);
-
-            return $iso3[ISO3166::KEY_ALPHA2];
-        }
-
-        return $value;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getPattern(): ?string
-    {
-        $countryCode = $this->getCountryCode();
-
-        if ($countryCode === null) {
-            return null;
-        }
-
-        $code = \mb_strtoupper($countryCode);
-
-        return static::$patterns[$code] ?? null;
+        return \mb_strtoupper($this->countryCode);
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tomchochola\Laratchi\Rules;
+namespace Tomchochola\Laratchi\Validation\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\Rule as RuleContract;
