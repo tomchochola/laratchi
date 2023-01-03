@@ -60,16 +60,6 @@ class Controller extends IlluminateController
     }
 
     /**
-     * Throw throttle validation error.
-     *
-     * @param array<array-key> $keys
-     */
-    protected function throwThrottleValidationError(array $keys, int $seconds, string $trans = 'validation.throttled'): never
-    {
-        ThrottleSupport::throwThrottleValidationError($keys, $seconds, $trans);
-    }
-
-    /**
      * Register throttle and hit.
      *
      * @param (Closure(int): never)|null $onError

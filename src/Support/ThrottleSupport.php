@@ -7,7 +7,6 @@ namespace Tomchochola\Laratchi\Support;
 use Closure;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use Illuminate\Validation\ValidationException;
 
 class ThrottleSupport
 {
@@ -46,23 +45,6 @@ class ThrottleSupport
                 $rateLimiter->clear($key);
             },
         ];
-    }
-
-    /**
-     * Throw throttle validation error.
-     *
-     * @param array<array-key> $keys
-     */
-    public static function throwThrottleValidationError(array $keys, int $seconds, string $trans = 'validation.throttled'): never
-    {
-        throw ValidationException::withMessages(
-            \array_map(static fn (): array => [
-                mustTransString($trans, [
-                    'seconds' => (string) $seconds,
-                    'minutes' => (string) \ceil($seconds / 60),
-                ]),
-            ], \array_flip($keys)),
-        );
     }
 
     /**

@@ -6,6 +6,8 @@ namespace Tomchochola\Laratchi\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest as IlluminateFormRequest;
 use Illuminate\Routing\Route;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator;
 use Tomchochola\Laratchi\Validation\ValidatedInput;
 
 class FormRequest extends IlluminateFormRequest
@@ -93,7 +95,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Slug getter.
      */
-    public function slug(string $key, ?string $default = null): ?string
+    public function fastSlug(string $key, ?string $default = null): ?string
     {
         $route = $this->route();
 
@@ -109,12 +111,65 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Mandatory slug getter.
      */
-    public function mustSlug(string $key, ?string $default = null): string
+    public function mustFastSlug(string $key, ?string $default = null): string
     {
-        $value = $this->slug($key, $default);
+        $value = $this->fastSlug($key, $default);
 
         \assert($value !== null);
 
         return $value;
+    }
+
+    /**
+     * Throw validation exception.
+     *
+     * @param array<string, array<string, array<string>>> $errors
+     */
+    public function throwValidationException(array $errors, ?int $status = null): never
+    {
+        $validator = $this->getValidatorInstance();
+
+        \assert($validator instanceof Validator);
+
+        foreach ($errors as $field => $exceptions) {
+            foreach ($exceptions as $exception => $params) {
+                $validator->addFailure($field, $exception, $params);
+            }
+        }
+
+        $exception = new ValidationException($validator);
+
+        if ($status !== null) {
+            $exception->status($status);
+        }
+
+        throw $exception;
+    }
+
+    /**
+     * Throw throttle validation error.
+     *
+     * @param array<array-key> $keys
+     */
+    public function throwThrottleValidationError(array $keys, int $seconds, string $rule = 'throttled', ?int $status = null): never
+    {
+        $validator = $this->getValidatorInstance();
+
+        \assert($validator instanceof Validator);
+
+        foreach ($keys as $key) {
+            $validator->addFailure($key, $rule, [
+                'seconds' => (string) $seconds,
+                'minutes' => (string) \ceil($seconds / 60),
+            ]);
+        }
+
+        $exception = new ValidationException($validator);
+
+        if ($status !== null) {
+            $exception->status($status);
+        }
+
+        throw $exception;
     }
 }
