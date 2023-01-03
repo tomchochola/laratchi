@@ -216,9 +216,6 @@ return [
     // 400
     Tomchochola\Laratchi\Http\Middleware\MustBeStatelessMiddleware::ERROR_MESSAGE => 'Request must be stateless',
 
-    // 406
-    Tomchochola\Laratchi\Http\Middleware\SetPreferredLanguageMiddleware::ERROR_MESSAGE => 'Unsupported language',
-
     // 427
     Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException::ERROR_MESSAGE => 'Log out first',
 ];

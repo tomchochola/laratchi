@@ -216,9 +216,6 @@ return [
     // 400
     Tomchochola\Laratchi\Http\Middleware\MustBeStatelessMiddleware::ERROR_MESSAGE => 'Požadavek musí být bezestavový',
 
-    // 406
-    Tomchochola\Laratchi\Http\Middleware\SetPreferredLanguageMiddleware::ERROR_MESSAGE => 'Nepodporovaný jazyk',
-
     // 427
     Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException::ERROR_MESSAGE => 'Musíte se nejdříve odhlásit',
 ];
