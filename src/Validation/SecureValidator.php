@@ -74,6 +74,7 @@ class SecureValidator extends Validator
         'date' => 'date',
         'date_equals' => 'date_equals::date',
         'date_format' => 'date_format::format',
+        'decimal' => 'decimal::decimal',
         'declined' => 'declined',
         'declined_if' => 'declined_if::other;:value',
         'different' => 'different::other',
