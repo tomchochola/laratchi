@@ -7,7 +7,6 @@ namespace Tomchochola\Laratchi\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class SetPreferredLanguageMiddleware
 {
@@ -40,13 +39,11 @@ class SetPreferredLanguageMiddleware
 
         $locale = $request->getPreferredLanguage($locales);
 
-        if ($locale === null && $request->getRequestFormat() === 'json') {
-            throw new HttpException(static::ERROR_STATUS, static::ERROR_MESSAGE);
-        }
+        \assert(\is_string($locale));
 
         $app = resolveApp();
 
-        if ($locale !== null && $app->getLocale() !== $locale) {
+        if ($app->getLocale() !== $locale) {
             $app->setLocale($locale);
         }
 
