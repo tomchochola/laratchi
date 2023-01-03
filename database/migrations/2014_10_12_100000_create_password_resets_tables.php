@@ -21,7 +21,7 @@ return new class() extends Migration {
             resolveSchema()->create($tableName, static function (Blueprint $table): void {
                 $table->id();
 
-                $table->string('email')->index();
+                $table->string('email')->unique();
                 $table->string('token');
 
                 $table->timestamp('created_at');
