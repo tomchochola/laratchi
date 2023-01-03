@@ -62,16 +62,6 @@ if (! \function_exists('arrayFilterNull')) {
     }
 }
 
-if (! \function_exists('randomFloat')) {
-    /**
-     * Random float generator.
-     */
-    function randomFloat(float $min, float $max): float
-    {
-        return $min + \random_int(0, \mt_getrandmax()) / \mt_getrandmax() * ($max - $min);
-    }
-}
-
 if (! \function_exists('nonProductionThrow')) {
     /**
      * Throw exception only on production.
@@ -91,20 +81,13 @@ if (! \function_exists('mustTransString')) {
      * Mandatory string translation resolver.
      *
      * @param array<string, string> $replace
-     *
-     * @return non-empty-string
      */
-    function mustTransString(string $key, array $replace = [], ?string $locale = null, bool $fallback = true, bool $trim = true): string
+    function mustTransString(string $key, array $replace = [], ?string $locale = null, bool $fallback = true): string
     {
         $resolved = resolveTranslator()->get($key, $replace, $locale, $fallback);
 
         \assert(\is_string($resolved) && $resolved !== $key, "[{$key}] translation is missing");
-
-        if ($trim) {
-            $resolved = \trim($resolved);
-        }
-
-        \assert($resolved !== '', "[{$key}] translation is empty");
+        \assert(\trim($resolved) !== '', "[{$key}] translation is empty");
 
         return $resolved;
     }
@@ -114,24 +97,14 @@ if (! \function_exists('mustTransJsonString')) {
     /**
      * Mandatory string json translation resolver.
      *
-     * @param array<string> $messageLocales
      * @param array<string, string> $replace
-     *
-     * @return non-empty-string
      */
-    function mustTransJsonString(string $message, array $messageLocales = ['en'], array $replace = [], ?string $locale = null, bool $fallback = true, bool $trim = true): string
+    function mustTransJsonString(string $message, array $replace = [], ?string $locale = null, bool $fallback = true): string
     {
-        $translator = resolveTranslator();
+        $resolved = resolveTranslator()->get($message, $replace, $locale, $fallback);
 
-        $resolved = $translator->get($message, $replace, $locale, $fallback);
-
-        \assert(\is_string($resolved) && ($resolved !== $message || \in_array($translator->getLocale(), $messageLocales, true)), "[{$message}] json translation is missing");
-
-        if ($trim) {
-            $resolved = \trim($resolved);
-        }
-
-        \assert($resolved !== '', "[{$message}] json translation is empty");
+        \assert(\is_string($resolved), "[{$message}] translation is missing");
+        \assert(\trim($resolved) !== '', "[{$message}] translation is empty");
 
         return $resolved;
     }
@@ -178,10 +151,7 @@ if (! \function_exists('configBool')) {
         $value = resolveConfig()->get($key, $default);
 
         \assert($value === null || \is_bool($value), "[{$key}] config is not bool or null");
-
-        if (\count($in) > 0) {
-            \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
-        }
+        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
 
         return $value;
     }
@@ -214,10 +184,7 @@ if (! \function_exists('configInt')) {
         $value = resolveConfig()->get($key, $default);
 
         \assert($value === null || \is_int($value), "[{$key}] config is not int or null");
-
-        if (\count($in) > 0) {
-            \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
-        }
+        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
 
         return $value;
     }
@@ -250,10 +217,7 @@ if (! \function_exists('configFloat')) {
         $value = resolveConfig()->get($key, $default);
 
         \assert($value === null || \is_float($value), "[{$key}] config is not float or null");
-
-        if (\count($in) > 0) {
-            \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
-        }
+        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
 
         return $value;
     }
@@ -317,31 +281,12 @@ if (! \function_exists('configString')) {
      *
      * @param array<mixed> $in
      */
-    function configString(string $key, ?string $default = null, bool $trim = true, array $in = []): ?string
+    function configString(string $key, ?string $default = null, array $in = []): ?string
     {
         $value = resolveConfig()->get($key, $default);
 
-        if ($value === null) {
-            if (\count($in) > 0) {
-                \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
-            }
-
-            return null;
-        }
-
-        \assert(\is_string($value), "[{$key}] config is not string or null");
-
-        if ($trim) {
-            $value = \trim($value);
-        }
-
-        if ($value === '') {
-            $value = $default;
-        }
-
-        if (\count($in) > 0) {
-            \assert(\in_array($value, $in, true), "[{$key}] config is not in available options");
-        }
+        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
+        \assert($value === null || \is_string($value), "[{$key}] config is not string or null");
 
         return $value;
     }
@@ -353,9 +298,9 @@ if (! \function_exists('mustConfigString')) {
      *
      * @param array<mixed> $in
      */
-    function mustConfigString(string $key, ?string $default = null, bool $trim = true, array $in = []): string
+    function mustConfigString(string $key, ?string $default = null, array $in = []): string
     {
-        $value = configString($key, $default, $trim, $in);
+        $value = configString($key, $default, $in);
 
         \assert($value !== null, "[{$key}] config is not string");
 
@@ -1058,17 +1003,15 @@ if (! \function_exists('envString')) {
      */
     function envString(string $key, ?string $default = null, bool $trim = true, array $in = []): ?string
     {
-        $value = env($key, $default);
+        $value = env($key, $default) ?? $default;
 
         if ($value === null) {
-            if (\count($in) > 0) {
-                \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
-            }
-
-            return null;
+            return $default;
         }
 
-        \assert(\is_string($value), "[{$key}] env is not string or null");
+        $value = \filter_var($value);
+
+        \assert($value !== false, "[{$key}] env is not string or null");
 
         if ($trim) {
             $value = \trim($value);
@@ -1078,9 +1021,7 @@ if (! \function_exists('envString')) {
             $value = $default;
         }
 
-        if (\count($in) > 0) {
-            \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
-        }
+        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] env is not in available options");
 
         return $value;
     }
@@ -1110,21 +1051,16 @@ if (! \function_exists('envBool')) {
      */
     function envBool(string $key, ?bool $default = null, array $in = []): ?bool
     {
-        $value = env($key, $default);
+        $value = env($key, $default) ?? $default;
 
         if ($value === null) {
-            if (\count($in) > 0) {
-                \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
-            }
-
-            return null;
+            return $default;
         }
 
-        \assert(\is_bool($value), "[{$key}] env is not bool or null");
+        $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
 
-        if (\count($in) > 0) {
-            \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
-        }
+        \assert($value !== null, "[{$key}] env is not bool or null");
+        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] env is not in available options");
 
         return $value;
     }
@@ -1154,23 +1090,16 @@ if (! \function_exists('envInt')) {
      */
     function envInt(string $key, ?int $default = null, array $in = []): ?int
     {
-        $value = env($key, $default);
+        $value = env($key, $default) ?? $default;
 
         if ($value === null) {
-            if (\count($in) > 0) {
-                \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
-            }
-
-            return null;
+            return $default;
         }
 
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
         \assert($value !== false, "[{$key}] env is not int or null");
-
-        if (\count($in) > 0) {
-            \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
-        }
+        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] env is not in available options");
 
         return $value;
     }
@@ -1200,23 +1129,16 @@ if (! \function_exists('envFloat')) {
      */
     function envFloat(string $key, ?float $default = null, array $in = []): ?float
     {
-        $value = env($key, $default);
+        $value = env($key, $default) ?? $default;
 
         if ($value === null) {
-            if (\count($in) > 0) {
-                \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
-            }
-
             return $default;
         }
 
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
         \assert($value !== false, "[{$key}] env is not float or null");
-
-        if (\count($in) > 0) {
-            \assert(\in_array($value, $in, true), "[{$key}] env is not in available options");
-        }
+        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] env is not in available options");
 
         return $value;
     }
@@ -1235,25 +1157,5 @@ if (! \function_exists('mustEnvFloat')) {
         \assert($value !== null, "[{$key}] env is not float");
 
         return $value;
-    }
-}
-
-if (! \function_exists('validationException')) {
-    /**
-     * Create validation exception.
-     *
-     * @param array<string, array<array<string>>> $errors
-     */
-    function validationException(array $errors): Illuminate\Validation\ValidationException
-    {
-        $validator = resolveValidatorFactory()->make([], []);
-
-        foreach ($errors as $field => $exceptions) {
-            foreach ($exceptions as $exception) {
-                $validator->addFailure($field, $exception[0], \array_slice($exception, 1));
-            }
-        }
-
-        return new Illuminate\Validation\ValidationException($validator);
     }
 }
