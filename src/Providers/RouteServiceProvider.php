@@ -16,14 +16,7 @@ class RouteServiceProvider extends ServiceProvider
         parent::boot();
 
         $this->routes(static function (): void {
-            $app = resolveApp();
-
-            resolveRouteRegistrar()->middleware('api')
-                ->prefix('api')
-                ->group($app->basePath('routes/api.php'));
-
-            resolveRouteRegistrar()->middleware('web')
-                ->group($app->basePath('routes/web.php'));
+            resolveRouteRegistrar()->group(resolveApp()->basePath('routes/http.php'));
         });
     }
 }
