@@ -54,7 +54,7 @@ class Kernel extends HttpKernel
      * @var array<mixed>
      */
     protected $middlewareGroups = [
-        'web' => [
+        'session' => [
             StartSession::class,
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
