@@ -20,7 +20,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * String resolver.
      */
-    public function string(string $key, ?string $default = null, bool $trim = true): ?string
+    public function string(string $key, ?string $default = null): ?string
     {
         $value = $this->get($key, $default);
 
@@ -34,25 +34,15 @@ class ValidatedInput extends IlluminateValidatedInput
             $this->throw("[{$key}] is not string or null");
         }
 
-        if ($trim) {
-            $trimed = \trim($value);
-
-            if ($trimed === '') {
-                return $default;
-            }
-
-            return $trimed;
-        }
-
         return $value;
     }
 
     /**
      * Mandatory string resolver.
      */
-    public function mustString(string $key, ?string $default = null, bool $trim = true): string
+    public function mustString(string $key, ?string $default = null): string
     {
-        $value = $this->string($key, $default, $trim);
+        $value = $this->string($key, $default);
 
         if ($value === null) {
             $this->throw("[{$key}] is not string");

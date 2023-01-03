@@ -6,23 +6,11 @@ namespace Tomchochola\Laratchi\Validation;
 
 use Illuminate\Contracts\Translation\Translator as TranslatorContract;
 use Illuminate\Contracts\Validation\Factory as ValidationFactoryContract;
-use Illuminate\Contracts\Validation\Validator as ValidatorContract;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator as IlluminateValidator;
 
 class Validator extends IlluminateValidator
 {
-    /**
-     * Use {{ attribute }} instead of real translations.
-     */
-    public static bool $usePlaceholderAttributes = true;
-
-    /**
-     * Plain errors are enabled.
-     */
-    public static bool $usePlainErrors = true;
-
     /**
      * @inheritDoc
      *
@@ -49,13 +37,15 @@ class Validator extends IlluminateValidator
 
     /**
      * Extend factory with custom resolver.
+     *
+     * @param class-string<IlluminateValidator> $validator
      */
-    public static function extend(ValidationFactoryContract $factory): void
+    public static function extend(ValidationFactoryContract $factory, string $validator): void
     {
         \assert($factory instanceof ValidationFactory);
 
-        $factory->resolver(static function (TranslatorContract $translator, array $data, array $rules, array $messages, array $attributes): ValidatorContract {
-            return new self($translator, $data, $rules, $messages, $attributes);
+        $factory->resolver(static function (TranslatorContract $translator, array $data, array $rules, array $messages, array $attributes) use ($validator): IlluminateValidator {
+            return new $validator($translator, $data, $rules, $messages, $attributes);
         });
     }
 
@@ -66,10 +56,9 @@ class Validator extends IlluminateValidator
     {
         \assert($factory instanceof ValidationFactory);
 
-        // Prevent global factory override.
         $clonedFactory = clone $factory;
 
-        static::extend($clonedFactory);
+        static::extend($clonedFactory, static::class);
 
         return $clonedFactory;
     }
@@ -372,31 +361,5 @@ class Validator extends IlluminateValidator
     protected function replaceStrlen(string $message, string $attribute, string $rule, array $parameters): string
     {
         return \str_replace(':size', (string) $parameters[0], $message);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getAttributeFromTranslations(mixed $name): string
-    {
-        if (static::$usePlainErrors && resolveRequest()->getRequestFormat() === 'json') {
-            return $name;
-        }
-
-        if (static::$usePlaceholderAttributes && resolveRequest()->getRequestFormat() === 'json') {
-            return "{{ {$name} }}";
-        }
-
-        foreach ([$name, Str::afterLast($name, '.')] as $look) {
-            $lookup = "validation.attributes.{$look}";
-
-            $attribute = $this->translator->get($lookup);
-
-            if (\is_string($attribute) && $attribute !== $lookup) {
-                return $attribute;
-            }
-        }
-
-        return '';
     }
 }
