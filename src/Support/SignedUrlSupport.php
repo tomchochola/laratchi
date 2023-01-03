@@ -21,7 +21,7 @@ class SignedUrlSupport
 
         \ksort($parameters);
 
-        return resolveUrlFactory()->action($action, \array_merge($parameters, [
+        return resolveUrlFactory()->action($action, \array_replace($parameters, [
             'signature' => \hash_hmac('sha256', resolveUrlFactory()->action($action, $parameters), mustConfigString('app.key')),
         ]));
     }

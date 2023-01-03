@@ -30,7 +30,7 @@ abstract class JsonApiResource extends JsonResource
                 continue;
             }
 
-            $map[$resource->getKey().':'.$resource->getType()] = \array_merge($map[$resource->getKey().':'.$resource->getType()] ?? [], $data);
+            $map[$resource->getKey().':'.$resource->getType()] = \array_replace($map[$resource->getKey().':'.$resource->getType()] ?? [], $data);
 
             static::withIncluded($resource->getIncluded(), $map, $request);
         }
