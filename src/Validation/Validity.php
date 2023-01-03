@@ -16,7 +16,7 @@ use Illuminate\Validation\Rules\NotIn;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rules\ProhibitedIf;
 use Illuminate\Validation\Rules\RequiredIf;
-use Tomchochola\Laratchi\Rules\CallbackRule;
+use Tomchochola\Laratchi\Validation\Rules\CallbackRule;
 
 /**
  * @implements ArrayableContract<int, mixed>
@@ -88,11 +88,18 @@ class Validity implements ArrayableContract
     protected array $rules = [];
 
     /**
+     * Validity constructor.
+     */
+    final public function __construct()
+    {
+    }
+
+    /**
      * Create a new validity instance.
      */
     public static function make(): static
     {
-        return inject(static::class);
+        return new static();
     }
 
     /**
@@ -238,25 +245,58 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function collection(int $minItems, int $maxItems): static
+    public function collection(int $maxItems, ?int $minItems = null): static
     {
-        \assert($minItems >= 0);
         \assert($maxItems > 0);
-        \assert($maxItems >= $minItems);
 
-        return $this->addRule('array')->min($minItems)->max($maxItems);
+        $rule = $this->addRule('array')->max($maxItems);
+
+        if ($minItems !== null) {
+            \assert($minItems <= $maxItems);
+            \assert($minItems > 0);
+
+            $rule->min($minItems);
+        }
+
+        return $rule;
+    }
+
+    /**
+     * Add array rule.
+     *
+     * @param ?array<int, string> $structure
+     * @param ?array<int, string> $keys
+     *
+     * @return $this
+     */
+    public function array(?array $structure = null, ?array $keys = null): static
+    {
+        $rule = $this->addRule('array', $structure);
+
+        if ($keys !== null) {
+            $rule->requiredArrayKeys($keys);
+        }
+
+        return $rule;
     }
 
     /**
      * Add object rule.
      *
      * @param ?array<int, string> $keys
+     * @param ?array<int, string> $structure
      *
      * @return $this
      */
-    public function object(?array $keys = null): static
+    public function object(?array $keys = null, ?array $structure = null): static
     {
-        return $this->addRule('array', $keys);
+        $rule = $this->addRule('array', $structure);
+
+        if ($keys !== null) {
+            $rule->requiredArrayKeys($keys);
+        }
+
+        return $rule;
     }
 
     /**
@@ -310,6 +350,16 @@ class Validity implements ArrayableContract
      */
     public function boolean(): static
     {
+        return $this->addRule('boolean');
+    }
+
+    /**
+     * Add integer boolean rule.
+     *
+     * @return $this
+     */
+    public function integerBoolean(): static
+    {
         return $this->addRule('integer')->in(['0', '1']);
     }
 
@@ -320,7 +370,7 @@ class Validity implements ArrayableContract
      */
     public function true(): static
     {
-        return $this->boolean()->in(['1']);
+        return $this->boolean()->in(['yes', 'on', '1', 1, true, 'true']);
     }
 
     /**
@@ -330,7 +380,27 @@ class Validity implements ArrayableContract
      */
     public function false(): static
     {
-        return $this->boolean()->in(['0']);
+        return $this->boolean()->in(['no', 'off', '0', 0, false, 'false']);
+    }
+
+    /**
+     * Add integer true rule.
+     *
+     * @return $this
+     */
+    public function integerTrue(): static
+    {
+        return $this->integerBoolean()->in(['yes', 'on', '1', 1, true, 'true']);
+    }
+
+    /**
+     * Add integer false rule.
+     *
+     * @return $this
+     */
+    public function integerFalse(): static
+    {
+        return $this->integerBoolean()->in(['no', 'off', '0', 0, false, 'false']);
     }
 
     /**
@@ -628,13 +698,35 @@ class Validity implements ArrayableContract
     /**
      * Add file rule.
      *
-     * @param array<int, string> $mimeTypes
+     * @return $this
+     */
+    public function file(): static
+    {
+        return $this->addRule('file');
+    }
+
+    /**
+     * Add mimetypes rule.
+     *
+     * @param array<int, string> $mimetypes
      *
      * @return $this
      */
-    public function file(array $mimeTypes, int $max): static
+    public function mimetypes(array $mimetypes): static
     {
-        return $this->addRule('mimetypes', $mimeTypes)->max($max);
+        return $this->addRule('mimetypes', $mimetypes);
+    }
+
+    /**
+     * Add mimes rule.
+     *
+     * @param array<int, string> $mimes
+     *
+     * @return $this
+     */
+    public function mimes(array $mimes): static
+    {
+        return $this->addRule('mimes', $mimes);
     }
 
     /**
@@ -678,7 +770,7 @@ class Validity implements ArrayableContract
      */
     public function image(array $mimeTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/svg', 'image/webp', 'image/bmp', 'image/x-bmp', 'image/x-ms-bmp', 'image/heif', 'image/heic'], int $max = 10240): static
     {
-        return $this->file($mimeTypes, $max);
+        return $this->file()->mimetypes($mimeTypes)->max($max);
     }
 
     /**
@@ -690,7 +782,7 @@ class Validity implements ArrayableContract
      */
     public function video(array $mimeTypes = ['video/mp4', 'video/mpeg', 'video/ogg', 'video/quicktime', 'video/webm'], int $max = 10240): static
     {
-        return $this->file($mimeTypes, $max);
+        return $this->file()->mimetypes($mimeTypes)->max($max);
     }
 
     /**
@@ -732,11 +824,23 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function integer(int $min, int $max): static
+    public function integer(?int $min = null, ?int $max = null): static
     {
-        \assert($max >= $min);
+        $rule = $this->addRule('integer');
 
-        return $this->addRule('integer')->min($min)->max($max);
+        if ($min !== null) {
+            \assert($max === null || $min <= $max);
+
+            $rule->min($min);
+        }
+
+        if ($max !== null) {
+            \assert($min === null || $min <= $max);
+
+            $rule->max($max);
+        }
+
+        return $rule;
     }
 
     /**
@@ -1114,11 +1218,25 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function string(int $max = 255): static
+    public function string(?int $max = null, ?int $min = null): static
     {
-        \assert($max > 0);
+        $rule = $this->addRule('string');
 
-        return $this->addRule('string')->max($max);
+        if ($min !== null) {
+            \assert($min > 0);
+            \assert($max === null || $min <= $max);
+
+            $rule->min($min);
+        }
+
+        if ($max !== null) {
+            \assert($max > 0);
+            \assert($min === null || $min <= $max);
+
+            $rule->max($max);
+        }
+
+        return $rule;
     }
 
     /**
@@ -1126,23 +1244,13 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function varchar(?int $max = null): static
+    public function varchar(?int $max = null, ?int $min = null): static
     {
         $max ??= static::VARCHAR_MAX;
 
-        \assert($max > 0 && $max <= static::VARCHAR_MAX);
+        \assert($max <= static::VARCHAR_MAX);
 
-        return $this->addRule('string')->max($max);
-    }
-
-    /**
-     * Add raw rule.
-     *
-     * @return $this
-     */
-    public function raw(): static
-    {
-        return $this->addRule('string');
+        return $this->string($max, $min);
     }
 
     /**
@@ -1392,13 +1500,21 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function tinyText(?int $max = null): static
+    public function tinyText(?int $max = null, ?int $min = null): static
     {
         $max ??= static::TINY_TEXT_MAX;
 
         \assert($max <= static::TINY_TEXT_MAX);
 
-        return $this->addRule('string')->strlenMax($max);
+        $rule = $this->addRule('string')->strlenMax($max);
+
+        if ($min !== null) {
+            \assert($min <= $max);
+
+            $rule->strlenMin($min);
+        }
+
+        return $rule;
     }
 
     /**
@@ -1406,13 +1522,21 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function text(?int $max = null): static
+    public function text(?int $max = null, ?int $min = null): static
     {
         $max ??= static::TEXT_MAX;
 
         \assert($max <= static::TEXT_MAX);
 
-        return $this->addRule('string')->strlenMax($max);
+        $rule = $this->addRule('string')->strlenMax($max);
+
+        if ($min !== null) {
+            \assert($min <= $max);
+
+            $rule->strlenMin($min);
+        }
+
+        return $rule;
     }
 
     /**
@@ -1420,13 +1544,21 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function mediumText(?int $max = null): static
+    public function mediumText(?int $max = null, ?int $min = null): static
     {
         $max ??= static::MEDIUM_TEXT_MAX;
 
         \assert($max <= static::MEDIUM_TEXT_MAX);
 
-        return $this->addRule('string')->strlenMax($max);
+        $rule = $this->addRule('string')->strlenMax($max);
+
+        if ($min !== null) {
+            \assert($min <= $max);
+
+            $rule->strlenMin($min);
+        }
+
+        return $rule;
     }
 
     /**
@@ -1434,13 +1566,21 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function longText(?int $max = null): static
+    public function longText(?int $max = null, ?int $min = null): static
     {
         $max ??= static::LONG_TEXT_MAX;
 
         \assert($max <= static::LONG_TEXT_MAX);
 
-        return $this->addRule('string')->strlenMax($max);
+        $rule = $this->addRule('string')->strlenMax($max);
+
+        if ($min !== null) {
+            \assert($min <= $max);
+
+            $rule->strlenMin($min);
+        }
+
+        return $rule;
     }
 
     /**
@@ -1640,6 +1780,18 @@ class Validity implements ArrayableContract
      */
     public function signed(?int $min = null, ?int $max = null): static
     {
+        return $this->bigInt($min, $max);
+    }
+
+    /**
+     * Add positive rules.
+     *
+     * @return $this
+     */
+    public function positive(int $min = 1, ?int $max = null): static
+    {
+        \assert($min > 0);
+
         return $this->bigInt($min, $max);
     }
 

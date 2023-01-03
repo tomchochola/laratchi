@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Http\Requests;
 
 use Illuminate\Auth\Access\Response;
-use Tomchochola\Laratchi\Validation\GenericValidity;
+use Tomchochola\Laratchi\Validation\Validity;
 
 class SignedRequest extends SecureFormRequest
 {
@@ -26,11 +26,9 @@ class SignedRequest extends SecureFormRequest
      */
     public function rules(): array
     {
-        $genericValidity = inject(GenericValidity::class);
-
-        return \array_merge(parent::rules(), [
-            'signature' => $genericValidity->signature()->nullable(),
-            'expires' => $genericValidity->expires()->nullable(),
-        ]);
+        return [
+            'signature' => Validity::make()->nullable()->filled()->string(1024),
+            'expires' => Validity::make()->nullable()->filled()->unsigned(),
+        ];
     }
 }

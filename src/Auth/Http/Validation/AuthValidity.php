@@ -4,11 +4,24 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Validation;
 
-use Tomchochola\Laratchi\Validation\GenericValidity;
 use Tomchochola\Laratchi\Validation\Validity;
 
 class AuthValidity
 {
+    /**
+     * Allowed guards.
+     *
+     * @var array<int, string>
+     */
+    public static array $allowedGuards = ['users'];
+
+    /**
+     * Allowed locales.
+     *
+     * @var ?array<int, string>
+     */
+    public static ?array $allowedLocales = null;
+
     /**
      * Remember validation rules.
      */
@@ -22,7 +35,7 @@ class AuthValidity
      */
     public function name(string $guardName): Validity
     {
-        return Validity::make()->string();
+        return Validity::make()->varchar(255);
     }
 
     /**
@@ -30,7 +43,7 @@ class AuthValidity
      */
     public function email(string $guardName): Validity
     {
-        return Validity::make()->string()->email();
+        return Validity::make()->varchar(255)->email();
     }
 
     /**
@@ -46,7 +59,7 @@ class AuthValidity
      */
     public function passwordResetToken(string $guardName): Validity
     {
-        return Validity::make()->string();
+        return Validity::make()->varchar(255);
     }
 
     /**
@@ -54,7 +67,7 @@ class AuthValidity
      */
     public function locale(string $guardName): Validity
     {
-        return inject(GenericValidity::class)->locale();
+        return Validity::make()->in(static::$allowedLocales ?? mustConfigArray('app.locales'));
     }
 
     /**
@@ -62,6 +75,46 @@ class AuthValidity
      */
     public function guard(): Validity
     {
-        return Validity::make()->string()->in(['users']);
+        return Validity::make()->in(static::$allowedGuards);
+    }
+
+    /**
+     * Id validation rules.
+     */
+    public function id(string $guardName): Validity
+    {
+        return Validity::make()->positive();
+    }
+
+    /**
+     * E-mail verified at validation rules.
+     */
+    public function emailVerifiedAt(string $guardName): Validity
+    {
+        return Validity::make()->string()->date();
+    }
+
+    /**
+     * Remember token validation rules.
+     */
+    public function rememberToken(string $guardName): Validity
+    {
+        return Validity::make()->string(100);
+    }
+
+    /**
+     * Created at validation rules.
+     */
+    public function createdAt(string $guardName): Validity
+    {
+        return Validity::make()->string()->date();
+    }
+
+    /**
+     * Updated at validation rules.
+     */
+    public function updatedAt(string $guardName): Validity
+    {
+        return Validity::make()->string()->date();
     }
 }

@@ -150,7 +150,7 @@ class JsonApiValidator
                 $this->relationships(Arr::prependKeysWith($rule->headerRules(), "{$name}.data.{$index}."));
             }
         } else {
-            $this->relationships(["{$name}.data" => Validity::make()->required()->collection(0, \PHP_INT_MAX)]);
+            $this->relationships(["{$name}.data" => Validity::make()->required()->array()]);
 
             $this->relationships(["{$name}.data.*" => Validity::make()->required()->requiredArrayKeys(['id', 'type', 'slug'])]);
             $this->relationships(Arr::prependKeysWith($rules->headerRules(), "{$name}.data.*."));
@@ -177,9 +177,9 @@ class JsonApiValidator
     public function headerRules(): array
     {
         $rules = [
-            'id' => Validity::make()->nullable()->filled()->raw(),
+            'id' => Validity::make()->nullable()->filled()->string(),
             'type' => Validity::make()->nullable()->filled()->in([$this->type]),
-            'slug' => Validity::make()->nullable()->filled()->raw(),
+            'slug' => Validity::make()->nullable()->filled()->string(),
         ];
 
         if (\count($this->meta) > 0) {
