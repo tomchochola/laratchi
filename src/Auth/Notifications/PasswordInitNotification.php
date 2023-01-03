@@ -33,7 +33,7 @@ class PasswordInitNotification extends ResetPassword implements ShouldQueueContr
             ->subject(mustTransJsonString('Init Password Notification'))
             ->line(mustTransJsonString('You are receiving this email because we received a password init request for your account.'))
             ->action(mustTransJsonString('Init Password'), $url)
-            ->line(mustTransJsonString('This password init link will expire in :count minutes.', ['en'], ['count' => (string) mustConfigInt('auth.passwords.'.mustConfigString('auth.defaults.passwords').'.expire')]))
+            ->line(mustTransJsonString('This password init link will expire in :count minutes.', ['count' => (string) mustConfigInt('auth.passwords.'.mustConfigString('auth.defaults.passwords').'.expire')]))
             ->line(mustTransJsonString('If you did not request a password init, no further action is required.'));
     }
 
