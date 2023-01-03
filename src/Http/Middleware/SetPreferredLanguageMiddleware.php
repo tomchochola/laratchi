@@ -11,16 +11,6 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 class SetPreferredLanguageMiddleware
 {
     /**
-     * HTTP Exception message.
-     */
-    final public const ERROR_MESSAGE = 'Not Acceptable Language';
-
-    /**
-     * HTTP Exception status.
-     */
-    final public const ERROR_STATUS = SymfonyResponse::HTTP_NOT_ACCEPTABLE;
-
-    /**
      * Handle an incoming request.
      *
      * @param Closure(Request): SymfonyResponse $next
