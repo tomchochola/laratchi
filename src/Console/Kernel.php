@@ -16,16 +16,16 @@ class Kernel extends ConsoleKernel
     {
         parent::schedule($schedule);
 
-        $this->authClearResets($schedule);
+        $this->authClearResets($schedule, 'UTC');
     }
 
     /**
      * Run auth:clear-resets for all password brokers.
      */
-    protected function authClearResets(Schedule $schedule): void
+    protected function authClearResets(Schedule $schedule, string $timezone): void
     {
         foreach (mustConfigArray('auth.passwords') as $passwordBrokerName => $config) {
-            $schedule->command("auth:clear-resets {$passwordBrokerName}")->dailyAt('04:00')->withoutOverlapping()->runInBackground();
+            $schedule->command("auth:clear-resets {$passwordBrokerName}")->dailyAt('04:00')->timezone($timezone)->withoutOverlapping()->runInBackground();
         }
     }
 
