@@ -7,7 +7,7 @@
 
     <meta name="robots" content="noindex, nofollow" />
 
-    <title>{{ mustConfigString('app.name', 'Swagger UI') }}</title>
+    <title>{{ mustConfigString('app.name') }}</title>
 
     <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/favicon-32x32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/favicon-16x16.png" sizes="16x16" />
@@ -22,7 +22,7 @@
     <script>
       window.onload = function () {
         window.ui = SwaggerUIBundle({
-          url: {{ ($url ?? null) ? "'{$url}'" : 'undefined' }},
+          url: {!! ($url ?? null) ? "'{$url}'" : 'undefined' !!},
           spec: {!! $spec ?? 'undefined' !!},
           dom_id: '#swagger-ui',
           deepLinking: true,
