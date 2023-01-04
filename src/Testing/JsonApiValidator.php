@@ -103,12 +103,12 @@ class JsonApiValidator
             return $this->relationships([$name => Validity::make()->nullable()->prohibited()]);
         }
 
-        $this->relationships([$name => Validity::make()->required()->requiredArrayKeys(['data'])]);
+        $this->relationships([$name => Validity::make()->required()->object(['data'])]);
 
         if ($filled === null) {
             $this->relationships(["{$name}.data" => Validity::make()->nullable()->null()]);
         } else {
-            $this->relationships(["{$name}.data" => Validity::make()->required()->requiredArrayKeys(['id', 'type', 'slug'])]);
+            $this->relationships(["{$name}.data" => Validity::make()->required()->object(['id', 'type', 'slug'])]);
             $this->relationships(Arr::prependKeysWith($rules->headerRules(), "{$name}.data."));
         }
 
@@ -140,19 +140,19 @@ class JsonApiValidator
             return $this->relationships([$name => Validity::make()->nullable()->prohibited()]);
         }
 
-        $this->relationships([$name => Validity::make()->required()->requiredArrayKeys(['data'])]);
+        $this->relationships([$name => Validity::make()->required()->object(['data'])]);
 
         if (\is_array($rules)) {
             $this->relationships(["{$name}.data" => Validity::make()->required()->collection(\count($rules), \count($rules))]);
 
             foreach ($rules as $index => $rule) {
-                $this->relationships(["{$name}.data.{$index}" => Validity::make()->required()->requiredArrayKeys(['id', 'type', 'slug'])]);
+                $this->relationships(["{$name}.data.{$index}" => Validity::make()->required()->object(['id', 'type', 'slug'])]);
                 $this->relationships(Arr::prependKeysWith($rule->headerRules(), "{$name}.data.{$index}."));
             }
         } else {
-            $this->relationships(["{$name}.data" => Validity::make()->required()->array()]);
+            $this->relationships(["{$name}.data" => Validity::make()->required()->object()]);
 
-            $this->relationships(["{$name}.data.*" => Validity::make()->required()->requiredArrayKeys(['id', 'type', 'slug'])]);
+            $this->relationships(["{$name}.data.*" => Validity::make()->required()->object(['id', 'type', 'slug'])]);
             $this->relationships(Arr::prependKeysWith($rules->headerRules(), "{$name}.data.*."));
         }
 
@@ -178,7 +178,7 @@ class JsonApiValidator
     {
         $rules = [
             'id' => Validity::make()->nullable()->filled()->string(),
-            'type' => Validity::make()->nullable()->filled()->in([$this->type]),
+            'type' => Validity::make()->nullable()->filled()->string()->in([$this->type]),
             'slug' => Validity::make()->nullable()->filled()->string(),
         ];
 

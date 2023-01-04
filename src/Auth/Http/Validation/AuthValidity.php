@@ -67,7 +67,7 @@ class AuthValidity
      */
     public function locale(string $guardName): Validity
     {
-        return Validity::make()->in(static::$allowedLocales ?? mustConfigArray('app.locales'));
+        return Validity::make()->string()->in(static::$allowedLocales ?? mustConfigArray('app.locales'));
     }
 
     /**
@@ -75,7 +75,7 @@ class AuthValidity
      */
     public function guard(): Validity
     {
-        return Validity::make()->in(static::$allowedGuards);
+        return Validity::make()->string()->in(static::$allowedGuards);
     }
 
     /**
