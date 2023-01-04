@@ -13,12 +13,16 @@ use Tomchochola\Laratchi\Auth\Notifications\PasswordInitNotification;
 use Tomchochola\Laratchi\Auth\Notifications\ResetPasswordNotification;
 use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
 use Tomchochola\Laratchi\Database\ModelTrait;
+use Tomchochola\Laratchi\Database\TypedModelTrait;
 
 class User extends IlluminateUser implements DatabaseTokenableInterface, HasLocalePreferenceContract
 {
     use DatabaseTokenableTrait;
     use ModelTrait;
     use Notifiable;
+    use TypedModelTrait {
+        TypedModelTrait::getKey insteadof ModelTrait;
+    }
 
     /**
      * @inheritDoc

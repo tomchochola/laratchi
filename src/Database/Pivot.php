@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot as IlluminatePivot;
 class Pivot extends IlluminatePivot
 {
     use ModelTrait;
+    use TypedModelTrait {
+        TypedModelTrait::getKey insteadof ModelTrait;
+    }
 
     /**
      * @inheritDoc

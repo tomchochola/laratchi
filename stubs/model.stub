@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use Illuminate\Database\Eloquent\Builder;
-use Tomchochola\Laratchi\Database\Model;
+use Tomchochola\Laratchi\Database\TypedModel;
 use Illuminate\Database\Eloquent\Collection;
 
-class {{ class }} extends Model
+class {{ class }} extends TypedModel
 {
     /**
      * @inheritDoc

@@ -266,15 +266,15 @@ trait ModelTrait
     /**
      * @inheritDoc
      */
-    public function getRouteKey(): int|string
+    public function getRouteKey(): string
     {
         \assert($this->attributeLoaded($this->getRouteKeyName()));
 
         $value = $this->getAttributeValue($this->getRouteKeyName());
 
-        \assert(\is_int($value) || \is_string($value), 'model route key is not int or string');
+        \assert(\is_scalar($value), 'model route key is string');
 
-        return $value;
+        return (string) $value;
     }
 
     /**
