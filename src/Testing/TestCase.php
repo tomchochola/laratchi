@@ -173,6 +173,9 @@ abstract class TestCase extends BaseTestCase
      */
     protected function validateJsonApiError(TestResponse $response, int $status, int $code = 0): void
     {
+        \assert($status >= 400 && $status <= 599);
+        \assert($code >= 0);
+
         $response->assertStatus($status);
 
         $keys = [
@@ -273,6 +276,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function validateJsonApiResponse(TestResponse $response, ?JsonApiValidator $validator, array $includedValidators): void
     {
+        $response->assertSuccessful();
+
         $response->assertJsonStructure(['data']);
 
         if ($validator !== null) {
@@ -364,6 +369,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function validateJsonApiCollectionResponse(TestResponse $response, array $validators, array $includedValidators): void
     {
+        $response->assertSuccessful();
+
         $response->assertJsonStructure([
             'data' => [
                 '*' => [
