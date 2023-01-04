@@ -66,6 +66,9 @@ update-tools: clean-tools tools
 update:
 	${MAKE_COMPOSER} update -o
 
+.PHONY: update-full
+update-full: update-tools update
+
 # Aliases
 .PHONY: ci
 ci: check
