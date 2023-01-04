@@ -88,6 +88,11 @@ class Validity implements ArrayableContract
     protected array $rules = [];
 
     /**
+     * Skip next addRule class.
+     */
+    protected bool $skipNext = false;
+
+    /**
      * Validity constructor.
      */
     final public function __construct()
@@ -111,6 +116,12 @@ class Validity implements ArrayableContract
      */
     public function addRule(mixed $rule, ?array $arguments = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         if (\is_string($rule)) {
             if ($arguments !== null && \count($arguments) > 0) {
                 $rule = $rule.(\str_contains($rule, ':') ? ',' : ':').$this->formatArguments($arguments);
@@ -136,6 +147,30 @@ class Validity implements ArrayableContract
         if ($condition) {
             $closure($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * Skip next rule if flag not true.
+     *
+     * @return $this
+     */
+    public function if(bool $flag): static
+    {
+        $this->skipNext = $flag === false;
+
+        return $this;
+    }
+
+    /**
+     * Skip next rule if flag true.
+     *
+     * @return $this
+     */
+    public function unless(bool $flag): static
+    {
+        $this->skipNext = $flag;
 
         return $this;
     }
@@ -1792,7 +1827,7 @@ class Validity implements ArrayableContract
     {
         \assert($min > 0);
 
-        return $this->bigInt($min, $max);
+        return $this->unsigned($min, $max);
     }
 
     /**
