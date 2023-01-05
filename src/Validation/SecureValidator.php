@@ -7,7 +7,12 @@ namespace Tomchochola\Laratchi\Validation;
 use Illuminate\Contracts\Validation\Rule as RuleContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ClosureValidationRule;
 use Illuminate\Validation\InvokableValidationRule;
+use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\File;
+use Illuminate\Validation\Rules\ImageFile;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationRuleParser;
 use Tomchochola\Laratchi\Validation\Rules\CallbackRule;
 use Tomchochola\Laratchi\Validation\Rules\CzBankAccountNumberRule;
@@ -50,7 +55,7 @@ class SecureValidator extends Validator
     public static bool $forceProhibited = true;
 
     /**
-     * @var array<string, string|array<string, string>>
+     * @var array<string|class-string<RuleContract>, string|array<string, string>>
      */
     public static array $msgs = [
         'accepted' => 'accepted',
@@ -227,10 +232,17 @@ class SecureValidator extends Validator
             'blocked' => 'auth_blocked',
         ],
 
+        ClosureValidationRule::class => 'invalid',
+        InvokableValidationRule::class => 'invalid',
+        Enum::class => 'enum',
+        File::class => 'file',
+        Password::class => 'regex',
+        ImageFile::class => 'image',
+
         CallbackRule::class => 'invalid',
-        CzBankAccountNumberRule::class => 'invalid',
-        IcoRule::class => 'invalid',
-        PostCodeRule::class => 'invalid',
+        CzBankAccountNumberRule::class => 'regex',
+        IcoRule::class => 'regex',
+        PostCodeRule::class => 'regex',
         RecaptchaRule::class => 'invalid',
     ];
 
