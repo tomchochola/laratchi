@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation;
 
+use Illuminate\Contracts\Validation\Rule as RuleContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Validation\InvokableValidationRule;
+use Illuminate\Validation\ValidationRuleParser;
 use Tomchochola\Laratchi\Validation\Rules\CallbackRule;
 use Tomchochola\Laratchi\Validation\Rules\CzBankAccountNumberRule;
 use Tomchochola\Laratchi\Validation\Rules\IcoRule;
@@ -241,6 +244,8 @@ class SecureValidator extends Validator
      */
     public function passes(): bool
     {
+        \assert(static::$useComputerErrors === false || $this->allMessagesDefined());
+
         $passes = parent::passes();
 
         if (static::$forceProhibited === false || $passes === false) {
@@ -381,5 +386,37 @@ class SecureValidator extends Validator
         }
 
         return parent::getFromLocalArray($attribute, $lowerRule);
+    }
+
+    /**
+     * Check that all rules has defined message.
+     */
+    protected function allMessagesDefined(): bool
+    {
+        foreach ($this->rules as $attribute => $rules) {
+            foreach ($rules as $rule) {
+                [$rule] = ValidationRuleParser::parse($rule);
+
+                if (blank($rule)) {
+                    continue;
+                }
+
+                if (\in_array($rule, $this->excludeRules, true)) {
+                    continue;
+                }
+
+                if ($rule instanceof RuleContract) {
+                    if ($this->getFromLocalArray($attribute, $rule instanceof InvokableValidationRule ? \get_class($rule->invokable()) : $rule::class) === null) {
+                        return false;
+                    }
+                } else {
+                    if ($this->getInlineMessage($attribute, $rule) === null) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 }
