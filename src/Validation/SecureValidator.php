@@ -256,7 +256,7 @@ class SecureValidator extends Validator
      */
     public function passes(): bool
     {
-        // \assert(static::$useComputerErrors === false || $this->allMessagesDefined());
+        \assert(static::$useComputerErrors === false || $this->allMessagesDefined());
 
         $passes = parent::passes();
 
