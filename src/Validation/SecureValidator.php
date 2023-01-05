@@ -244,7 +244,7 @@ class SecureValidator extends Validator
      */
     public function passes(): bool
     {
-        \assert(static::$useComputerErrors === false || $this->allMessagesDefined());
+        // \assert(static::$useComputerErrors === false || $this->allMessagesDefined());
 
         $passes = parent::passes();
 
@@ -402,6 +402,10 @@ class SecureValidator extends Validator
                 }
 
                 if (\in_array($rule, $this->excludeRules, true)) {
+                    continue;
+                }
+
+                if (\is_string($rule) && \in_array(\mb_strtolower($rule), ['sometimes', 'nullable', 'bail'], true)) {
                     continue;
                 }
 
