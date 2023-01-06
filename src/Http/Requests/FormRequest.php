@@ -190,6 +190,6 @@ class FormRequest extends IlluminateFormRequest
      */
     public function throwSingleValidationException(array $keys, string $rule, ?int $status = null): never
     {
-        $this->throwValidationException(\array_map(static fn (): array => [$rule => []], $keys), $status);
+        $this->throwValidationException(\array_map(static fn (): array => [$rule => []], \array_flip($keys)), $status);
     }
 }
