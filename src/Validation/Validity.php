@@ -282,13 +282,13 @@ class Validity implements ArrayableContract
      */
     public function collection(int $maxItems, ?int $minItems = null): static
     {
-        \assert($maxItems > 0);
+        \assert($maxItems >= 0);
 
         $rule = $this->addRule('array')->max($maxItems);
 
         if ($minItems !== null) {
             \assert($minItems <= $maxItems);
-            \assert($minItems > 0);
+            \assert($minItems >= 0);
 
             $rule->min($minItems);
         }
