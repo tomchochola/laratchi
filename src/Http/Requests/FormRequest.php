@@ -172,4 +172,24 @@ class FormRequest extends IlluminateFormRequest
 
         throw $exception;
     }
+
+    /**
+     * Throw unique validation exception.
+     *
+     * @param array<string> $keys
+     */
+    public function throwUniqueValidationException(array $keys, ?int $status = null): never
+    {
+        $this->throwSingleValidationException($keys, 'Unique', $status);
+    }
+
+    /**
+     * Throw single validation exception.
+     *
+     * @param array<string> $keys
+     */
+    public function throwSingleValidationException(array $keys, string $rule, ?int $status = null): never
+    {
+        $this->throwValidationException(\array_map(static fn (): array => [$rule => []], $keys), $status);
+    }
 }

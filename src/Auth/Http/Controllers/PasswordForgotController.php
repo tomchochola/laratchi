@@ -98,7 +98,7 @@ class PasswordForgotController extends TransactionController
      */
     protected function throwInvalidStatus(PasswordForgotRequest $request, string $status): never
     {
-        $request->throwValidationException(\array_map(static fn (): array => [$status => []], $request->credentials()));
+        $request->throwSingleValidationException(\array_keys($request->credentials()), $status);
     }
 
     /**

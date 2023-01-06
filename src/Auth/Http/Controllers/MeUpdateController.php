@@ -110,7 +110,7 @@ class MeUpdateController extends TransactionController
      */
     protected function throwDuplicateCredentialsError(MeUpdateRequest $request, array $credentials): never
     {
-        $request->throwValidationException(\array_map(static fn (): array => ['Unique' => []], $credentials));
+        $request->throwUniqueValidationException(\array_keys($credentials));
     }
 
     /**

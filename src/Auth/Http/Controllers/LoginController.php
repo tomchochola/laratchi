@@ -162,7 +162,7 @@ class LoginController extends TransactionController
      */
     protected function throwRetrieveByCredentialsFailedError(LoginRequest $request, ?AuthenticatableContract $user): never
     {
-        $request->throwValidationException(\array_map(static fn (): array => ['auth.failed' => []], $request->credentials()));
+        $request->throwSingleValidationException(\array_keys($request->credentials()), 'auth.failed');
     }
 
     /**
@@ -186,7 +186,7 @@ class LoginController extends TransactionController
      */
     protected function throwValidatePasswordFailedError(LoginRequest $request, ?AuthenticatableContract $user): never
     {
-        $request->throwValidationException(\array_map(static fn (): array => ['auth.password' => []], $request->password()));
+        $request->throwSingleValidationException(\array_keys($request->password()), 'auth.password');
     }
 
     /**
@@ -245,7 +245,7 @@ class LoginController extends TransactionController
         }
 
         if ($response->code() === null) {
-            $request->throwValidationException(\array_map(static fn (): array => [$message => []], $request->credentials()), $response->status() ?? 422);
+            $request->throwSingleValidationException(\array_keys($request->credentials()), $message, $response->status());
         }
 
         throw (new AuthorizationException($message, $response->code()))

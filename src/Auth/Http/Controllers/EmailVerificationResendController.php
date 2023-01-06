@@ -164,6 +164,6 @@ class EmailVerificationResendController extends TransactionController
      */
     protected function throwRetrieveByCredentialsFailedError(EmailVerificationResendRequest $request): never
     {
-        $request->throwValidationException(\array_map(static fn (): array => ['auth.failed' => []], $request->credentials()));
+        $request->throwSingleValidationException(\array_keys($request->credentials()), 'auth.failed');
     }
 }

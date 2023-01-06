@@ -143,7 +143,7 @@ class PasswordResetController extends TransactionController
      */
     protected function throwInvalidStatus(PasswordResetRequest $request, string $status): never
     {
-        $request->throwValidationException(\array_map(static fn (): array => [$status => []], $request->credentials()));
+        $request->throwSingleValidationException(\array_keys($request->credentials()), $status);
     }
 
     /**
@@ -236,7 +236,7 @@ class PasswordResetController extends TransactionController
         }
 
         if ($response->code() === null) {
-            $request->throwValidationException(\array_map(static fn (): array => [$message => []], $request->credentials()), $response->status() ?? 422);
+            $request->throwSingleValidationException(\array_keys($request->credentials()), $message, $response->status());
         }
 
         throw (new AuthorizationException($message, $response->code()))

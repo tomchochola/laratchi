@@ -127,7 +127,7 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function throwValidatePasswordFailedError(LogoutOtherDevicesRequest $request): never
     {
-        $request->throwValidationException(\array_map(static fn (): array => ['auth.password' => []], $request->password()));
+        $request->throwSingleValidationException(\array_keys($request->password()), 'auth.password');
     }
 
     /**

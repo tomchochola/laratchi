@@ -139,7 +139,7 @@ class RegisterController extends TransactionController
      */
     protected function throwDuplicateCredentialsError(RegisterRequest $request, array $credentials): never
     {
-        $request->throwValidationException(\array_map(static fn (): array => ['Unique' => []], $credentials));
+        $request->throwUniqueValidationException(\array_keys($credentials));
     }
 
     /**
@@ -237,7 +237,7 @@ class RegisterController extends TransactionController
                 $keys = \array_merge($keys, $credentials);
             }
 
-            $request->throwValidationException(\array_map(static fn (): array => [$message => []], $keys), $response->status() ?? 422);
+            $request->throwSingleValidationException(\array_keys($keys), $message, $response->status());
         }
 
         throw (new AuthorizationException($message, $response->code()))
