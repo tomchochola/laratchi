@@ -66,6 +66,8 @@ class DatabaseToken extends TypedModel
         $databaseToken->setProvider($user->getUserProviderName());
         $databaseToken->setAuthId((string) $authId);
 
+        $this->modify($user);
+
         $ok = $databaseToken->save();
 
         \assert($ok);
@@ -145,5 +147,12 @@ class DatabaseToken extends TypedModel
     public function setAuthId(string $value): void
     {
         $this->setAttribute('auth_id', $value);
+    }
+
+    /**
+     * Modify before save.
+     */
+    protected function modify(DatabaseTokenableInterface $user): void
+    {
     }
 }
