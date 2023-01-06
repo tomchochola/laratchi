@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Testing;
 
-use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
@@ -458,7 +458,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Validate validator.
      */
-    protected function validate(Validator $validator): void
+    protected function validate(ValidatorContract $validator): void
     {
         if ($validator->fails()) {
             static::assertEmpty($validator->failed(), 'Json api response validation failed: '.\json_encode($validator->failed()));

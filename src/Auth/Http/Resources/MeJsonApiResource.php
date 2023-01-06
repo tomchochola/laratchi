@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Resources;
 
-use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Tomchochola\Laratchi\Auth\DatabaseTokenableInterface;
 use Tomchochola\Laratchi\Http\Resources\JsonApiResource;
 
 /**
- * @property Authenticatable $resource
+ * @property AuthenticatableContract $resource
  */
 class MeJsonApiResource extends JsonApiResource
 {
     /**
      * @inheritDoc
      */
-    public function __construct(Authenticatable $resource)
+    public function __construct(AuthenticatableContract $resource)
     {
         parent::__construct($resource);
     }
