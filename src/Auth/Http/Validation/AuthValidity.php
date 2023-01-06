@@ -51,7 +51,7 @@ class AuthValidity
      */
     public function password(string $guardName): Validity
     {
-        return Validity::make()->string(1024)->password();
+        return Validity::make()->varchar(1024)->password();
     }
 
     /**
@@ -67,7 +67,7 @@ class AuthValidity
      */
     public function locale(string $guardName): Validity
     {
-        return Validity::make()->string()->in(static::$allowedLocales ?? mustConfigArray('app.locales'));
+        return Validity::make()->varchar()->in(static::$allowedLocales ?? mustConfigArray('app.locales'));
     }
 
     /**
@@ -75,7 +75,7 @@ class AuthValidity
      */
     public function guard(): Validity
     {
-        return Validity::make()->string()->in(static::$allowedGuards);
+        return Validity::make()->varchar()->in(static::$allowedGuards);
     }
 
     /**
@@ -91,7 +91,7 @@ class AuthValidity
      */
     public function emailVerifiedAt(string $guardName): Validity
     {
-        return Validity::make()->string()->date();
+        return Validity::make()->varchar()->date();
     }
 
     /**
@@ -99,7 +99,7 @@ class AuthValidity
      */
     public function rememberToken(string $guardName): Validity
     {
-        return Validity::make()->string(100);
+        return Validity::make()->varchar(100);
     }
 
     /**
@@ -107,7 +107,7 @@ class AuthValidity
      */
     public function createdAt(string $guardName): Validity
     {
-        return Validity::make()->string()->date();
+        return Validity::make()->varchar()->date();
     }
 
     /**
@@ -115,6 +115,6 @@ class AuthValidity
      */
     public function updatedAt(string $guardName): Validity
     {
-        return Validity::make()->string()->date();
+        return Validity::make()->varchar()->date();
     }
 }
