@@ -99,7 +99,7 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     /**
      * @inheritDoc
      */
-    public function getAuthIdentifier(): int|string
+    public function getAuthIdentifier(): int
     {
         return $this->getKey();
     }
