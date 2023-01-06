@@ -18,7 +18,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
     /**
      * Create a new notification.
      */
-    public function __construct(protected string $guardName, protected string $action)
+    public function __construct(protected string $guardName, protected string $action, protected ?string $spa = null)
     {
         $this->afterCommit();
     }
@@ -53,6 +53,6 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
             'url' => $signedUrl,
         ]);
 
-        return mustTransString('spa.email_verification_verify_url').'?'.$query;
+        return ($this->spa ?? mustTransString('spa.email_verification_verify_url')).'?'.$query;
     }
 }

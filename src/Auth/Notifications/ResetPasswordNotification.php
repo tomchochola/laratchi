@@ -16,7 +16,7 @@ class ResetPasswordNotification extends ResetPassword implements ShouldQueueCont
     /**
      * @inheritDoc
      */
-    public function __construct(string $token)
+    public function __construct(string $token, protected ?string $spa = null)
     {
         parent::__construct($token);
 
@@ -35,6 +35,6 @@ class ResetPasswordNotification extends ResetPassword implements ShouldQueueCont
             'email' => $notifiable->getEmailForPasswordReset(),
         ]);
 
-        return mustTransString('spa.password_reset_url').'?'.$query;
+        return ($this->spa ?? mustTransString('spa.password_reset_url')).'?'.$query;
     }
 }
