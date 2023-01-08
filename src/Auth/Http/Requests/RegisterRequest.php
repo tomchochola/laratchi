@@ -46,7 +46,7 @@ class RegisterRequest extends SecureFormRequest
     public function guardName(): string
     {
         if ($this->filled('guard')) {
-            $guardName = $this->str('guard')->value();
+            $guardName = $this->varchar('guard');
 
             if (\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true)) {
                 return $guardName;
