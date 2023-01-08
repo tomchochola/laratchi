@@ -335,7 +335,11 @@ if (! \function_exists('resolveApp')) {
      */
     function resolveApp(): Illuminate\Foundation\Application
     {
-        return Illuminate\Foundation\Application::getInstance();
+        $resolved = Illuminate\Support\Facades\App::getFacadeRoot();
+
+        \assert($resolved instanceof Illuminate\Foundation\Application);
+
+        return $resolved;
     }
 }
 
