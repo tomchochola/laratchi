@@ -148,7 +148,7 @@ if (! \function_exists('configBool')) {
      */
     function configBool(string $key, ?bool $default = null, array $in = []): ?bool
     {
-        $value = resolveConfig()->get($key, $default);
+        $value = resolveConfig()->get($key, $default) ?? $default;
 
         \assert($value === null || \is_bool($value), "[{$key}] config is not bool or null");
         \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
@@ -181,7 +181,7 @@ if (! \function_exists('configInt')) {
      */
     function configInt(string $key, ?int $default = null, array $in = []): ?int
     {
-        $value = resolveConfig()->get($key, $default);
+        $value = resolveConfig()->get($key, $default) ?? $default;
 
         \assert($value === null || \is_int($value), "[{$key}] config is not int or null");
         \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
@@ -214,7 +214,7 @@ if (! \function_exists('configFloat')) {
      */
     function configFloat(string $key, ?float $default = null, array $in = []): ?float
     {
-        $value = resolveConfig()->get($key, $default);
+        $value = resolveConfig()->get($key, $default) ?? $default;
 
         \assert($value === null || \is_float($value), "[{$key}] config is not float or null");
         \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
@@ -249,7 +249,7 @@ if (! \function_exists('configArray')) {
      */
     function configArray(string $key, ?array $default = null): ?array
     {
-        $value = resolveConfig()->get($key, $default);
+        $value = resolveConfig()->get($key, $default) ?? $default;
 
         \assert($value === null || \is_array($value), "[{$key}] config is not array or null");
 
@@ -283,7 +283,7 @@ if (! \function_exists('configString')) {
      */
     function configString(string $key, ?string $default = null, array $in = []): ?string
     {
-        $value = resolveConfig()->get($key, $default);
+        $value = resolveConfig()->get($key, $default) ?? $default;
 
         \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
         \assert($value === null || \is_string($value), "[{$key}] config is not string or null");
@@ -874,6 +874,20 @@ if (! \function_exists('resolveExceptionHandler')) {
     function resolveExceptionHandler(): Illuminate\Contracts\Debug\ExceptionHandler
     {
         return inject(Illuminate\Contracts\Debug\ExceptionHandler::class);
+    }
+}
+
+if (! \function_exists('resolveDate')) {
+    /**
+     * Resolve date factory.
+     */
+    function resolveDate(): Illuminate\Support\DateFactory
+    {
+        $resolved = Illuminate\Support\Facades\Date::getFacadeRoot();
+
+        \assert($resolved instanceof Illuminate\Support\DateFactory);
+
+        return $resolved;
     }
 }
 

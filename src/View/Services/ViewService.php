@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\View\Services;
 
-use Illuminate\Support\Carbon;
-
 class ViewService
 {
     /**
@@ -57,7 +55,7 @@ class ViewService
      */
     protected function sunPhase(): string
     {
-        $timestamp = Carbon::now()->getTimestamp();
+        $timestamp = resolveDate()->now()->getTimestamp();
 
         [$lat, $lng] = $this->sunLatLng();
 

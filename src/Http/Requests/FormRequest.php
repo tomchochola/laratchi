@@ -6,6 +6,10 @@ namespace Tomchochola\Laratchi\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest as IlluminateFormRequest;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Tomchochola\Laratchi\Validation\ValidatedInput;
@@ -179,5 +183,107 @@ class FormRequest extends IlluminateFormRequest
     public function throwSingleValidationException(array $keys, string $rule, ?int $status = null): never
     {
         $this->throwValidationException(\array_map(static fn (): array => [$rule => []], \array_flip($keys)), $status);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function string(mixed $key, mixed $default = null): Stringable
+    {
+        $value = \filter_var($this->input($key, $default));
+
+        if ($value === false) {
+            $value = '';
+        }
+
+        return Str::of($value);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function integer(mixed $key, mixed $default = 0): int
+    {
+        $value = \filter_var($this->input($key, $default), \FILTER_VALIDATE_INT);
+
+        if ($value === false) {
+            $value = 0;
+        }
+
+        return $value;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function float(mixed $key, mixed $default = 0.0): float
+    {
+        $value = \filter_var($this->input($key, $default), \FILTER_VALIDATE_FLOAT);
+
+        if ($value === false) {
+            $value = 0;
+        }
+
+        return $value;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function date(mixed $key, mixed $format = null, mixed $tz = null): ?Carbon
+    {
+        $value = \filter_var($this->input($key));
+
+        if ($value === false || $value === '') {
+            return null;
+        }
+
+        if ($format === null) {
+            return resolveDate()->parse($value, $tz);
+        }
+
+        $value = resolveDate()->createFromFormat($format, $value, $tz);
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed>|string|null $key
+     *
+     * @return Collection<array-key, mixed>
+     */
+    public function collect(mixed $key = null): Collection
+    {
+        if (\is_array($key)) {
+            return collect($this->only($key));
+        }
+
+        $value = $this->input($key);
+
+        if (! \is_array($value)) {
+            $value = [];
+        }
+
+        return collect($value);
+    }
+
+    /**
+     * Resolve varchar.
+     */
+    public function varchar(string $key, ?string $default = null): string
+    {
+        $value = \filter_var($this->input($key, $default));
+
+        if ($value === false) {
+            return '';
+        }
+
+        return $value;
     }
 }

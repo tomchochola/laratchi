@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
@@ -30,7 +29,7 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'email_verified_at' => Carbon::now(),
+            'email_verified_at' => resolveDate()->now(),
             'password' => Str::random(10),
             'remember_token' => Str::random(10),
             'locale' => $this->faker->randomElement(mustConfigArray('app.locales')),

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Support;
 
-use Illuminate\Support\Carbon;
-
 class SignedUrlSupport
 {
     /**
@@ -16,7 +14,7 @@ class SignedUrlSupport
     public static function make(string $action, array $parameters, int $expires): string
     {
         if ($expires > 0) {
-            $parameters['expires'] = Carbon::now()->addMinutes($expires)->getTimestamp();
+            $parameters['expires'] = resolveDate()->now()->addMinutes($expires)->getTimestamp();
         }
 
         \ksort($parameters);

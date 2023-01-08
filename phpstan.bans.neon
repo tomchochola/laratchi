@@ -95,7 +95,7 @@ parameters:
       message: 'mix() is banned, use inject(\Illuminate\Foundation\Mix::class) instead'
     -
       function: 'now()'
-      message: 'now() is banned, use Illuminate\Support\Carbon::now() instead'
+      message: 'now() is banned, use resolveDate()->now() instead'
     -
       function: 'old()'
       message: 'old() is banned, use resolveRequest()->old() instead'
@@ -146,7 +146,7 @@ parameters:
       message: 'to_route() is banned, use resolveRedirector()->route() instead'
     -
       function: 'today()'
-      message: 'today() is banned, use Illuminate\Support\Carbon::today() instead'
+      message: 'today() is banned, use resolveDate()->today() instead'
     -
       function: 'trans()'
       message: 'trans() is banned, use mustTransString(), mustTransJsonString(), mustTransArray() instead'
@@ -238,7 +238,7 @@ parameters:
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Date'
-      message: 'Illuminate\Support\Facades\Date is banned, use Illuminate\Support\Carbon::xxx() instead'
+      message: 'Illuminate\Support\Facades\Date is banned, use resolveDate() instead'
       allowIn:
         - tests/*
         - src/Helpers/functions.php
