@@ -91,7 +91,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByRouteKey(int|string $key, ?Closure $closure = null): ?static
+    public static function findByRouteKey(string $key, ?Closure $closure = null): ?static
     {
         $instance = static::query()->tap($closure ?? static function (): void {
         })->where(static::getRouteKeyColumn(), $key)->first();
@@ -111,7 +111,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param (Closure(): never)|null $onError
      */
-    public static function mustFindByRouteKey(int|string $key, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindByRouteKey(string $key, ?Closure $closure = null, ?Closure $onError = null): static
     {
         $instance = static::findByRouteKey($key, $closure);
 
