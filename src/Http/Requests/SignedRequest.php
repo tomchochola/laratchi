@@ -27,7 +27,7 @@ class SignedRequest extends SecureFormRequest
     public function rules(): array
     {
         return [
-            'signature' => Validity::make()->nullable()->filled()->string(1024),
+            'signature' => Validity::make()->nullable()->filled()->varchar(1024),
             'expires' => Validity::make()->nullable()->filled()->unsigned(),
         ];
     }

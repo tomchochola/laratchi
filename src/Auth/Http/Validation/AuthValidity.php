@@ -35,7 +35,7 @@ class AuthValidity
      */
     public function name(string $guardName): Validity
     {
-        return Validity::make()->varchar(255);
+        return Validity::make()->varchar();
     }
 
     /**
@@ -43,7 +43,7 @@ class AuthValidity
      */
     public function email(string $guardName): Validity
     {
-        return Validity::make()->varchar(255)->email();
+        return Validity::make()->varchar()->email();
     }
 
     /**
@@ -59,7 +59,7 @@ class AuthValidity
      */
     public function passwordResetToken(string $guardName): Validity
     {
-        return Validity::make()->varchar(255);
+        return Validity::make()->varchar();
     }
 
     /**
