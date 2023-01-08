@@ -95,7 +95,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Slug getter.
      */
-    public function fastSlug(string $key, ?string $default = null): ?string
+    public function slug(string $key, ?string $default = null): string
     {
         $route = $this->route();
 
@@ -103,19 +103,7 @@ class FormRequest extends IlluminateFormRequest
 
         $value = $route->parameter($key, $default);
 
-        \assert($value === null || \is_string($value));
-
-        return $value;
-    }
-
-    /**
-     * Mandatory slug getter.
-     */
-    public function mustFastSlug(string $key, ?string $default = null): string
-    {
-        $value = $this->fastSlug($key, $default);
-
-        \assert($value !== null);
+        \assert(\is_string($value));
 
         return $value;
     }
