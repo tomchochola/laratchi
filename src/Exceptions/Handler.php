@@ -70,7 +70,7 @@ class Handler extends IlluminateHandler
         return match (true) {
             $exception instanceof BackedEnumCaseNotFoundException => new HttpException(404, SymfonyResponse::$statusTexts[404], $exception, $headers, $code),
             $exception instanceof ModelNotFoundException => new HttpException(404, SymfonyResponse::$statusTexts[404], $exception, $headers, $code),
-            $exception instanceof AuthorizationException => new HttpException($exception->status() ?? 403, $exception->getMessage() !== '' && $exception->getMessage() !== 'This action is unauthorized.' ? $exception->getMessage() : '', $exception, $headers, $code),
+            $exception instanceof AuthorizationException => new HttpException($exception->status() ?? 403, $exception->getMessage(), $exception, $headers, $code),
             $exception instanceof TokenMismatchException => new HttpException(419, 'Csrf Token Mismatch', $exception, $headers, $code),
             $exception instanceof SuspiciousOperationException => new HttpException(404, 'Bad Hostname Provided', $exception, $headers, $code),
             $exception instanceof RecordsNotFoundException => new HttpException(404, SymfonyResponse::$statusTexts[404], $exception, $headers, $code),
@@ -99,7 +99,7 @@ class Handler extends IlluminateHandler
      */
     protected function unauthenticated(mixed $request, AuthenticationException $exception): SymfonyResponse
     {
-        $httpException = $this->httpException(401, $exception->getMessage() !== '' && $exception->getMessage() !== 'Unauthenticated.' ? $exception->getMessage() : '', $exception);
+        $httpException = $this->httpException(401, $exception->getMessage(), $exception);
 
         if ($this->shouldReturnJson($request, $exception)) {
             return $this->jsonResponse($request, $exception, $httpException);

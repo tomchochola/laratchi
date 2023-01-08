@@ -78,6 +78,9 @@ return [
     // 401
     SymfonyResponse::$statusTexts[401] => 'Sorry, you are not authorized to access this page',
 
+    // 401
+    'Unauthenticated' => 'Sorry, you are not authorized to access this page',
+
     // 402
     SymfonyResponse::$statusTexts[402] => 'Payment required',
 
@@ -89,6 +92,9 @@ return [
 
     // 403
     'Invalid Signature' => 'Invalid signature',
+
+    // 403
+    'This Action Is Unauthorized' => 'Sorry, you are forbidden from accessing this page',
 
     // 404
     SymfonyResponse::$statusTexts[404] => 'Sorry, the page you are looking for could not be found',

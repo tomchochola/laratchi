@@ -78,6 +78,9 @@ return [
     // 401
     SymfonyResponse::$statusTexts[401] => 'Omlouváme se, nejste oprávněni k přístupu na tuto stránku',
 
+    // 401
+    'Unauthenticated' => 'Omlouváme se, nejste oprávněni k přístupu na tuto stránku',
+
     // 402
     SymfonyResponse::$statusTexts[402] => 'Požadovaná platba',
 
@@ -89,6 +92,9 @@ return [
 
     // 403
     'Invalid Signature' => 'Nesprávný podpis odkazu',
+
+    // 403
+    'This Action Is Unauthorized' => 'Omlouváme se, ale přístup na tuto stránku je zakázán',
 
     // 404
     SymfonyResponse::$statusTexts[404] => 'Omlouváme se, ale hledanou stránku se nepodařilo najít',
