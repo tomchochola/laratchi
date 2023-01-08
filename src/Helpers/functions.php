@@ -335,7 +335,7 @@ if (! \function_exists('resolveApp')) {
      */
     function resolveApp(): Illuminate\Foundation\Application
     {
-        $resolved = Illuminate\Support\Facades\App::getFacadeRoot();
+        $resolved = Illuminate\Support\Facades\App::getFacadeRoot() ?? Illuminate\Foundation\Application::getInstance();
 
         \assert($resolved instanceof Illuminate\Foundation\Application);
 
