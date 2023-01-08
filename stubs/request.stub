@@ -19,13 +19,22 @@ class {{ class }} extends SecureFormRequest
     }
 
     /**
+     * Resolve user.
+     */
+    public function resolveUser(): User
+    {
+        return once(static fn (): User => User::mustFindByRouteKey($this->slug('user'));
+    }
+
+    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): Response|bool
     {
         $me = $this->resolveMe();
+        $user = $this->resolveUser();
 
-        if ($me->getKey() === 0) {
+        if ($me->getKey() === $user->getKey()) {
             return true;
         }
 
