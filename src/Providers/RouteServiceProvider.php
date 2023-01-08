@@ -16,6 +16,10 @@ class RouteServiceProvider extends ServiceProvider
         parent::boot();
 
         $this->routes(static function (): void {
+            resolveRouter()->view('/', 'laratchi::status', [
+                'title' => mustConfigString('app.name'),
+            ]);
+
             resolveRouteRegistrar()->group(resolveApp()->basePath('routes/http.php'));
         });
     }
