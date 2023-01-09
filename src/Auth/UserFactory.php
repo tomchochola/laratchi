@@ -27,12 +27,12 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => resolveDate()->now(),
             'password' => Str::random(10),
             'remember_token' => Str::random(10),
-            'locale' => $this->faker->randomElement(mustConfigArray('app.locales')),
+            'locale' => fake()->randomElement(mustConfigArray('app.locales')),
         ];
     }
 

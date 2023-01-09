@@ -34,7 +34,7 @@ class {{ class }} extends TypedModel
      */
     public static function selectIndex(): array
     {
-        return ['table.*']; TODO
+        return ['table.*'];
     }
 
     /**
@@ -54,7 +54,7 @@ class {{ class }} extends TypedModel
      */
     public static function selectDetail(): array
     {
-        return ['table.*']; TODO
+        return ['table.*'];
     }
 
     /**
