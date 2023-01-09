@@ -341,7 +341,7 @@ if (! \function_exists('resolveApp')) {
 
 if (! \function_exists('resolveArtisan')) {
     /**
-     * Resolve artisan.
+     * Resolve console kernel.
      */
     function resolveArtisan(): Illuminate\Foundation\Console\Kernel
     {
@@ -364,6 +364,26 @@ if (! \function_exists('resolveKernel')) {
         \assert($resolved instanceof Illuminate\Foundation\Http\Kernel);
 
         return $resolved;
+    }
+}
+
+if (! \function_exists('resolveConsoleKernel')) {
+    /**
+     * Resolve console kernel.
+     */
+    function resolveConsoleKernel(): Illuminate\Foundation\Console\Kernel
+    {
+        return resolveArtisan();
+    }
+}
+
+if (! \function_exists('resolveHttpKernel')) {
+    /**
+     * Resolve HTTP kernel.
+     */
+    function resolveHttpKernel(): Illuminate\Foundation\Http\Kernel
+    {
+        return resolveKernel();
     }
 }
 
@@ -871,9 +891,13 @@ if (! \function_exists('resolveExceptionHandler')) {
     /**
      * Resolve exception handler.
      */
-    function resolveExceptionHandler(): Illuminate\Contracts\Debug\ExceptionHandler
+    function resolveExceptionHandler(): Illuminate\Foundation\Exceptions\Handler
     {
-        return inject(Illuminate\Contracts\Debug\ExceptionHandler::class);
+        $resolved = resolveApp()->make(Illuminate\Contracts\Debug\ExceptionHandler::class);
+
+        \assert($resolved instanceof Illuminate\Foundation\Exceptions\Handler);
+
+        return $resolved;
     }
 }
 

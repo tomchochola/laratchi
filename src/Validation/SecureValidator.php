@@ -217,21 +217,6 @@ class SecureValidator extends Validator
         'passwords.token' => 'passwords_token',
         'passwords.user' => 'passwords_user',
 
-        'passwords' => [
-            'reset' => 'passwords_reset',
-            'sent' => 'passwords_sent',
-            'throttled' => 'passwords_throttled',
-            'token' => 'passwords_token',
-            'user' => 'passwords_user',
-        ],
-
-        'auth' => [
-            'failed' => 'auth_failed',
-            'password' => 'auth_password',
-            'throttle' => 'auth_throttle::seconds',
-            'blocked' => 'auth_blocked',
-        ],
-
         ClosureValidationRule::class => 'invalid',
         InvokableValidationRule::class => 'invalid',
         Enum::class => 'enum',

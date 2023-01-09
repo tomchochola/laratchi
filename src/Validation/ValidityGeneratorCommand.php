@@ -28,7 +28,7 @@ class ValidityGeneratorCommand extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return $this->resolveStubPath(pathJoin(['stubs', 'validity.stub']));
+        return $this->resolveStubPath('stubs/validity.stub');
     }
 
     /**
@@ -38,9 +38,7 @@ class ValidityGeneratorCommand extends GeneratorCommand
     {
         $customPath = $this->laravel->basePath($stub);
 
-        return \file_exists($customPath)
-            ? $customPath
-            : pathJoin([__DIR__, 'validity.stub']);
+        return \file_exists($customPath) ? $customPath : __DIR__.'/validity.stub';
     }
 
     /**

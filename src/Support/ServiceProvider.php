@@ -15,11 +15,11 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public function boot(): void
     {
-        $this->loadTranslationsFrom(pathJoin([__DIR__, '..', '..', 'lang', 'exceptions']), 'exceptions');
+        $this->loadTranslationsFrom(__DIR__.'/../../lang/exceptions', 'exceptions');
 
-        $this->loadViewsFrom(pathJoin([__DIR__, '..', '..', 'resources', 'exceptions', 'views']), 'exceptions');
+        $this->loadViewsFrom(__DIR__.'/../../resources/exceptions/views', 'exceptions');
 
-        $this->loadViewsFrom(pathJoin([__DIR__, '..', '..', 'resources', 'views']), 'laratchi');
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'laratchi');
 
         if (! $this->app->runningInConsole()) {
             return;
@@ -30,14 +30,14 @@ class ServiceProvider extends IlluminateServiceProvider
         \assert($app instanceof Application);
 
         $this->publishes([
-            pathJoin([__DIR__, '..', '..', 'lang', 'exceptions']) => $app->langPath(pathJoin(['vendor', 'exceptions'])),
+            __DIR__.'/../../lang/exceptions' => $app->langPath('vendor/exceptions'),
         ], ['laratchi-exceptions-lang', 'laratchi-exceptions', 'lang']);
 
         $this->publishes([
-            pathJoin([__DIR__, '..', '..', 'database', 'migrations']) => $app->databasePath('migrations'),
+            __DIR__.'/../../database/migrations' => $app->databasePath('migrations'),
         ], ['laratchi-migrations', 'migrations']);
 
-        $this->loadMigrationsFrom(pathJoin([__DIR__, '..', '..', 'database', 'migrations']));
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
 
         $this->commands([ValidityGeneratorCommand::class]);
     }

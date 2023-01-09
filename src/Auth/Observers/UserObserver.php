@@ -27,7 +27,7 @@ class UserObserver
      */
     public function updating(User $user): void
     {
-        if ($user->isDirty('email') && $user instanceof MustVerifyEmailContract) {
+        if ($user->isDirty('email') && $user instanceof MustVerifyEmailContract && $user->hasVerifiedEmail()) {
             $this->clearEmailVerifiedAt($user);
         }
 

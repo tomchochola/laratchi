@@ -19,6 +19,10 @@ class SessionReloginAction implements ReloginActionInterface
         \assert($guard instanceof SessionGuard);
         \assert($user !== null);
 
+        if (blank($user->getRememberToken())) {
+            return;
+        }
+
         $cookieName = $guard->getRecallerName();
 
         $cookieJar = resolveCookieJar();
