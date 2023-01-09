@@ -9,6 +9,8 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    public const SCHEDULE_TIMEZONE = 'UTC';
+
     /**
      * @inheritDoc
      */
@@ -16,16 +18,16 @@ class Kernel extends ConsoleKernel
     {
         parent::schedule($schedule);
 
-        $this->authClearResets($schedule, 'UTC');
+        $this->authClearResets($schedule);
     }
 
     /**
      * Run auth:clear-resets for all password brokers.
      */
-    protected function authClearResets(Schedule $schedule, string $timezone): void
+    protected function authClearResets(Schedule $schedule): void
     {
         foreach (mustConfigArray('auth.passwords') as $passwordBrokerName => $config) {
-            $schedule->command("auth:clear-resets {$passwordBrokerName}")->dailyAt('04:00')->timezone($timezone)->withoutOverlapping()->runInBackground();
+            $schedule->command("auth:clear-resets {$passwordBrokerName}")->dailyAt('04:00')->timezone(static::SCHEDULE_TIMEZONE)->withoutOverlapping()->runInBackground();
         }
     }
 
@@ -36,8 +38,10 @@ class Kernel extends ConsoleKernel
     {
         parent::commands();
 
-        $this->load(resolveApp()->basePath('app/Console/Commands'));
+        $app = resolveApp();
 
-        require resolveApp()->basePath('routes/console.php');
+        $this->load($app->basePath('app/Console/Commands'));
+
+        require $app->basePath('routes/console.php');
     }
 }

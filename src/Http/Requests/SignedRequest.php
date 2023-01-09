@@ -10,6 +10,11 @@ use Tomchochola\Laratchi\Validation\Validity;
 class SignedRequest extends SecureFormRequest
 {
     /**
+     * Signature max length.
+     */
+    public static int $signatureMaxLength = 1024;
+
+    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): Response|bool
@@ -27,7 +32,7 @@ class SignedRequest extends SecureFormRequest
     public function rules(): array
     {
         return [
-            'signature' => Validity::make()->nullable()->filled()->varchar(1024),
+            'signature' => Validity::make()->nullable()->filled()->varchar(static::$signatureMaxLength),
             'expires' => Validity::make()->nullable()->filled()->unsigned(),
         ];
     }

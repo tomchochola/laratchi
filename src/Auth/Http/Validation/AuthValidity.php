@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Validation;
 
+use Tomchochola\Laratchi\Auth\Actions\CycleRememberTokenAction;
 use Tomchochola\Laratchi\Validation\Validity;
 
 class AuthValidity
@@ -21,6 +22,11 @@ class AuthValidity
      * @var ?array<int, string>
      */
     public static ?array $allowedLocales = null;
+
+    /**
+     * Password max length.
+     */
+    public static int $passwordMaxLength = 1024;
 
     /**
      * Remember validation rules.
@@ -51,7 +57,7 @@ class AuthValidity
      */
     public function password(string $guardName): Validity
     {
-        return Validity::make()->varchar(1024)->password();
+        return Validity::make()->varchar(static::$passwordMaxLength)->password();
     }
 
     /**
@@ -99,7 +105,7 @@ class AuthValidity
      */
     public function rememberToken(string $guardName): Validity
     {
-        return Validity::make()->varchar(100);
+        return Validity::make()->varchar(CycleRememberTokenAction::$rememberTokenLength);
     }
 
     /**

@@ -18,8 +18,10 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
     /**
      * Create a new notification.
      */
-    public function __construct(protected string $guardName, protected string $action, protected ?string $spa = null)
+    public function __construct(protected string $guardName, protected ?string $action = null, protected ?string $url = null, protected ?string $spa = null)
     {
+        \assert($this->action !== null || $this->url !== null, 'action or url must be provided');
+
         $this->afterCommit();
     }
 
@@ -36,6 +38,8 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
 
         $expires = mustConfigInt('auth.verification.expire');
 
+        \assert($this->action !== null);
+
         return SignedUrlSupport::make($this->action, $parameters, $expires);
     }
 
@@ -44,6 +48,10 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
      */
     protected function verificationUrl(mixed $notifiable): string
     {
+        if ($this->url !== null) {
+            return $this->url;
+        }
+
         \assert($notifiable instanceof MustVerifyEmailContract);
         \assert($notifiable instanceof AuthenticatableContract);
 

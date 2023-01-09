@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Contracts\Support\Arrayable as ArrayableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Schema\Builder as SchmeaBuilder;
 use Illuminate\Validation\Rules\Dimensions;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\ExcludeIf;
@@ -54,7 +55,6 @@ class Validity implements ArrayableContract
     public const LONG_TEXT_MAX = 4294967295;
 
     public const VARCHAR_MAX = 65535;
-    public const VARCHAR_DEFAULT = 255;
 
     /**
      * Bail flag.
@@ -1280,8 +1280,10 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function varchar(int $max = self::VARCHAR_DEFAULT, ?int $min = null): static
+    public function varchar(?int $max = null, ?int $min = null): static
     {
+        $max ??= SchmeaBuilder::$defaultStringLength;
+
         \assert($max <= self::VARCHAR_MAX);
 
         return $this->string($max, $min);

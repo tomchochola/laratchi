@@ -16,7 +16,7 @@ class ResetPasswordNotification extends ResetPassword implements ShouldQueueCont
     /**
      * @inheritDoc
      */
-    public function __construct(string $token, protected ?string $spa = null)
+    public function __construct(string $token, protected ?string $spa = null, protected ?string $url = null)
     {
         parent::__construct($token);
 
@@ -28,6 +28,10 @@ class ResetPasswordNotification extends ResetPassword implements ShouldQueueCont
      */
     protected function resetUrl(mixed $notifiable): string
     {
+        if ($this->url !== null) {
+            return $this->url;
+        }
+
         \assert($notifiable instanceof CanResetPasswordContract);
 
         $query = \http_build_query([

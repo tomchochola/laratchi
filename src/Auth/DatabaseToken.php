@@ -10,6 +10,11 @@ use Tomchochola\Laratchi\Database\TypedModel;
 class DatabaseToken extends TypedModel
 {
     /**
+     * Bearer length.
+     */
+    public static int $bearerLength = 100;
+
+    /**
      * Plain text bearer.
      */
     public string $bearer = '';
@@ -53,7 +58,7 @@ class DatabaseToken extends TypedModel
      */
     public function create(DatabaseTokenableInterface $user): static
     {
-        $token = Str::random(100);
+        $token = Str::random(static::$bearerLength);
         $hash = \hash('sha256', $token);
 
         $authId = $user->getAuthIdentifier();

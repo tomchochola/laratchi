@@ -10,10 +10,15 @@ use Illuminate\Support\Str;
 class CycleRememberTokenAction
 {
     /**
+     * Remember token length.
+     */
+    public static int $rememberTokenLength = 60;
+
+    /**
      * Cycle remember token.
      */
     public function handle(AuthenticatableContract $user): void
     {
-        $user->setRememberToken(Str::random(60));
+        $user->setRememberToken(Str::random(static::$rememberTokenLength));
     }
 }
