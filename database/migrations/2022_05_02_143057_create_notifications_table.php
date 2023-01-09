@@ -11,6 +11,10 @@ return new class() extends Migration {
      */
     public function up(): void
     {
+        if (resolveSchema()->hasTable('notifications')) {
+            return;
+        }
+
         resolveSchema()->create('notifications', static function (Blueprint $table): void {
             $table->uuid('id')->primary();
 

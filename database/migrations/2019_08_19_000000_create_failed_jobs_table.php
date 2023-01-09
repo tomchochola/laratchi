@@ -11,6 +11,10 @@ return new class() extends Migration {
      */
     public function up(): void
     {
+        if (resolveSchema()->hasTable('failed_jobs')) {
+            return;
+        }
+
         resolveSchema()->create('failed_jobs', static function (Blueprint $table): void {
             $table->id();
 

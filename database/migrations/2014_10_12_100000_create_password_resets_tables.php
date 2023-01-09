@@ -18,6 +18,10 @@ return new class() extends Migration {
 
             \assert(\is_string($tableName));
 
+            if (resolveSchema()->hasTable($tableName)) {
+                continue;
+            }
+
             resolveSchema()->create($tableName, static function (Blueprint $table): void {
                 $table->id();
 

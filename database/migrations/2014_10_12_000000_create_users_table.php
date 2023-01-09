@@ -11,6 +11,10 @@ return new class() extends Migration {
      */
     public function up(): void
     {
+        if (resolveSchema()->hasTable('users')) {
+            return;
+        }
+
         resolveSchema()->create('users', static function (Blueprint $table): void {
             $table->id();
 

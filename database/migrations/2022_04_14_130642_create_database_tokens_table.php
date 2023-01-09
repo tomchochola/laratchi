@@ -11,6 +11,10 @@ return new class() extends Migration {
      */
     public function up(): void
     {
+        if (resolveSchema()->hasTable('database_tokens')) {
+            return;
+        }
+
         resolveSchema()->create('database_tokens', static function (Blueprint $table): void {
             $table->id();
 
