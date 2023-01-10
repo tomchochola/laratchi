@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Relations\Pivot as IlluminatePivot;
 
 class Pivot extends IlluminatePivot
 {
-    use ModelTrait;
-    use TypedModelTrait {
-        TypedModelTrait::getKey insteadof ModelTrait;
+    use IntModelTrait {
+        IntModelTrait::getKey insteadof ModelTrait;
+        IntModelTrait::findByKey insteadof ModelTrait;
+        IntModelTrait::mustFindByKey insteadof ModelTrait;
     }
+    use ModelTrait;
 
     /**
      * @inheritDoc

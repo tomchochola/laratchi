@@ -12,17 +12,19 @@ use Tomchochola\Laratchi\Auth\Http\Controllers\EmailVerificationVerifyController
 use Tomchochola\Laratchi\Auth\Notifications\PasswordInitNotification;
 use Tomchochola\Laratchi\Auth\Notifications\ResetPasswordNotification;
 use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
+use Tomchochola\Laratchi\Database\IntModelTrait;
 use Tomchochola\Laratchi\Database\ModelTrait;
-use Tomchochola\Laratchi\Database\TypedModelTrait;
 
 class User extends IlluminateUser implements DatabaseTokenableInterface, HasLocalePreferenceContract
 {
     use DatabaseTokenableTrait;
+    use IntModelTrait {
+        IntModelTrait::getKey insteadof ModelTrait;
+        IntModelTrait::findByKey insteadof ModelTrait;
+        IntModelTrait::mustFindByKey insteadof ModelTrait;
+    }
     use ModelTrait;
     use Notifiable;
-    use TypedModelTrait {
-        TypedModelTrait::getKey insteadof ModelTrait;
-    }
 
     /**
      * @inheritDoc

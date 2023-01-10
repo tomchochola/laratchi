@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth;
 
 use Illuminate\Support\Str;
-use Tomchochola\Laratchi\Database\TypedModel;
+use Tomchochola\Laratchi\Database\Model;
 
-class DatabaseToken extends TypedModel
+class DatabaseToken extends Model
 {
     /**
      * Bearer length.
