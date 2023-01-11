@@ -64,14 +64,6 @@ class Validator extends IlluminateValidator
     }
 
     /**
-     * @inheritDoc
-     */
-    public function validateBoolean(mixed $attribute, mixed $value): bool
-    {
-        return \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE) !== null;
-    }
-
-    /**
      * Validate that an attribute is prohibited when any other attribute exists.
      *
      * @param array<int, string> $parameters

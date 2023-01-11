@@ -390,23 +390,13 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add integer boolean rule.
-     *
-     * @return $this
-     */
-    public function integerBoolean(): static
-    {
-        return $this->addRule('integer')->in(['0', '1']);
-    }
-
-    /**
      * Add true rule.
      *
      * @return $this
      */
     public function true(): static
     {
-        return $this->boolean()->in(['yes', 'on', '1', 1, true, 'true']);
+        return $this->boolean()->in(['1', 1, true]);
     }
 
     /**
@@ -416,27 +406,7 @@ class Validity implements ArrayableContract
      */
     public function false(): static
     {
-        return $this->boolean()->in(['no', 'off', '0', 0, false, 'false']);
-    }
-
-    /**
-     * Add integer true rule.
-     *
-     * @return $this
-     */
-    public function integerTrue(): static
-    {
-        return $this->integerBoolean()->in(['yes', 'on', '1', 1, true, 'true']);
-    }
-
-    /**
-     * Add integer false rule.
-     *
-     * @return $this
-     */
-    public function integerFalse(): static
-    {
-        return $this->integerBoolean()->in(['no', 'off', '0', 0, false, 'false']);
+        return $this->boolean()->in(['0', 0, false]);
     }
 
     /**
