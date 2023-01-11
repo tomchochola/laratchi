@@ -11,22 +11,6 @@ use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 class {{ class }} extends SecureFormRequest
 {
     /**
-     * Resolve me.
-     */
-    public function resolveMe(): User
-    {
-        return once(static fn (): User => User::mustResolve());
-    }
-
-    /**
-     * Resolve user.
-     */
-    public function resolveUser(): User
-    {
-        return once(static fn (): User => User::mustFindByRouteKey($this->slug('user'));
-    }
-
-    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): Response|bool
@@ -49,5 +33,21 @@ class {{ class }} extends SecureFormRequest
     public function rules(): array
     {
         return [];
+    }
+
+    /**
+     * Resolve me.
+     */
+    public function resolveMe(): User
+    {
+        return once(static fn (): User => User::mustResolve());
+    }
+
+    /**
+     * Resolve user.
+     */
+    public function resolveUser(): User
+    {
+        return once(static fn (): User => User::mustFindByRouteKey($this->slug('user')));
     }
 }
