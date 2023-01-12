@@ -1198,6 +1198,30 @@ if (! \function_exists('mustEnvFloat')) {
     }
 }
 
+if (! \function_exists('currentEnv')) {
+    /**
+     * Get current env.
+     */
+    function currentEnv(): string
+    {
+        $current = resolveApp()->make('env');
+
+        \assert(\is_string($current));
+
+        return $current;
+    }
+}
+
+if (! \function_exists('currentEnvEnv')) {
+    /**
+     * Get current env in env scope.
+     */
+    function currentEnvEnv(): string
+    {
+        return mustEnvString('APP_ENV');
+    }
+}
+
 if (! \function_exists('isEnv')) {
     /**
      * Check for current env.
@@ -1206,20 +1230,64 @@ if (! \function_exists('isEnv')) {
      */
     function isEnv(array $envs): bool
     {
-        return \in_array(resolveApp()['env'], $envs, true);
+        return \in_array(currentEnv(), $envs, true);
     }
 }
 
-if (! \function_exists('currentEnv')) {
+if (! \function_exists('isEnvEnv')) {
     /**
-     * Get current env.
+     * Check for current env in env scope.
+     *
+     * @param array<int, string> $envs
      */
-    function currentEnv(): string
+    function isEnvEnv(array $envs): bool
     {
-        $current = resolveApp()['env'];
+        return \in_array(currentEnvEnv(), $envs, true);
+    }
+}
 
-        \assert(\is_string($current));
+if (! \function_exists('envConfig')) {
+    /**
+     * Get config in env scope.
+     */
+    function envConfig(): Illuminate\Config\Repository
+    {
+        $resolved = resolveApp()->make('config');
 
-        return $current;
+        \assert($resolved instanceof Illuminate\Config\Repository);
+
+        return $resolved;
+    }
+}
+
+if (! \function_exists('mapEnv')) {
+    /**
+     * Map env.
+     *
+     * @param array<string, mixed> $mapping
+     */
+    function mapEnv(array $mapping, mixed $default = null): mixed
+    {
+        if ($default === null) {
+            return $mapping[currentEnv()];
+        }
+
+        return $mapping[currentEnv()] ?? $default;
+    }
+}
+
+if (! \function_exists('mapEnvEnv')) {
+    /**
+     * Map env in env scope.
+     *
+     * @param array<string, mixed> $mapping
+     */
+    function mapEnvEnv(array $mapping, mixed $default = null): mixed
+    {
+        if ($default === null) {
+            return $mapping[currentEnvEnv()];
+        }
+
+        return $mapping[currentEnvEnv()] ?? $default;
     }
 }
