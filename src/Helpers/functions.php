@@ -68,7 +68,7 @@ if (! \function_exists('nonProductionThrow')) {
      */
     function nonProductionThrow(Throwable $throwable): void
     {
-        if (resolveApp()->environment(['staging', 'production']) === false) {
+        if (isEnv(['staging', 'production']) === false) {
             throw $throwable;
         }
 
@@ -1195,5 +1195,31 @@ if (! \function_exists('mustEnvFloat')) {
         \assert($value !== null, "[{$key}] env is not float");
 
         return $value;
+    }
+}
+
+if (! \function_exists('isEnv')) {
+    /**
+     * Check for current env.
+     *
+     * @param array<int, string> $envs
+     */
+    function isEnv(array $envs): bool
+    {
+        return \in_array(resolveApp()['env'], $envs, true);
+    }
+}
+
+if (! \function_exists('currentEnv')) {
+    /**
+     * Get current env.
+     */
+    function currentEnv(): string
+    {
+        $current = resolveApp()['env'];
+
+        \assert(\is_string($current));
+
+        return $current;
     }
 }

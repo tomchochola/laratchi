@@ -20,7 +20,7 @@ class RecaptchaRule implements RuleContract
      */
     public function passes(mixed $attribute, mixed $value): bool
     {
-        if (resolveApp()->environment(['local', 'testing']) === true) {
+        if (isEnv(['local', 'testing'])) {
             return true;
         }
 
