@@ -169,7 +169,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unless(bool $flag): static
+    public function ifNot(bool $flag): static
     {
         $this->skipNext = $flag;
 
