@@ -48,6 +48,6 @@ class {{ class }} extends SecureFormRequest
      */
     public function resolveUser(): User
     {
-        return once(static fn (): User => User::mustFindByRouteKey($this->slug('user')));
+        return once(fn (): User => User::mustFindByRouteKey($this->slug('slug')));
     }
 }
