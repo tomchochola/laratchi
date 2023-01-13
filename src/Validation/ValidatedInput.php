@@ -279,7 +279,7 @@ class ValidatedInput extends IlluminateValidatedInput
         foreach ($data as $validatedInput) {
             \assert(\is_array($validatedInput));
 
-            $validatedInputs[] = new static($data);
+            $validatedInputs[] = new static($validatedInput);
         }
 
         return $validatedInputs;
