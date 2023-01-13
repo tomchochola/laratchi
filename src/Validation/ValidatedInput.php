@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Validation;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
 use LogicException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -230,6 +231,58 @@ class ValidatedInput extends IlluminateValidatedInput
 
         if ($value === null) {
             $this->throw("[{$key}] is not array");
+        }
+
+        return $value;
+    }
+
+    /**
+     * Date resolver.
+     */
+    public function date(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): ?Carbon
+    {
+        $value = $this->get($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        if ($value instanceof Carbon) {
+            return $value;
+        }
+
+        $value = \filter_var($value);
+
+        if ($value === false) {
+            $this->throw("[{$key}] is not date or null");
+        }
+
+        if ($value === '') {
+            return null;
+        }
+
+        if ($format === null) {
+            return resolveDate()->parse($value, $tz);
+        }
+
+        $value = resolveDate()->createFromFormat($format, $value, $tz);
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Mandatory date resolver.
+     */
+    public function mustDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): Carbon
+    {
+        $value = $this->date($key, $default, $format, $tz);
+
+        if ($value === null) {
+            $this->throw("[{$key}] is not date");
         }
 
         return $value;
