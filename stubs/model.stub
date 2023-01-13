@@ -6,7 +6,6 @@ namespace {{ namespace }};
 
 use Illuminate\Database\Eloquent\Builder;
 use Tomchochola\Laratchi\Database\Model;
-use Illuminate\Database\Eloquent\Collection;
 
 class {{ class }} extends Model
 {
