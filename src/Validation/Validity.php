@@ -9,6 +9,7 @@ use Illuminate\Contracts\Support\Arrayable as ArrayableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Builder as SchmeaBuilder;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Dimensions;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\ExcludeIf;
@@ -317,6 +318,16 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add ascii rule.
+     *
+     * @return $this
+     */
+    public function ascii(): static
+    {
+        return $this->addRule('ascii');
+    }
+
+    /**
      * Add object rule.
      *
      * @param ?array<int, string> $keys
@@ -460,6 +471,18 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add decimal rule.
+     *
+     * @return $this
+     */
+    public function decimal(int $min, ?int $max = null): static
+    {
+        \assert($max === null || $max >= $min);
+
+        return $this->addRule('between', $max === null ? [$min] : [$min, $max]);
+    }
+
+    /**
      * Add declined rule.
      *
      * @return $this
@@ -499,6 +522,26 @@ class Validity implements ArrayableContract
     public function digits(int $length): static
     {
         return $this->addRule('digits', [$length]);
+    }
+
+    /**
+     * Add max_digits rule.
+     *
+     * @return $this
+     */
+    public function maxDigits(int $max): static
+    {
+        return $this->addRule('max_digits', [$max]);
+    }
+
+    /**
+     * Add min_digits rule.
+     *
+     * @return $this
+     */
+    public function minDigits(int $min): static
+    {
+        return $this->addRule('min_digits', [$min]);
     }
 
     /**
@@ -574,12 +617,49 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add strict ignore case distinct rule.
+     *
+     * @return $this
+     */
+    public function strictDistinct(): static
+    {
+        return $this->addRule('distinct', ['strict', 'ignore_case']);
+    }
+
+    /**
+     * Add doesnt_start_with rule.
+     *
+     * @param array<int, string> $ends
+     *
+     * @return $this
+     */
+    public function doesntStartWith(array $ends): static
+    {
+        return $this->addRule('doesnt_start_with', $ends);
+    }
+
+    /**
+     * Add doesnt_end_with rule.
+     *
+     * @param array<int, string> $ends
+     *
+     * @return $this
+     */
+    public function doesntEndWith(array $ends): static
+    {
+        return $this->addRule('doesnt_end_with', $ends);
+    }
+
+    /**
      * Add email rule.
      *
      * @return $this
      */
-    public function email(bool $filter = true, bool $strict = true, bool $dns = true, bool $rfc = false, bool $spoof = false): static
+    public function email(bool $filterUnicode = true, bool $strict = true, bool $dns = true, bool $rfc = false, bool $spoof = true, bool $filter = false): static
     {
+        \assert(! $filterUnicode || ! $filter, 'filter and filter_unicode can not coexist');
+        \assert(! $strict || ! $rfc, 'strict and rfc can not coexist');
+
         if (resolveApp()->runningUnitTests()) {
             return $this->addRule('email');
         }
@@ -588,6 +668,10 @@ class Validity implements ArrayableContract
 
         if ($filter) {
             $options[] = 'filter';
+        }
+
+        if ($filterUnicode) {
+            $options[] = 'filter_unicode';
         }
 
         if ($strict) {
@@ -677,6 +761,18 @@ class Validity implements ArrayableContract
     public function excludeUnless(string $field, array $values): static
     {
         return $this->addRule('exclude_unless', [$field, ...$values]);
+    }
+
+    /**
+     * Add exclude_with rule.
+     *
+     * @param array<int, string> $fields
+     *
+     * @return $this
+     */
+    public function excludeWith(array $fields): static
+    {
+        return $this->addRule('exclude_with', $fields);
     }
 
     /**
@@ -917,6 +1013,26 @@ class Validity implements ArrayableContract
     public function lte(string $field): static
     {
         return $this->addRule('lte', [$field]);
+    }
+
+    /**
+     * Add lowercase rule.
+     *
+     * @return $this
+     */
+    public function lowercase(): static
+    {
+        return $this->addRule('lowercase');
+    }
+
+    /**
+     * Add uppercase rule.
+     *
+     * @return $this
+     */
+    public function uppercase(): static
+    {
+        return $this->addRule('uppercase');
     }
 
     /**
@@ -1299,6 +1415,16 @@ class Validity implements ArrayableContract
     public function uuid(): static
     {
         return $this->addRule('uuid');
+    }
+
+    /**
+     * Add ulid rule.
+     *
+     * @return $this
+     */
+    public function ulid(): static
+    {
+        return $this->addRule('ulid');
     }
 
     /**
