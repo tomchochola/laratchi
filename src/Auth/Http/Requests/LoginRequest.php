@@ -21,9 +21,7 @@ class LoginRequest extends SecureFormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
+     * @inheritDoc
      */
     public function rules(): array
     {

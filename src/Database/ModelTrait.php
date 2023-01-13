@@ -17,7 +17,7 @@ use Illuminate\Support\Carbon;
 trait ModelTrait
 {
     /**
-     * @inheritDoc
+     * ModelTrait constructor.
      *
      * @param array<mixed> $attributes
      */
@@ -250,7 +250,7 @@ trait ModelTrait
     }
 
     /**
-     * @inheritDoc
+     * Get the value of the model's primary key.
      */
     public function getKey(): int|string
     {
@@ -264,7 +264,7 @@ trait ModelTrait
     }
 
     /**
-     * @inheritDoc
+     * Get the value of the model's route key.
      */
     public function getRouteKey(): string
     {

@@ -25,6 +25,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected $defaultHeaders = [
         'Accept-Language' => 'en',
+        'Accept' => 'application/json',
     ];
 
     /**
