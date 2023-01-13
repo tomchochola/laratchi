@@ -18,6 +18,16 @@ class ValidatedInput extends IlluminateValidatedInput
     public static int $castFailedStatus = 400;
 
     /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $input
+     */
+    final public function __construct(array $input)
+    {
+        parent::__construct($input);
+    }
+
+    /**
      * String resolver.
      */
     public function string(string $key, ?string $default = null): ?string
@@ -231,6 +241,48 @@ class ValidatedInput extends IlluminateValidatedInput
     public function get(string $key, mixed $default = null): mixed
     {
         return Arr::get($this->input, $key) ?? $default;
+    }
+
+    /**
+     * Make new validated input from given data.
+     *
+     * @param array<mixed> $data
+     */
+    public function newValidatedInput(array $data): static
+    {
+        return new static($data);
+    }
+
+    /**
+     * Make new validated input from given key.
+     *
+     * @param array<mixed>|null $default
+     */
+    public function validatedInput(string $key, ?array $default = null): static
+    {
+        return new static($this->mustArray($key, $default));
+    }
+
+    /**
+     * Make new validated inputs from given key.
+     *
+     * @param array<mixed>|null $default
+     *
+     * @return array<int, static>
+     */
+    public function validatedInputs(string $key, ?array $default = null): array
+    {
+        $validatedInputs = [];
+
+        $data = $this->mustArray($key, $default);
+
+        foreach ($data as $validatedInput) {
+            \assert(\is_array($validatedInput));
+
+            $validatedInputs[] = new static($data);
+        }
+
+        return $validatedInputs;
     }
 
     /**
