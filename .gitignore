@@ -2,14 +2,15 @@
 .DS_Store
 .idea
 .vscode
+.fleet
 
 # node
-node_modules
-package-lock.json
+/node_modules
+/package-lock.json
 
 # composer
-vendor
-composer.lock
+/vendor
+/composer.lock
 
 # phpunit
 phpunit.xml
@@ -20,3 +21,9 @@ phpstan.neon
 
 # php-cs-fixer
 .php-cs-fixer.cache
+
+# tools
+/tools/*/vendor
+/tools/*/node_modules
+/tools/*/package-lock.json
+/tools/*/composer.lock
