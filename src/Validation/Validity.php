@@ -1254,7 +1254,7 @@ class Validity implements ArrayableContract
     {
         $max ??= SchmeaBuilder::$defaultStringLength;
 
-        \assert($max <= self::VARCHAR_MAX);
+        \assert($max <= static::VARCHAR_MAX);
 
         return $this->string($max, $min);
     }
@@ -1506,9 +1506,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function tinyText(int $max = self::TINY_TEXT_MAX, ?int $min = null): static
+    public function tinyText(?int $max = null, ?int $min = null): static
     {
-        \assert($max <= self::TINY_TEXT_MAX);
+        $max ??= static::TINY_TEXT_MAX;
+
+        \assert($max <= static::TINY_TEXT_MAX);
 
         $rule = $this->addRule('string')->strlenMax($max);
 
@@ -1526,9 +1528,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function text(int $max = self::TEXT_MAX, ?int $min = null): static
+    public function text(?int $max = null, ?int $min = null): static
     {
-        \assert($max <= self::TEXT_MAX);
+        $max ??= static::TEXT_MAX;
+
+        \assert($max <= static::TEXT_MAX);
 
         $rule = $this->addRule('string')->strlenMax($max);
 
@@ -1546,9 +1550,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function mediumText(int $max = self::MEDIUM_TEXT_MAX, ?int $min = null): static
+    public function mediumText(?int $max = null, ?int $min = null): static
     {
-        \assert($max <= self::MEDIUM_TEXT_MAX);
+        $max ??= static::MEDIUM_TEXT_MAX;
+
+        \assert($max <= static::MEDIUM_TEXT_MAX);
 
         $rule = $this->addRule('string')->strlenMax($max);
 
@@ -1566,9 +1572,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function longText(int $max = self::LONG_TEXT_MAX, ?int $min = null): static
+    public function longText(?int $max = null, ?int $min = null): static
     {
-        \assert($max <= self::LONG_TEXT_MAX);
+        $max ??= static::LONG_TEXT_MAX;
+
+        \assert($max <= static::LONG_TEXT_MAX);
 
         $rule = $this->addRule('string')->strlenMax($max);
 
@@ -1586,9 +1594,12 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function tinyInt(int $min = self::TINY_INT_MIN, int $max = self::TINY_INT_MAX): static
+    public function tinyInt(?int $min = null, ?int $max = null): static
     {
-        \assert($min >= self::TINY_INT_MIN);
+        $min ??= static::TINY_INT_MIN;
+        $max ??= static::TINY_INT_MAX;
+
+        \assert($min >= static::TINY_INT_MIN);
         \assert($max <= static::TINY_INT_MAX);
 
         return $this->integer($min, $max);
@@ -1599,8 +1610,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedTinyInt(int $min = self::UNSIGNED_TINY_INT_MIN, int $max = self::UNSIGNED_TINY_INT_MAX): static
+    public function unsignedTinyInt(?int $min = null, ?int $max = null): static
     {
+        $min ??= static::UNSIGNED_TINY_INT_MIN;
+        $max ??= static::UNSIGNED_TINY_INT_MAX;
+
         \assert($min >= static::UNSIGNED_TINY_INT_MIN);
         \assert($max <= static::UNSIGNED_TINY_INT_MAX);
 
@@ -1612,8 +1626,10 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function smallInt(int $min = self::SMALL_INT_MIN, int $max = self::SMALL_INT_MAX): static
+    public function smallInt(?int $min = null, ?int $max = null): static
     {
+        $min ??= static::SMALL_INT_MIN;
+        $max ??= static::SMALL_INT_MAX;
         \assert($min >= static::SMALL_INT_MIN);
         \assert($max <= static::SMALL_INT_MAX);
 
@@ -1625,8 +1641,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedSmallInt(int $min = self::UNSIGNED_SMALL_INT_MIN, int $max = self::UNSIGNED_SMALL_INT_MAX): static
+    public function unsignedSmallInt(?int $min = null, ?int $max = null): static
     {
+        $min ??= static::UNSIGNED_SMALL_INT_MIN;
+        $max ??= static::UNSIGNED_SMALL_INT_MAX;
+
         \assert($min >= static::UNSIGNED_SMALL_INT_MIN);
         \assert($max <= static::UNSIGNED_SMALL_INT_MAX);
 
@@ -1638,8 +1657,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function mediumInt(int $min = self::MEDIUM_INT_MIN, int $max = self::MEDIUM_INT_MAX): static
+    public function mediumInt(?int $min = null, ?int $max = null): static
     {
+        $min ??= static::MEDIUM_INT_MIN;
+        $max ??= static::MEDIUM_INT_MAX;
+
         \assert($min >= static::MEDIUM_INT_MIN);
         \assert($max <= static::MEDIUM_INT_MAX);
 
@@ -1651,8 +1673,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedMediumInt(int $min = self::UNSIGNED_MEDIUM_INT_MIN, int $max = self::UNSIGNED_MEDIUM_INT_MAX): static
+    public function unsignedMediumInt(?int $min = null, ?int $max = null): static
     {
+        $min ??= static::UNSIGNED_MEDIUM_INT_MIN;
+        $max ??= static::UNSIGNED_MEDIUM_INT_MAX;
+
         \assert($min >= static::UNSIGNED_MEDIUM_INT_MIN);
         \assert($max <= static::UNSIGNED_MEDIUM_INT_MAX);
 
@@ -1664,8 +1689,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function int(int $min = self::INT_MIN, int $max = self::INT_MAX): static
+    public function int(?int $min = null, ?int $max = null): static
     {
+        $min ??= static::INT_MIN;
+        $max ??= static::INT_MAX;
+
         \assert($min >= static::INT_MIN);
         \assert($max <= static::INT_MAX);
 
@@ -1677,8 +1705,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedInt(int $min = self::UNSIGNED_INT_MIN, int $max = self::UNSIGNED_INT_MAX): static
+    public function unsignedInt(?int $min = null, ?int $max = null): static
     {
+        $min ??= static::UNSIGNED_INT_MIN;
+        $max ??= static::UNSIGNED_INT_MAX;
+
         \assert($min >= static::UNSIGNED_INT_MIN);
         \assert($max <= static::UNSIGNED_INT_MAX);
 
@@ -1690,8 +1721,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function bigInt(int $min = self::BIG_INT_MIN, int $max = self::BIG_INT_MAX): static
+    public function bigInt(?int $min = null, ?int $max = null): static
     {
+        $min ??= static::BIG_INT_MIN;
+        $max ??= static::BIG_INT_MAX;
+
         \assert($min >= static::BIG_INT_MIN);
         \assert($max <= static::BIG_INT_MAX);
 
@@ -1703,8 +1737,11 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedBigInt(int $min = self::UNSIGNED_BIG_INT_MIN, int $max = self::UNSIGNED_BIG_INT_MAX): static
+    public function unsignedBigInt(?int $min = null, ?int $max = null): static
     {
+        $min ??= static::UNSIGNED_BIG_INT_MIN;
+        $max ??= static::UNSIGNED_BIG_INT_MAX;
+
         \assert($min >= static::UNSIGNED_BIG_INT_MIN);
         \assert($max <= static::UNSIGNED_BIG_INT_MAX);
 
@@ -1716,7 +1753,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsigned(int $min = self::UNSIGNED_BIG_INT_MIN, int $max = self::UNSIGNED_BIG_INT_MAX): static
+    public function unsigned(?int $min = null, ?int $max = null): static
     {
         return $this->unsignedBigInt($min, $max);
     }
@@ -1726,7 +1763,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function signed(int $min = self::BIG_INT_MIN, int $max = self::BIG_INT_MAX): static
+    public function signed(?int $min = null, ?int $max = null): static
     {
         return $this->bigInt($min, $max);
     }
@@ -1736,8 +1773,10 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function positive(int $min = 1, int $max = self::UNSIGNED_BIG_INT_MAX): static
+    public function positive(?int $min = null, ?int $max = null): static
     {
+        $min ??= 1;
+
         \assert($min >= 1);
 
         return $this->unsigned($min, $max);
