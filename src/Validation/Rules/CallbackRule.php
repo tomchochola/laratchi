@@ -14,7 +14,7 @@ class CallbackRule implements RuleContract
      *
      * @param Closure(mixed, mixed=): bool $callback
      */
-    public function __construct(protected Closure $callback, protected string $message)
+    public function __construct(protected Closure $callback, protected string $message = 'validation.invalid')
     {
     }
 

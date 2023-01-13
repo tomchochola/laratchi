@@ -11,7 +11,7 @@ class RecaptchaRule implements RuleContract
     /**
      * Create a new rule instance.
      */
-    public function __construct(protected string $secret, protected string $message)
+    public function __construct(protected string $secret, protected string $message = 'validation.invalid')
     {
     }
 
