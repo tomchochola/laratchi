@@ -91,7 +91,7 @@ return [
     'Invalid Credentials' => 'Nesprávné přístupové údaje',
 
     // 403
-    'Invalid Signature' => 'Nesprávný podpis odkazu',
+    'Invalid Signature' => 'Stránka vypršela',
 
     // 403
     'This Action Is Unauthorized' => 'Omlouváme se, ale přístup na tuto stránku je zakázán',

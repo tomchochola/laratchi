@@ -35,6 +35,11 @@ class EmailVerificationVerifyController extends TransactionController
     public static bool $simpleThrottle = false;
 
     /**
+     * Enable response view when not expected json.
+     */
+    public static bool $responseViewEnabled = true;
+
+    /**
      * Handle the incoming request.
      */
     public function __invoke(EmailVerificationVerifyRequest $request): SymfonyResponse
@@ -125,7 +130,11 @@ class EmailVerificationVerifyController extends TransactionController
      */
     protected function response(EmailVerificationVerifyRequest $request, AuthenticatableContract&MustVerifyEmailContract $user): SymfonyResponse
     {
-        return resolveResponseFactory()->noContent();
+        if ($request->expectsJson() || static::$responseViewEnabled === false) {
+            return resolveResponseFactory()->noContent();
+        }
+
+        return resolveResponseFactory()->view('laratchi::ok');
     }
 
     /**

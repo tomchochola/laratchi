@@ -91,7 +91,7 @@ return [
     'Invalid Credentials' => 'Invalid credentials',
 
     // 403
-    'Invalid Signature' => 'Invalid signature',
+    'Invalid Signature' => 'Page expired',
 
     // 403
     'This Action Is Unauthorized' => 'Sorry, you are forbidden from accessing this page',
