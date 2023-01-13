@@ -1291,3 +1291,13 @@ if (! \function_exists('mapEnvEnv')) {
         return $mapping[currentEnvEnv()] ?? $default;
     }
 }
+
+if (! \function_exists('assertNever')) {
+    /**
+     * Assert never.
+     */
+    function assertNever(): never
+    {
+        throw new LogicException('assert never');
+    }
+}
