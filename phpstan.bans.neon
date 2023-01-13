@@ -92,7 +92,7 @@ parameters:
       message: 'method_field() is banned, use @method'
     -
       function: 'mix()'
-      message: 'mix() is banned, use inject(\Illuminate\Foundation\Mix::class) instead'
+      message: 'mix() is banned, use resolveMix() instead'
     -
       function: 'now()'
       message: 'now() is banned, use resolveDate()->now() instead'
@@ -103,6 +103,9 @@ parameters:
       function: 'policy()'
       message: 'policy() is banned, use resolveGate()->getPolicyFor() instead'
     -
+      function: 'precognitive()'
+      message: 'precognitive() is banned'
+    -
       function: 'public_path()'
       message: 'public_path() is banned, use resolveApp()->publicPath() instead'
     -
@@ -111,6 +114,12 @@ parameters:
     -
       function: 'report()'
       message: 'report() is banned, use resolveExceptionHandler()->report() instead'
+    -
+      function: 'report_if()'
+      message: 'report_if() is banned, use resolveExceptionHandler()->report() instead'
+    -
+      function: 'report_unless()'
+      message: 'report_unless() is banned, use resolveExceptionHandler()->report() instead'
     -
       function: 'request()'
       message: 'request() is banned, use resolveRequest() instead'
@@ -414,6 +423,13 @@ parameters:
     -
       namespace: 'Illuminate\Support\Facades\View'
       message: 'Illuminate\Support\Facades\View is banned, use resolveViewFactory() instead'
+      allowIn:
+        - tests/*
+        - src/Helpers/functions.php
+        - src/Testing/*
+    -
+      namespace: 'Illuminate\Support\Facades\Vite'
+      message: 'Illuminate\Support\Facades\Vite is banned, use resolveVite() instead'
       allowIn:
         - tests/*
         - src/Helpers/functions.php

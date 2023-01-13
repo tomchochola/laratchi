@@ -915,6 +915,26 @@ if (! \function_exists('resolveDate')) {
     }
 }
 
+if (! \function_exists('resolveMix')) {
+    /**
+     * Resolve mix.
+     */
+    function resolveMix(): Illuminate\Foundation\Mix
+    {
+        return inject(Illuminate\Foundation\Mix::class);
+    }
+}
+
+if (! \function_exists('resolveVite')) {
+    /**
+     * Resolve vite.
+     */
+    function resolveVite(): Illuminate\Foundation\Vite
+    {
+        return inject(Illuminate\Foundation\Vite::class);
+    }
+}
+
 if (! \function_exists('mustBeGuest')) {
     /**
      * Throw if authenticated.
