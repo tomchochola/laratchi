@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Support;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
+use Tomchochola\Laratchi\Testing\TestMailCommand;
 use Tomchochola\Laratchi\Validation\ValidityGeneratorCommand;
 
 class ServiceProvider extends IlluminateServiceProvider
@@ -39,6 +40,6 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
 
-        $this->commands([ValidityGeneratorCommand::class]);
+        $this->commands([ValidityGeneratorCommand::class, TestMailCommand::class]);
     }
 }
