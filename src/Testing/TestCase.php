@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
+use LogicException;
 use Stringable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tomchochola\Laratchi\Auth\DatabaseTokenableInterface;
@@ -24,7 +25,6 @@ abstract class TestCase extends BaseTestCase
      * @var array<mixed>
      */
     protected $defaultHeaders = [
-        'Accept-Language' => 'en',
         'Accept' => 'application/json',
     ];
 
@@ -75,6 +75,50 @@ abstract class TestCase extends BaseTestCase
         $params = $this->transformParameters($parameters);
 
         return parent::call($method, $uri, $params, $cookies, $files, $server, $content);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $data
+     * @param array<mixed> $headers
+     */
+    public function json(mixed $method, mixed $uri, array $data = [], array $headers = []): never
+    {
+        throw new LogicException('only multipart/form-data is supported');
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $data
+     * @param array<mixed> $headers
+     */
+    public function put(mixed $uri, array $data = [], array $headers = []): never
+    {
+        throw new LogicException('multipart/form-data support only GET|POST');
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $data
+     * @param array<mixed> $headers
+     */
+    public function patch(mixed $uri, array $data = [], array $headers = []): never
+    {
+        throw new LogicException('multipart/form-data support only GET|POST');
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $data
+     * @param array<mixed> $headers
+     */
+    public function delete(mixed $uri, array $data = [], array $headers = []): never
+    {
+        throw new LogicException('multipart/form-data support only GET|POST');
     }
 
     /**
@@ -464,5 +508,18 @@ abstract class TestCase extends BaseTestCase
         if ($validator->fails()) {
             static::assertEmpty($validator->failed(), 'Json api response validation failed: '.\json_encode($validator->failed()));
         }
+    }
+
+    /**
+     * Set locale.
+     */
+    protected function locale(string $locale): void
+    {
+        $app = resolveApp();
+
+        $app->setLocale($locale);
+        $app->setFallbackLocale($locale);
+
+        $this->defaultHeaders['Accept-Language'] = $locale;
     }
 }
