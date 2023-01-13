@@ -40,11 +40,6 @@ class SecureValidator extends Validator
     public static bool $usePlaceholderAttributes = true;
 
     /**
-     * Use attribtue instead of real translations.
-     */
-    public static bool $useRawAttributes = true;
-
-    /**
      * Use computer errors.
      */
     public static bool $useComputerErrors = true;
@@ -330,11 +325,7 @@ class SecureValidator extends Validator
      */
     protected function getAttributeFromTranslations(mixed $name): string
     {
-        if (static::$useRawAttributes) {
-            return $name;
-        }
-
-        if (static::$usePlaceholderAttributes) {
+        if (static::$usePlaceholderAttributes || static::$useComputerErrors) {
             return "{{ {$name} }}";
         }
 
