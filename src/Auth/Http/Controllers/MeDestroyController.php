@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Actions\LogoutCurrentDeviceActionAction;
 use Tomchochola\Laratchi\Auth\Http\Requests\MeDestroyRequest;
-use Tomchochola\Laratchi\Routing\Controller;
+use Tomchochola\Laratchi\Routing\TransactionController;
 
-class MeDestroyController extends Controller
+class MeDestroyController extends TransactionController
 {
     /**
      * Handle the incoming request.
