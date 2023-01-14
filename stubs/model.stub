@@ -17,51 +17,11 @@ class {{ class }} extends Model
     protected $casts = [];
 
     /**
-     * What is loaded on index.
-     *
-     * @return array<mixed>
-     */
-    public static function loadIndex(): array
-    {
-        return [];
-    }
-
-    /**
-     * What is selected on index.
-     *
-     * @return array<mixed>
-     */
-    public static function selectIndex(): array
-    {
-        return ['table.*'];
-    }
-
-    /**
-     * What is loaded on detail.
-     *
-     * @return array<mixed>
-     */
-    public static function loadDetail(): array
-    {
-        return [];
-    }
-
-    /**
-     * What is loaded on detail.
-     *
-     * @return array<mixed>
-     */
-    public static function selectDetail(): array
-    {
-        return ['table.*'];
-    }
-
-    /**
      * Modify index query.
      */
     public static function queryIndex(Builder $builder): void
     {
-        $builder->with(static::loadIndex())->getQuery()->select(static::selectIndex());
+        $builder->with([])->getQuery()->select($builder->qualifyColumns(['*']));
     }
 
     /**
@@ -69,6 +29,6 @@ class {{ class }} extends Model
      */
     public static function queryDetail(Builder $builder): void
     {
-        $builder->with(static::loadDetail())->getQuery()->select(static::selectDetail());
+        $builder->with([])->getQuery()->select($builder->qualifyColumns(['*']));
     }
 }
