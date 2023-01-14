@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -123,7 +124,17 @@ class PasswordUpdateController extends TransactionController
      */
     protected function response(PasswordUpdateRequest $request): SymfonyResponse
     {
-        return (new LaratchiServiceProvider::$meJsonApiResource($request->retrieveUser()))->toResponse($request);
+        $user = $this->modifyUser($request, $request->retrieveUser());
+
+        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+    }
+
+    /**
+     * Modify user before response.
+     */
+    protected function modifyUser(PasswordUpdateRequest $request, AuthenticatableContract $user): AuthenticatableContract
+    {
+        return inject(AuthService::class)->modifyUser($user);
     }
 
     /**

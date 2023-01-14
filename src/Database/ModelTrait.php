@@ -31,9 +31,7 @@ trait ModelTrait
      */
     public static function getKeyColumn(): string
     {
-        $instance = new static();
-
-        return $instance->getQualifiedKeyName();
+        return (new static())->getQualifiedKeyName();
     }
 
     /**

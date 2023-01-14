@@ -129,7 +129,17 @@ class RegisterController extends TransactionController
      */
     protected function response(RegisterRequest $request, AuthenticatableContract $user): SymfonyResponse
     {
+        $user = $this->modifyUser($request, $user);
+
         return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+    }
+
+    /**
+     * Modify user before response.
+     */
+    protected function modifyUser(RegisterRequest $request, AuthenticatableContract $user): AuthenticatableContract
+    {
+        return inject(AuthService::class)->modifyUser($user);
     }
 
     /**

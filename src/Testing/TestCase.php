@@ -9,7 +9,6 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
-use LogicException;
 use Stringable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tomchochola\Laratchi\Auth\DatabaseTokenableInterface;
@@ -85,7 +84,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function json(mixed $method, mixed $uri, array $data = [], array $headers = []): never
     {
-        throw new LogicException('only multipart/form-data is supported');
+        assertNever();
     }
 
     /**
@@ -96,7 +95,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function put(mixed $uri, array $data = [], array $headers = []): never
     {
-        throw new LogicException('multipart/form-data support only GET|POST');
+        assertNever();
     }
 
     /**
@@ -107,7 +106,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function patch(mixed $uri, array $data = [], array $headers = []): never
     {
-        throw new LogicException('multipart/form-data support only GET|POST');
+        assertNever();
     }
 
     /**
@@ -118,7 +117,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function delete(mixed $uri, array $data = [], array $headers = []): never
     {
-        throw new LogicException('multipart/form-data support only GET|POST');
+        assertNever();
     }
 
     /**

@@ -210,6 +210,8 @@ class LoginController extends TransactionController
      */
     protected function response(LoginRequest $request, AuthenticatableContract $user): SymfonyResponse
     {
+        $user = $this->modifyUser($request, $user);
+
         return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
     }
 
@@ -251,5 +253,13 @@ class LoginController extends TransactionController
         throw (new AuthorizationException($message, $response->code()))
             ->setResponse($response)
             ->withStatus($response->status());
+    }
+
+    /**
+     * Modify user before response.
+     */
+    protected function modifyUser(LoginRequest $request, AuthenticatableContract $user): AuthenticatableContract
+    {
+        return inject(AuthService::class)->modifyUser($user);
     }
 }

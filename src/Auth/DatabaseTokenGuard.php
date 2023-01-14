@@ -11,16 +11,10 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Guard as GuardContract;
 use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Support\Str;
-use LogicException;
 use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
 
 class DatabaseTokenGuard implements GuardContract
 {
-    /**
-     * Cookie name.
-     */
-    public static string $cookieName = 'database_token';
-
     /**
      * The currently authenticated user.
      */
@@ -43,7 +37,7 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function cookieName(): string
     {
-        return (resolveApp()->isLocal() ? '' : '__Host-').Str::slug(mustConfigString('app.name').'_'.currentEnv().'_'.static::$cookieName."_{$this->guardName}", '_');
+        return (resolveApp()->isLocal() ? '' : '__Host-').Str::slug(mustConfigString('app.name').'_'.currentEnv()."_database_token_{$this->guardName}", '_');
     }
 
     /**
@@ -126,7 +120,7 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function validate(array $credentials = []): never
     {
-        throw new LogicException('Not implemented.');
+        assertNever();
     }
 
     /**

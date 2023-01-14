@@ -22,37 +22,7 @@ use Tomchochola\Laratchi\Validation\Rules\RecaptchaRule;
 
 class SecureValidator extends Validator
 {
-    /**
-     * Excluded keys.
-     *
-     * @var array<int, string>
-     */
-    public static array $excluded = [];
-
-    /**
-     * Bail on every attribute.
-     */
-    public static bool $bail = true;
-
-    /**
-     * Use {{ attribute }} instead of real translations.
-     */
-    public static bool $usePlaceholderAttributes = true;
-
-    /**
-     * Use computer errors.
-     */
-    public static bool $useComputerErrors = true;
-
-    /**
-     * Force prohibited.
-     */
-    public static bool $forceProhibited = true;
-
-    /**
-     * @var array<string|class-string<RuleContract>, string|array<string, string>>
-     */
-    public static array $msgs = [
+    public const MSGS = [
         'accepted' => 'accepted',
         'accepted_if' => 'accepted_if::other;:value',
         'active_url' => 'active_url',
@@ -227,6 +197,18 @@ class SecureValidator extends Validator
     ];
 
     /**
+     * Excluded keys.
+     *
+     * @var array<int, string>
+     */
+    public static array $excluded = [];
+
+    /**
+     * Bail on every attribute.
+     */
+    public static bool $bail = true;
+
+    /**
      * @var array<string, string|array<string, string>>
      */
     public static array $customMsgs = [];
@@ -236,12 +218,12 @@ class SecureValidator extends Validator
      */
     public function passes(): bool
     {
-        \assert(static::$useComputerErrors === false || $this->allMessagesDefined());
+        \assert($this->allMessagesDefined());
 
         $passes = parent::passes();
 
-        if (static::$forceProhibited === false || $passes === false) {
-            return $passes;
+        if ($passes === false) {
+            return false;
         }
 
         $extraAttributes = \array_diff_key(
@@ -275,16 +257,12 @@ class SecureValidator extends Validator
      */
     public function getDisplayableValue(mixed $attribute, mixed $value): string
     {
-        if (static::$useComputerErrors === false) {
-            return parent::getDisplayableValue($attribute, $value);
-        }
-
         if (\is_bool($value)) {
             return $value ? 'true' : 'false';
         }
 
         if ($value === null) {
-            return 'empty';
+            return 'null';
         }
 
         \assert(\is_scalar($value));
@@ -325,11 +303,7 @@ class SecureValidator extends Validator
      */
     protected function getAttributeFromTranslations(mixed $name): string
     {
-        if (static::$usePlaceholderAttributes || static::$useComputerErrors) {
-            return "{{ {$name} }}";
-        }
-
-        return parent::getAttributeFromTranslations($name);
+        return "{{ {$name} }}";
     }
 
     /**
@@ -337,24 +311,20 @@ class SecureValidator extends Validator
      */
     protected function getInlineMessage(mixed $attribute, mixed $rule): ?string
     {
-        if (static::$useComputerErrors) {
-            $snake = Str::snake($rule);
+        $snake = Str::snake($rule);
 
-            if (\in_array($rule, $this->sizeRules, true)) {
-                $type = $this->getAttributeType($attribute);
+        if (\in_array($rule, $this->sizeRules, true)) {
+            $type = $this->getAttributeType($attribute);
 
-                $message = static::$customMsgs[$snake][$type] ?? static::$msgs[$snake][$type] ?? 'fallback';
-            } else {
-                $message = static::$customMsgs[$snake] ?? static::$msgs[$snake] ?? 'fallback';
-            }
-
-            \assert(\is_string($message));
-            \assert($message !== 'fallback', "Json api validation message not defined for regular rule: [{$snake}]");
-
-            return $message;
+            $message = static::$customMsgs[$snake][$type] ?? static::MSGS[$snake][$type] ?? 'fallback';
+        } else {
+            $message = static::$customMsgs[$snake] ?? static::MSGS[$snake] ?? 'fallback';
         }
 
-        return parent::getInlineMessage($attribute, $rule);
+        \assert(\is_string($message));
+        \assert($message !== 'fallback', "Json api validation message not defined for regular rule: [{$snake}]");
+
+        return $message;
     }
 
     /**
@@ -364,16 +334,12 @@ class SecureValidator extends Validator
      */
     protected function getFromLocalArray(mixed $attribute, mixed $lowerRule, mixed $source = null): ?string
     {
-        if (static::$useComputerErrors) {
-            $message = static::$customMsgs[$lowerRule] ?? static::$msgs[$lowerRule] ?? 'fallback';
+        $message = static::$customMsgs[$lowerRule] ?? static::MSGS[$lowerRule] ?? 'fallback';
 
-            \assert(\is_string($message));
-            \assert($message !== 'fallback', "Json api validation message not defined for rule class: [{$lowerRule}]");
+        \assert(\is_string($message));
+        \assert($message !== 'fallback', "Json api validation message not defined for rule class: [{$lowerRule}]");
 
-            return $message;
-        }
-
-        return parent::getFromLocalArray($attribute, $lowerRule);
+        return $message;
     }
 
     /**

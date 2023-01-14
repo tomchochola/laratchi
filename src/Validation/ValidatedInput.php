@@ -14,11 +14,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class ValidatedInput extends IlluminateValidatedInput
 {
     /**
-     * What status is thrown on invalid cast.
-     */
-    public static int $castFailedStatus = 400;
-
-    /**
      * @inheritDoc
      *
      * @param array<mixed> $input
@@ -343,14 +338,6 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     protected function throw(string $message): never
     {
-        $logicException = new LogicException($message);
-
-        if (static::$castFailedStatus === 0) {
-            throw $logicException;
-        }
-
-        \assert(static::$castFailedStatus >= 400 && static::$castFailedStatus <= 599);
-
-        throw new HttpException(static::$castFailedStatus, previous: $logicException);
+        throw new HttpException(422, 'The Given Data Was Invalid', new LogicException($message));
     }
 }

@@ -100,7 +100,17 @@ class MeUpdateController extends TransactionController
      */
     protected function response(MeUpdateRequest $request): SymfonyResponse
     {
-        return (new LaratchiServiceProvider::$meJsonApiResource($request->retrieveUser()))->toResponse($request);
+        $user = $this->modifyUser($request, $request->retrieveUser());
+
+        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+    }
+
+    /**
+     * Modify user before response.
+     */
+    protected function modifyUser(MeUpdateRequest $request, AuthenticatableContract $user): AuthenticatableContract
+    {
+        return inject(AuthService::class)->modifyUser($user);
     }
 
     /**

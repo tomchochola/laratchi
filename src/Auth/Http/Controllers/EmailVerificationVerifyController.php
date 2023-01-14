@@ -35,11 +35,6 @@ class EmailVerificationVerifyController extends TransactionController
     public static bool $simpleThrottle = false;
 
     /**
-     * Enable response view when not expected json.
-     */
-    public static bool $responseViewEnabled = true;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(EmailVerificationVerifyRequest $request): SymfonyResponse
@@ -130,11 +125,11 @@ class EmailVerificationVerifyController extends TransactionController
      */
     protected function response(EmailVerificationVerifyRequest $request, AuthenticatableContract&MustVerifyEmailContract $user): SymfonyResponse
     {
-        if ($request->expectsJson() || static::$responseViewEnabled === false) {
-            return resolveResponseFactory()->noContent();
+        if ($request->expectsJson()) {
+            return $this->jsonResponse($request, $user);
         }
 
-        return resolveResponseFactory()->view('laratchi::ok');
+        return $this->viewResponse($request, $user);
     }
 
     /**
@@ -167,5 +162,21 @@ class EmailVerificationVerifyController extends TransactionController
     protected function throwRetrieveByCredentialsFailedError(EmailVerificationVerifyRequest $request): never
     {
         $request->throwSingleValidationException(\array_keys($request->credentials()), 'auth.failed');
+    }
+
+    /**
+     * Return json response.
+     */
+    protected function jsonResponse(EmailVerificationVerifyRequest $request, AuthenticatableContract&MustVerifyEmailContract $user): SymfonyResponse
+    {
+        return resolveResponseFactory()->noContent();
+    }
+
+    /**
+     * Return view response.
+     */
+    protected function viewResponse(EmailVerificationVerifyRequest $request, AuthenticatableContract&MustVerifyEmailContract $user): SymfonyResponse
+    {
+        return resolveResponseFactory()->view('laratchi::ok');
     }
 }

@@ -87,7 +87,9 @@ class DatabaseToken extends Model
      */
     public function clear(DatabaseTokenableInterface $user): void
     {
-        $this->newQuery()->where('provider', $user->getUserProviderName())->where('auth_id', $user->getAuthIdentifier())->delete();
+        $builder = $this->newQuery();
+
+        $builder->where($builder->qualifyColumn('provider'), $user->getUserProviderName())->where($builder->qualifyColumn('auth_id'), $user->getAuthIdentifier())->delete();
     }
 
     /**

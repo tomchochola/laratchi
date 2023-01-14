@@ -185,7 +185,17 @@ class PasswordResetController extends TransactionController
      */
     protected function response(PasswordResetRequest $request): SymfonyResponse
     {
-        return (new LaratchiServiceProvider::$meJsonApiResource($this->user))->toResponse($request);
+        $user = $this->modifyUser($request, $this->user);
+
+        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+    }
+
+    /**
+     * Modify user before response.
+     */
+    protected function modifyUser(PasswordResetRequest $request, AuthenticatableContract $user): AuthenticatableContract
+    {
+        return inject(AuthService::class)->modifyUser($user);
     }
 
     /**
