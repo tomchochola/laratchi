@@ -12,6 +12,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
+use LogicException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tomchochola\Laratchi\Validation\ValidatedInput;
 
 class FormRequest extends IlluminateFormRequest
@@ -261,6 +263,136 @@ class FormRequest extends IlluminateFormRequest
 
         if ($value === false) {
             return '';
+        }
+
+        return $value;
+    }
+
+    /**
+     * Retrieve string from request.
+     */
+    public function fastString(string $key, ?string $default = null): ?string
+    {
+        $value = $this->input($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        $value = \filter_var($value);
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Retrieve int from request.
+     */
+    public function fastInteger(string $key, ?int $default = null): ?int
+    {
+        $value = $this->input($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_INT);
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Retrieve float from request.
+     */
+    public function fastFloat(string $key, ?float $default = null): ?float
+    {
+        $value = $this->input($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Retrieve boolean from request.
+     */
+    public function fastBoolean(string $key, ?bool $default = null): ?bool
+    {
+        $value = $this->input($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        return \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
+    }
+
+    /**
+     * Mandatory retrieve string from request.
+     */
+    public function mustFastString(string $key, ?string $default = null): string
+    {
+        $value = $this->fastString($key, $default);
+
+        if ($value === null) {
+            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not string"));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Mandatory retrieve int from request.
+     */
+    public function mustFastInteger(string $key, ?int $default = null): int
+    {
+        $value = $this->fastInteger($key, $default);
+
+        if ($value === null) {
+            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not integer"));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Mandatory retrieve float from request.
+     */
+    public function mustFastFloat(string $key, ?float $default = null): float
+    {
+        $value = $this->fastFloat($key, $default);
+
+        if ($value === null) {
+            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not float"));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Mandatory retrieve boolean from request.
+     */
+    public function mustFastBoolean(string $key, ?bool $default = null): bool
+    {
+        $value = $this->fastBoolean($key, $default);
+
+        if ($value === null) {
+            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not boolean"));
         }
 
         return $value;
