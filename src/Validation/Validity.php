@@ -117,11 +117,7 @@ class Validity implements ArrayableContract
      */
     public function addRule(mixed $rule, ?array $arguments = null): static
     {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
+        \assert($this->skipNext === false);
 
         if (\is_string($rule)) {
             if ($arguments !== null && \count($arguments) > 0) {
@@ -145,6 +141,12 @@ class Validity implements ArrayableContract
      */
     public function when(bool $condition, Closure $closure): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         if ($condition) {
             $closure($this);
         }
@@ -185,6 +187,12 @@ class Validity implements ArrayableContract
      */
     public function tap(Closure $callback): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $callback($this);
 
         return $this;
@@ -197,6 +205,12 @@ class Validity implements ArrayableContract
      */
     public function accepted(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('accepted');
     }
 
@@ -209,6 +223,12 @@ class Validity implements ArrayableContract
      */
     public function acceptedIf(string $field, array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('accepted_if', [$field, ...$values]);
     }
 
@@ -219,6 +239,12 @@ class Validity implements ArrayableContract
      */
     public function activeUrl(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         if (resolveApp()->runningUnitTests()) {
             return $this->addRule('url');
         }
@@ -233,6 +259,12 @@ class Validity implements ArrayableContract
      */
     public function after(string $dateOrField): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('after', [$dateOrField]);
     }
 
@@ -243,6 +275,12 @@ class Validity implements ArrayableContract
      */
     public function afterOrEqual(string $dateOrField): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('after_or_equal', [$dateOrField]);
     }
 
@@ -253,6 +291,12 @@ class Validity implements ArrayableContract
      */
     public function alpha(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('alpha');
     }
 
@@ -263,6 +307,12 @@ class Validity implements ArrayableContract
      */
     public function alphaDash(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('alpha_dash');
     }
 
@@ -273,6 +323,12 @@ class Validity implements ArrayableContract
      */
     public function alphaNum(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('alpha_num');
     }
 
@@ -283,6 +339,12 @@ class Validity implements ArrayableContract
      */
     public function collection(int $maxItems, ?int $minItems = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         \assert($maxItems >= 0);
 
         $rule = $this->addRule('array')->max($maxItems);
@@ -307,6 +369,12 @@ class Validity implements ArrayableContract
      */
     public function array(?array $structure = null, ?array $keys = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $rule = $this->addRule('array', $structure);
 
         if ($keys !== null) {
@@ -323,6 +391,12 @@ class Validity implements ArrayableContract
      */
     public function ascii(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('ascii');
     }
 
@@ -336,6 +410,12 @@ class Validity implements ArrayableContract
      */
     public function object(?array $keys = null, ?array $structure = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $rule = $this->addRule('array', $structure);
 
         if ($keys !== null) {
@@ -352,6 +432,12 @@ class Validity implements ArrayableContract
      */
     public function bail(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $this->bail = true;
 
         return $this;
@@ -364,6 +450,12 @@ class Validity implements ArrayableContract
      */
     public function before(string $dateOrField): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('before', [$dateOrField]);
     }
 
@@ -374,6 +466,12 @@ class Validity implements ArrayableContract
      */
     public function beforeOrEqual(string $dateOrField): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('before_or_equal', [$dateOrField]);
     }
 
@@ -384,6 +482,12 @@ class Validity implements ArrayableContract
      */
     public function between(int|float $min, int|float $max): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         \assert($max >= $min);
 
         return $this->addRule('between', [$min, $max]);
@@ -396,6 +500,12 @@ class Validity implements ArrayableContract
      */
     public function boolean(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('boolean');
     }
 
@@ -406,6 +516,12 @@ class Validity implements ArrayableContract
      */
     public function true(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->boolean()->in(['1', 1, true]);
     }
 
@@ -416,6 +532,12 @@ class Validity implements ArrayableContract
      */
     public function false(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->boolean()->in(['0', 0, false]);
     }
 
@@ -426,6 +548,12 @@ class Validity implements ArrayableContract
      */
     public function confirmed(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('confirmed');
     }
 
@@ -436,6 +564,12 @@ class Validity implements ArrayableContract
      */
     public function currentPassword(?string $guard = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('current_password', $guard !== null ? [$guard] : null);
     }
 
@@ -446,6 +580,12 @@ class Validity implements ArrayableContract
      */
     public function date(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('date');
     }
 
@@ -456,6 +596,12 @@ class Validity implements ArrayableContract
      */
     public function dateEquals(string $date): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('date_equals', [$date]);
     }
 
@@ -466,6 +612,12 @@ class Validity implements ArrayableContract
      */
     public function dateFormat(string $dateFormat = 'Y-m-d'): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('date_format', [$dateFormat]);
     }
 
@@ -476,6 +628,12 @@ class Validity implements ArrayableContract
      */
     public function decimal(int $min, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         \assert($max === null || $max >= $min);
 
         return $this->addRule('between', $max === null ? [$min] : [$min, $max]);
@@ -488,6 +646,12 @@ class Validity implements ArrayableContract
      */
     public function declined(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('declined');
     }
 
@@ -500,6 +664,12 @@ class Validity implements ArrayableContract
      */
     public function declinedIf(string $field, array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('declined_if', [$field, ...$values]);
     }
 
@@ -510,6 +680,12 @@ class Validity implements ArrayableContract
      */
     public function different(string $field): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('different', [$field]);
     }
 
@@ -520,6 +696,12 @@ class Validity implements ArrayableContract
      */
     public function digits(int $length): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('digits', [$length]);
     }
 
@@ -530,6 +712,12 @@ class Validity implements ArrayableContract
      */
     public function maxDigits(int $max): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('max_digits', [$max]);
     }
 
@@ -540,6 +728,12 @@ class Validity implements ArrayableContract
      */
     public function minDigits(int $min): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('min_digits', [$min]);
     }
 
@@ -550,6 +744,12 @@ class Validity implements ArrayableContract
      */
     public function digitsBetween(int $minLength, int $maxLength): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         \assert($maxLength >= $minLength);
 
         return $this->addRule('digits_between', [$minLength, $maxLength]);
@@ -562,6 +762,12 @@ class Validity implements ArrayableContract
      */
     public function dimensionsRule(?int $width = null, ?int $height = null, ?int $minWidth = null, ?int $maxWidth = null, ?int $minHeight = null, ?int $maxHeight = null, ?float $ratio = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $dimensions = new Dimensions([]);
 
         if ($width !== null) {
@@ -602,6 +808,12 @@ class Validity implements ArrayableContract
      */
     public function distinct(bool $strict = false, bool $ignoreCase = false): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $options = [];
 
         if ($strict) {
@@ -622,6 +834,12 @@ class Validity implements ArrayableContract
      */
     public function strictDistinct(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('distinct', ['strict', 'ignore_case']);
     }
 
@@ -634,6 +852,12 @@ class Validity implements ArrayableContract
      */
     public function doesntStartWith(array $ends): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('doesnt_start_with', $ends);
     }
 
@@ -646,6 +870,12 @@ class Validity implements ArrayableContract
      */
     public function doesntEndWith(array $ends): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('doesnt_end_with', $ends);
     }
 
@@ -656,6 +886,12 @@ class Validity implements ArrayableContract
      */
     public function email(bool $filterUnicode = true, bool $strict = true, bool $dns = true, bool $rfc = false, bool $spoof = true, bool $filter = false): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         \assert(! $filterUnicode || ! $filter, 'filter and filter_unicode can not coexist');
         \assert(! $strict || ! $rfc, 'strict and rfc can not coexist');
 
@@ -701,6 +937,12 @@ class Validity implements ArrayableContract
      */
     public function endsWith(array $ends): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('ends_with', $ends);
     }
 
@@ -713,6 +955,12 @@ class Validity implements ArrayableContract
      */
     public function enumRule(string $type): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(new Enum($type));
     }
 
@@ -723,6 +971,12 @@ class Validity implements ArrayableContract
      */
     public function exclude(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('exclude');
     }
 
@@ -735,6 +989,12 @@ class Validity implements ArrayableContract
      */
     public function excludeIf(string $field, array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('exclude_if', [$field, ...$values]);
     }
 
@@ -747,6 +1007,12 @@ class Validity implements ArrayableContract
      */
     public function excludeIfRule(Closure|bool $condition): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(new ExcludeIf($condition));
     }
 
@@ -759,6 +1025,12 @@ class Validity implements ArrayableContract
      */
     public function excludeUnless(string $field, array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('exclude_unless', [$field, ...$values]);
     }
 
@@ -771,6 +1043,12 @@ class Validity implements ArrayableContract
      */
     public function excludeWith(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('exclude_with', $fields);
     }
 
@@ -781,6 +1059,12 @@ class Validity implements ArrayableContract
      */
     public function excludeWithout(string $field): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('exclude_without', [$field]);
     }
 
@@ -793,6 +1077,12 @@ class Validity implements ArrayableContract
      */
     public function exists(string $table, string $column, array $wheres = []): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('exists', [$table, $column, ...$wheres]);
     }
 
@@ -803,6 +1093,12 @@ class Validity implements ArrayableContract
      */
     public function file(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('file');
     }
 
@@ -815,6 +1111,12 @@ class Validity implements ArrayableContract
      */
     public function mimetypes(array $mimetypes): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('mimetypes', $mimetypes);
     }
 
@@ -827,6 +1129,12 @@ class Validity implements ArrayableContract
      */
     public function mimes(array $mimes): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('mimes', $mimes);
     }
 
@@ -837,6 +1145,12 @@ class Validity implements ArrayableContract
      */
     public function filled(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $this->filled = true;
 
         return $this;
@@ -849,6 +1163,12 @@ class Validity implements ArrayableContract
      */
     public function gt(string $field): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('gt', [$field]);
     }
 
@@ -859,6 +1179,12 @@ class Validity implements ArrayableContract
      */
     public function gte(string $field): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('gte', [$field]);
     }
 
@@ -871,6 +1197,12 @@ class Validity implements ArrayableContract
      */
     public function image(array $mimeTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/svg', 'image/webp', 'image/bmp', 'image/x-bmp', 'image/x-ms-bmp', 'image/heif', 'image/heic'], int $max = 10240): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->file()->mimetypes($mimeTypes)->max($max);
     }
 
@@ -883,6 +1215,12 @@ class Validity implements ArrayableContract
      */
     public function video(array $mimeTypes = ['video/mp4', 'video/mpeg', 'video/ogg', 'video/quicktime', 'video/webm'], int $max = 10240): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->file()->mimetypes($mimeTypes)->max($max);
     }
 
@@ -895,6 +1233,12 @@ class Validity implements ArrayableContract
      */
     public function in(array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('in', $values);
     }
 
@@ -907,6 +1251,12 @@ class Validity implements ArrayableContract
      */
     public function inRule(array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(new In($values));
     }
 
@@ -917,6 +1267,12 @@ class Validity implements ArrayableContract
      */
     public function inArray(string $field): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('in_array', [$field]);
     }
 
@@ -927,6 +1283,12 @@ class Validity implements ArrayableContract
      */
     public function integer(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $rule = $this->addRule('integer');
 
         if ($min !== null) {
@@ -951,6 +1313,12 @@ class Validity implements ArrayableContract
      */
     public function ip(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('ip');
     }
 
@@ -961,6 +1329,12 @@ class Validity implements ArrayableContract
      */
     public function ipv4(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('ipv4');
     }
 
@@ -971,6 +1345,12 @@ class Validity implements ArrayableContract
      */
     public function ipv6(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('ipv6');
     }
 
@@ -981,6 +1361,12 @@ class Validity implements ArrayableContract
      */
     public function macAddress(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('mac_address');
     }
 
@@ -991,6 +1377,12 @@ class Validity implements ArrayableContract
      */
     public function json(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('json');
     }
 
@@ -1001,6 +1393,12 @@ class Validity implements ArrayableContract
      */
     public function lt(string $field): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('lt', [$field]);
     }
 
@@ -1011,6 +1409,12 @@ class Validity implements ArrayableContract
      */
     public function lte(string $field): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('lte', [$field]);
     }
 
@@ -1021,6 +1425,12 @@ class Validity implements ArrayableContract
      */
     public function lowercase(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('lowercase');
     }
 
@@ -1031,6 +1441,12 @@ class Validity implements ArrayableContract
      */
     public function uppercase(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('uppercase');
     }
 
@@ -1041,6 +1457,12 @@ class Validity implements ArrayableContract
      */
     public function max(int|float $max): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('max', [$max]);
     }
 
@@ -1051,6 +1473,12 @@ class Validity implements ArrayableContract
      */
     public function min(int|float $min): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('min', [$min]);
     }
 
@@ -1061,6 +1489,12 @@ class Validity implements ArrayableContract
      */
     public function multipleOf(int|float $multipleOf): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('multiple_of', [$multipleOf]);
     }
 
@@ -1073,6 +1507,12 @@ class Validity implements ArrayableContract
      */
     public function notIn(array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('not_in', $values);
     }
 
@@ -1085,6 +1525,12 @@ class Validity implements ArrayableContract
      */
     public function notInRule(array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(new NotIn($values));
     }
 
@@ -1095,6 +1541,12 @@ class Validity implements ArrayableContract
      */
     public function notRegex(string $pattern): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('not_regex', [$pattern]);
     }
 
@@ -1105,6 +1557,12 @@ class Validity implements ArrayableContract
      */
     public function nullable(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $this->nullable = true;
 
         return $this;
@@ -1117,6 +1575,12 @@ class Validity implements ArrayableContract
      */
     public function numeric(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('numeric');
     }
 
@@ -1127,6 +1591,12 @@ class Validity implements ArrayableContract
      */
     public function passwordRule(int $min): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(new Password($min));
     }
 
@@ -1137,6 +1607,12 @@ class Validity implements ArrayableContract
      */
     public function password(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(Password::default());
     }
 
@@ -1147,6 +1623,12 @@ class Validity implements ArrayableContract
      */
     public function present(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('present');
     }
 
@@ -1157,6 +1639,12 @@ class Validity implements ArrayableContract
      */
     public function prohibited(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('prohibited');
     }
 
@@ -1169,6 +1657,12 @@ class Validity implements ArrayableContract
      */
     public function prohibitedIf(string $field, array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('prohibited_if', [$field, ...$values]);
     }
 
@@ -1181,6 +1675,12 @@ class Validity implements ArrayableContract
      */
     public function prohibitedUnless(string $field, array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('prohibited_unless', [$field, ...$values]);
     }
 
@@ -1193,6 +1693,12 @@ class Validity implements ArrayableContract
      */
     public function prohibits(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('prohibits', $fields);
     }
 
@@ -1203,6 +1709,12 @@ class Validity implements ArrayableContract
      */
     public function regex(string $pattern): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('regex', [$pattern]);
     }
 
@@ -1213,6 +1725,12 @@ class Validity implements ArrayableContract
      */
     public function required(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $this->required = true;
 
         return $this;
@@ -1227,6 +1745,12 @@ class Validity implements ArrayableContract
      */
     public function requiredIf(string $field, array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('required_if', [$field, ...$values]);
     }
 
@@ -1239,6 +1763,12 @@ class Validity implements ArrayableContract
      */
     public function requiredUnless(string $field, array $values): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('required_unless', [$field, $values]);
     }
 
@@ -1251,6 +1781,12 @@ class Validity implements ArrayableContract
      */
     public function requiredWith(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('required_with', $fields);
     }
 
@@ -1263,6 +1799,12 @@ class Validity implements ArrayableContract
      */
     public function requiredWithAll(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('required_with_all', $fields);
     }
 
@@ -1275,6 +1817,12 @@ class Validity implements ArrayableContract
      */
     public function requiredWithout(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('required_without', $fields);
     }
 
@@ -1287,6 +1835,12 @@ class Validity implements ArrayableContract
      */
     public function requiredWithoutAll(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('required_without_all', $fields);
     }
 
@@ -1299,6 +1853,12 @@ class Validity implements ArrayableContract
      */
     public function requiredArrayKeys(array $keys): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('required_array_keys', $keys);
     }
 
@@ -1309,6 +1869,12 @@ class Validity implements ArrayableContract
      */
     public function same(string $field): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('same', [$field]);
     }
 
@@ -1319,6 +1885,12 @@ class Validity implements ArrayableContract
      */
     public function size(int|float $size): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('size', [$size]);
     }
 
@@ -1331,6 +1903,12 @@ class Validity implements ArrayableContract
      */
     public function startsWith(array $startsWith): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('starts_with', $startsWith);
     }
 
@@ -1341,6 +1919,12 @@ class Validity implements ArrayableContract
      */
     public function string(?int $max = null, ?int $min = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $rule = $this->addRule('string');
 
         if ($min !== null) {
@@ -1367,6 +1951,12 @@ class Validity implements ArrayableContract
      */
     public function varchar(?int $max = null, ?int $min = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $max ??= SchmeaBuilder::$defaultStringLength;
 
         \assert($max <= static::VARCHAR_MAX);
@@ -1381,6 +1971,12 @@ class Validity implements ArrayableContract
      */
     public function timezone(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('timezone');
     }
 
@@ -1393,6 +1989,12 @@ class Validity implements ArrayableContract
      */
     public function unique(string $table, string $column, mixed $id = null, ?string $idColumn = null, array $wheres = []): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('unique', [$table, $column, $id, $idColumn, ...$wheres]);
     }
 
@@ -1403,6 +2005,12 @@ class Validity implements ArrayableContract
      */
     public function url(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('url');
     }
 
@@ -1413,6 +2021,12 @@ class Validity implements ArrayableContract
      */
     public function uuid(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('uuid');
     }
 
@@ -1423,6 +2037,12 @@ class Validity implements ArrayableContract
      */
     public function ulid(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('ulid');
     }
 
@@ -1435,6 +2055,12 @@ class Validity implements ArrayableContract
      */
     public function closure(Closure $closure): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule($closure);
     }
 
@@ -1447,6 +2073,12 @@ class Validity implements ArrayableContract
      */
     public function requiredIfRule(bool|callable $condition): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(new RequiredIf($condition));
     }
 
@@ -1457,6 +2089,12 @@ class Validity implements ArrayableContract
      */
     public function sometimes(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $this->sometimes = true;
 
         return $this;
@@ -1471,6 +2109,12 @@ class Validity implements ArrayableContract
      */
     public function prohibitedWith(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('prohibited_with', $fields);
     }
 
@@ -1483,6 +2127,12 @@ class Validity implements ArrayableContract
      */
     public function prohibitedWithout(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('prohibited_without', $fields);
     }
 
@@ -1495,6 +2145,12 @@ class Validity implements ArrayableContract
      */
     public function prohibitedWithAll(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('prohibited_with_all', $fields);
     }
 
@@ -1507,6 +2163,12 @@ class Validity implements ArrayableContract
      */
     public function prohibitedWithoutAll(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('prohibited_without_all', $fields);
     }
 
@@ -1517,6 +2179,12 @@ class Validity implements ArrayableContract
      */
     public function null(): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('null');
     }
 
@@ -1529,6 +2197,12 @@ class Validity implements ArrayableContract
      */
     public function nullWith(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('null_with', $fields);
     }
 
@@ -1541,6 +2215,12 @@ class Validity implements ArrayableContract
      */
     public function nullWithout(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('null_without', $fields);
     }
 
@@ -1553,6 +2233,12 @@ class Validity implements ArrayableContract
      */
     public function nullWithAll(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('null_with_all', $fields);
     }
 
@@ -1565,6 +2251,12 @@ class Validity implements ArrayableContract
      */
     public function nullWithoutAll(array $fields): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('null_without_all', $fields);
     }
 
@@ -1575,6 +2267,12 @@ class Validity implements ArrayableContract
      */
     public function strlen(int $length): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         \assert($length >= 0);
 
         return $this->addRule('strlen', [$length]);
@@ -1587,6 +2285,12 @@ class Validity implements ArrayableContract
      */
     public function strlenMax(int $max): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         \assert($max >= 0);
 
         return $this->addRule('strlen_max', [$max]);
@@ -1599,6 +2303,12 @@ class Validity implements ArrayableContract
      */
     public function strlenMin(int $min): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         \assert($min >= 0);
 
         return $this->addRule('strlen_min', [$min]);
@@ -1613,6 +2323,12 @@ class Validity implements ArrayableContract
      */
     public function prohibitedIfRule(bool|Closure $condition): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(new ProhibitedIf($condition));
     }
 
@@ -1623,6 +2339,12 @@ class Validity implements ArrayableContract
      */
     public function char(int $length): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule('string')->strlen($length);
     }
 
@@ -1633,6 +2355,12 @@ class Validity implements ArrayableContract
      */
     public function tinyText(?int $max = null, ?int $min = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $max ??= static::TINY_TEXT_MAX;
 
         \assert($max <= static::TINY_TEXT_MAX);
@@ -1655,6 +2383,12 @@ class Validity implements ArrayableContract
      */
     public function text(?int $max = null, ?int $min = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $max ??= static::TEXT_MAX;
 
         \assert($max <= static::TEXT_MAX);
@@ -1677,6 +2411,12 @@ class Validity implements ArrayableContract
      */
     public function mediumText(?int $max = null, ?int $min = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $max ??= static::MEDIUM_TEXT_MAX;
 
         \assert($max <= static::MEDIUM_TEXT_MAX);
@@ -1699,6 +2439,12 @@ class Validity implements ArrayableContract
      */
     public function longText(?int $max = null, ?int $min = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $max ??= static::LONG_TEXT_MAX;
 
         \assert($max <= static::LONG_TEXT_MAX);
@@ -1721,6 +2467,12 @@ class Validity implements ArrayableContract
      */
     public function tinyInt(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= static::TINY_INT_MIN;
         $max ??= static::TINY_INT_MAX;
 
@@ -1737,6 +2489,12 @@ class Validity implements ArrayableContract
      */
     public function unsignedTinyInt(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= static::UNSIGNED_TINY_INT_MIN;
         $max ??= static::UNSIGNED_TINY_INT_MAX;
 
@@ -1753,8 +2511,15 @@ class Validity implements ArrayableContract
      */
     public function smallInt(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= static::SMALL_INT_MIN;
         $max ??= static::SMALL_INT_MAX;
+
         \assert($min >= static::SMALL_INT_MIN);
         \assert($max <= static::SMALL_INT_MAX);
 
@@ -1768,6 +2533,12 @@ class Validity implements ArrayableContract
      */
     public function unsignedSmallInt(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= static::UNSIGNED_SMALL_INT_MIN;
         $max ??= static::UNSIGNED_SMALL_INT_MAX;
 
@@ -1784,6 +2555,12 @@ class Validity implements ArrayableContract
      */
     public function mediumInt(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= static::MEDIUM_INT_MIN;
         $max ??= static::MEDIUM_INT_MAX;
 
@@ -1800,6 +2577,12 @@ class Validity implements ArrayableContract
      */
     public function unsignedMediumInt(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= static::UNSIGNED_MEDIUM_INT_MIN;
         $max ??= static::UNSIGNED_MEDIUM_INT_MAX;
 
@@ -1816,6 +2599,12 @@ class Validity implements ArrayableContract
      */
     public function int(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= static::INT_MIN;
         $max ??= static::INT_MAX;
 
@@ -1832,6 +2621,12 @@ class Validity implements ArrayableContract
      */
     public function unsignedInt(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= static::UNSIGNED_INT_MIN;
         $max ??= static::UNSIGNED_INT_MAX;
 
@@ -1848,6 +2643,12 @@ class Validity implements ArrayableContract
      */
     public function bigInt(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= static::BIG_INT_MIN;
         $max ??= static::BIG_INT_MAX;
 
@@ -1864,6 +2665,12 @@ class Validity implements ArrayableContract
      */
     public function unsignedBigInt(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= static::UNSIGNED_BIG_INT_MIN;
         $max ??= static::UNSIGNED_BIG_INT_MAX;
 
@@ -1880,6 +2687,12 @@ class Validity implements ArrayableContract
      */
     public function unsigned(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->unsignedBigInt($min, $max);
     }
 
@@ -1890,6 +2703,12 @@ class Validity implements ArrayableContract
      */
     public function signed(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->bigInt($min, $max);
     }
 
@@ -1900,6 +2719,12 @@ class Validity implements ArrayableContract
      */
     public function positive(?int $min = null, ?int $max = null): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         $min ??= 1;
 
         \assert($min >= 1);
@@ -1916,6 +2741,12 @@ class Validity implements ArrayableContract
      */
     public function callback(Closure $callback, string $message = 'validation.regex'): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(new CallbackRule($callback, $message));
     }
 
@@ -1931,6 +2762,12 @@ class Validity implements ArrayableContract
      */
     public function query(Relation|Builder $query, ?Closure $callback = null, string $message = 'validation.exists'): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($query, $callback): bool {
             $query = clone $query;
 
@@ -1956,6 +2793,12 @@ class Validity implements ArrayableContract
      */
     public function queryKey(Relation|Builder $query, ?Closure $callback = null, string $message = 'validation.exists'): static
     {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($query, $callback): bool {
             $query = clone $query;
 
