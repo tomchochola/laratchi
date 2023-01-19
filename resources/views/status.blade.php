@@ -37,13 +37,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;900&display=swap" rel="stylesheet"/>
 
   <style>
+    @include('exceptions::css')
+
     .button:hover,
     .button:focus {
       border-color: {{ $color }};
       background-color: {{ $color }};
     }
 
-    @include('exceptions::css')
+    body {
+      word-break: break-all;
+    }
   </style>
 </head>
 <body class="bg-white dark:bg-[#49454F] text-gray-900 antialiased">
