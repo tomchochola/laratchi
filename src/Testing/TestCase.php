@@ -308,7 +308,7 @@ abstract class TestCase extends BaseTestCase
      * @param ?array<string, mixed> $attributes
      * @param ?array<string, mixed> $meta
      */
-    protected function jsonApiValidator(string $type, ?array $attributes = null, ?array $meta = null): JsonApiValidator
+    protected function jsonApiValidator(?string $type, ?array $attributes = null, ?array $meta = null): JsonApiValidator
     {
         return new JsonApiValidator($type, $attributes, $meta);
     }

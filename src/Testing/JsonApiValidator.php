@@ -178,7 +178,7 @@ class JsonApiValidator
     {
         $rules = [
             'id' => Validity::make()->nullable()->filled()->string(),
-            'type' => Validity::make()->nullable()->filled()->string()->in([$this->type]),
+            'type' => Validity::make()->nullable()->filled()->string()->if($this->type !== null)->in([$this->type]),
             'slug' => Validity::make()->nullable()->filled()->string(),
         ];
 
