@@ -17,6 +17,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->routes(static function (): void {
             resolveRouter()->view('/', 'laratchi::status', [
+                'status' => mustTransJsonString('Hello!'),
                 'title' => mustConfigString('app.name'),
             ]);
 
