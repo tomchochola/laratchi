@@ -38,6 +38,11 @@ abstract class TestCase extends BaseTestCase
     protected $withCredentials = true;
 
     /**
+     * Locale method called.
+     */
+    private bool $localeCalled = false;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
@@ -45,6 +50,20 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         Storage::fake('public');
+
+        static::assertNotEmpty($this->getProvidedData(), '@dataProvider localeDataProvider must be used in every test!');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        static::assertTrue($this->localeCalled, '$this->locale($locale) must be called in every test!');
+
+        $this->localeCalled = false;
     }
 
     /**
@@ -520,5 +539,7 @@ abstract class TestCase extends BaseTestCase
         $app->setFallbackLocale($locale);
 
         $this->defaultHeaders['Accept-Language'] = $locale;
+
+        $this->localeCalled = true;
     }
 }
