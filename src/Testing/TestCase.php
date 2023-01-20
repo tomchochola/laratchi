@@ -51,7 +51,7 @@ abstract class TestCase extends BaseTestCase
 
         Storage::fake('public');
 
-        static::assertNotEmpty($this->getProvidedData(), '@dataProvider localeDataProvider must be used in every test!');
+        \assert(\count($this->getProvidedData()) > 0, '@dataProvider localeDataProvider must be used in every test!');
     }
 
     /**
@@ -61,7 +61,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::tearDown();
 
-        static::assertTrue($this->localeCalled, '$this->locale($locale) must be called in every test!');
+        \assert($this->localeCalled, '$this->locale($locale) must be called in every test!');
 
         $this->localeCalled = false;
     }
@@ -178,6 +178,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function guard(string $guardName): static
     {
+        \assert(\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true));
+
         resolveAuthManager()->shouldUse($guardName);
 
         return $this;
@@ -190,6 +192,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function passwordBroker(string $passwordBrokerName): static
     {
+        \assert(\in_array($passwordBrokerName, \array_keys(mustConfigArray('auth.passwords')), true));
+
         resolvePasswordBrokerManager()->setDefaultDriver($passwordBrokerName);
 
         return $this;
@@ -202,6 +206,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function beViaDatabaseToken(DatabaseTokenableInterface $user, string $guardName): static
     {
+        \assert(\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true));
+
         $guard = resolveAuthManager()->guard($guardName);
 
         \assert($guard instanceof DatabaseTokenGuard);
@@ -218,6 +224,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function beWithDatabaseToken(DatabaseTokenableInterface $user, string $guardName): static
     {
+        \assert(\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true));
+
         $guard = resolveAuthManager()->guard($guardName);
 
         \assert($guard instanceof DatabaseTokenGuard);
@@ -533,6 +541,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function locale(string $locale): void
     {
+        \assert(\in_array($locale, mustConfigArray('app.locales'), true));
+
         $app = resolveApp();
 
         $app->setLocale($locale);
