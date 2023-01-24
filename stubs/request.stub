@@ -16,9 +16,8 @@ class {{ class }} extends SecureFormRequest
     public function authorize(): Response|bool
     {
         $me = $this->resolveMe();
-        $user = $this->resolveUser();
 
-        if ($me->getKey() === $user->getKey()) {
+        if ($me->getKey() === 0) {
             return true;
         }
 
@@ -39,13 +38,5 @@ class {{ class }} extends SecureFormRequest
     public function resolveMe(): User
     {
         return once(static fn (): User => User::mustResolve());
-    }
-
-    /**
-     * Resolve user.
-     */
-    public function resolveUser(): User
-    {
-        return once(fn (): User => User::mustFindByRouteKey($this->slug('slug')));
     }
 }
