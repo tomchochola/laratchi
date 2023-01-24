@@ -32,9 +32,9 @@ class MediaSeedSupport
      */
     public static function imageUrl(array $keywords): string
     {
-        $json = once(static function () use ($keywords): array {
-            $keyword = \implode(',', $keywords);
+        $keyword = \implode(',', $keywords);
 
+        $json = once(static function () use ($keyword): array {
             $query = \http_build_query([
                 'method' => 'search',
                 'keyword' => $keyword,
@@ -45,15 +45,9 @@ class MediaSeedSupport
 
             $response = \file_get_contents("https://www.123rfapis.com?{$query}");
 
-            if ($response === false) {
-                return [];
-            }
+            \assert($response !== false);
 
             $json = \json_decode($response, true);
-
-            if ($json === null) {
-                return [];
-            }
 
             \assert(\is_array($json));
 
@@ -62,29 +56,15 @@ class MediaSeedSupport
 
         $randomIndex = \random_int(0, 99);
 
-        $url = Arr::get($json, "0.images.123RF.image.{$randomIndex}.link_image") ?? Arr::get($json, '0.images.stockunlimited.image.0.link_image') ?? Arr::get($json, '0.images.freeimages.image.0.link_image');
+        $url = Arr::get($json, "0.images.123RF.image.{$randomIndex}.link_image") ?? Arr::get($json, '0.images.123RF.image.0.link_image') ?? Arr::get($json, '0.images.stockunlimited.image.0.link_image') ?? Arr::get($json, '0.images.freeimages.image.0.link_image');
 
         if ($url === null) {
-            return static::randomImageUrl();
+            return static::imageUrl(['random']);
         }
 
         \assert(\is_string($url));
 
         return $url;
-    }
-
-    /**
-     * Generate random image url.
-     */
-    public static function randomImageUrl(int $width = 100, ?int $height = null): string
-    {
-        $seed = Str::random(30);
-
-        if ($height !== null) {
-            return "https://picsum.photos/seed/{$seed}/{$width}/{$height}";
-        }
-
-        return "https://picsum.photos/seed/{$seed}/{$width}";
     }
 
     /**
