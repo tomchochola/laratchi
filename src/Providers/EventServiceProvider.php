@@ -12,8 +12,6 @@ class EventServiceProvider extends ServiceProvider
 {
     /**
      * @inheritDoc
-     *
-     * @var array<mixed>
      */
     protected $listen = [
         Registered::class => [

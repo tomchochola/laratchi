@@ -34,8 +34,6 @@ class Kernel extends HttpKernel
 {
     /**
      * @inheritDoc
-     *
-     * @var array<mixed>
      */
     protected $middleware = [
         SetPreferredLanguageMiddleware::class,
@@ -50,8 +48,6 @@ class Kernel extends HttpKernel
 
     /**
      * @inheritDoc
-     *
-     * @var array<mixed>
      */
     protected $middlewareGroups = [
         'session' => [
@@ -69,8 +65,6 @@ class Kernel extends HttpKernel
 
     /**
      * @inheritDoc
-     *
-     * @var array<mixed>
      */
     protected $routeMiddleware = [
         'auth' => Authenticate::class,

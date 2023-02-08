@@ -10,8 +10,6 @@ class TrimStrings extends Middleware
 {
     /**
      * @inheritDoc
-     *
-     * @var array<mixed>
      */
     protected $except = [
         'current_password',
