@@ -12,8 +12,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
-use LogicException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tomchochola\Laratchi\Validation\ValidatedInput;
 
 class FormRequest extends IlluminateFormRequest
@@ -80,7 +78,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Slug getter.
      */
-    public function slug(string $key, ?string $default = null): string
+    public function slug(string $key = 'slug', ?string $default = null): string
     {
         $route = $this->route();
 
@@ -88,7 +86,15 @@ class FormRequest extends IlluminateFormRequest
 
         $value = $route->parameter($key, $default);
 
-        \assert(\is_string($value));
+        if (\is_string($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value);
+
+        if ($value === false) {
+            return '';
+        }
 
         return $value;
     }
@@ -171,10 +177,20 @@ class FormRequest extends IlluminateFormRequest
      */
     public function string(mixed $key, mixed $default = null): Stringable
     {
-        $value = \filter_var($this->input($key, $default));
+        $value = $this->input($key, $default);
+
+        if ($value instanceof Stringable) {
+            return $value;
+        }
+
+        if (\is_string($value)) {
+            return Str::of($value);
+        }
+
+        $value = \filter_var($value);
 
         if ($value === false) {
-            $value = '';
+            return Str::of('');
         }
 
         return Str::of($value);
@@ -185,13 +201,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function integer(mixed $key, mixed $default = 0): int
     {
-        $value = \filter_var($this->input($key, $default), \FILTER_VALIDATE_INT);
-
-        if ($value === false) {
-            $value = 0;
-        }
-
-        return $value;
+        return $this->mustFastInteger($key, $default);
     }
 
     /**
@@ -199,21 +209,137 @@ class FormRequest extends IlluminateFormRequest
      */
     public function float(mixed $key, mixed $default = 0.0): float
     {
-        $value = \filter_var($this->input($key, $default), \FILTER_VALIDATE_FLOAT);
+        return $this->mustFastFloat($key, $default);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function date(mixed $key, mixed $format = null, mixed $tz = null): Carbon
+    {
+        return $this->mustFastDate($key, null, $format, $tz);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed>|string|null $key
+     *
+     * @return Collection<array-key, mixed>
+     */
+    public function collect(mixed $key = null): Collection
+    {
+        if (\is_array($key)) {
+            return collect($this->only($key));
+        }
+
+        $value = $this->input($key);
+
+        if (! \is_array($value)) {
+            return collect([]);
+        }
+
+        return collect($value);
+    }
+
+    /**
+     * Resolve varchar.
+     */
+    public function varchar(string $key, ?string $default = null): string
+    {
+        return $this->mustFastString($key, $default);
+    }
+
+    /**
+     * Retrieve string from request.
+     */
+    public function fastString(string $key, ?string $default = null): ?string
+    {
+        $value = $this->input($key, $default);
+
+        if ($value === null || \is_string($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value);
 
         if ($value === false) {
-            $value = 0;
+            return null;
         }
 
         return $value;
     }
 
     /**
-     * @inheritDoc
+     * Retrieve int from request.
      */
-    public function date(mixed $key, mixed $format = null, mixed $tz = null): ?Carbon
+    public function fastInteger(string $key, ?int $default = null): ?int
     {
-        $value = \filter_var($this->input($key));
+        $value = $this->input($key, $default);
+
+        if ($value === null || \is_int($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_INT);
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Retrieve float from request.
+     */
+    public function fastFloat(string $key, ?float $default = null): ?float
+    {
+        $value = $this->input($key, $default);
+
+        if ($value === null || \is_float($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Retrieve boolean from request.
+     */
+    public function fastBoolean(string $key, ?bool $default = null): ?bool
+    {
+        $value = $this->input($key, $default);
+
+        if ($value === null || \is_bool($value)) {
+            return $value;
+        }
+
+        return \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
+    }
+
+    /**
+     * Retrieve date from request.
+     */
+    public function fastDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): ?Carbon
+    {
+        $value = $this->get($key, $default);
+
+        if ($value === null) {
+            return null;
+        }
+
+        if ($value instanceof Carbon) {
+            return $value;
+        }
+
+        $value = \filter_var($value);
 
         if ($value === false || $value === '') {
             return null;
@@ -233,127 +359,11 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * @inheritDoc
-     *
-     * @param array<mixed>|string|null $key
-     *
-     * @return Collection<array-key, mixed>
-     */
-    public function collect(mixed $key = null): Collection
-    {
-        if (\is_array($key)) {
-            return collect($this->only($key));
-        }
-
-        $value = $this->input($key);
-
-        if (! \is_array($value)) {
-            $value = [];
-        }
-
-        return collect($value);
-    }
-
-    /**
-     * Resolve varchar.
-     */
-    public function varchar(string $key, ?string $default = null): string
-    {
-        $value = \filter_var($this->input($key, $default));
-
-        if ($value === false) {
-            return '';
-        }
-
-        return $value;
-    }
-
-    /**
-     * Retrieve string from request.
-     */
-    public function fastString(string $key, ?string $default = null): ?string
-    {
-        $value = $this->input($key, $default);
-
-        if ($value === null) {
-            return null;
-        }
-
-        $value = \filter_var($value);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
-    }
-
-    /**
-     * Retrieve int from request.
-     */
-    public function fastInteger(string $key, ?int $default = null): ?int
-    {
-        $value = $this->input($key, $default);
-
-        if ($value === null) {
-            return null;
-        }
-
-        $value = \filter_var($value, \FILTER_VALIDATE_INT);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
-    }
-
-    /**
-     * Retrieve float from request.
-     */
-    public function fastFloat(string $key, ?float $default = null): ?float
-    {
-        $value = $this->input($key, $default);
-
-        if ($value === null) {
-            return null;
-        }
-
-        $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
-    }
-
-    /**
-     * Retrieve boolean from request.
-     */
-    public function fastBoolean(string $key, ?bool $default = null): ?bool
-    {
-        $value = $this->input($key, $default);
-
-        if ($value === null) {
-            return null;
-        }
-
-        return \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
-    }
-
-    /**
      * Mandatory retrieve string from request.
      */
     public function mustFastString(string $key, ?string $default = null): string
     {
-        $value = $this->fastString($key, $default);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not string"));
-        }
-
-        return $value;
+        return $this->fastString($key, $default) ?? '';
     }
 
     /**
@@ -361,13 +371,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustFastInteger(string $key, ?int $default = null): int
     {
-        $value = $this->fastInteger($key, $default);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not integer"));
-        }
-
-        return $value;
+        return $this->fastInteger($key, $default) ?? 0;
     }
 
     /**
@@ -375,13 +379,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustFastFloat(string $key, ?float $default = null): float
     {
-        $value = $this->fastFloat($key, $default);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not float"));
-        }
-
-        return $value;
+        return $this->fastFloat($key, $default) ?? 0;
     }
 
     /**
@@ -389,12 +387,14 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustFastBoolean(string $key, ?bool $default = null): bool
     {
-        $value = $this->fastBoolean($key, $default);
+        return $this->fastBoolean($key, $default) ?? false;
+    }
 
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not boolean"));
-        }
-
-        return $value;
+    /**
+     * Mandatory retrieve date from request.
+     */
+    public function mustFastDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): Carbon
+    {
+        return $this->fastDate($key, $default, $format, $tz) ?? resolveDate()->now();
     }
 }
