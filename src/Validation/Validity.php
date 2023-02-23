@@ -2815,6 +2815,102 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add builder rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     *
+     * @return $this
+     */
+    public function builder(Closure $callback, string $message = 'validation.exists'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback): bool {
+            $builder = $callback($value, $attribute);
+
+            return $builder->toBase()->exists();
+        }, $message));
+    }
+
+    /**
+     * Add builder key rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     *
+     * @return $this
+     */
+    public function builderKey(Closure $callback, string $message = 'validation.exists'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback): bool {
+            $builder = $callback($value, $attribute);
+
+            return $builder->whereKey($value)->toBase()->exists();
+        }, $message));
+    }
+
+    /**
+     * Add not builder rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     *
+     * @return $this
+     */
+    public function notBuilder(Closure $callback, string $message = 'validation.exists'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback): bool {
+            $builder = $callback($value, $attribute);
+
+            return ! $builder->toBase()->exists();
+        }, $message));
+    }
+
+    /**
+     * Add not builder key rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     *
+     * @return $this
+     */
+    public function notBuilderKey(Closure $callback, string $message = 'validation.exists'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback): bool {
+            $builder = $callback($value, $attribute);
+
+            return ! $builder->whereKey($value)->toBase()->exists();
+        }, $message));
+    }
+
+    /**
      * @inheritDoc
      */
     public function toArray(): array
