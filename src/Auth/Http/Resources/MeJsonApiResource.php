@@ -68,14 +68,6 @@ class MeJsonApiResource extends JsonApiResource
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getRelationships(): array
-    {
-        return $this->mergeDatabaseToken(false);
-    }
-
-    /**
      * Merge database token.
      *
      * @return array<string, JsonApiResource|null>
