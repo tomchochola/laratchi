@@ -162,7 +162,7 @@ trait ModelTrait
             $closure($model);
         }
 
-        $model->mustSave();
+        $model->save();
 
         return $model;
     }
@@ -252,13 +252,19 @@ trait ModelTrait
      */
     public function mustUpdate(array $attributes, ?Closure $closure = null): static
     {
+        \assert($this->exists, 'model not exists');
+
         $this->fill($attributes);
 
         if ($closure !== null) {
             $closure($this);
         }
 
-        return $this->mustSaveIfDirty();
+        if ($this->isDirty()) {
+            $this->save();
+        }
+
+        return $this;
     }
 
     /**
@@ -268,8 +274,8 @@ trait ModelTrait
      */
     public function mustSaveIfDirty(): static
     {
-        if ($this->isDirty()) {
-            return $this->mustSave();
+        if ($this->isDirty() || ! $this->exists) {
+            $this->save();
         }
 
         return $this;
@@ -282,9 +288,7 @@ trait ModelTrait
      */
     public function mustSave(): static
     {
-        $ok = $this->save();
-
-        \assert($ok, 'model not saved correctly');
+        $this->save();
 
         return $this;
     }
@@ -292,11 +296,11 @@ trait ModelTrait
     /**
      * Delete model from database.
      */
-    public function mustDelete(): void
+    public function mustDelete(): static
     {
-        $ok = $this->delete();
+        $this->delete();
 
-        \assert((bool) $ok, 'model not deleted correctly');
+        return $this;
     }
 
     /**
@@ -344,11 +348,7 @@ trait ModelTrait
 
         $value = $this->getAttributeValue($key);
 
-        if ($value === null) {
-            return null;
-        }
-
-        \assert(\is_int($value), "[{$key}] attribute is not int or null");
+        \assert($value === null || \is_int($value), "[{$key}] attribute is not int or null");
 
         return $value;
     }
@@ -376,11 +376,7 @@ trait ModelTrait
 
         $value = $this->getAttributeValue($key);
 
-        if ($value === null) {
-            return null;
-        }
-
-        \assert(\is_float($value), "[{$key}] attribute is not float or null");
+        \assert($value === null || \is_float($value), "[{$key}] attribute is not float or null");
 
         return $value;
     }
@@ -408,11 +404,7 @@ trait ModelTrait
 
         $value = $this->getAttributeValue($key);
 
-        if ($value === null) {
-            return null;
-        }
-
-        \assert(\is_string($value), "[{$key}] attribute is not string or null");
+        \assert($value === null || \is_string($value), "[{$key}] attribute is not string or null");
 
         return $value;
     }
@@ -440,11 +432,7 @@ trait ModelTrait
 
         $value = $this->getAttributeValue($key);
 
-        if ($value === null) {
-            return null;
-        }
-
-        \assert(\is_bool($value), "[{$key}] attribute is not bool or null");
+        \assert($value === null || \is_bool($value), "[{$key}] attribute is not bool or null");
 
         return $value;
     }
@@ -474,11 +462,7 @@ trait ModelTrait
 
         $value = $this->getAttributeValue($key);
 
-        if ($value === null) {
-            return null;
-        }
-
-        \assert(\is_array($value), "[{$key}] attribute is not array or null");
+        \assert($value === null || \is_array($value), "[{$key}] attribute is not array or null");
 
         return $value;
     }
@@ -508,11 +492,7 @@ trait ModelTrait
 
         $value = $this->getAttributeValue($key);
 
-        if ($value === null) {
-            return null;
-        }
-
-        \assert(\is_object($value), "[{$key}] attribute is not object or null");
+        \assert($value === null || \is_object($value), "[{$key}] attribute is not object or null");
 
         return $value;
     }
@@ -540,11 +520,7 @@ trait ModelTrait
 
         $value = $this->getAttributeValue($key);
 
-        if ($value === null) {
-            return null;
-        }
-
-        \assert($value instanceof Carbon, "[{$key}] attribute is not Carbon or null");
+        \assert($value === null || $value instanceof Carbon, "[{$key}] attribute is not Carbon or null");
 
         return $value;
     }
@@ -578,11 +554,7 @@ trait ModelTrait
 
         $value = $this->getRelationValue($key);
 
-        if ($value === null) {
-            return null;
-        }
-
-        \assert($value instanceof $type, "[{$key}] relationship is not of type [{$type}]");
+        \assert($value === null || $value instanceof $type, "[{$key}] relationship is not of type [{$type}]");
 
         return $value;
     }
@@ -641,5 +613,90 @@ trait ModelTrait
     public function getUpdatedAt(): Carbon
     {
         return $this->mustCarbon('updated_at');
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $options
+     */
+    public function save(array $options = []): bool
+    {
+        $ok = parent::save($options);
+
+        \assert($ok, 'model not saved correctly');
+
+        return $ok;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(): bool
+    {
+        \assert($this->exists, 'model not exists');
+
+        $ok = parent::delete();
+
+        \assert($ok === true, 'model not deleted correctly');
+
+        return $ok;
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $attributes
+     * @param array<mixed> $options
+     */
+    public function update(array $attributes = [], array $options = []): bool
+    {
+        \assert($this->exists, 'model not exists');
+
+        $this->fill($attributes);
+
+        if ($this->isDirty()) {
+            $this->save();
+        }
+
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $attributes
+     * @param array<mixed> $options
+     */
+    public function updateQuietly(array $attributes = [], array $options = []): bool
+    {
+        \assert($this->exists, 'model not exists');
+
+        $this->fill($attributes);
+
+        if ($this->isDirty()) {
+            $this->saveQuietly();
+        }
+
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $attributes
+     * @param array<mixed> $options
+     */
+    public function updateOrFail(array $attributes = [], array $options = []): bool
+    {
+        \assert($this->exists, 'model not exists');
+
+        $this->fill($attributes);
+
+        if ($this->isDirty()) {
+            $this->saveOrFail();
+        }
+
+        return true;
     }
 }

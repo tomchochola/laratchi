@@ -21,8 +21,13 @@ trait IntModelTrait
      */
     public static function findByKey(int $key, ?Closure $closure = null): ?static
     {
-        $instance = static::query()->tap($closure ?? static function (): void {
-        })->find($key);
+        $builder = static::query();
+
+        if ($closure !== null) {
+            $builder = $builder->tap($closure);
+        }
+
+        $instance = $builder->find($key);
 
         if ($instance === null) {
             return null;

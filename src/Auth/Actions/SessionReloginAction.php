@@ -19,7 +19,9 @@ class SessionReloginAction implements ReloginActionInterface
         \assert($guard instanceof SessionGuard);
         \assert($user !== null);
 
-        if (blank($user->getRememberToken())) {
+        $rememberToken = $user->getRememberToken();
+
+        if (blank($rememberToken)) {
             return;
         }
 
@@ -35,6 +37,6 @@ class SessionReloginAction implements ReloginActionInterface
 
         \assert(\is_scalar($id));
 
-        $cookieJar->queue($cookieJar->forever($cookieName, $id.'|'.$user->getRememberToken().'|'.$user->getAuthPassword()));
+        $cookieJar->queue($cookieJar->forever($cookieName, "{$id}|{$rememberToken}|{$user->getAuthPassword()}"));
     }
 }

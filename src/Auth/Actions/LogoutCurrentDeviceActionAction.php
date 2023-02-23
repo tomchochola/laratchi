@@ -29,6 +29,7 @@ class LogoutCurrentDeviceActionAction implements LogoutCurrentDeviceActionInterf
 
         if ($request->hasSession()) {
             $sesion = $request->session();
+
             $sesion->invalidate();
             $sesion->regenerateToken();
         }

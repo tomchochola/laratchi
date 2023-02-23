@@ -24,4 +24,18 @@ class Pivot extends IlluminatePivot
      * @inheritDoc
      */
     public $preventsLazyLoading = true;
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(): int
+    {
+        \assert($this->exists, 'model not exists');
+
+        $ok = parent::delete();
+
+        \assert($ok > 0, 'model not deleted correctly');
+
+        return $ok;
+    }
 }

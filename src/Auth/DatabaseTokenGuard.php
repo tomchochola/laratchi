@@ -184,7 +184,7 @@ class DatabaseTokenGuard implements GuardContract
     {
         \assert($user->getUserProviderName() === $this->userProviderName);
 
-        return inject(DatabaseToken::class)->create($user);
+        return inject(DatabaseToken::class)->store($user);
     }
 
     /**

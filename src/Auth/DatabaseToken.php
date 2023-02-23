@@ -38,7 +38,13 @@ class DatabaseToken extends Model
 
         [$id, $token] = \explode('|', $bearer, 2);
 
-        $instance = static::query()->find($id);
+        $key = \filter_var($id, \FILTER_VALIDATE_INT);
+
+        if ($key === false) {
+            return null;
+        }
+
+        $instance = $this->newQuery()->find($id);
 
         if ($instance === null) {
             return null;
@@ -56,7 +62,7 @@ class DatabaseToken extends Model
     /**
      * Create a new database token instance.
      */
-    public function create(DatabaseTokenableInterface $user): static
+    public function store(DatabaseTokenableInterface $user): static
     {
         $token = Str::random(static::$bearerLength);
         $hash = \hash('sha256', $token);
@@ -73,11 +79,9 @@ class DatabaseToken extends Model
 
         $this->modify($user);
 
-        $ok = $databaseToken->save();
+        $databaseToken->save();
 
-        \assert($ok);
-
-        $databaseToken->bearer = $databaseToken->getKey().'|'.$token;
+        $databaseToken->bearer = "{$databaseToken->getKey()}|{$token}";
 
         return $databaseToken;
     }

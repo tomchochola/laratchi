@@ -162,17 +162,13 @@ class MeUpdateController extends TransactionController
 
         \assert($user instanceof Model);
 
-        $user->forceFill($request->data());
+        $user->fill($request->data());
 
         $this->makeChanges($request, $user);
 
-        if (! $user->isDirty()) {
-            return;
+        if ($user->isDirty()) {
+            $user->save();
         }
-
-        $ok = $user->save();
-
-        \assert($ok);
 
         $user->refresh();
     }

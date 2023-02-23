@@ -97,7 +97,7 @@ class UserObserver
      */
     protected function clearEmailVerifiedAt(User&MustVerifyEmailContract $user): void
     {
-        $user->forceFill(['email_verified_at' => null]);
+        $user->fill(['email_verified_at' => null]);
     }
 
     /**
@@ -132,11 +132,11 @@ class UserObserver
         $oldEmail = $user->getOriginal('email');
         $newEmail = $user->getAttribute('email');
 
-        $user->forceFill(['email' => $oldEmail]);
+        $user->fill(['email' => $oldEmail]);
 
         $this->clearPasswordReset($user);
 
-        $user->forceFill(['email' => $newEmail]);
+        $user->fill(['email' => $newEmail]);
     }
 
     /**

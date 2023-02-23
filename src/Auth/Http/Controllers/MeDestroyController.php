@@ -49,8 +49,6 @@ class MeDestroyController extends TransactionController
 
         \assert($user instanceof Model);
 
-        $ok = $user->delete();
-
-        \assert($ok === true);
+        $user->delete();
     }
 }

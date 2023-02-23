@@ -16,20 +16,14 @@ class UpdatePasswordAction
     {
         \assert($user instanceof Model);
 
-        $user->forceFill(['password' => resolveHasher()->make($password)]);
+        $user->fill(['password' => resolveHasher()->make($password)]);
 
         if (! $timestamps) {
             $oldTimestamps = $user->timestamps;
             $user->timestamps = false;
         }
 
-        if (! $user->isDirty()) {
-            return;
-        }
-
-        $ok = $user->save();
-
-        \assert($ok);
+        $user->save();
 
         if (! $timestamps) {
             $user->timestamps = $oldTimestamps;
