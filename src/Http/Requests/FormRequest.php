@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest as IlluminateFormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -12,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
+use Tomchochola\Laratchi\Validation\AllInput;
 use Tomchochola\Laratchi\Validation\ValidatedInput;
 
 class FormRequest extends IlluminateFormRequest
@@ -24,12 +26,17 @@ class FormRequest extends IlluminateFormRequest
     /**
      * All input cache.
      */
-    protected ?ValidatedInput $allInput = null;
+    protected ?AllInput $allInput = null;
 
     /**
      * Query parameters cache.
      */
-    protected ?ValidatedInput $queryParameters = null;
+    protected ?AllInput $queryParameters = null;
+
+    /**
+     * Route parameters cache.
+     */
+    protected ?AllInput $routeParameters = null;
 
     /**
      * Get a validated input container for the validated input.
@@ -50,19 +57,19 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Get a all input container for the all input.
      */
-    public function allInput(): ValidatedInput
+    public function allInput(): AllInput
     {
         if ($this->allInput !== null) {
             return $this->allInput;
         }
 
-        return $this->allInput = new ValidatedInput($this->all());
+        return $this->allInput = new AllInput($this->all());
     }
 
     /**
      * Get query parameters.
      */
-    public function queryParameters(): ValidatedInput
+    public function queryParameters(): AllInput
     {
         if ($this->queryParameters !== null) {
             return $this->queryParameters;
@@ -72,7 +79,23 @@ class FormRequest extends IlluminateFormRequest
 
         \assert(\is_array($data));
 
-        return $this->queryParameters = new ValidatedInput($data);
+        return $this->queryParameters = new AllInput($data);
+    }
+
+    /**
+     * Get route parameters.
+     */
+    public function routeParameters(): AllInput
+    {
+        if ($this->routeParameters !== null) {
+            return $this->routeParameters;
+        }
+
+        $route = $this->route();
+
+        \assert($route instanceof Route);
+
+        return $this->routeParameters = new AllInput($route->parameters());
     }
 
     /**
@@ -80,23 +103,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function slug(string $key = 'slug', ?string $default = null): string
     {
-        $route = $this->route();
-
-        \assert($route instanceof Route);
-
-        $value = $route->parameter($key, $default);
-
-        if (\is_string($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value);
-
-        if ($value === false) {
-            return '';
-        }
-
-        return $value;
+        return $this->routeParameters()->mustString($key, $default);
     }
 
     /**
@@ -187,6 +194,10 @@ class FormRequest extends IlluminateFormRequest
             return Str::of($value);
         }
 
+        if ($value === null) {
+            return Str::of('');
+        }
+
         $value = \filter_var($value);
 
         if ($value === false) {
@@ -201,7 +212,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function integer(mixed $key, mixed $default = 0): int
     {
-        return $this->mustFastInteger($key, $default);
+        return $this->allInput()->mustInt($key, $default);
     }
 
     /**
@@ -209,7 +220,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function float(mixed $key, mixed $default = 0.0): float
     {
-        return $this->mustFastFloat($key, $default);
+        return $this->allInput()->mustFloat($key, $default);
     }
 
     /**
@@ -217,7 +228,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function date(mixed $key, mixed $format = null, mixed $tz = null): Carbon
     {
-        return $this->mustFastDate($key, null, $format, $tz);
+        return $this->allInput()->mustDate($key, null, $format, $tz);
     }
 
     /**
@@ -235,11 +246,15 @@ class FormRequest extends IlluminateFormRequest
 
         $value = $this->input($key);
 
-        if (! \is_array($value)) {
-            return collect([]);
+        if ($value instanceof Collection) {
+            return $value;
         }
 
-        return collect($value);
+        if (\is_array($value)) {
+            return collect($value);
+        }
+
+        return new Collection([$key => $value]);
     }
 
     /**
@@ -247,7 +262,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function varchar(string $key, ?string $default = null): string
     {
-        return $this->mustFastString($key, $default);
+        return $this->allInput()->mustString($key, $default);
     }
 
     /**
@@ -255,19 +270,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function fastString(string $key, ?string $default = null): ?string
     {
-        $value = $this->input($key, $default);
-
-        if ($value === null || \is_string($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
+        return $this->allInput()->string($key, $default);
     }
 
     /**
@@ -275,19 +278,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function fastInteger(string $key, ?int $default = null): ?int
     {
-        $value = $this->input($key, $default);
-
-        if ($value === null || \is_int($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value, \FILTER_VALIDATE_INT);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
+        return $this->allInput()->int($key, $default);
     }
 
     /**
@@ -295,19 +286,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function fastFloat(string $key, ?float $default = null): ?float
     {
-        $value = $this->input($key, $default);
-
-        if ($value === null || \is_float($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
+        return $this->allInput()->float($key, $default);
     }
 
     /**
@@ -315,13 +294,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function fastBoolean(string $key, ?bool $default = null): ?bool
     {
-        $value = $this->input($key, $default);
-
-        if ($value === null || \is_bool($value)) {
-            return $value;
-        }
-
-        return \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
+        return $this->allInput()->bool($key, $default);
     }
 
     /**
@@ -329,33 +302,15 @@ class FormRequest extends IlluminateFormRequest
      */
     public function fastDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): ?Carbon
     {
-        $value = $this->get($key, $default);
+        return $this->allInput()->date($key, $default, $format, $tz);
+    }
 
-        if ($value === null) {
-            return null;
-        }
-
-        if ($value instanceof Carbon) {
-            return $value;
-        }
-
-        $value = \filter_var($value);
-
-        if ($value === false || $value === '') {
-            return null;
-        }
-
-        if ($format === null) {
-            return resolveDate()->parse($value, $tz);
-        }
-
-        $value = resolveDate()->createFromFormat($format, $value, $tz);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
+    /**
+     * Retrieve file from request.
+     */
+    public function fastFile(string $key, ?UploadedFile $default = null): ?UploadedFile
+    {
+        return $this->allInput()->file($key, $default);
     }
 
     /**
@@ -363,7 +318,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustFastString(string $key, ?string $default = null): string
     {
-        return $this->fastString($key, $default) ?? '';
+        return $this->allInput()->mustString($key, $default);
     }
 
     /**
@@ -371,7 +326,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustFastInteger(string $key, ?int $default = null): int
     {
-        return $this->fastInteger($key, $default) ?? 0;
+        return $this->allInput()->mustInt($key, $default);
     }
 
     /**
@@ -379,7 +334,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustFastFloat(string $key, ?float $default = null): float
     {
-        return $this->fastFloat($key, $default) ?? 0;
+        return $this->allInput()->mustFloat($key, $default);
     }
 
     /**
@@ -387,7 +342,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustFastBoolean(string $key, ?bool $default = null): bool
     {
-        return $this->fastBoolean($key, $default) ?? false;
+        return $this->allInput()->mustBool($key, $default);
     }
 
     /**
@@ -395,6 +350,14 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustFastDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): Carbon
     {
-        return $this->fastDate($key, $default, $format, $tz) ?? resolveDate()->now();
+        return $this->allInput()->mustDate($key, $default, $format, $tz);
+    }
+
+    /**
+     * Mandatory retrieve file from request.
+     */
+    public function mustFastFile(string $key, ?UploadedFile $default = null): UploadedFile
+    {
+        return $this->allInput()->mustFile($key, $default);
     }
 }

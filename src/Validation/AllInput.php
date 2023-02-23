@@ -8,10 +8,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
-use LogicException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ValidatedInput extends IlluminateValidatedInput
+class AllInput extends IlluminateValidatedInput
 {
     /**
      * @inheritDoc
@@ -37,7 +35,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value);
 
         if ($value === false) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not string or null"));
+            return null;
         }
 
         return $value;
@@ -48,13 +46,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function mustString(string $key, ?string $default = null): string
     {
-        $value = $this->string($key, $default);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not string"));
-        }
-
-        return $value;
+        return $this->string($key, $default) ?? '';
     }
 
     /**
@@ -68,13 +60,7 @@ class ValidatedInput extends IlluminateValidatedInput
             return $value;
         }
 
-        $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not bool or null"));
-        }
-
-        return $value;
+        return \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
     }
 
     /**
@@ -82,13 +68,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function mustBool(string $key, ?bool $default = null): bool
     {
-        $value = $this->bool($key, $default);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not bool"));
-        }
-
-        return $value;
+        return $this->bool($key, $default) ?? false;
     }
 
     /**
@@ -105,7 +85,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
         if ($value === false) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not int or null"));
+            return null;
         }
 
         return $value;
@@ -116,13 +96,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function mustInt(string $key, ?int $default = null): int
     {
-        $value = $this->int($key, $default);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not int"));
-        }
-
-        return $value;
+        return $this->int($key, $default) ?? 0;
     }
 
     /**
@@ -139,7 +113,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
         if ($value === false) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not float or null"));
+            return null;
         }
 
         return $value;
@@ -150,13 +124,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function mustFloat(string $key, ?float $default = null): float
     {
-        $value = $this->float($key, $default);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not float"));
-        }
-
-        return $value;
+        return $this->float($key, $default) ?? 0.0;
     }
 
     /**
@@ -170,7 +138,7 @@ class ValidatedInput extends IlluminateValidatedInput
             return $value;
         }
 
-        throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not file or null"));
+        return null;
     }
 
     /**
@@ -178,13 +146,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function mustFile(string $key, ?UploadedFile $default = null): UploadedFile
     {
-        $value = $this->file($key, $default);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not file"));
-        }
-
-        return $value;
+        return $this->file($key, $default) ?? UploadedFile::createFromBase(UploadedFile::fake()->create($key));
     }
 
     /**
@@ -202,7 +164,7 @@ class ValidatedInput extends IlluminateValidatedInput
             return $value;
         }
 
-        throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not array or null"));
+        return null;
     }
 
     /**
@@ -214,13 +176,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function mustArray(string $key, ?array $default = null): array
     {
-        $value = $this->array($key, $default);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not array"));
-        }
-
-        return $value;
+        return $this->array($key, $default) ?? [];
     }
 
     /**
@@ -237,7 +193,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value);
 
         if ($value === false || $value === '') {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not date or null"));
+            return null;
         }
 
         if ($format === null) {
@@ -247,7 +203,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = resolveDate()->createFromFormat($format, $value, $tz);
 
         if ($value === false) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not date or null"));
+            return null;
         }
 
         return $value;
@@ -258,13 +214,7 @@ class ValidatedInput extends IlluminateValidatedInput
      */
     public function mustDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): Carbon
     {
-        $value = $this->date($key, $default, $format, $tz);
-
-        if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not date"));
-        }
-
-        return $value;
+        return $this->date($key, $default, $format, $tz) ?? resolveDate()->now();
     }
 
     /**
@@ -276,44 +226,44 @@ class ValidatedInput extends IlluminateValidatedInput
     }
 
     /**
-     * Make new validated input from given data.
+     * Make new all input from given data.
      *
      * @param array<mixed> $data
      */
-    public function newValidatedInput(array $data): static
+    public function newAllInput(array $data): static
     {
         return new static($data);
     }
 
     /**
-     * Make new validated input from given key.
+     * Make new all input from given key.
      *
      * @param array<mixed>|null $default
      */
-    public function validatedInput(string $key, ?array $default = null): static
+    public function allInput(string $key, ?array $default = null): static
     {
         return new static($this->mustArray($key, $default));
     }
 
     /**
-     * Make new validated inputs from given key.
+     * Make new all inputs from given key.
      *
      * @param array<mixed>|null $default
      *
      * @return array<int, static>
      */
-    public function validatedInputs(string $key, ?array $default = null): array
+    public function allInputs(string $key, ?array $default = null): array
     {
-        $validatedInputs = [];
+        $allInputs = [];
 
         $data = $this->mustArray($key, $default);
 
-        foreach ($data as $validatedInput) {
-            \assert(\is_array($validatedInput));
+        foreach ($data as $allInput) {
+            \assert(\is_array($allInput));
 
-            $validatedInputs[] = new static($validatedInput);
+            $allInputs[] = new static($allInput);
         }
 
-        return $validatedInputs;
+        return $allInputs;
     }
 }
