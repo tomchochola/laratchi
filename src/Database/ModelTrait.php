@@ -29,6 +29,14 @@ trait ModelTrait
     /**
      * Get qualified key column name.
      */
+    public static function getQualifiedKey(): string
+    {
+        return (new static())->getQualifiedKeyName();
+    }
+
+    /**
+     * Get qualified key column name.
+     */
     public static function getKeyColumn(): string
     {
         return (new static())->getQualifiedKeyName();
@@ -39,9 +47,15 @@ trait ModelTrait
      */
     public static function getRouteKeyColumn(): string
     {
-        $instance = new static();
+        return (new static())->getQualifiedRouteKeyName();
+    }
 
-        return $instance->qualifyColumn($instance->getRouteKeyName());
+    /**
+     * Get qualified route key column name.
+     */
+    public static function getQualifiedRouteKey(): string
+    {
+        return (new static())->getQualifiedRouteKeyName();
     }
 
     /**
@@ -51,8 +65,13 @@ trait ModelTrait
      */
     public static function findByKey(int|string $key, ?Closure $closure = null): ?static
     {
-        $instance = static::query()->tap($closure ?? static function (): void {
-        })->find($key);
+        $builder = static::query();
+
+        if ($closure !== null) {
+            $builder = $builder->tap($closure);
+        }
+
+        $instance = $builder->find($key);
 
         if ($instance === null) {
             return null;
@@ -91,8 +110,13 @@ trait ModelTrait
      */
     public static function findByRouteKey(string $key, ?Closure $closure = null): ?static
     {
-        $instance = static::query()->tap($closure ?? static function (): void {
-        })->where(static::getRouteKeyColumn(), $key)->first();
+        $builder = static::query()->where(static::getRouteKeyColumn(), $key);
+
+        if ($closure !== null) {
+            $builder = $builder->tap($closure);
+        }
+
+        $instance = $builder->first();
 
         if ($instance === null) {
             return null;
@@ -188,6 +212,34 @@ trait ModelTrait
         }
 
         return $instance;
+    }
+
+    /**
+     * Scope by keys.
+     *
+     * @param array<mixed> $ids
+     */
+    public static function scopeKeys(Builder $builder, array $ids): void
+    {
+        $builder->whereKey($ids);
+    }
+
+    /**
+     * Scope by route keys.
+     *
+     * @param array<mixed> $slugs
+     */
+    public static function scopeRouteKeys(Builder $builder, array $slugs): void
+    {
+        $builder->getQuery()->whereIn(static::getRouteKeyColumn(), $slugs);
+    }
+
+    /**
+     * Get the table qualified key name.
+     */
+    public function getQualifiedRouteKeyName(): string
+    {
+        return $this->qualifyColumn($this->getRouteKeyName());
     }
 
     /**
