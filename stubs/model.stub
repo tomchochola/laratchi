@@ -21,7 +21,7 @@ class {{ class }} extends Model
      */
     public static function queryIndex(Builder $builder): void
     {
-        $builder->with([])->getQuery()->select($builder->qualifyColumns(['*']));
+        $builder->getQuery()->select($builder->qualifyColumns(['*']));
     }
 
     /**
@@ -29,6 +29,6 @@ class {{ class }} extends Model
      */
     public static function queryDetail(Builder $builder): void
     {
-        $builder->with([])->getQuery()->select($builder->qualifyColumns(['*']));
+        $builder->getQuery()->select($builder->qualifyColumns(['*']));
     }
 }
