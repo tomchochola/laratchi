@@ -8,7 +8,6 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Carbon;
 
 /**
@@ -86,18 +85,14 @@ trait ModelTrait
      * Mandatory find instance by key.
      *
      * @param (Closure(Builder): void)|null $closure
-     * @param (Closure(): never)|null $onError
+     * @param Closure(): never $onError
      */
-    public static function mustFindByKey(int|string $key, ?Closure $closure, ?Closure $onError): static
+    public static function mustFindByKey(int|string $key, ?Closure $closure, Closure $onError): static
     {
         $instance = static::findByKey($key, $closure);
 
         if ($instance === null) {
-            if ($onError !== null) {
-                $onError();
-            }
-
-            throw (new ModelNotFoundException())->setModel(static::class, $key);
+            $onError();
         }
 
         return $instance;
@@ -131,18 +126,14 @@ trait ModelTrait
      * Mandatory find instance by route key.
      *
      * @param (Closure(Builder): void)|null $closure
-     * @param (Closure(): never)|null $onError
+     * @param Closure(): never $onError
      */
-    public static function mustFindByRouteKey(string $key, ?Closure $closure, ?Closure $onError): static
+    public static function mustFindByRouteKey(string $key, ?Closure $closure, Closure $onError): static
     {
         $instance = static::findByRouteKey($key, $closure);
 
         if ($instance === null) {
-            if ($onError !== null) {
-                $onError();
-            }
-
-            throw (new ModelNotFoundException())->setModel(static::class, $key);
+            $onError();
         }
 
         return $instance;

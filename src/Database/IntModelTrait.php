@@ -7,7 +7,6 @@ namespace Tomchochola\Laratchi\Database;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * @mixin Model
@@ -42,18 +41,14 @@ trait IntModelTrait
      * Mandatory find instance by key.
      *
      * @param (Closure(Builder): void)|null $closure
-     * @param (Closure(): never)|null $onError
+     * @param Closure(): never $onError
      */
-    public static function mustFindByKey(int $key, ?Closure $closure, ?Closure $onError): static
+    public static function mustFindByKey(int $key, ?Closure $closure, Closure $onError): static
     {
         $instance = static::findByKey($key, $closure);
 
         if ($instance === null) {
-            if ($onError !== null) {
-                $onError();
-            }
-
-            throw (new ModelNotFoundException())->setModel(static::class, $key);
+            $onError();
         }
 
         return $instance;
