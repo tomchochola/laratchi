@@ -88,7 +88,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param (Closure(): never)|null $onError
      */
-    public static function mustFindByKey(int|string $key, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindByKey(int|string $key, ?Closure $closure, ?Closure $onError): static
     {
         $instance = static::findByKey($key, $closure);
 
@@ -133,7 +133,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param (Closure(): never)|null $onError
      */
-    public static function mustFindByRouteKey(string $key, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindByRouteKey(string $key, ?Closure $closure, ?Closure $onError): static
     {
         $instance = static::findByRouteKey($key, $closure);
 
