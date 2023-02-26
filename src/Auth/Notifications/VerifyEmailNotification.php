@@ -33,7 +33,6 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
         $parameters = [
             'id' => $user->getAuthIdentifier(),
             'email' => $user->getEmailForVerification(),
-            'guard' => $this->guardName,
         ];
 
         $expires = mustConfigInt('auth.verification.expire');
@@ -58,6 +57,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueueContract
         $signedUrl = $this->signedUrl($notifiable);
 
         $query = \http_build_query([
+            'guard' => $this->guardName,
             'url' => $signedUrl,
         ]);
 

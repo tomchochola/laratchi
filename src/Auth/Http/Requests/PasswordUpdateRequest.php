@@ -31,7 +31,6 @@ class PasswordUpdateRequest extends SecureFormRequest
         $guardName = $this->guardName();
 
         return [
-            'guard' => $authValidity->guard()->nullable()->filled(),
             'password' => $authValidity->password($guardName)->required(),
             'new_password' => $authValidity->password($guardName)->required()->confirmed(),
         ];
@@ -42,14 +41,6 @@ class PasswordUpdateRequest extends SecureFormRequest
      */
     public function guardName(): string
     {
-        if ($this->filled('guard')) {
-            $guardName = $this->varchar('guard');
-
-            if (\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true)) {
-                return $guardName;
-            }
-        }
-
         return resolveAuthManager()->getDefaultDriver();
     }
 
@@ -58,9 +49,7 @@ class PasswordUpdateRequest extends SecureFormRequest
      */
     public function retrieveUser(): AuthenticatableContract
     {
-        return once(function (): AuthenticatableContract {
-            return mustResolveUser([$this->guardName()]);
-        });
+        return once(fn (): AuthenticatableContract => mustResolveUser([$this->guardName()]));
     }
 
     /**

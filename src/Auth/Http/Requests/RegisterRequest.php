@@ -30,7 +30,6 @@ class RegisterRequest extends SecureFormRequest
         $guardName = $this->guardName();
 
         return [
-            'guard' => $authValidity->guard()->nullable()->filled(),
             'email' => $authValidity->email($guardName)->required(),
             'password' => $authValidity->password($guardName)->confirmed()->required(),
             'name' => $authValidity->name($guardName)->required(),
@@ -43,14 +42,6 @@ class RegisterRequest extends SecureFormRequest
      */
     public function guardName(): string
     {
-        if ($this->filled('guard')) {
-            $guardName = $this->varchar('guard');
-
-            if (\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true)) {
-                return $guardName;
-            }
-        }
-
         return resolveAuthManager()->getDefaultDriver();
     }
 

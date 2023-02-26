@@ -31,7 +31,6 @@ class LogoutOtherDevicesRequest extends SecureFormRequest
         $guardName = $this->guardName();
 
         return [
-            'guard' => $authValidity->guard()->nullable()->filled(),
             'password' => $authValidity->password($guardName)->nullable()->filled(),
         ];
     }
@@ -41,14 +40,6 @@ class LogoutOtherDevicesRequest extends SecureFormRequest
      */
     public function guardName(): string
     {
-        if ($this->filled('guard')) {
-            $guardName = $this->varchar('guard');
-
-            if (\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true)) {
-                return $guardName;
-            }
-        }
-
         return resolveAuthManager()->getDefaultDriver();
     }
 
@@ -67,8 +58,6 @@ class LogoutOtherDevicesRequest extends SecureFormRequest
      */
     public function retrieveUser(): AuthenticatableContract
     {
-        return once(function (): AuthenticatableContract {
-            return mustResolveUser([$this->guardName()]);
-        });
+        return once(fn (): AuthenticatableContract => mustResolveUser([$this->guardName()]));
     }
 }

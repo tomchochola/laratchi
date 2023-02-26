@@ -33,29 +33,30 @@ class AuthShouldUseMiddleware
      */
     public function handle(Request $request, Closure $next, string ...$guards): SymfonyResponse
     {
-        \assert(\count($guards) > 0);
+        $want = $request->headers->get(static::HEADER_NAME);
 
-        if (! $request->hasHeader(static::HEADER_NAME)) {
-            $defaultGuard = resolveAuthManager()->getDefaultDriver();
-
-            if (! \in_array($defaultGuard, $guards, true)) {
-                resolveAuthManager()->shouldUse($guards[0]);
-            }
-
+        if ($want === null && \count($guards) === 0) {
             return $next($request);
         }
 
-        $value = $request->header(static::HEADER_NAME);
+        $current = resolveAuthManager()->getDefaultDriver();
+        $allowed = \array_keys(mustConfigArray('auth.guards'));
 
-        if (\is_array($value)) {
-            $value = \end($value);
+        if ($want === null && ! \in_array($current, $guards, true)) {
+            $want = $guards[0];
         }
 
-        if (! \in_array($value, $guards, true)) {
+        if (! \in_array($want, $allowed, true)) {
             throw new HttpException(static::ERROR_STATUS, static::ERROR_MESSAGE);
         }
 
-        resolveAuthManager()->shouldUse($value);
+        if (\count($guards) > 0 && ! \in_array($want, $guards, true)) {
+            throw new HttpException(static::ERROR_STATUS, static::ERROR_MESSAGE);
+        }
+
+        if ($current !== $want) {
+            resolveAuthManager()->shouldUse($want);
+        }
 
         return $next($request);
     }

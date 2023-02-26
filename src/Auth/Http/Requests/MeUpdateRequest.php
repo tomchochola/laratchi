@@ -7,9 +7,9 @@ namespace Tomchochola\Laratchi\Auth\Http\Requests;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
-use Tomchochola\Laratchi\Http\Requests\NonEmptySecureRequest;
+use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
-class MeUpdateRequest extends NonEmptySecureRequest
+class MeUpdateRequest extends SecureFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,7 +31,6 @@ class MeUpdateRequest extends NonEmptySecureRequest
         $guardName = $this->guardName();
 
         return [
-            'guard' => $authValidity->guard()->nullable()->filled(),
             'email' => $authValidity->email($guardName)->nullable()->filled(),
             'name' => $authValidity->name($guardName)->nullable()->filled(),
             'locale' => $authValidity->locale($guardName)->nullable()->filled(),
@@ -43,14 +42,6 @@ class MeUpdateRequest extends NonEmptySecureRequest
      */
     public function guardName(): string
     {
-        if ($this->filled('guard')) {
-            $guardName = $this->varchar('guard');
-
-            if (\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true)) {
-                return $guardName;
-            }
-        }
-
         return resolveAuthManager()->getDefaultDriver();
     }
 
@@ -79,8 +70,6 @@ class MeUpdateRequest extends NonEmptySecureRequest
      */
     public function retrieveUser(): AuthenticatableContract
     {
-        return once(function (): AuthenticatableContract {
-            return mustResolveUser([$this->guardName()]);
-        });
+        return once(fn (): AuthenticatableContract => mustResolveUser([$this->guardName()]));
     }
 }

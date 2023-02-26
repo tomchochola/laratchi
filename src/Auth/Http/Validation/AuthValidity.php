@@ -10,13 +10,6 @@ use Tomchochola\Laratchi\Validation\Validity;
 class AuthValidity
 {
     /**
-     * Allowed guards.
-     *
-     * @var array<int, string>
-     */
-    public static array $allowedGuards = ['users'];
-
-    /**
      * Allowed locales.
      *
      * @var ?array<int, string>
@@ -57,6 +50,8 @@ class AuthValidity
      */
     public function password(string $guardName): Validity
     {
+        \assert(static::$passwordMaxLength <= 1024, 'hashing algorithm performance issue');
+
         return Validity::make()->varchar(static::$passwordMaxLength)->password();
     }
 
@@ -73,15 +68,7 @@ class AuthValidity
      */
     public function locale(string $guardName): Validity
     {
-        return Validity::make()->varchar()->in(static::$allowedLocales ?? mustConfigArray('app.locales'));
-    }
-
-    /**
-     * Guard name validation rules.
-     */
-    public function guard(): Validity
-    {
-        return Validity::make()->varchar()->in(static::$allowedGuards);
+        return Validity::make()->char(2)->in(mustConfigArray('app.locales'))->if(static::$allowedLocales !== null)->in(static::$allowedLocales ?? []);
     }
 
     /**
@@ -105,7 +92,7 @@ class AuthValidity
      */
     public function rememberToken(string $guardName): Validity
     {
-        return Validity::make()->varchar(CycleRememberTokenAction::$rememberTokenLength);
+        return Validity::make()->char(CycleRememberTokenAction::$rememberTokenLength);
     }
 
     /**

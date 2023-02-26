@@ -18,10 +18,9 @@ class EmailVerificationResendRequest extends SecureFormRequest
 
         $guardName = $this->guardName();
 
-        $guest = resolveAuthManager()->guard($guardName)->guest();
+        $guest = isGuest([$guardName]);
 
         return [
-            'guard' => $authValidity->guard()->nullable()->filled(),
             'email' => $authValidity->email($guardName)->nullable()->filled()->requiredIfRule($guest),
         ];
     }
@@ -31,14 +30,6 @@ class EmailVerificationResendRequest extends SecureFormRequest
      */
     public function guardName(): string
     {
-        if ($this->filled('guard')) {
-            $guardName = $this->varchar('guard');
-
-            if (\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true)) {
-                return $guardName;
-            }
-        }
-
         return resolveAuthManager()->getDefaultDriver();
     }
 

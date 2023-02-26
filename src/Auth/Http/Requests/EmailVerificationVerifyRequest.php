@@ -19,7 +19,6 @@ class EmailVerificationVerifyRequest extends SignedRequest
         $guardName = $this->guardName();
 
         return \array_replace(parent::rules(), [
-            'guard' => $authValidity->guard()->nullable()->filled(),
             'email' => $authValidity->email($guardName)->required(),
             'id' => $authValidity->id($guardName)->required(),
         ]);
@@ -30,14 +29,6 @@ class EmailVerificationVerifyRequest extends SignedRequest
      */
     public function guardName(): string
     {
-        if ($this->filled('guard')) {
-            $guardName = $this->varchar('guard');
-
-            if (\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true)) {
-                return $guardName;
-            }
-        }
-
         return resolveAuthManager()->getDefaultDriver();
     }
 

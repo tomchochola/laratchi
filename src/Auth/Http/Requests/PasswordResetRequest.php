@@ -30,7 +30,6 @@ class PasswordResetRequest extends SecureFormRequest
         $guardName = $this->guardName();
 
         return [
-            'guard' => $authValidity->guard()->nullable()->filled(),
             'token' => $authValidity->passwordResetToken($guardName)->required(),
             'email' => $authValidity->email($guardName)->required(),
             'password' => $authValidity->password($guardName)->required()->confirmed(),
@@ -52,14 +51,6 @@ class PasswordResetRequest extends SecureFormRequest
      */
     public function guardName(): string
     {
-        if ($this->filled('guard')) {
-            $guardName = $this->varchar('guard');
-
-            if (\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true)) {
-                return $guardName;
-            }
-        }
-
         return resolveAuthManager()->getDefaultDriver();
     }
 
