@@ -11,5 +11,6 @@ return new class() extends Migration {
      */
     public function up(): void
     {
+        resolveSchema()->table('{{ table }}', static function (Blueprint $table): void {});
     }
 };
