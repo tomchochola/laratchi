@@ -28,10 +28,6 @@ class Validator extends IlluminateValidator
             'ProhibitedWithAll',
             'ProhibitedWithout',
             'ProhibitedWithoutAll',
-            'NullWith',
-            'NullWithAll',
-            'NullWithout',
-            'NullWithoutAll',
         ]);
     }
 
@@ -128,94 +124,6 @@ class Validator extends IlluminateValidator
     }
 
     /**
-     * Validate that an attribute is null.
-     */
-    public function validateNull(string $attribute, mixed $value): bool
-    {
-        return $value === null;
-    }
-
-    /**
-     * Validate that an attribute is null when any other attribute exists.
-     *
-     * @param array<int, string> $parameters
-     */
-    public function validateNullWith(string $attribute, mixed $value, array $parameters): bool
-    {
-        if ($value === null) {
-            return true;
-        }
-
-        foreach ($parameters as $key) {
-            if ($this->validateRequired($key, $this->getValue($key))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Validate that an attribute is null when any other attribute not exists.
-     *
-     * @param array<int, string> $parameters
-     */
-    public function validateNullWithout(string $attribute, mixed $value, array $parameters): bool
-    {
-        if ($value === null) {
-            return true;
-        }
-
-        foreach ($parameters as $key) {
-            if (! $this->validateRequired($key, $this->getValue($key))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Validate that an attribute is null when all other attribute exists.
-     *
-     * @param array<int, string> $parameters
-     */
-    public function validateNullWithAll(string $attribute, mixed $value, array $parameters): bool
-    {
-        if ($value === null) {
-            return true;
-        }
-
-        foreach ($parameters as $key) {
-            if (! $this->validateRequired($key, $this->getValue($key))) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Validate that an attribute is null when all other attribute not exists.
-     *
-     * @param array<int, string> $parameters
-     */
-    public function validateNullWithoutAll(string $attribute, mixed $value, array $parameters): bool
-    {
-        if ($value === null) {
-            return true;
-        }
-
-        foreach ($parameters as $key) {
-            if ($this->validateRequired($key, $this->getValue($key))) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Validate the size of an attribute is less than a maximum value.
      *
      * @param array{numeric} $parameters
@@ -281,46 +189,6 @@ class Validator extends IlluminateValidator
      * @param array<int ,string> $parameters
      */
     protected function replaceProhibitedWithoutAll(string $message, string $attribute, string $rule, array $parameters): string
-    {
-        return $this->replaceProhibitedWith($message, $attribute, $rule, $parameters);
-    }
-
-    /**
-     * Replace all place-holders for the null_with rule.
-     *
-     * @param array<int ,string> $parameters
-     */
-    protected function replaceNullWith(string $message, string $attribute, string $rule, array $parameters): string
-    {
-        return \str_replace(':values', \implode(' / ', $this->getAttributeList($parameters)), $message);
-    }
-
-    /**
-     * Replace all place-holders for the null_with_all rule.
-     *
-     * @param array<int ,string> $parameters
-     */
-    protected function replaceNullWithAll(string $message, string $attribute, string $rule, array $parameters): string
-    {
-        return $this->replaceProhibitedWith($message, $attribute, $rule, $parameters);
-    }
-
-    /**
-     * Replace all place-holders for the null_without rule.
-     *
-     * @param array<int ,string> $parameters
-     */
-    protected function replaceNullWithout(string $message, string $attribute, string $rule, array $parameters): string
-    {
-        return $this->replaceProhibitedWith($message, $attribute, $rule, $parameters);
-    }
-
-    /**
-     * Replace all place-holders for the null_without_all rule.
-     *
-     * @param array<int ,string> $parameters
-     */
-    protected function replaceNullWithoutAll(string $message, string $attribute, string $rule, array $parameters): string
     {
         return $this->replaceProhibitedWith($message, $attribute, $rule, $parameters);
     }

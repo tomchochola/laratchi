@@ -113,6 +113,11 @@ class SecureValidator extends Validator
             'string' => 'min_string::min',
         ],
         'min_digits' => 'min_digits::min',
+        'missing' => 'missing',
+        'missing_if' => 'missing_if::other;:values',
+        'missing_unless' => 'missing_unless::other;:values',
+        'missing_with' => 'missing_with::values',
+        'missing_with_all' => 'missing_with_all::values',
         'multiple_of' => 'multiple_of::value',
         'not_in' => 'not_in',
         'not_regex' => 'not_regex',
@@ -160,14 +165,9 @@ class SecureValidator extends Validator
         'prohibited_with_all' => 'prohibited_with_all::values',
         'prohibited_without' => 'prohibited_without::values',
         'prohibited_without_all' => 'prohibited_without_all::values',
-        'null_with' => 'null_with::values',
-        'null_with_all' => 'null_with_all::values',
-        'null_without' => 'null_without::values',
-        'null_without_all' => 'null_without_all::values',
         'strlen' => 'strlen::size',
         'strlen_max' => 'strlen_max::max',
         'strlen_min' => 'strlen_min::min',
-        'null' => 'null',
 
         'throttled' => 'throttled::seconds',
 
@@ -245,7 +245,7 @@ class SecureValidator extends Validator
                     }
                 }
 
-                $this->addFailure($attribute, 'prohibited', []);
+                $this->addFailure($attribute, 'missing', []);
             }
         }
 

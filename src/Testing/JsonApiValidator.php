@@ -100,13 +100,13 @@ class JsonApiValidator
     public function relationship(string $name, self $rules, ?bool $filled, ?array $meta = null, ?array $links = null): static
     {
         if ($filled === false) {
-            return $this->relationships([$name => Validity::make()->nullable()->prohibited()]);
+            return $this->relationships([$name => Validity::make()->missing()]);
         }
 
         $this->relationships([$name => Validity::make()->required()->object(['data'])]);
 
         if ($filled === null) {
-            $this->relationships(["{$name}.data" => Validity::make()->nullable()->null()]);
+            $this->relationships(["{$name}.data" => Validity::make()->present()->nullable()->prohibited()]);
         } else {
             $this->relationships(["{$name}.data" => Validity::make()->required()->object(['id', 'type', 'slug'])]);
             $this->relationships(Arr::prependKeysWith($rules->headerRules(), "{$name}.data."));
@@ -137,7 +137,7 @@ class JsonApiValidator
     public function relationshipCollection(string $name, self|array $rules, bool $filled, ?array $meta = null, ?array $links = null): static
     {
         if ($filled === false) {
-            return $this->relationships([$name => Validity::make()->nullable()->prohibited()]);
+            return $this->relationships([$name => Validity::make()->missing()]);
         }
 
         $this->relationships([$name => Validity::make()->required()->object(['data'])]);

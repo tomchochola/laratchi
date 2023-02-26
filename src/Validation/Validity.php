@@ -1483,6 +1483,94 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add missing rule.
+     *
+     * @return $this
+     */
+    public function missing(): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule('missing');
+    }
+
+    /**
+     * Add missing_if rule.
+     *
+     * @param array<int, mixed> $values
+     *
+     * @return $this
+     */
+    public function missingIf(string $field, array $values): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule('missing_if', [$field, ...$values]);
+    }
+
+    /**
+     * Add missing_unless rule.
+     *
+     * @param array<int, mixed> $values
+     *
+     * @return $this
+     */
+    public function missingUnless(string $field, array $values): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule('missing_unless', [$field, ...$values]);
+    }
+
+    /**
+     * Add missing_with rule.
+     *
+     * @param array<int, string> $fields
+     *
+     * @return $this
+     */
+    public function missingWith(array $fields): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule('missing_with', $fields);
+    }
+
+    /**
+     * Add missing_with_all rule.
+     *
+     * @param array<int, string> $fields
+     *
+     * @return $this
+     */
+    public function missingWithAll(array $fields): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule('missing_with_all', $fields);
+    }
+
+    /**
      * Add multiple_of rule.
      *
      * @return $this
@@ -2170,94 +2258,6 @@ class Validity implements ArrayableContract
         }
 
         return $this->addRule('prohibited_without_all', $fields);
-    }
-
-    /**
-     * Add null rule.
-     *
-     * @return $this
-     */
-    public function null(): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule('null');
-    }
-
-    /**
-     * Add null_with rule.
-     *
-     * @param array<int, string> $fields
-     *
-     * @return $this
-     */
-    public function nullWith(array $fields): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule('null_with', $fields);
-    }
-
-    /**
-     * Add null_without rule.
-     *
-     * @param array<int, string> $fields
-     *
-     * @return $this
-     */
-    public function nullWithout(array $fields): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule('null_without', $fields);
-    }
-
-    /**
-     * Add null_with_all rule.
-     *
-     * @param array<int, string> $fields
-     *
-     * @return $this
-     */
-    public function nullWithAll(array $fields): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule('null_with_all', $fields);
-    }
-
-    /**
-     * Add null_without_all rule.
-     *
-     * @param array<int, string> $fields
-     *
-     * @return $this
-     */
-    public function nullWithoutAll(array $fields): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule('null_without_all', $fields);
     }
 
     /**
