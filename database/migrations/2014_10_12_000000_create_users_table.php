@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Tomchochola\Laratchi\Auth\Actions\CycleRememberTokenAction;
 
 return new class() extends Migration {
     /**
@@ -22,7 +23,7 @@ return new class() extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
-            $table->rememberToken();
+            $table->char('remember_token', CycleRememberTokenAction::$rememberTokenLength)->nullable();
             $table->char('locale', 2);
 
             $table->timestamp('created_at');
