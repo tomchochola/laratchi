@@ -216,12 +216,12 @@ return [
     // Fallback
     Handler::ERROR_MESSAGE_UNEXPECTED_ERROR => 'Whoops, something went wrong',
 
-    // 400
-    Tomchochola\Laratchi\Http\Middleware\MustBeStatefulMiddleware::ERROR_MESSAGE => 'Request must be stateful',
-
-    // 400
-    Tomchochola\Laratchi\Http\Middleware\MustBeStatelessMiddleware::ERROR_MESSAGE => 'Request must be stateless',
-
-    // 427
-    Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException::ERROR_MESSAGE => 'Log out first',
+    // Custom
+    Tomchochola\Laratchi\Http\Middleware\AuthShouldUseMiddleware::ERROR_MESSAGE => 'Unsupported guard',
+    Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException::ERROR_MESSAGE => 'Loug out first',
+    Tomchochola\Laratchi\Http\Middleware\MustBeStatefulMiddleware::ERROR_MESSAGE => 'Must be stateful',
+    Tomchochola\Laratchi\Http\Middleware\MustBeStatelessMiddleware::ERROR_MESSAGE => 'Must be stateless',
+    Tomchochola\Laratchi\Http\Middleware\SetPreferredLanguageMiddleware::ERROR_MESSAGE => 'Unsupported language',
+    Tomchochola\Laratchi\Http\Middleware\ValidateAcceptHeaderMiddleware::ERROR_MESSAGE => 'Unsupported response format',
+    Tomchochola\Laratchi\Http\Middleware\ValidateContentTypeHeaderMiddleware::ERROR_MESSAGE => 'Unsupported request format',
 ];

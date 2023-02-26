@@ -216,12 +216,12 @@ return [
     // Fallback
     Handler::ERROR_MESSAGE_UNEXPECTED_ERROR => 'Ups, něco se pokazilo',
 
-    // 400
-    Tomchochola\Laratchi\Http\Middleware\MustBeStatefulMiddleware::ERROR_MESSAGE => 'Požadavek musí podporovat cookies',
-
-    // 400
-    Tomchochola\Laratchi\Http\Middleware\MustBeStatelessMiddleware::ERROR_MESSAGE => 'Požadavek musí být bezestavový',
-
-    // 427
+    // Custom
+    Tomchochola\Laratchi\Http\Middleware\AuthShouldUseMiddleware::ERROR_MESSAGE => 'Nepodporovaný guard',
     Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException::ERROR_MESSAGE => 'Musíte se nejdříve odhlásit',
+    Tomchochola\Laratchi\Http\Middleware\MustBeStatefulMiddleware::ERROR_MESSAGE => 'Požadavek musí podporovat cookies',
+    Tomchochola\Laratchi\Http\Middleware\MustBeStatelessMiddleware::ERROR_MESSAGE => 'Požadavek musí být bezestavový',
+    Tomchochola\Laratchi\Http\Middleware\SetPreferredLanguageMiddleware::ERROR_MESSAGE => 'Nepodporovaný jazyk',
+    Tomchochola\Laratchi\Http\Middleware\ValidateAcceptHeaderMiddleware::ERROR_MESSAGE => 'Nepodporovaný formát odpovědi',
+    Tomchochola\Laratchi\Http\Middleware\ValidateContentTypeHeaderMiddleware::ERROR_MESSAGE => 'Nepodporovaný formát požadavku',
 ];
