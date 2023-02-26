@@ -12,6 +12,16 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class ValidateAcceptHeaderMiddleware
 {
     /**
+     * Header name.
+     */
+    final public const HEADER_NAME = 'Accept';
+
+    /**
+     * HTTP Exception message.
+     */
+    final public const ERROR_MESSAGE = 'Accept Header Invalid';
+
+    /**
      * HTTP Exception status.
      */
     final public const ERROR_STATUS = SymfonyResponse::HTTP_NOT_ACCEPTABLE;
@@ -25,8 +35,12 @@ class ValidateAcceptHeaderMiddleware
     {
         \assert(\count($accepts) > 0);
 
+        if (! $request->hasHeader(static::HEADER_NAME)) {
+            return $next($request);
+        }
+
         if (! $request->accepts($accepts)) {
-            throw new HttpException(static::ERROR_STATUS);
+            throw new HttpException(static::ERROR_STATUS, static::ERROR_MESSAGE);
         }
 
         return $next($request);

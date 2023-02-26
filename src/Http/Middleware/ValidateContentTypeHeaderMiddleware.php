@@ -12,6 +12,16 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class ValidateContentTypeHeaderMiddleware
 {
     /**
+     * Header name.
+     */
+    final public const HEADER_NAME = 'Content-Type';
+
+    /**
+     * HTTP Exception message.
+     */
+    final public const ERROR_MESSAGE = 'Content-Type Header Invalid';
+
+    /**
      * HTTP Exception status.
      */
     final public const ERROR_STATUS = SymfonyResponse::HTTP_UNSUPPORTED_MEDIA_TYPE;
@@ -32,7 +42,7 @@ class ValidateContentTypeHeaderMiddleware
         $contentType = $request->getContentTypeFormat();
 
         if (! \in_array($contentType, $contentTypes, true)) {
-            throw new HttpException(static::ERROR_STATUS);
+            throw new HttpException(static::ERROR_STATUS, static::ERROR_MESSAGE);
         }
 
         return $next($request);

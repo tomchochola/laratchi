@@ -6,13 +6,10 @@ namespace Tomchochola\Laratchi\Exceptions;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\RecordsNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as IlluminateHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Routing\Exceptions\BackedEnumCaseNotFoundException;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
@@ -68,12 +65,9 @@ class Handler extends IlluminateHandler
         }
 
         return match (true) {
-            $exception instanceof BackedEnumCaseNotFoundException => new HttpException(404, SymfonyResponse::$statusTexts[404], $exception, $headers, $code),
-            $exception instanceof ModelNotFoundException => new HttpException(404, SymfonyResponse::$statusTexts[404], $exception, $headers, $code),
             $exception instanceof AuthorizationException => new HttpException($exception->status() ?? 403, $exception->getMessage(), $exception, $headers, $code),
             $exception instanceof TokenMismatchException => new HttpException(419, 'Csrf Token Mismatch', $exception, $headers, $code),
             $exception instanceof SuspiciousOperationException => new HttpException(404, 'Bad Hostname Provided', $exception, $headers, $code),
-            $exception instanceof RecordsNotFoundException => new HttpException(404, SymfonyResponse::$statusTexts[404], $exception, $headers, $code),
             default => new HttpException($status, $message, $exception, $headers, $code),
         };
     }

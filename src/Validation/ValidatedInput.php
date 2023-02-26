@@ -9,7 +9,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
 use LogicException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ValidatedInput extends IlluminateValidatedInput
 {
@@ -37,7 +36,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value);
 
         if ($value === false) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not string or null"));
+            throw new LogicException("[{$key}] is not string or null");
         }
 
         return $value;
@@ -51,7 +50,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->string($key, $default);
 
         if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not string"));
+            throw new LogicException("[{$key}] is not string");
         }
 
         return $value;
@@ -71,7 +70,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
 
         if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not bool or null"));
+            throw new LogicException("[{$key}] is not bool or null");
         }
 
         return $value;
@@ -85,7 +84,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->bool($key, $default);
 
         if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not bool"));
+            throw new LogicException("[{$key}] is not bool");
         }
 
         return $value;
@@ -105,7 +104,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
         if ($value === false) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not int or null"));
+            throw new LogicException("[{$key}] is not int or null");
         }
 
         return $value;
@@ -119,7 +118,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->int($key, $default);
 
         if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not int"));
+            throw new LogicException("[{$key}] is not int");
         }
 
         return $value;
@@ -139,7 +138,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
         if ($value === false) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not float or null"));
+            throw new LogicException("[{$key}] is not float or null");
         }
 
         return $value;
@@ -153,7 +152,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->float($key, $default);
 
         if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not float"));
+            throw new LogicException("[{$key}] is not float");
         }
 
         return $value;
@@ -170,7 +169,7 @@ class ValidatedInput extends IlluminateValidatedInput
             return $value;
         }
 
-        throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not file or null"));
+        throw new LogicException("[{$key}] is not file or null");
     }
 
     /**
@@ -181,7 +180,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->file($key, $default);
 
         if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not file"));
+            throw new LogicException("[{$key}] is not file");
         }
 
         return $value;
@@ -202,7 +201,7 @@ class ValidatedInput extends IlluminateValidatedInput
             return $value;
         }
 
-        throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not array or null"));
+        throw new LogicException("[{$key}] is not array or null");
     }
 
     /**
@@ -217,7 +216,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->array($key, $default);
 
         if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not array"));
+            throw new LogicException("[{$key}] is not array");
         }
 
         return $value;
@@ -237,7 +236,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value);
 
         if ($value === false || $value === '') {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not date or null"));
+            throw new LogicException("[{$key}] is not date or null");
         }
 
         if ($format === null) {
@@ -247,7 +246,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = resolveDate()->createFromFormat($format, $value, $tz);
 
         if ($value === false) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not date or null"));
+            throw new LogicException("[{$key}] is not date or null");
         }
 
         return $value;
@@ -261,7 +260,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->date($key, $default, $format, $tz);
 
         if ($value === null) {
-            throw new HttpException(422, 'The Given Data Was Invalid', new LogicException("[{$key}] is not date"));
+            throw new LogicException("[{$key}] is not date");
         }
 
         return $value;
