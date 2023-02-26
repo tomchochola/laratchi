@@ -6,6 +6,9 @@ namespace {{ namespace }};
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes as CastsAttributesContract;
 
+/**
+ * @implements CastsAttributesContract<mixed, mixed>
+ */
 class {{ class }} implements CastsAttributesContract
 {
     /**
