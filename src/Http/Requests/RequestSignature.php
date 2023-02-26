@@ -113,9 +113,7 @@ class RequestSignature implements Stringable
      */
     public function query(): static
     {
-        $query = resolveRequest()->query();
-
-        \assert(\is_array($query));
+        $query = resolveRequest()->query->all();
 
         \ksort($query);
 

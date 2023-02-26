@@ -32,7 +32,7 @@ class SignedRequest extends SecureFormRequest
     public function rules(): array
     {
         return [
-            'signature' => Validity::make()->nullable()->filled()->varchar(static::$signatureMaxLength),
+            'signature' => Validity::make()->required()->varchar(static::$signatureMaxLength),
             'expires' => Validity::make()->nullable()->filled()->unsigned(),
         ];
     }

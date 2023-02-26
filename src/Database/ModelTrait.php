@@ -38,15 +38,7 @@ trait ModelTrait
      */
     public static function getKeyColumn(): string
     {
-        return (new static())->getQualifiedKeyName();
-    }
-
-    /**
-     * Get qualified route key column name.
-     */
-    public static function getRouteKeyColumn(): string
-    {
-        return (new static())->getQualifiedRouteKeyName();
+        return static::getQualifiedKey();
     }
 
     /**
@@ -55,6 +47,14 @@ trait ModelTrait
     public static function getQualifiedRouteKey(): string
     {
         return (new static())->getQualifiedRouteKeyName();
+    }
+
+    /**
+     * Get qualified route key column name.
+     */
+    public static function getRouteKeyColumn(): string
+    {
+        return static::getQualifiedRouteKey();
     }
 
     /**
@@ -145,7 +145,7 @@ trait ModelTrait
      * @param array<mixed> $attributes
      * @param (Closure(static): void)|null $closure
      */
-    public static function mustCreate(array $attributes, ?Closure $closure = null): static
+    public static function create(array $attributes, ?Closure $closure = null): static
     {
         $model = new static($attributes);
 
@@ -159,12 +159,23 @@ trait ModelTrait
     }
 
     /**
+     * Create new model.
+     *
+     * @param array<mixed> $attributes
+     * @param (Closure(static): void)|null $closure
+     */
+    public static function mustCreate(array $attributes, ?Closure $closure = null): static
+    {
+        return static::create($attributes, $closure);
+    }
+
+    /**
      * Make new model.
      *
      * @param array<mixed> $attributes
      * @param (Closure(static): void)|null $closure
      */
-    public static function mustMake(array $attributes, ?Closure $closure = null): static
+    public static function make(array $attributes, ?Closure $closure = null): static
     {
         $model = new static($attributes);
 
@@ -173,6 +184,17 @@ trait ModelTrait
         }
 
         return $model;
+    }
+
+    /**
+     * Make new model.
+     *
+     * @param array<mixed> $attributes
+     * @param (Closure(static): void)|null $closure
+     */
+    public static function mustMake(array $attributes, ?Closure $closure = null): static
+    {
+        return static::mustMake($attributes, $closure);
     }
 
     /**
@@ -223,6 +245,26 @@ trait ModelTrait
     public static function scopeRouteKeys(Builder $builder, array $slugs): void
     {
         $builder->getQuery()->whereIn(static::getRouteKeyColumn(), $slugs);
+    }
+
+    /**
+     * Get qualified column.
+     */
+    public static function getQualifiedColumn(string $column): string
+    {
+        return (new static())->qualifyColumn($column);
+    }
+
+    /**
+     * Get qualified columns.
+     *
+     * @param array<int, string> $columns
+     *
+     * @return array<int, string>
+     */
+    public static function getQualifiedColumns(array $columns): array
+    {
+        return (new static())->qualifyColumns($columns);
     }
 
     /**

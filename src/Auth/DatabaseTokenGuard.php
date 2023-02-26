@@ -230,17 +230,13 @@ class DatabaseTokenGuard implements GuardContract
         $bearer = $request->bearerToken();
 
         if ($bearer === null) {
-            $bearer = $request->cookie($this->cookieName());
+            $bearer = $request->cookies->get($this->cookieName());
         }
 
-        if (\is_array($bearer)) {
-            $bearer = \end($bearer);
+        if (\is_string($bearer)) {
+            return $bearer;
         }
 
-        if (blank($bearer)) {
-            return null;
-        }
-
-        return $bearer;
+        return null;
     }
 }

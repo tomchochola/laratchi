@@ -29,11 +29,6 @@ class FormRequest extends IlluminateFormRequest
     protected ?AllInput $allInput = null;
 
     /**
-     * Query parameters cache.
-     */
-    protected ?AllInput $queryParameters = null;
-
-    /**
      * Route parameters cache.
      */
     protected ?AllInput $routeParameters = null;
@@ -47,11 +42,7 @@ class FormRequest extends IlluminateFormRequest
             return $this->validatedInput;
         }
 
-        $data = $this->validated();
-
-        \assert(\is_array($data));
-
-        return $this->validatedInput = new ValidatedInput($data);
+        return $this->validatedInput = new ValidatedInput($this->validator->validated());
     }
 
     /**
@@ -64,22 +55,6 @@ class FormRequest extends IlluminateFormRequest
         }
 
         return $this->allInput = new AllInput($this->all());
-    }
-
-    /**
-     * Get query parameters.
-     */
-    public function queryParameters(): AllInput
-    {
-        if ($this->queryParameters !== null) {
-            return $this->queryParameters;
-        }
-
-        $data = $this->query();
-
-        \assert(\is_array($data));
-
-        return $this->queryParameters = new AllInput($data);
     }
 
     /**
@@ -266,7 +241,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve string from request.
+     * Retrieve nullable string from request.
      */
     public function fastString(string $key, ?string $default = null): ?string
     {
@@ -274,7 +249,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve int from request.
+     * Retrieve nullable int from request.
      */
     public function fastInteger(string $key, ?int $default = null): ?int
     {
@@ -282,7 +257,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve float from request.
+     * Retrieve nullable float from request.
      */
     public function fastFloat(string $key, ?float $default = null): ?float
     {
@@ -290,7 +265,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve boolean from request.
+     * Retrieve nullable boolean from request.
      */
     public function fastBoolean(string $key, ?bool $default = null): ?bool
     {
@@ -298,7 +273,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve date from request.
+     * Retrieve nullable date from request.
      */
     public function fastDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): ?Carbon
     {
@@ -306,7 +281,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve file from request.
+     * Retrievenullable  file from request.
      */
     public function fastFile(string $key, ?UploadedFile $default = null): ?UploadedFile
     {
