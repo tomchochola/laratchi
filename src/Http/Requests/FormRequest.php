@@ -76,9 +76,9 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Slug getter.
      */
-    public function slug(string $key = 'slug', ?string $default = null): string
+    public function slug(): string
     {
-        return $this->routeParameters()->mustString($key, $default);
+        return $this->routeParameters()->mustString('slug');
     }
 
     /**
