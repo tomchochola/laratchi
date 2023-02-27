@@ -1321,3 +1321,17 @@ if (! \function_exists('assertNever')) {
         throw new LogicException('assert never');
     }
 }
+
+if (! \function_exists('assertNeverClosure')) {
+    /**
+     * Assert never closure.
+     *
+     * @return Closure(): never
+     */
+    function assertNeverClosure(): Closure
+    {
+        return static function (): never {
+            throw new LogicException('assert never');
+        };
+    }
+}
