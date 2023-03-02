@@ -19,7 +19,7 @@ class {{ class }} extends TransactionController
     {
         $this->validateUnique($request);
 
-        $model = {{ model }}::create($request->validatedInput()->only(['title']));
+        $request->resolve{{ model }}()->update($request->validatedInput()->only(['title']));
 
         return resolveResponseFactory()->noContent();
     }
