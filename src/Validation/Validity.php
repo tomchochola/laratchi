@@ -1857,7 +1857,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule('required_unless', [$field, $values]);
+        return $this->addRule('required_unless', [$field, ...$values]);
     }
 
     /**
