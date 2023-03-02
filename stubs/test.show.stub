@@ -1,0 +1,60 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use {{ namespacedShowController }};
+use {{ namespacedValidity }};
+use {{ namespacedModel }};
+use {{ namespacedUserModel }};
+use {{ namespacedFactory }};
+use {{ namespacedUserModelFactory }};
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+use Tomchochola\Laratchi\Testing\JsonApiValidator;
+
+class {{ class }} extends TestCase
+{
+    use RefreshDatabase;
+
+    /**
+     * @dataProvider localeDataProvider
+     */
+    public function test_fetch_{{ table }}_show(string $locale): void
+    {
+        $this->locale($locale);
+
+        $me = {{ userModelFactory }}::new()->createOne();
+
+        \assert($me instanceof {{ userModel }});
+
+        $model = {{ factory }}::new()->createOne();
+
+        \assert($model instanceof {{ model }});
+
+        $query = [
+            'slug' => $model->getRouteKey(),
+        ];
+
+        $response = $this->be($me, 'users')->get(resolveUrlFactory()->action({{ showController }}::class, $query));
+
+        $response->assertOk();
+
+        $this->validateJsonApiResponse($response, $this->jsonApiValidator{{ model }}Show(), []);
+    }
+
+    /**
+     * {{ model }} show json api validator.
+     */
+    protected function jsonApiValidator{{ model }}Show(): JsonApiValidator
+    {
+        $validity = new {{ validity }}();
+
+        return $this->jsonApiValidator('{{ table }}', [
+            'title' => $validity->title()->required(),
+            'created_at' => $validity->createdAt()->required(),
+            'updated_at' => $validity->updatedAt()->required(),
+        ]);
+    }
+}

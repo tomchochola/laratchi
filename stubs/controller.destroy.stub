@@ -1,0 +1,22 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use {{ namespacedDestroyRequest }};
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Routing\TransactionController;
+
+class {{ class }} extends TransactionController
+{
+    /**
+     * Handle the incoming request.
+     */
+    public function __invoke({{ destroyRequest }} $request): SymfonyResponse
+    {
+        $request->resolve{{ model }}()->delete();
+
+        return resolveResponseFactory()->noContent();
+    }
+}

@@ -27,8 +27,6 @@ class {{ class }} extends ModelJsonApiResource
     {
         return [
             'title' => $this->resource->getTitle(),
-            'created_at' => $this->resource->getCreatedAt(),
-            'updated_at' => $this->resource->getUpdatedAt(),
         ];
     }
 

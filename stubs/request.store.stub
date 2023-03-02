@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use Illuminate\Auth\Access\Response;
+use {{ namespacedValidity }};
 use {{ namespacedUserModel }};
+use Illuminate\Auth\Access\Response;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
 class {{ class }} extends SecureFormRequest
@@ -13,9 +14,9 @@ class {{ class }} extends SecureFormRequest
     /**
      * Resolve me.
      */
-    public function resolveMe(): {{ namespacedUserModel }}
+    public function resolveMe(): {{ userModel }}
     {
-        return once(static fn (): {{ namespacedUserModel }} => {{ namespacedUserModel }}::mustResolve());
+        return once(static fn (): {{ userModel }} => {{ userModel }}::mustResolve());
     }
 
     /**
@@ -33,6 +34,10 @@ class {{ class }} extends SecureFormRequest
      */
     public function rules(): array
     {
-        return [];
+        $validity = new {{ validity }}();
+
+        return [
+            'title' => $validity->title()->required(),
+        ];
     }
 }

@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Tomchochola\Laratchi\Validation\Validity;
+
+class {{ class }}
+{
+    /**
+     * Id validation rules.
+     */
+    public function id(): Validity
+    {
+        return Validity::make()->positive();
+    }
+
+    /**
+     * Slug validation rules.
+     */
+    public function slug(): Validity
+    {
+        return Validity::make()->varchar();
+    }
+
+    /**
+     * Title validation rules.
+     */
+    public function title(): Validity
+    {
+        return Validity::make()->varchar();
+    }
+
+    /**
+     * Created at validation rules.
+     */
+    public function createdAt(): Validity
+    {
+        return Validity::make()->varchar()->date();
+    }
+
+    /**
+     * Updated at validation rules.
+     */
+    public function updatedAt(): Validity
+    {
+        return Validity::make()->varchar()->date();
+    }
+}

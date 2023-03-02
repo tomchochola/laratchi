@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use {{ namespacedShowRequest }};
+use {{ namespacedShowResource }};
+use {{ namespacedModel }};
+use Illuminate\Database\Eloquent\Builder;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Routing\Controller;
+
+class {{ class }} extends Controller
+{
+    /**
+     * Handle the incoming request.
+     */
+    public function __invoke({{ showRequest }} $request): SymfonyResponse
+    {
+        $data = {{ model }}::clean($request->resolve{{ model }}(), function (Builder $builder) use ($request): void {
+            $this->select($builder, $request);
+        });
+
+        return (new {{ showResource }}($data))->toResponse($request);
+    }
+
+    /**
+     * Modify select query.
+     */
+    protected function select(Builder $builder, {{ showRequest }} $request): void
+    {
+        $builder->getQuery()->select($builder->qualifyColumns(['id', 'title', 'created_at', 'updated_at']));
+    }
+}

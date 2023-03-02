@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use {{ namespacedStoreController }};
+use {{ namespacedModel }};
+use {{ namespacedUserModel }};
+use {{ namespacedFactory }};
+use {{ namespacedUserModelFactory }};
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class {{ class }} extends TestCase
+{
+    use RefreshDatabase;
+
+    /**
+     * @dataProvider localeDataProvider
+     */
+    public function test_store_{{ table }}(string $locale): void
+    {
+        $this->locale($locale);
+
+        $me = {{ userModelFactory }}::new()->createOne();
+
+        \assert($me instanceof {{ userModel }});
+
+        $model = {{ factory }}::new()->makeOne();
+
+        \assert($model instanceof {{ model }});
+
+        $query = [];
+        $data = [
+            'title' => $model->getTitle(),
+        ];
+
+        $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
+
+        $response->assertCreated();
+
+        $this->validateJsonApiResponse($response, $this->jsonApiValidator('{{ table }}'), []);
+    }
+
+    /**
+     * @dataProvider localeDataProvider
+     */
+    public function test_store_{{ table }}_unique_title(string $locale): void
+    {
+        $this->locale($locale);
+
+        $me = {{ userModelFactory }}::new()->createOne();
+
+        \assert($me instanceof {{ userModel }});
+
+        $model = {{ factory }}::new()->createOne();
+
+        \assert($model instanceof {{ model }});
+
+        $query = [];
+        $data = [
+            'title' => $model->getTitle(),
+        ];
+
+        $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
+
+        $response->assertStatus(422);
+
+        $this->validateJsonApiValidationError($response, ['title']);
+    }
+}

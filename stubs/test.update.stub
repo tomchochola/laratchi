@@ -1,0 +1,100 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use {{ namespacedUpdateController }};
+use {{ namespacedModel }};
+use {{ namespacedUserModel }};
+use {{ namespacedFactory }};
+use {{ namespacedUserModelFactory }};
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class {{ class }} extends TestCase
+{
+    use RefreshDatabase;
+
+    /**
+     * @dataProvider localeDataProvider
+     */
+    public function test_update_{{ table }}(string $locale): void
+    {
+        $this->locale($locale);
+
+        $me = {{ userModelFactory }}::new()->createOne();
+
+        \assert($me instanceof {{ userModel }});
+
+        $model = {{ factory }}::new()->createOne();
+        $newModel = {{ factory }}::new()->makeOne();
+
+        \assert($model instanceof {{ model }} && $newModel instanceof {{ model }});
+
+        $query = [];
+        $data = [
+            'id' => $model->getKey(),
+            'title' => $newModel->getTitle(),
+        ];
+
+        $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ updateController }}::class, $query), $data);
+
+        $response->assertNoContent();
+    }
+
+    /**
+     * @dataProvider localeDataProvider
+     */
+    public function test_update_{{ table }}_same_unique_title(string $locale): void
+    {
+        $this->locale($locale);
+
+        $me = {{ userModelFactory }}::new()->createOne();
+
+        \assert($me instanceof {{ userModel }});
+
+        $model = {{ factory }}::new()->createOne();
+
+        \assert($model instanceof {{ model }});
+
+        $query = [];
+        $data = [
+            'id' => $model->getKey(),
+            'title' => $model->getTitle(),
+        ];
+
+        $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ updateController }}::class, $query), $data);
+
+        $response->assertNoContent();
+    }
+
+    /**
+     * @dataProvider localeDataProvider
+     */
+    public function test_update_{{ table }}_unique_title(string $locale): void
+    {
+        $this->locale($locale);
+
+        $me = {{ userModelFactory }}::new()->createOne();
+
+        \assert($me instanceof {{ userModel }});
+
+        $model = {{ factory }}::new()->createOne();
+        $newModel = {{ factory }}::new()->createOne();
+
+        \assert($model instanceof {{ model }} && $newModel instanceof {{ model }});
+
+        $query = [];
+        $data = [
+            'id' => $model->getKey(),
+            'title' => $newModel->getTitle(),
+        ];
+
+        $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ updateController }}::class, $query), $data);
+
+        $response->assertStatus(422);
+
+        $this->validateJsonApiValidationError($response, ['title']);
+    }
+}

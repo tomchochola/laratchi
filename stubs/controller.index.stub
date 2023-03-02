@@ -1,0 +1,86 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use {{ namespacedIndexRequest }};
+use {{ namespacedIndexResource }};
+use {{ namespacedSelectResource }};
+use {{ namespacedModel }};
+use Illuminate\Database\Eloquent\Builder;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Http\Resources\JsonApiCollectionResponse;
+use Tomchochola\Laratchi\Routing\Controller;
+
+class {{ class }} extends Controller
+{
+    /**
+     * Handle the incoming request.
+     */
+    public function __invoke({{ indexRequest }} $request): SymfonyResponse
+    {
+        $data = {{ model }}::query()->tap(function (Builder $builder) use ($request): void {
+            $this->select($builder, $request);
+            $this->filterId($builder, $request);
+            $this->sort($builder, $request);
+            $this->take($builder, $request);
+        })->get();
+
+        return (new JsonApiCollectionResponse($data, $request->validatedInput()->mustBool('select', false) ? {{ selectResource }}::class : {{ indexResource }}::class))->toResponse($request);
+    }
+
+    /**
+     * Sort query.
+     */
+    protected function sort(Builder $builder, {{ indexRequest }} $request): void
+    {
+        $sorts = $request->validatedInput()->mustArray('sort', []);
+
+        if (! \in_array('id', $sorts, true) && ! \in_array('-id', $sorts, true)) {
+            $sorts[] = '-id';
+        }
+
+        foreach ($sorts as $sort) {
+            match ($sort) {
+                '-created_at', '-updated_at', '-id', '-title' => $builder->getQuery()->orderByDesc($builder->qualifyColumn(\mb_substr($sort, 1))),
+                'created_at', 'updated_at', 'id', 'title' => $builder->getQuery()->orderByDesc($builder->qualifyColumn($sort)),
+                default => assertNever(),
+            };
+        }
+    }
+
+    /**
+     * Filter by id.
+     */
+    protected function filterId(Builder $builder, {{ indexRequest }} $request): void
+    {
+        $filter = $request->validatedInput()->array('filter.id');
+
+        if ($filter === null) {
+            return;
+        }
+
+        {{ model }}::scopeKeys($builder, $filter);
+    }
+
+    /**
+     * Modify select query.
+     */
+    protected function select(Builder $builder, {{ indexRequest }} $request): void
+    {
+        if ($request->validatedInput()->mustBool('select', false)) {
+            $builder->getQuery()->select($builder->qualifyColumns(['id', 'title']));
+        } else {
+            $builder->getQuery()->select($builder->qualifyColumns(['id', 'title', 'created_at', 'updated_at']));
+        }
+    }
+
+    /**
+     * Limit count.
+     */
+    protected function take(Builder $builder, {{ indexRequest }} $request): void
+    {
+        $builder->getQuery()->take($request->validatedInput()->mustInt('take', {{ indexRequest }}::TAKE_MAX));
+    }
+}

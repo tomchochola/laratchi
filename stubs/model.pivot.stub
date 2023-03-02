@@ -8,4 +8,81 @@ use Tomchochola\Laratchi\Database\Pivot;
 
 class {{ class }} extends Pivot
 {
+    /**
+     * @inheritDoc
+     *
+     * @var array<mixed>
+     */
+    protected $casts = [
+        'first_id' => 'integer',
+        'second_id' => 'integer',
+    ];
+
+    /**
+     * First relationship.
+     */
+    public function first(): BelongsTo
+    {
+        return $this->belongsTo(First::class);
+    }
+
+    /**
+     * First id getter.
+     */
+    public function getFirstId(): int
+    {
+        return $this->mustInt('first_id');
+    }
+
+    /**
+     * First getter.
+     */
+    public function getFirst(): First
+    {
+        return $this->mustRelation('first', First::class);
+    }
+
+    /**
+     * Second relationship.
+     */
+    public function second(): BelongsTo
+    {
+        return $this->belongsTo(Second::class);
+    }
+
+    /**
+     * Second id getter.
+     */
+    public function getSecondId(): int
+    {
+        return $this->mustInt('second_id');
+    }
+
+    /**
+     * Second getter.
+     */
+    public function getSecond(): Second
+    {
+        return $this->mustRelation('second', Second::class);
+    }
+
+    /**
+     * First scope.
+     *
+     * @param array<int, int> $ids
+     */
+    public static function scopeFirst(Builder $builder, array $ids): void
+    {
+        $builder->getQuery()->whereIn($builder->qualifyColumn('first_id'), $ids);
+    }
+
+    /**
+     * Second scope.
+     *
+     * @param array<int, int> $ids
+     */
+    public static function scopeSecond(Builder $builder, array $ids): void
+    {
+        $builder->getQuery()->whereIn($builder->qualifyColumn('second_id'), $ids);
+    }
 }

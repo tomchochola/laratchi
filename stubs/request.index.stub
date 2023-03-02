@@ -1,0 +1,63 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use {{ namespacedValidity }};
+use {{ namespacedUserModel }};
+use Illuminate\Auth\Access\Response;
+use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
+use Tomchochola\Laratchi\Validation\Validity;
+
+class {{ class }} extends SecureFormRequest
+{
+    public const TAKE_MAX = 100;
+
+    public const SORTS = [
+        '-created_at',
+        '-updated_at',
+        '-id',
+        '-title',
+        'created_at',
+        'updated_at',
+        'id',
+        'title',
+    ];
+
+    /**
+     * Resolve me.
+     */
+    public function resolveMe(): {{ userModel }}
+    {
+        return once(static fn (): {{ userModel }} => {{ userModel }}::mustResolve());
+    }
+
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): Response|bool
+    {
+        $this->resolveMe();
+
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rules(): array
+    {
+        $validity = new {{ validity }}();
+
+        return [
+            'filter' => Validity::make()->object()->nullable()->filled(),
+            'filter.id' => Validity::make()->collection(static::TAKE_MAX)->nullable()->filled(),
+            'filter.id.*' => $validity->id()->nullable()->filled(),
+            'take' => Validity::make()->positive(1, static::TAKE_MAX)->nullable()->filled(),
+            'select' => Validity::make()->boolean()->nullable()->filled(),
+            'sort' => Validity::make()->collection(\count(static::SORTS))->nullable()->filled(),
+            'sort.*' => Validity::make()->string()->in(static::SORTS)->distinct()->nullable()->filled(),
+        ];
+    }
+}

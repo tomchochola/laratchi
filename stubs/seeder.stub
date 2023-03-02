@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use {{ namespacedModel }};
+use {{ namespacedFactory }};
 
 class {{ class }} extends Seeder
 {
@@ -18,10 +19,10 @@ class {{ class }} extends Seeder
             return;
         }
 
-        if (Model::query()->getQuery()->exists()) {
+        if ({{ model }}::query()->getQuery()->exists()) {
             return;
         }
 
-        ModelFactory::new()->count(100)->create();
+        {{ factory }}::new()->count(10)->create();
     }
 }

@@ -17,18 +17,18 @@ class {{ class }} extends Model
     protected $casts = [];
 
     /**
-     * Modify index query.
+     * Modify embed query.
      */
-    public static function queryIndex(Builder $builder): void
+    public static function queryEmbed(Builder $builder): void
     {
-        $builder->getQuery()->select($builder->qualifyColumns(['*']));
+        $builder->getQuery()->select($builder->qualifyColumns(['id', 'title']));
     }
 
     /**
-     * Modify detail query.
+     * Title getter.
      */
-    public static function queryDetail(Builder $builder): void
+    public function getTitle(): string
     {
-        $builder->getQuery()->select($builder->qualifyColumns(['*']));
+        return $this->mustString('title');
     }
 }
