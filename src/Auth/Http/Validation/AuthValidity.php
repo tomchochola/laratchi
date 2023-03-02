@@ -80,6 +80,14 @@ class AuthValidity
     }
 
     /**
+     * Slug validation rules.
+     */
+    public function slug(string $guardName): Validity
+    {
+        return Validity::make()->varchar();
+    }
+
+    /**
      * E-mail verified at validation rules.
      */
     public function emailVerifiedAt(string $guardName): Validity
