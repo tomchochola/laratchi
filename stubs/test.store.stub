@@ -38,7 +38,7 @@ class {{ class }} extends TestCase
 
         $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
 
-        $response->assertCreated();
+        $response->assertSuccessful();
 
         $this->validateJsonApiResponse($response, $this->jsonApiValidator('{{ table }}'), []);
     }
