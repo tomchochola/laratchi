@@ -258,16 +258,16 @@ class SecureValidator extends Validator
     public function getDisplayableValue(mixed $attribute, mixed $value): string
     {
         if (\is_bool($value)) {
-            return $value ? 'true' : 'false';
+            return $value ? '{{ true }}' : '{{ false }}';
         }
 
-        if ($value === null) {
-            return 'null';
+        if (blank($value)) {
+            return '{{ null }}';
         }
 
         \assert(\is_scalar($value));
 
-        return (string) $value;
+        return "{{ {$value} }}";
     }
 
     /**
@@ -376,5 +376,157 @@ class SecureValidator extends Validator
         }
 
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceProhibitedWith(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        return \str_replace(':values', \implode(',', $this->getAttributeList($parameters)), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceMissingWith(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        return \str_replace(':values', \implode(',', $this->getAttributeList($parameters)), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceIn(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        foreach ($parameters as &$parameter) {
+            $parameter = $this->getDisplayableValue($attribute, $parameter);
+        }
+
+        return \str_replace(':values', \implode(',', $parameters), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceRequiredArrayKeys(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        foreach ($parameters as &$parameter) {
+            $parameter = $this->getDisplayableValue($attribute, $parameter);
+        }
+
+        return \str_replace(':values', \implode(',', $parameters), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceMimetypes(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        return \str_replace(':values', \implode(',', $parameters), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceMimes(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        return \str_replace(':values', \implode(',', $parameters), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceRequiredWith(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        return \str_replace(':values', \implode(',', $this->getAttributeList($parameters)), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceRequiredUnless(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        $other = $this->getDisplayableAttribute($parameters[0]);
+
+        $values = [];
+
+        foreach (\array_slice($parameters, 1) as $value) {
+            $values[] = $this->getDisplayableValue($parameters[0], $value);
+        }
+
+        return \str_replace([':other', ':values'], [$other, \implode(',', $values)], $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceProhibitedUnless(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        $other = $this->getDisplayableAttribute($parameters[0]);
+
+        $values = [];
+
+        foreach (\array_slice($parameters, 1) as $value) {
+            $values[] = $this->getDisplayableValue($parameters[0], $value);
+        }
+
+        return \str_replace([':other', ':values'], [$other, \implode(',', $values)], $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceProhibits(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        return \str_replace(':other', \implode(',', $this->getAttributeList($parameters)), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceEndsWith(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        foreach ($parameters as &$parameter) {
+            $parameter = $this->getDisplayableValue($attribute, $parameter);
+        }
+
+        return \str_replace(':values', \implode(',', $parameters), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceDoesntEndWith(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        foreach ($parameters as &$parameter) {
+            $parameter = $this->getDisplayableValue($attribute, $parameter);
+        }
+
+        return \str_replace(':values', \implode(',', $parameters), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceStartsWith(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        foreach ($parameters as &$parameter) {
+            $parameter = $this->getDisplayableValue($attribute, $parameter);
+        }
+
+        return \str_replace(':values', \implode(',', $parameters), $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function replaceDoesntStartWith(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
+    {
+        foreach ($parameters as &$parameter) {
+            $parameter = $this->getDisplayableValue($attribute, $parameter);
+        }
+
+        return \str_replace(':values', \implode(',', $parameters), $message);
     }
 }
