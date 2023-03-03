@@ -37,8 +37,9 @@ class {{ class }} extends TestCase
         $query = [
             'filter' => [
                 'id' => [$model->getKey()],
+                'search' => $model->getTitle(),
             ],
-            'take' => fake()->numberBetween(1, {{ indexRequest }}::TAKE_MAX),
+            'take' => {{ indexRequest }}::TAKE_MAX,
             'select' => false,
             'sort' => {{ indexRequest }}::SORTS,
         ];
@@ -68,8 +69,9 @@ class {{ class }} extends TestCase
         $query = [
             'filter' => [
                 'id' => [$model->getKey()],
+                'search' => $model->getTitle(),
             ],
-            'take' => fake()->numberBetween(1, {{ indexRequest }}::TAKE_MAX),
+            'take' => {{ indexRequest }}::TAKE_MAX,
             'select' => true,
             'sort' => {{ indexRequest }}::SORTS,
         ];

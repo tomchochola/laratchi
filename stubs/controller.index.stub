@@ -22,6 +22,7 @@ class {{ class }} extends Controller
     {
         $data = {{ model }}::query()->tap(function (Builder $builder) use ($request): void {
             $this->select($builder, $request);
+            $this->filterSearch($builder, $request);
             $this->filterId($builder, $request);
             $this->sort($builder, $request);
             $this->take($builder, $request);
@@ -48,6 +49,20 @@ class {{ class }} extends Controller
                 default => assertNever(),
             };
         }
+    }
+
+    /**
+     * Filter by search.
+     */
+    protected function filterSearch(Builder $builder, {{ indexRequest }} $request): void
+    {
+        $filter = $request->validatedInput()->string('filter.search');
+
+        if ($filter === null) {
+            return;
+        }
+
+        {{ model }}::scopeSearch($builder, $filter);
     }
 
     /**

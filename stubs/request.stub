@@ -13,9 +13,9 @@ class {{ class }} extends SecureFormRequest
     /**
      * Resolve me.
      */
-    public function resolveMe(): {{ namespacedUserModel }}
+    public function resolveMe(): \{{ namespacedUserModel }}
     {
-        return once(static fn (): {{ namespacedUserModel }} => {{ namespacedUserModel }}::mustResolve());
+        return once(static fn (): \{{ namespacedUserModel }} => \{{ namespacedUserModel }}::mustResolve());
     }
 
     /**

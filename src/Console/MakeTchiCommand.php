@@ -70,6 +70,7 @@ class MakeTchiCommand extends GeneratorCommand
         $this->modifyDatabaseSeeder();
         $this->modifyDatabaseSchema();
         $this->modifyRoutes();
+        $this->modifyTestCase();
 
         return true;
     }
@@ -253,19 +254,6 @@ class MakeTchiCommand extends GeneratorCommand
                 'operationId' => "get_{$table}_index",
                 'parameters' => [
                     [
-                        'description' => 'id filter',
-                        'in' => 'query',
-                        'name' => 'filter[id]',
-                        'explode' => false,
-                        'schema' => [
-                            'description' => 'id',
-                            'type' => 'array',
-                            'items' => [
-                                '$ref' => '#/components/schemas/id',
-                            ],
-                        ],
-                    ],
-                    [
                         'description' => 'sort',
                         'in' => 'query',
                         'name' => 'sort',
@@ -281,6 +269,12 @@ class MakeTchiCommand extends GeneratorCommand
                         ],
                     ],
                     [
+                        '$ref' => '#/components/parameters/filterId',
+                    ],
+                    [
+                        '$ref' => '#/components/parameters/filterSearch',
+                    ],
+                    [
                         '$ref' => '#/components/parameters/take',
                     ],
                     [
@@ -289,7 +283,86 @@ class MakeTchiCommand extends GeneratorCommand
                 ],
                 'responses' => [
                     '200' => [
-                        '$ref' => "#/components/responses/{$modelName}Index",
+                        'description' => 'Successful operation',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    'description' => 'response data',
+                                    'type' => 'object',
+                                    'required' => ['data'],
+                                    'properties' => [
+                                        'data' => [
+                                            'description' => 'data',
+                                            'type' => 'array',
+                                            'items' => [
+                                                'oneOf' => [
+                                                    [
+                                                        'allOf' => [
+                                                            [
+                                                                '$ref' => '#/components/schemas/Resource',
+                                                            ],
+                                                            [
+                                                                'description' => "{$modelName} index schema",
+                                                                'type' => 'object',
+                                                                'required' => ['attributes'],
+                                                                'properties' => [
+                                                                    'type' => [
+                                                                        'enum' => [$table],
+                                                                    ],
+                                                                    'attributes' => [
+                                                                        'description' => 'attributes',
+                                                                        'type' => 'object',
+                                                                        'required' => ['title', 'created_at', 'updated_at'],
+                                                                        'properties' => [
+                                                                            'title' => [
+                                                                                '$ref' => '#/components/schemas/string',
+                                                                            ],
+                                                                            'created_at' => [
+                                                                                '$ref' => '#/components/schemas/timestamp',
+                                                                            ],
+                                                                            'updated_at' => [
+                                                                                '$ref' => '#/components/schemas/timestamp',
+                                                                            ],
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                            ],
+                                                        ],
+                                                    ],
+                                                    [
+                                                        'allOf' => [
+                                                            [
+                                                                '$ref' => '#/components/schemas/Resource',
+                                                            ],
+                                                            [
+                                                                'description' => "{$modelName} select schema",
+                                                                'type' => 'object',
+                                                                'required' => ['attributes'],
+                                                                'properties' => [
+                                                                    'type' => [
+                                                                        'enum' => [$table],
+                                                                    ],
+                                                                    'attributes' => [
+                                                                        'description' => 'attributes',
+                                                                        'type' => 'object',
+                                                                        'required' => ['title'],
+                                                                        'properties' => [
+                                                                            'title' => [
+                                                                                '$ref' => '#/components/schemas/string',
+                                                                            ],
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                            ],
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     '401' => [
                         '$ref' => '#/components/responses/4xx',
@@ -314,7 +387,51 @@ class MakeTchiCommand extends GeneratorCommand
                 ],
                 'responses' => [
                     '200' => [
-                        '$ref' => "#/components/responses/{$modelName}Show",
+                        'description' => 'Successful operation',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    'description' => 'response data',
+                                    'type' => 'object',
+                                    'required' => ['data'],
+                                    'properties' => [
+                                        'data' => [
+                                            'allOf' => [
+                                                [
+                                                    '$ref' => '#/components/schemas/Resource',
+                                                ],
+                                                [
+                                                    'description' => "{$modelName} show schema",
+                                                    'type' => 'object',
+                                                    'required' => ['attributes'],
+                                                    'properties' => [
+                                                        'type' => [
+                                                            'enum' => [$table],
+                                                        ],
+                                                        'attributes' => [
+                                                            'description' => 'attributes',
+                                                            'type' => 'object',
+                                                            'required' => ['title', 'created_at', 'updated_at'],
+                                                            'properties' => [
+                                                                'title' => [
+                                                                    '$ref' => '#/components/schemas/string',
+                                                                ],
+                                                                'created_at' => [
+                                                                    '$ref' => '#/components/schemas/timestamp',
+                                                                ],
+                                                                'updated_at' => [
+                                                                    '$ref' => '#/components/schemas/timestamp',
+                                                                ],
+                                                            ],
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     '401' => [
                         '$ref' => '#/components/responses/4xx',
@@ -440,150 +557,19 @@ class MakeTchiCommand extends GeneratorCommand
             ],
         ];
 
-        $json['components']['responses']["{$modelName}Index"] = [
-            'description' => 'Successful operation',
-            'content' => [
-                'application/json' => [
-                    'schema' => [
-                        'description' => 'response data',
-                        'type' => 'object',
-                        'required' => ['data'],
-                        'properties' => [
-                            'data' => [
-                                'description' => 'data',
-                                'type' => 'array',
-                                'items' => [
-                                    'oneOf' => [
-                                        [
-                                            '$ref' => "#/components/schemas/{$modelName}Index",
-                                        ],
-                                        [
-                                            '$ref' => "#/components/schemas/{$modelName}Select",
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        $json['components']['responses']["{$modelName}Show"] = [
-            'description' => 'Successful operation',
-            'content' => [
-                'application/json' => [
-                    'schema' => [
-                        'description' => 'response data',
-                        'type' => 'object',
-                        'required' => ['data'],
-                        'properties' => [
-                            'data' => [
-                                '$ref' => "#/components/schemas/{$modelName}Show",
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        $json['components']['schemas']["{$modelName}Show"] = [
-            'description' => "{$modelName} show schema",
-            'allOf' => [
-                [
-                    '$ref' => '#/components/schemas/Resource',
-                ],
-                [
-                    'type' => 'object',
-                    'required' => ['attributes'],
-                    'properties' => [
-                        'attributes' => [
-                            'description' => 'attributes',
-                            'type' => 'object',
-                            'required' => ['title', 'created_at', 'updated_at'],
-                            'properties' => [
-                                'title' => [
-                                    '$ref' => '#/components/schemas/string',
-                                ],
-                                'created_at' => [
-                                    '$ref' => '#/components/schemas/timestamp',
-                                ],
-                                'updated_at' => [
-                                    '$ref' => '#/components/schemas/timestamp',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        $json['components']['schemas']["{$modelName}Index"] = [
-            'description' => "{$modelName} index schema",
-            'allOf' => [
-                [
-                    '$ref' => '#/components/schemas/Resource',
-                ],
-                [
-                    'type' => 'object',
-                    'required' => ['attributes'],
-                    'properties' => [
-                        'attributes' => [
-                            'description' => 'attributes',
-                            'type' => 'object',
-                            'required' => ['title', 'created_at', 'updated_at'],
-                            'properties' => [
-                                'title' => [
-                                    '$ref' => '#/components/schemas/string',
-                                ],
-                                'created_at' => [
-                                    '$ref' => '#/components/schemas/timestamp',
-                                ],
-                                'updated_at' => [
-                                    '$ref' => '#/components/schemas/timestamp',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
         $json['components']['schemas']["{$modelName}Embed"] = [
-            'description' => "{$modelName} embed schema",
             'allOf' => [
                 [
                     '$ref' => '#/components/schemas/Resource',
                 ],
                 [
+                    'description' => "{$modelName} embed schema",
                     'type' => 'object',
                     'required' => ['attributes'],
                     'properties' => [
-                        'attributes' => [
-                            'description' => 'attributes',
-                            'type' => 'object',
-                            'required' => ['title'],
-                            'properties' => [
-                                'title' => [
-                                    '$ref' => '#/components/schemas/string',
-                                ],
-                            ],
+                        'type' => [
+                            'enum' => [$table],
                         ],
-                    ],
-                ],
-            ],
-        ];
-
-        $json['components']['schemas']["{$modelName}Select"] = [
-            'description' => "{$modelName} select schema",
-            'allOf' => [
-                [
-                    '$ref' => '#/components/schemas/Resource',
-                ],
-                [
-                    'type' => 'object',
-                    'required' => ['attributes'],
-                    'properties' => [
                         'attributes' => [
                             'description' => 'attributes',
                             'type' => 'object',
@@ -670,5 +656,24 @@ class MakeTchiCommand extends GeneratorCommand
         $routes = \str_replace('resolveRouter()->any(', "resolveRouteRegistrar()->prefix('v1/{$table}')->group(static function (): void {\n    resolveRouteRegistrar()->post('store', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreController::class);\n    resolveRouteRegistrar()->get('index', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexController::class);\n    resolveRouteRegistrar()->get('show', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowController::class);\n    resolveRouteRegistrar()->post('update', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateController::class);\n    resolveRouteRegistrar()->post('destroy', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyController::class);\n});\n\nresolveRouter()->any(", $routes);
 
         $this->files->put($path, $routes);
+    }
+
+    /**
+     * Modify test case.
+     */
+    protected function modifyTestCase(): void
+    {
+        $modelName = $this->modelName();
+        $table = $this->tableName();
+        $path = $this->laravel->basePath('tests/TestCase.php');
+
+        $validityName = "{$modelName}Validity";
+        $qualifiedValidityName = "App\\Http\\Validation\\{$validityName}";
+
+        $testCase = $this->files->get($path);
+
+        $testCase = \str_replace("\n}\n", "\n\n    /**\n     * {$modelName} embed json api validator.\n     */\n    protected function embed{$modelName}(): JsonApiValidator\n    {\n        \$validity = new \\{$qualifiedValidityName}();\n\n        return \$this->jsonApiValidator('{$table}', [\n            'title' => \$validity->title()->required(),\n        ]);\n    }\n}\n", $testCase);
+
+        $this->files->put($path, $testCase);
     }
 }

@@ -6,9 +6,13 @@ namespace {{ namespace }};
 
 use Illuminate\Database\Eloquent\Builder;
 use Tomchochola\Laratchi\Database\Model;
+use Laravel\Scout\Searchable;
+use App\Support\ScoutSupport;
 
 class {{ class }} extends Model
 {
+    use Searchable;
+
     /**
      * @inheritDoc
      *
@@ -30,5 +34,25 @@ class {{ class }} extends Model
     public function getTitle(): string
     {
         return $this->mustString('title');
+    }
+
+    /**
+    * @inheritDoc
+    *
+    * @return array<string, string>
+    */
+    public function toSearchableArray(): array
+    {
+        return [
+            'title' => $this->getTitle(),
+        ];
+    }
+
+    /**
+    * Search scope.
+    */
+    public static function scopeSearch(Builder $builder, string $search): void
+    {
+        ScoutSupport::search($builder, static::search($search));
     }
 }

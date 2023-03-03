@@ -53,7 +53,8 @@ class {{ class }} extends SecureFormRequest
         return [
             'filter' => Validity::make()->object()->nullable()->filled(),
             'filter.id' => Validity::make()->collection(static::TAKE_MAX)->nullable()->filled(),
-            'filter.id.*' => $validity->id()->nullable()->filled(),
+            'filter.id.*' => $validity->id()->distinct()->nullable()->filled(),
+            'filter.search' => Validity::make()->varchar()->nullable()->filled(),
             'take' => Validity::make()->positive(1, static::TAKE_MAX)->nullable()->filled(),
             'select' => Validity::make()->boolean()->nullable()->filled(),
             'sort' => Validity::make()->collection(\count(static::SORTS))->nullable()->filled(),
