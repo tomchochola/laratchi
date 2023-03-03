@@ -1349,7 +1349,7 @@ if (! \function_exists('strPutCsv')) {
                 return '"'.\str_replace('"', '""', $value).'"';
             }
 
-            \assert(\is_scalar($value));
+            \assert(\is_scalar($value) || $value === null);
 
             return (string) $value;
         }, $data));
