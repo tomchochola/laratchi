@@ -209,7 +209,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule('accepted');
+        return $this->addRule('accepted')->boolean();
     }
 
     /**
@@ -227,7 +227,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule('accepted_if', [$field, ...$values]);
+        return $this->addRule('accepted_if', [$field, ...$values])->boolean();
     }
 
     /**
@@ -650,7 +650,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule('declined');
+        return $this->addRule('declined')->boolean();
     }
 
     /**
@@ -668,7 +668,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule('declined_if', [$field, ...$values]);
+        return $this->addRule('declined_if', [$field, ...$values])->boolean();
     }
 
     /**
