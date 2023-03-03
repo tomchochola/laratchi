@@ -13,7 +13,7 @@ class {{ class }}
      */
     public function id(): Validity
     {
-        return Validity::make()->positive();
+        return Validity::make()->id();
     }
 
     /**
@@ -21,7 +21,7 @@ class {{ class }}
      */
     public function slug(): Validity
     {
-        return Validity::make()->varchar();
+        return Validity::make()->slug();
     }
 
     /**
@@ -37,7 +37,7 @@ class {{ class }}
      */
     public function createdAt(): Validity
     {
-        return Validity::make()->varchar()->date();
+        return Validity::make()->dateTime();
     }
 
     /**
@@ -45,6 +45,6 @@ class {{ class }}
      */
     public function updatedAt(): Validity
     {
-        return Validity::make()->varchar()->date();
+        return Validity::make()->dateTime();
     }
 }

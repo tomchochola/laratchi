@@ -76,7 +76,7 @@ class AuthValidity
      */
     public function id(string $guardName): Validity
     {
-        return Validity::make()->positive();
+        return Validity::make()->id();
     }
 
     /**
@@ -84,7 +84,7 @@ class AuthValidity
      */
     public function slug(string $guardName): Validity
     {
-        return Validity::make()->varchar();
+        return Validity::make()->slug();
     }
 
     /**
@@ -92,7 +92,7 @@ class AuthValidity
      */
     public function emailVerifiedAt(string $guardName): Validity
     {
-        return Validity::make()->varchar()->date();
+        return Validity::make()->dateTime();
     }
 
     /**
@@ -108,7 +108,7 @@ class AuthValidity
      */
     public function createdAt(string $guardName): Validity
     {
-        return Validity::make()->varchar()->date();
+        return Validity::make()->dateTime();
     }
 
     /**
@@ -116,6 +116,6 @@ class AuthValidity
      */
     public function updatedAt(string $guardName): Validity
     {
-        return Validity::make()->varchar()->date();
+        return Validity::make()->dateTime();
     }
 }

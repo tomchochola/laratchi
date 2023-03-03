@@ -12,8 +12,6 @@ use Illuminate\Database\Schema\Builder as SchmeaBuilder;
 use Illuminate\Validation\Rules\Dimensions;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\ExcludeIf;
-use Illuminate\Validation\Rules\In;
-use Illuminate\Validation\Rules\NotIn;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rules\ProhibitedIf;
 use Illuminate\Validation\Rules\RequiredIf;
@@ -522,7 +520,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->boolean()->in(['1', 1, true]);
+        return $this->boolean()->in([true]);
     }
 
     /**
@@ -538,7 +536,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->boolean()->in(['0', 0, false]);
+        return $this->boolean()->in([false]);
     }
 
     /**
@@ -806,7 +804,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function distinct(bool $strict = false, bool $ignoreCase = false): static
+    public function distinct(bool $strict = false, bool $ignoreCase = true): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -825,22 +823,6 @@ class Validity implements ArrayableContract
         }
 
         return $this->addRule('distinct', $options);
-    }
-
-    /**
-     * Add strict ignore case distinct rule.
-     *
-     * @return $this
-     */
-    public function strictDistinct(): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule('distinct', ['strict', 'ignore_case']);
     }
 
     /**
@@ -1243,24 +1225,6 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add in rule.
-     *
-     * @param array<int, mixed> $values
-     *
-     * @return $this
-     */
-    public function inRule(array $values): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule(new In($values));
-    }
-
-    /**
      * Add in_array rule.
      *
      * @return $this
@@ -1602,24 +1566,6 @@ class Validity implements ArrayableContract
         }
 
         return $this->addRule('not_in', $values);
-    }
-
-    /**
-     * Add not_if rule.
-     *
-     * @param array<int, mixed> $values
-     *
-     * @return $this
-     */
-    public function notInRule(array $values): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule(new NotIn($values));
     }
 
     /**
@@ -2911,6 +2857,54 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Id rules.
+     *
+     * @return $this
+     */
+    public function id(): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->positive();
+    }
+
+    /**
+     * Slug rules.
+     *
+     * @return $this
+     */
+    public function slug(): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->varchar();
+    }
+
+    /**
+     * Date time rules.
+     *
+     * @return $this
+     */
+    public function dateTime(): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->varchar()->date();
+    }
+
+    /**
      * @inheritDoc
      */
     public function toArray(): array
@@ -2947,6 +2941,6 @@ class Validity implements ArrayableContract
      */
     protected function formatArguments(array $arguments): string
     {
-        return \implode(',', $arguments);
+        return strPutCsv($arguments);
     }
 }

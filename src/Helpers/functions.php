@@ -1335,3 +1335,23 @@ if (! \function_exists('assertNeverClosure')) {
         };
     }
 }
+
+if (! \function_exists('strPutCsv')) {
+    /**
+     * Encode array to csv.
+     *
+     * @param array<mixed> $data
+     */
+    function strPutCsv(array $data): string
+    {
+        return \implode(',', \array_map(static function (mixed $value): string {
+            if (\is_string($value)) {
+                return '"'.\str_replace('"', '""', $value).'"';
+            }
+
+            \assert(\is_scalar($value));
+
+            return (string) $value;
+        }, $data));
+    }
+}
