@@ -640,7 +640,7 @@ class MakeTchiCommand extends GeneratorCommand
 
         $databaseSchema = $this->files->get($path);
 
-        $databaseSchema = \str_replace("erDiagram\n", "erDiagram\n\n{$table} {\n  id id PK\n  string title\n  timestamp created_at\n  timestamp updated_at\n}\n", $databaseSchema);
+        $databaseSchema = \str_replace("erDiagram\n", "erDiagram\n\n{$table} {\n  id id PK\n  string title \"fulltext\"\n  timestamp created_at\n  timestamp updated_at\n}\n", $databaseSchema);
 
         $this->files->put($path, $databaseSchema);
     }
