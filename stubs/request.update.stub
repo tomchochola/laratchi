@@ -48,6 +48,6 @@ class {{ class }} extends SecureFormRequest
      */
     public function resolve{{ model }}(): {{ model }}
     {
-        return once(fn (): {{ model }} => {{ model }}::mustResolveByKey($this));
+        return once(fn (): {{ model }} => {{ model }}::mustResolve($this));
     }
 }
