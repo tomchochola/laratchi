@@ -384,6 +384,9 @@ class MakeTchiCommand extends GeneratorCommand
                     [
                         '$ref' => '#/components/parameters/slug',
                     ],
+                    [
+                        '$ref' => '#/components/parameters/id',
+                    ],
                 ],
                 'responses' => [
                     '200' => [

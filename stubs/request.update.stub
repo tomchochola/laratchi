@@ -48,8 +48,6 @@ class {{ class }} extends SecureFormRequest
      */
     public function resolve{{ model }}(): {{ model }}
     {
-        return once(fn (): {{ model }} => {{ model }}::mustFindByKey($this->integer('id'), null, function (): never {
-            $this->throwSingleValidationException(['id'], 'Exists');
-        }));
+        return once(fn (): {{ model }} => {{ model }}::mustResolveByKey($this));
     }
 }

@@ -38,7 +38,8 @@ class {{ class }} extends SecureFormRequest
         $validity = new {{ validity }}();
 
         return [
-            'slug' => $validity->slug()->required(),
+            'id' => $validity->id()->nullable()->filled()->requiredWithout(['slug'])->missingWith(['slug']),
+            'slug' => $validity->slug()->nullable()->filled()->requiredWithout(['id'])->missingWith(['id']),
         ];
     }
 
@@ -47,8 +48,6 @@ class {{ class }} extends SecureFormRequest
      */
     public function resolve{{ model }}(): {{ model }}
     {
-        return once(fn (): {{ model }} => {{ model }}::mustFindByRouteKey($this->varchar('slug'), null, function (): never {
-            $this->throwSingleValidationException(['slug'], 'Exists');
-        }));
+        return once(fn (): {{ model }} => {{ model }}::mustResolve($this));
     }
 }
