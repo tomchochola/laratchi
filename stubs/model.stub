@@ -25,18 +25,18 @@ class {{ class }} extends Model
     }
 
     /**
-     * Title getter.
-     */
-    public function getTitle(): string
-    {
-        return $this->mustString('title');
-    }
-
-    /**
     * Search scope.
     */
     public static function scopeSearch(Builder $builder, string $search): void
     {
         $builder->getQuery()->whereFullText($builder->qualifyColumn('title'), $search);
+    }
+
+    /**
+     * Title getter.
+     */
+    public function getTitle(): string
+    {
+        return $this->mustString('title');
     }
 }
