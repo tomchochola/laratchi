@@ -257,7 +257,15 @@ class SecureValidator extends Validator
      */
     public function getDisplayableValue(mixed $attribute, mixed $value): string
     {
-        \assert(\is_scalar($value) || $value === null);
+        if (\is_bool($value)) {
+            return $value ? '1' : '0';
+        }
+
+        if ($value === null) {
+            return '';
+        }
+
+        \assert(\is_scalar($value));
 
         return (string) $value;
     }
