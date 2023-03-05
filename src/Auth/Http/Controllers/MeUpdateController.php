@@ -100,9 +100,9 @@ class MeUpdateController extends TransactionController
      */
     protected function response(MeUpdateRequest $request): SymfonyResponse
     {
-        $user = $this->modifyUser($request, $request->retrieveUser());
+        $user = $this->modifyUser($request, $request->resolveMe());
 
-        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+        return (new LaratchiServiceProvider::$meResource($user))->toResponse($request);
     }
 
     /**
@@ -138,7 +138,7 @@ class MeUpdateController extends TransactionController
     {
         $credentialsArray = $request->credentials();
 
-        $me = $request->retrieveUser();
+        $me = $request->resolveMe();
 
         foreach ($credentialsArray as $index => $credentials) {
             [$hit] = $this->throttle($this->limit($request, "credentials.{$index}"), $this->onThrottle($request, $credentials));
@@ -158,7 +158,7 @@ class MeUpdateController extends TransactionController
      */
     protected function updateUser(MeUpdateRequest $request): void
     {
-        $user = $request->retrieveUser();
+        $user = $request->resolveMe();
 
         \assert($user instanceof Model);
 

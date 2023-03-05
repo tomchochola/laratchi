@@ -48,7 +48,7 @@ class {{ class }} extends TestCase
 
         $response->assertOk();
 
-        $this->validateJsonApiCollectionResponse($response, [$this->jsonApiValidator{{ model }}Index()], []);
+        $this->validateJsonApiCollectionResponse($response, [$this->structure{{ model }}Index()], []);
     }
 
     /**
@@ -80,17 +80,17 @@ class {{ class }} extends TestCase
 
         $response->assertOk();
 
-        $this->validateJsonApiCollectionResponse($response, [$this->jsonApiValidator{{ model }}Select()], []);
+        $this->validateJsonApiCollectionResponse($response, [$this->structure{{ model }}Select()], []);
     }
 
     /**
-     * {{ model }} index json api validator.
+     * {{ model }} index structure.
      */
-    protected function jsonApiValidator{{ model }}Index(): JsonApiValidator
+    protected function structure{{ model }}Index(): JsonApiValidator
     {
         $validity = new {{ validity }}();
 
-        return $this->jsonApiValidator('{{ table }}', [
+        return $this->structure('{{ table }}', [
             'title' => $validity->title()->required(),
             'created_at' => $validity->createdAt()->required(),
             'updated_at' => $validity->updatedAt()->required(),
@@ -98,13 +98,13 @@ class {{ class }} extends TestCase
     }
 
     /**
-     * {{ model }} select json api validator.
+     * {{ model }} select structure.
      */
-    protected function jsonApiValidator{{ model }}Select(): JsonApiValidator
+    protected function structure{{ model }}Select(): JsonApiValidator
     {
         $validity = new {{ validity }}();
 
-        return $this->jsonApiValidator('{{ table }}', [
+        return $this->structure('{{ table }}', [
             'title' => $validity->title()->required(),
         ]);
     }

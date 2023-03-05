@@ -16,7 +16,7 @@ class MeUpdateRequest extends SecureFormRequest
      */
     public function authorize(): Response|bool
     {
-        $this->retrieveUser();
+        $this->resolveMe();
 
         return true;
     }
@@ -66,9 +66,9 @@ class MeUpdateRequest extends SecureFormRequest
     }
 
     /**
-     * Retrieve user.
+     * Resolve me.
      */
-    public function retrieveUser(): AuthenticatableContract
+    public function resolveMe(): AuthenticatableContract
     {
         return once(fn (): AuthenticatableContract => mustResolveUser([$this->guardName()]));
     }

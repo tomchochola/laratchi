@@ -7,13 +7,12 @@ namespace Tomchochola\Laratchi\Auth\Http\Resources;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Tomchochola\Laratchi\Auth\DatabaseTokenableInterface;
 use Tomchochola\Laratchi\Http\Resources\JsonApiResource;
 
 /**
  * @property AuthenticatableContract $resource
  */
-class MeJsonApiResource extends JsonApiResource
+class MeResource extends JsonApiResource
 {
     /**
      * @inheritDoc
@@ -65,27 +64,5 @@ class MeJsonApiResource extends JsonApiResource
         }
 
         return Str::snake($this->resource::class);
-    }
-
-    /**
-     * Merge database token.
-     *
-     * @return array<string, JsonApiResource|null>
-     */
-    protected function mergeDatabaseToken(bool $omitWhenNull): array
-    {
-        if ($this->resource instanceof DatabaseTokenableInterface) {
-            $databaseToken = $this->resource->getDatabaseToken();
-
-            if ($databaseToken === null && $omitWhenNull) {
-                return [];
-            }
-
-            return [
-                'database_token' => $databaseToken === null ? null : new DatabaseTokenJsonApiResource($databaseToken),
-            ];
-        }
-
-        return [];
     }
 }

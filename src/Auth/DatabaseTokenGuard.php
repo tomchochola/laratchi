@@ -137,7 +137,7 @@ class DatabaseTokenGuard implements GuardContract
     public function setUser(AuthenticatableContract $user, bool $events = true): void
     {
         \assert($user instanceof DatabaseTokenableInterface);
-        \assert($user->getUserProviderName() === $this->userProviderName);
+        assertNeverIfNot($user->getUserProviderName() === $this->userProviderName);
 
         $this->user = $user;
 
@@ -151,6 +151,8 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function login(DatabaseTokenableInterface $user, bool $remember = false, bool $events = true): DatabaseToken
     {
+        assertNeverIfNot($user->getUserProviderName() === $this->userProviderName);
+
         $databaseToken = $this->createToken($user);
 
         $user->setDatabaseToken($databaseToken);
@@ -182,7 +184,7 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function createToken(DatabaseTokenableInterface $user): DatabaseToken
     {
-        \assert($user->getUserProviderName() === $this->userProviderName);
+        assertNeverIfNot($user->getUserProviderName() === $this->userProviderName);
 
         return inject(DatabaseToken::class)->store($user);
     }

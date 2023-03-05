@@ -141,11 +141,11 @@ trait ModelTrait
     }
 
     /**
-     * Must resolve.
+     * Must resolve from request.
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function mustResolve(FormRequest $request, ?Closure $closure = null): static
+    public static function mustResolveFromRequest(FormRequest $request, ?Closure $closure = null): static
     {
         $id = $request->fastInteger('id');
 
@@ -164,42 +164,6 @@ trait ModelTrait
         }
 
         $request->throwSingleValidationException(['id', 'slug'], 'Required');
-    }
-
-    /**
-     * Must resolve by id.
-     *
-     * @param (Closure(Builder): void)|null $closure
-     */
-    public static function mustResolveByKey(FormRequest $request, ?Closure $closure = null): static
-    {
-        $id = $request->fastInteger('id');
-
-        if ($id !== null) {
-            return static::mustFindByKey($id, $closure, static function () use ($request): never {
-                $request->throwSingleValidationException(['id'], 'Exists');
-            });
-        }
-
-        $request->throwSingleValidationException(['id'], 'Required');
-    }
-
-    /**
-     * Must resolve by route key.
-     *
-     * @param (Closure(Builder): void)|null $closure
-     */
-    public static function mustResolveByRouteKey(FormRequest $request, ?Closure $closure = null): static
-    {
-        $slug = $request->fastString('slug');
-
-        if ($slug !== null) {
-            return static::mustFindByRouteKey($slug, $closure, static function () use ($request): never {
-                $request->throwSingleValidationException(['slug'], 'Exists');
-            });
-        }
-
-        $request->throwSingleValidationException(['slug'], 'Required');
     }
 
     /**
@@ -279,7 +243,7 @@ trait ModelTrait
             $closure($query);
         }
 
-        $instance = $query->firstOrFail();
+        $instance = $query->first();
 
         \assert($instance instanceof static);
 
@@ -348,7 +312,7 @@ trait ModelTrait
      */
     public function mustUpdate(array $attributes, ?Closure $closure = null): static
     {
-        \assert($this->exists, 'model not exists');
+        assertNeverIfNot($this->exists, 'model not exists');
 
         $this->fill($attributes);
 
@@ -720,9 +684,9 @@ trait ModelTrait
     {
         $ok = parent::save($options);
 
-        \assert($ok, 'model not saved correctly');
+        assertNeverIfNot($ok, 'model not saved correctly');
 
-        return $ok;
+        return true;
     }
 
     /**
@@ -730,13 +694,13 @@ trait ModelTrait
      */
     public function delete(): bool
     {
-        \assert($this->exists, 'model not exists');
+        assertNeverIfNot($this->exists, 'model not exists');
 
         $ok = parent::delete();
 
-        \assert($ok === true, 'model not deleted correctly');
+        assertNeverIfNot($ok === true, 'model not deleted correctly');
 
-        return $ok;
+        return true;
     }
 
     /**
@@ -747,7 +711,7 @@ trait ModelTrait
      */
     public function update(array $attributes = [], array $options = []): bool
     {
-        \assert($this->exists, 'model not exists');
+        assertNeverIfNot($this->exists, 'model not exists');
 
         $this->fill($attributes);
 
@@ -766,7 +730,7 @@ trait ModelTrait
      */
     public function updateQuietly(array $attributes = [], array $options = []): bool
     {
-        \assert($this->exists, 'model not exists');
+        assertNeverIfNot($this->exists, 'model not exists');
 
         $this->fill($attributes);
 
@@ -785,7 +749,7 @@ trait ModelTrait
      */
     public function updateOrFail(array $attributes = [], array $options = []): bool
     {
-        \assert($this->exists, 'model not exists');
+        assertNeverIfNot($this->exists, 'model not exists');
 
         $this->fill($attributes);
 

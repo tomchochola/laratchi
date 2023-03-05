@@ -82,7 +82,7 @@ class PasswordUpdateController extends TransactionController
      */
     protected function limit(PasswordUpdateRequest $request, string $key): Limit
     {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->user($request->retrieveUser())->hash());
+        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->user($request->resolveMe())->hash());
     }
 
     /**
@@ -108,7 +108,7 @@ class PasswordUpdateController extends TransactionController
      */
     protected function updatePassword(PasswordUpdateRequest $request): void
     {
-        inject(UpdatePasswordAction::class)->handle($request->retrieveUser(), $request->newPassword());
+        inject(UpdatePasswordAction::class)->handle($request->resolveMe(), $request->newPassword());
     }
 
     /**
@@ -116,7 +116,7 @@ class PasswordUpdateController extends TransactionController
      */
     protected function logoutOtherDevices(PasswordUpdateRequest $request): void
     {
-        inject(LogoutOtherDevicesAction::class)->handle($request->retrieveUser());
+        inject(LogoutOtherDevicesAction::class)->handle($request->resolveMe());
     }
 
     /**
@@ -124,9 +124,9 @@ class PasswordUpdateController extends TransactionController
      */
     protected function response(PasswordUpdateRequest $request): SymfonyResponse
     {
-        $user = $this->modifyUser($request, $request->retrieveUser());
+        $user = $this->modifyUser($request, $request->resolveMe());
 
-        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+        return (new LaratchiServiceProvider::$meResource($user))->toResponse($request);
     }
 
     /**
@@ -150,7 +150,7 @@ class PasswordUpdateController extends TransactionController
      */
     protected function validatePassword(PasswordUpdateRequest $request): bool
     {
-        return $this->userProvider($request)->validateCredentials($request->retrieveUser(), $request->password());
+        return $this->userProvider($request)->validateCredentials($request->resolveMe(), $request->password());
     }
 
     /**
@@ -158,7 +158,7 @@ class PasswordUpdateController extends TransactionController
      */
     protected function fireValidatePasswordFailedEvent(PasswordUpdateRequest $request): void
     {
-        resolveEventDispatcher()->dispatch(new Failed($request->guardName(), $request->retrieveUser(), $request->password()));
+        resolveEventDispatcher()->dispatch(new Failed($request->guardName(), $request->resolveMe(), $request->password()));
     }
 
     /**
@@ -174,7 +174,7 @@ class PasswordUpdateController extends TransactionController
      */
     protected function fireValidatedEvent(PasswordUpdateRequest $request): void
     {
-        resolveEventDispatcher()->dispatch(new Validated($request->guardName(), $request->retrieveUser()));
+        resolveEventDispatcher()->dispatch(new Validated($request->guardName(), $request->resolveMe()));
     }
 
     /**
@@ -182,7 +182,7 @@ class PasswordUpdateController extends TransactionController
      */
     protected function cycleRememberToken(PasswordUpdateRequest $request): void
     {
-        $user = $request->retrieveUser();
+        $user = $request->resolveMe();
 
         inject(CycleRememberTokenAction::class)->handle($user);
 
@@ -210,6 +210,6 @@ class PasswordUpdateController extends TransactionController
      */
     protected function firePasswordUpdateEvent(PasswordUpdateRequest $request): void
     {
-        resolveEventDispatcher()->dispatch(new PasswordUpdateEvent($request->retrieveUser()));
+        resolveEventDispatcher()->dispatch(new PasswordUpdateEvent($request->resolveMe()));
     }
 }

@@ -45,7 +45,7 @@ class MeDestroyController extends TransactionController
      */
     protected function destroyMe(MeDestroyRequest $request): void
     {
-        $user = $request->retrieveUser();
+        $user = $request->resolveMe();
 
         \assert($user instanceof Model);
 

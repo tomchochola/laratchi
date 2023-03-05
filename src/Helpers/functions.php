@@ -1316,9 +1316,33 @@ if (! \function_exists('assertNever')) {
     /**
      * Assert never.
      */
-    function assertNever(): never
+    function assertNever(string $message = 'assert never'): never
     {
-        throw new LogicException('assert never');
+        throw new LogicException($message);
+    }
+}
+
+if (! \function_exists('assertNeverIf')) {
+    /**
+     * Assert never if.
+     */
+    function assertNeverIf(bool $pass, string $message = 'assert never if'): void
+    {
+        if ($pass) {
+            throw new LogicException($message);
+        }
+    }
+}
+
+if (! \function_exists('assertNeverIfNot')) {
+    /**
+     * Assert never if not.
+     */
+    function assertNeverIfNot(bool $pass, string $message = 'assert never if not'): void
+    {
+        if (! $pass) {
+            throw new LogicException($message);
+        }
     }
 }
 
@@ -1328,10 +1352,10 @@ if (! \function_exists('assertNeverClosure')) {
      *
      * @return Closure(): never
      */
-    function assertNeverClosure(): Closure
+    function assertNeverClosure(string $message = 'assert never closure'): Closure
     {
-        return static function (): never {
-            throw new LogicException('assert never');
+        return static function () use ($message): never {
+            throw new LogicException($message);
         };
     }
 }

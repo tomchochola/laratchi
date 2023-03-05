@@ -41,17 +41,17 @@ class {{ class }} extends TestCase
 
         $response->assertOk();
 
-        $this->validateJsonApiResponse($response, $this->jsonApiValidator{{ model }}Show(), []);
+        $this->validateJsonApiResponse($response, $this->structure{{ model }}Show(), []);
     }
 
     /**
-     * {{ model }} show json api validator.
+     * {{ model }} show structure.
      */
-    protected function jsonApiValidator{{ model }}Show(): JsonApiValidator
+    protected function structure{{ model }}Show(): JsonApiValidator
     {
         $validity = new {{ validity }}();
 
-        return $this->jsonApiValidator('{{ table }}', [
+        return $this->structure('{{ table }}', [
             'title' => $validity->title()->required(),
             'created_at' => $validity->createdAt()->required(),
             'updated_at' => $validity->updatedAt()->required(),

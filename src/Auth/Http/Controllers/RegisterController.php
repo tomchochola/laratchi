@@ -131,7 +131,7 @@ class RegisterController extends TransactionController
     {
         $user = $this->modifyUser($request, $user);
 
-        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+        return (new LaratchiServiceProvider::$meResource($user))->toResponse($request);
     }
 
     /**
@@ -165,11 +165,15 @@ class RegisterController extends TransactionController
 
         \assert($user instanceof AuthenticatableContract);
 
-        $password = $request->password()['password'];
+        $data = $request->data();
 
-        \assert(\is_string($password));
+        $password = $request->password()['password'] ?? null;
 
-        $user->fill(\array_merge($request->data(), ['password' => resolveHasher()->make($password)]));
+        if (\is_string($password)) {
+            $data = \array_replace($data, ['password' => resolveHasher()->make($password)]);
+        }
+
+        $user->fill($data);
 
         $this->makeChanges($request, $user);
 

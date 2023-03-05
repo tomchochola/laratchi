@@ -25,7 +25,7 @@ class AuthService
     }
 
     /**
-     * Modify user before passing to MeJsonApiResource.
+     * Modify user before passing to MeResource.
      */
     public function modifyUser(AuthenticatableContract $user): AuthenticatableContract
     {

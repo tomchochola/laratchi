@@ -11,17 +11,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Tomchochola\Laratchi\Auth\DatabaseTokenGuard;
-use Tomchochola\Laratchi\Auth\Http\Resources\MeJsonApiResource;
+use Tomchochola\Laratchi\Auth\Http\Resources\MeResource;
 use Tomchochola\Laratchi\Validation\Validator;
 
 class LaratchiServiceProvider extends ServiceProvider
 {
     /**
-     * Me json api resource.
+     * Me resource.
      *
-     * @var class-string<MeJsonApiResource>
+     * @var class-string<MeResource>
      */
-    public static string $meJsonApiResource = MeJsonApiResource::class;
+    public static string $meResource = MeResource::class;
 
     /**
      * @inheritDoc

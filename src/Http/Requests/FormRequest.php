@@ -241,7 +241,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve nullable string from request.
+     * Resolve nullable string from request.
      */
     public function fastString(string $key, ?string $default = null): ?string
     {
@@ -249,7 +249,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve nullable int from request.
+     * Resolve nullable int from request.
      */
     public function fastInteger(string $key, ?int $default = null): ?int
     {
@@ -257,7 +257,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve nullable float from request.
+     * Resolve nullable float from request.
      */
     public function fastFloat(string $key, ?float $default = null): ?float
     {
@@ -265,7 +265,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve nullable boolean from request.
+     * Resolve nullable boolean from request.
      */
     public function fastBoolean(string $key, ?bool $default = null): ?bool
     {
@@ -273,7 +273,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrieve nullable date from request.
+     * Resolve nullable date from request.
      */
     public function fastDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): ?Carbon
     {
@@ -281,7 +281,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Retrievenullable  file from request.
+     * Resolvenullable  file from request.
      */
     public function fastFile(string $key, ?UploadedFile $default = null): ?UploadedFile
     {
@@ -289,7 +289,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Mandatory retrieve string from request.
+     * Mandatory resolve string from request.
      */
     public function mustFastString(string $key, ?string $default = null): string
     {
@@ -297,7 +297,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Mandatory retrieve int from request.
+     * Mandatory resolve int from request.
      */
     public function mustFastInteger(string $key, ?int $default = null): int
     {
@@ -305,7 +305,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Mandatory retrieve float from request.
+     * Mandatory resolve float from request.
      */
     public function mustFastFloat(string $key, ?float $default = null): float
     {
@@ -313,7 +313,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Mandatory retrieve boolean from request.
+     * Mandatory resolve boolean from request.
      */
     public function mustFastBoolean(string $key, ?bool $default = null): bool
     {
@@ -321,7 +321,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Mandatory retrieve date from request.
+     * Mandatory resolve date from request.
      */
     public function mustFastDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): Carbon
     {
@@ -329,7 +329,7 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Mandatory retrieve file from request.
+     * Mandatory resolve file from request.
      */
     public function mustFastFile(string $key, ?UploadedFile $default = null): UploadedFile
     {

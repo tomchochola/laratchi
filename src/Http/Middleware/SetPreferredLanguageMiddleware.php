@@ -47,9 +47,7 @@ class SetPreferredLanguageMiddleware
 
         $locale = $request->getPreferredLanguage($locales);
 
-        \assert(\is_string($locale));
-
-        if (! \in_array($locale, $allowed, true)) {
+        if (! \is_string($locale) || ! \in_array($locale, $allowed, true)) {
             throw new HttpException(static::ERROR_STATUS, static::ERROR_MESSAGE);
         }
 

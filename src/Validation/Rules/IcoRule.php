@@ -90,7 +90,9 @@ class IcoRule implements RuleContract
 
         $response = \file_get_contents("https://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi?ico={$value}");
 
-        \assert(\is_string($response));
+        if (! \is_string($response)) {
+            assertNever('ares not responding');
+        }
 
         $passes = \str_contains($response, 'Shoda_ICO');
 

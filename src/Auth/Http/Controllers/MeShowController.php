@@ -26,7 +26,7 @@ class MeShowController extends Controller
      */
     protected function response(MeShowRequest $request): SymfonyResponse
     {
-        $user = $request->retrieveUser();
+        $user = $request->resolveMe();
 
         if ($user === null) {
             return $this->unauthenticatedResponse($request);
@@ -58,6 +58,6 @@ class MeShowController extends Controller
     {
         $user = $this->modifyUser($request, $user);
 
-        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+        return (new LaratchiServiceProvider::$meResource($user))->toResponse($request);
     }
 }

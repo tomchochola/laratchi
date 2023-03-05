@@ -125,7 +125,9 @@ class PasswordResetController extends TransactionController
             $this->firePasswordResetEvent($request);
         });
 
-        \assert(\is_string($status));
+        if (! \is_string($status)) {
+            return PasswordBrokerContract::INVALID_USER;
+        }
 
         return $status;
     }
@@ -187,7 +189,7 @@ class PasswordResetController extends TransactionController
     {
         $user = $this->modifyUser($request, $this->user);
 
-        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+        return (new LaratchiServiceProvider::$meResource($user))->toResponse($request);
     }
 
     /**

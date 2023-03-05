@@ -24,15 +24,13 @@ class TestMailCommand extends Command
      */
     public function handle(): int
     {
-        $mail = $this->ask('Mail to send test mail: ');
+        $mail = \filter_var($this->ask('Mail to send test mail: '), \FILTER_VALIDATE_EMAIL);
 
-        if (\filter_var($mail, \FILTER_VALIDATE_EMAIL) === false) {
+        if ($mail === false) {
             $this->error('Given data is not valid e-mail address.');
 
             return static::FAILURE;
         }
-
-        \assert(\is_string($mail));
 
         $target = (new AnonymousNotifiable())->route('mail', $mail);
 

@@ -212,7 +212,7 @@ class LoginController extends TransactionController
     {
         $user = $this->modifyUser($request, $user);
 
-        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+        return (new LaratchiServiceProvider::$meResource($user))->toResponse($request);
     }
 
     /**

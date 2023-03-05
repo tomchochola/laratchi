@@ -259,7 +259,9 @@ class AllInput extends IlluminateValidatedInput
         $data = $this->mustArray($key, $default);
 
         foreach ($data as $allInput) {
-            \assert(\is_array($allInput));
+            if (! \is_array($allInput)) {
+                $allInput = [];
+            }
 
             $allInputs[] = new static($allInput);
         }

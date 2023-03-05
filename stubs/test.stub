@@ -35,8 +35,8 @@ class {{ class }} extends TestCase
         $response->assertSuccessful();
         $response->assertStatus(422);
 
-        $this->validateJsonApiResponse($response, $this->jsonApiValidator('resources'), [$this->jsonApiValidator('resources')]);
-        $this->validateJsonApiCollectionResponse($response, [$this->jsonApiValidator('resources')], [$this->jsonApiValidator('resources')]);
+        $this->validateJsonApiResponse($response, $this->structure('resources'), [$this->structure('resources')]);
+        $this->validateJsonApiCollectionResponse($response, [$this->structure('resources')], [$this->structure('resources')]);
         $this->validateJsonApiError($response, 400);
         $this->validateJsonApiValidationError($response, ['attribute']);
     }

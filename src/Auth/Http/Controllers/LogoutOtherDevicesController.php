@@ -82,7 +82,7 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function limit(LogoutOtherDevicesRequest $request, string $key): Limit
     {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->user($request->retrieveUser())->hash());
+        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->user($request->resolveMe())->hash());
     }
 
     /**
@@ -112,7 +112,7 @@ class LogoutOtherDevicesController extends TransactionController
             return true;
         }
 
-        return $this->userProvider($request)->validateCredentials($request->retrieveUser(), $request->password());
+        return $this->userProvider($request)->validateCredentials($request->resolveMe(), $request->password());
     }
 
     /**
@@ -120,7 +120,7 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function fireValidatePasswordFailedEvent(LogoutOtherDevicesRequest $request): void
     {
-        resolveEventDispatcher()->dispatch(new Failed($request->guardName(), $request->retrieveUser(), $request->password()));
+        resolveEventDispatcher()->dispatch(new Failed($request->guardName(), $request->resolveMe(), $request->password()));
     }
 
     /**
@@ -138,13 +138,11 @@ class LogoutOtherDevicesController extends TransactionController
     {
         $password = $request->password()['password'] ?? null;
 
-        if ($password === null) {
+        if (! \is_string($password)) {
             return;
         }
 
-        \assert(\is_string($password));
-
-        inject(UpdatePasswordAction::class)->handle($request->retrieveUser(), $password, false);
+        inject(UpdatePasswordAction::class)->handle($request->resolveMe(), $password, false);
     }
 
     /**
@@ -160,7 +158,7 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function cycleRememberToken(LogoutOtherDevicesRequest $request): void
     {
-        $user = $request->retrieveUser();
+        $user = $request->resolveMe();
 
         inject(CycleRememberTokenAction::class)->handle($user);
 
@@ -172,7 +170,7 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function logoutOtherDevices(LogoutOtherDevicesRequest $request): void
     {
-        inject(LogoutOtherDevicesAction::class)->handle($request->retrieveUser());
+        inject(LogoutOtherDevicesAction::class)->handle($request->resolveMe());
     }
 
     /**
@@ -180,7 +178,7 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function fireOtherDeviceLogoutEvent(LogoutOtherDevicesRequest $request): void
     {
-        resolveEventDispatcher()->dispatch(new OtherDeviceLogout($request->guardName(), $request->retrieveUser()));
+        resolveEventDispatcher()->dispatch(new OtherDeviceLogout($request->guardName(), $request->resolveMe()));
     }
 
     /**
@@ -196,9 +194,9 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function response(LogoutOtherDevicesRequest $request): SymfonyResponse
     {
-        $user = $this->modifyUser($request, $request->retrieveUser());
+        $user = $this->modifyUser($request, $request->resolveMe());
 
-        return (new LaratchiServiceProvider::$meJsonApiResource($user))->toResponse($request);
+        return (new LaratchiServiceProvider::$meResource($user))->toResponse($request);
     }
 
     /**
@@ -214,7 +212,7 @@ class LogoutOtherDevicesController extends TransactionController
      */
     protected function fireValidatedEvent(LogoutOtherDevicesRequest $request): void
     {
-        resolveEventDispatcher()->dispatch(new Validated($request->guardName(), $request->retrieveUser()));
+        resolveEventDispatcher()->dispatch(new Validated($request->guardName(), $request->resolveMe()));
     }
 
     /**

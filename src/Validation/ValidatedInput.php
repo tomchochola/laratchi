@@ -308,7 +308,9 @@ class ValidatedInput extends IlluminateValidatedInput
         $data = $this->mustArray($key, $default);
 
         foreach ($data as $validatedInput) {
-            \assert(\is_array($validatedInput));
+            if (! \is_array($validatedInput)) {
+                throw new LogicException('validated input is not array');
+            }
 
             $validatedInputs[] = new static($validatedInput);
         }

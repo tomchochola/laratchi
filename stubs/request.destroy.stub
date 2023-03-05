@@ -43,10 +43,10 @@ class {{ class }} extends SecureFormRequest
     }
 
     /**
-     * Resolve model from slug.
+     * Resolve {{ model }} from request.
      */
     public function resolve{{ model }}(): {{ model }}
     {
-        return once(fn (): {{ model }} => {{ model }}::mustResolve($this));
+        return once(fn (): {{ model }} => {{ model }}::mustResolveFromRequest($this));
     }
 }

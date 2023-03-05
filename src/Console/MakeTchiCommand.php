@@ -675,7 +675,7 @@ class MakeTchiCommand extends GeneratorCommand
 
         $testCase = $this->files->get($path);
 
-        $testCase = \str_replace("\n}\n", "\n\n    /**\n     * {$modelName} embed json api validator.\n     */\n    protected function embed{$modelName}(): JsonApiValidator\n    {\n        \$validity = new \\{$qualifiedValidityName}();\n\n        return \$this->jsonApiValidator('{$table}', [\n            'title' => \$validity->title()->required(),\n        ]);\n    }\n}\n", $testCase);
+        $testCase = \str_replace("\n}\n", "\n\n    /**\n     * {$modelName} embed structure.\n     */\n    protected function structure{$modelName}Embed(): JsonApiValidator\n    {\n        \$validity = new \\{$qualifiedValidityName}();\n\n        return \$this->structure('{$table}', [\n            'title' => \$validity->title()->required(),\n        ]);\n    }\n}\n", $testCase);
 
         $this->files->put($path, $testCase);
     }

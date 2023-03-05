@@ -10,7 +10,7 @@ use Tomchochola\Laratchi\Http\Resources\ModelJsonApiResource;
 /**
  * @property DatabaseToken $resource
  */
-class DatabaseTokenJsonApiResource extends ModelJsonApiResource
+class DatabaseTokenResource extends ModelJsonApiResource
 {
     /**
      * @inheritDoc
