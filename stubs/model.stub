@@ -25,8 +25,8 @@ class {{ class }} extends Model
     }
 
     /**
-    * Search scope.
-    */
+     * Search scope.
+     */
     public static function scopeSearch(Builder $builder, string $search): void
     {
         $builder->getQuery()->whereFullText($builder->qualifyColumn('title'), $search);
