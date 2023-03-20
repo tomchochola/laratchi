@@ -9,12 +9,9 @@ MAKE_PHP ?= ${MAKE_PHP_8_1_BIN}
 MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_2_BIN}
 
 # Default goal
-.DEFAULT_GOAL := check
+.DEFAULT_GOAL := assert-never
 
 # Goals
-.PHONY: local
-local: update
-
 .PHONY: check
 check: audit lint
 
@@ -31,25 +28,13 @@ lint: vendor tools
 	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
 
 .PHONY: fix
-fix: tools
+fix: vendor tools
 	tools/prettier/node_modules/.bin/prettier --ignore-path .gitignore -w . '!**/*.svg'
 	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
 
-.PHONY: cold
-cold: clean-tools clean-composer
-	git clean -xfd package-lock.json node_modules
-
-.PHONY: minify
-minify:
-	svgo -r -f resources --multipass --final-newline
-
-.PHONY: build
-build:
-	npx tailwindcss -c resources/exceptions/css/tailwind.config.js  -i resources/exceptions/css/index.css -o resources/exceptions/views/css.blade.php -m
-
-.PHONY: dev
-dev:
-	npx tailwindcss -c resources/exceptions/css/tailwind.config.js -i resources/exceptions/css/index.css -o resources/exceptions/views/css.css
+.PHONY: clean-composer
+clean-composer:
+	git clean -xfd vendor composer.lock
 
 .PHONY: update-composer
 update-composer: clean-composer
@@ -59,22 +44,18 @@ update-composer: clean-composer
 clean-tools:
 	git clean -xfd tools
 
-.PHONY: clean-composer
-clean-composer:
-	git clean -xfd vendor composer.lock
-
 .PHONY: update-tools
 update-tools: clean-tools tools
+
+.PHONY: clean-npm
+clean-npm:
+	git clean -xfd package-lock.json node_modules
 
 .PHONY: update-full
 update-full: update-tools update-composer
 
-# Aliases
-.PHONY: ci
-ci: check
-
-.PHONY: update
-update: update-composer
+.PHONY: clean
+clean: clean-tools clean-composer clean-npm
 
 # Dependencies
 tools: tools/prettier/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer tools/local-php-security-checker/vendor/bin/local-php-security-checker
