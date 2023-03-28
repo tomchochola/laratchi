@@ -1,0 +1,122 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Http\Requests\NovaRequest;
+use Tomchochola\Laratchi\Validation\Validity;
+
+class {{ class }} extends Resource
+{
+    /**
+     * The model the resource corresponds to.
+     *
+     * @var class-string<\{{ namespacedModel }}>
+     */
+    public static string $model = \{{ namespacedModel }}::class;
+
+    /**
+     * @inheritDoc
+     */
+    public static $title = 'id';
+
+    /**
+     * @inheritDoc
+     *
+     * @var array<mixed>
+     */
+    public static $with = [];
+
+    /**
+     * @inheritDoc
+     *
+     * @var array<mixed>
+     */
+    public static $search = [];
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexQuery(NovaRequest $request, mixed $query): Builder
+    {
+        $query = parent::indexQuery($request, $query);
+
+        $query->getQuery()->select($query->qualifyColumns(['id']));
+
+        return $query;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function detailQuery(NovaRequest $request, mixed $query): Builder
+    {
+        $query = parent::detailQuery($request, $query);
+
+        $query->getQuery()->select($query->qualifyColumns(['id']));
+
+        return $query;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function relatableQuery(NovaRequest $request, mixed $query): Builder
+    {
+        $query = parent::relatableQuery($request, $query);
+
+        $query->getQuery()->select($query->qualifyColumns(\array_unique(['id', static::$title])));
+
+        return $query;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function authorizedToCreate(Request $request): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @return array<mixed>
+     */
+    public function fields(NovaRequest $request): array
+    {
+        $validity = new Validity();
+
+        return [
+            ID::make()->sortable(),
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function authorizedToView(Request $request): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function authorizedToUpdate(Request $request): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function authorizedToDelete(Request $request): bool
+    {
+        return true;
+    }
+}

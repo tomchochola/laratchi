@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Laravel\Nova\Actions\Action;
+use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Http\Requests\NovaRequest;
+use Tomchochola\Laratchi\Validation\Validity;
+
+class {{ class }} extends Action
+{
+    /**
+     * Perform the action on the given models.
+     *
+     * @param Collection<array-key, Model> $models
+     */
+    public function handle(ActionFields $fields, Collection $models): void
+    {
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @return array<mixed>
+     */
+    public function fields(NovaRequest $request): array
+    {
+        $validity = new Validity();
+
+        return [];
+    }
+}
