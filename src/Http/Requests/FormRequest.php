@@ -34,6 +34,79 @@ class FormRequest extends IlluminateFormRequest
     protected ?AllInput $routeParameters = null;
 
     /**
+     * Create validation exception.
+     *
+     * @param array<string, array<string, array<string>>> $errors
+     */
+    public static function createValidationException(?Validator $validator, array $errors, ?int $status = null): ValidationException
+    {
+        $validator ??= resolveValidatorFactory()->make([], []);
+
+        foreach ($errors as $field => $exceptions) {
+            foreach ($exceptions as $exception => $params) {
+                $validator->addFailure($field, $exception, $params);
+            }
+        }
+
+        $exception = new ValidationException($validator);
+
+        if ($status !== null) {
+            $exception->status($status);
+        }
+
+        return $exception;
+    }
+
+    /**
+     * Create throttle validation exception.
+     *
+     * @param array<array-key> $keys
+     */
+    public static function createThrottleValidationException(?Validator $validator, array $keys, int $seconds, string $rule = 'throttled', ?int $status = null): ValidationException
+    {
+        $validator ??= resolveValidatorFactory()->make([], []);
+
+        foreach ($keys as $key) {
+            $validator->addFailure($key, $rule, [
+                'seconds' => (string) $seconds,
+                'minutes' => (string) \ceil($seconds / 60),
+            ]);
+        }
+
+        $exception = new ValidationException($validator);
+
+        if ($status !== null) {
+            $exception->status($status);
+        }
+
+        return $exception;
+    }
+
+    /**
+     * Create unique validation exception.
+     *
+     * @param array<string> $keys
+     */
+    public static function createUniqueValidationException(?Validator $validator, array $keys, ?int $status = null): ValidationException
+    {
+        $validator ??= resolveValidatorFactory()->make([], []);
+
+        return static::createSingleValidationException($validator, $keys, 'Unique', $status);
+    }
+
+    /**
+     * Create single validation exception.
+     *
+     * @param array<string> $keys
+     */
+    public static function createSingleValidationException(?Validator $validator, array $keys, string $rule, ?int $status = null): ValidationException
+    {
+        $validator ??= resolveValidatorFactory()->make([], []);
+
+        return static::createValidationException($validator, \array_map(static fn (): array => [$rule => []], \array_flip($keys)), $status);
+    }
+
+    /**
      * Get a validated input container for the validated input.
      */
     public function validatedInput(): ValidatedInput
@@ -92,23 +165,11 @@ class FormRequest extends IlluminateFormRequest
 
         \assert($validator instanceof Validator);
 
-        foreach ($errors as $field => $exceptions) {
-            foreach ($exceptions as $exception => $params) {
-                $validator->addFailure($field, $exception, $params);
-            }
-        }
-
-        $exception = new ValidationException($validator);
-
-        if ($status !== null) {
-            $exception->status($status);
-        }
-
-        throw $exception;
+        throw static::createValidationException($validator, $errors, $status);
     }
 
     /**
-     * Throw throttle validation error.
+     * Throw throttle validation exception.
      *
      * @param array<array-key> $keys
      */
@@ -118,20 +179,7 @@ class FormRequest extends IlluminateFormRequest
 
         \assert($validator instanceof Validator);
 
-        foreach ($keys as $key) {
-            $validator->addFailure($key, $rule, [
-                'seconds' => (string) $seconds,
-                'minutes' => (string) \ceil($seconds / 60),
-            ]);
-        }
-
-        $exception = new ValidationException($validator);
-
-        if ($status !== null) {
-            $exception->status($status);
-        }
-
-        throw $exception;
+        throw static::createThrottleValidationException($validator, $keys, $seconds, $rule, $status);
     }
 
     /**
@@ -141,7 +189,11 @@ class FormRequest extends IlluminateFormRequest
      */
     public function throwUniqueValidationException(array $keys, ?int $status = null): never
     {
-        $this->throwSingleValidationException($keys, 'Unique', $status);
+        $validator = $this->getValidatorInstance();
+
+        \assert($validator instanceof Validator);
+
+        throw static::createUniqueValidationException($validator, $keys, $status);
     }
 
     /**
@@ -151,7 +203,11 @@ class FormRequest extends IlluminateFormRequest
      */
     public function throwSingleValidationException(array $keys, string $rule, ?int $status = null): never
     {
-        $this->throwValidationException(\array_map(static fn (): array => [$rule => []], \array_flip($keys)), $status);
+        $validator = $this->getValidatorInstance();
+
+        \assert($validator instanceof Validator);
+
+        throw static::createSingleValidationException($validator, $keys, $rule, $status);
     }
 
     /**
