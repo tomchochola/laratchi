@@ -81,6 +81,25 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Locale bool data provider.
+     *
+     * @return array<string, array{string,bool}>
+     */
+    public function localeBoolDataProvider(): array
+    {
+        return [
+            'en|false' => [
+                'en',
+                false,
+            ],
+            'en|true' => [
+                'en',
+                true,
+            ],
+        ];
+    }
+
+    /**
      * @inheritDoc
      *
      * @param array<mixed> $parameters
