@@ -85,17 +85,17 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     /**
      * Send only password reset notification.
      */
-    public function notifyPasswordReset(string $token): void
+    public function notifyPasswordReset(?string $token = null, ?string $spa = null, ?string $url = null): void
     {
-        $this->notify(new ResetPasswordNotification($this->getUserProviderName(), $token));
+        $this->notify(new ResetPasswordNotification($this->getUserProviderName(), $token, $spa, $url));
     }
 
     /**
      * Send only password init notification.
      */
-    public function notifyPasswordInit(string $token): void
+    public function notifyPasswordInit(?string $token = null, ?string $spa = null, ?string $url = null): void
     {
-        $this->notify(new PasswordInitNotification($this->getUserProviderName(), $token));
+        $this->notify(new PasswordInitNotification($this->getUserProviderName(), $token, $spa, $url));
     }
 
     /**
