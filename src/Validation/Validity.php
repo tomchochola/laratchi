@@ -7,6 +7,7 @@ namespace Tomchochola\Laratchi\Validation;
 use Closure;
 use Illuminate\Contracts\Support\Arrayable as ArrayableContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Builder as SchmeaBuilder;
 use Illuminate\Validation\Rules\Dimensions;
@@ -2766,10 +2767,11 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
      *
      * @return $this
      */
-    public function builder(Closure $callback, string $message = 'validation.exists'): static
+    public function builder(Closure $callback, ?Closure $each = null, string $message = 'validation.exists'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2777,10 +2779,22 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
             $builder = $callback($value, $attribute);
 
-            return $builder->toBase()->exists();
+            if ($each === null) {
+                return $builder->toBase()->exists();
+            }
+
+            $model = $builder->first();
+
+            if ($model === null) {
+                return false;
+            }
+
+            \assert($model instanceof Model);
+
+            return $each($model, $value, $attribute);
         }, $message));
     }
 
@@ -2790,10 +2804,11 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
      *
      * @return $this
      */
-    public function builderKey(Closure $callback, string $message = 'validation.exists'): static
+    public function builderKey(Closure $callback, ?Closure $each = null, string $message = 'validation.exists'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2801,10 +2816,22 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
             $builder = $callback($value, $attribute);
 
-            return $builder->whereKey($value)->toBase()->exists();
+            if ($each === null) {
+                return $builder->whereKey($value)->toBase()->exists();
+            }
+
+            $model = $builder->whereKey($value)->first();
+
+            if ($model === null) {
+                return false;
+            }
+
+            \assert($model instanceof Model);
+
+            return $each($model, $value, $attribute);
         }, $message));
     }
 
@@ -2814,10 +2841,11 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
      *
      * @return $this
      */
-    public function notBuilder(Closure $callback, string $message = 'validation.exists'): static
+    public function notBuilder(Closure $callback, ?Closure $each = null, string $message = 'validation.exists'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2825,10 +2853,22 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
             $builder = $callback($value, $attribute);
 
-            return ! $builder->toBase()->exists();
+            if ($each === null) {
+                return ! $builder->toBase()->exists();
+            }
+
+            $model = $builder->first();
+
+            if ($model === null) {
+                return true;
+            }
+
+            \assert($model instanceof Model);
+
+            return ! $each($model, $value, $attribute);
         }, $message));
     }
 
@@ -2838,10 +2878,11 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
      *
      * @return $this
      */
-    public function notBuilderKey(Closure $callback, string $message = 'validation.exists'): static
+    public function notBuilderKey(Closure $callback, ?Closure $each = null, string $message = 'validation.exists'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2849,10 +2890,22 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
             $builder = $callback($value, $attribute);
 
-            return ! $builder->whereKey($value)->toBase()->exists();
+            if ($each === null) {
+                return ! $builder->whereKey($value)->toBase()->exists();
+            }
+
+            $model = $builder->whereKey($value)->first();
+
+            if ($model === null) {
+                return true;
+            }
+
+            \assert($model instanceof Model);
+
+            return ! $each($model, $value, $attribute);
         }, $message));
     }
 
