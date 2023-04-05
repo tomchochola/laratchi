@@ -26,11 +26,11 @@ class {{ class }} extends SecureFormRequest
     ];
 
     /**
-     * Resolve me.
+     * @inheritDoc
      */
-    public function resolveMe(): {{ userModel }}
+    public function mustAuth(): {{ userModel }}
     {
-        return once(static fn (): {{ userModel }} => {{ userModel }}::mustResolve());
+        return once(static fn (): {{ userModel }} => {{ userModel }}::mustAuth());
     }
 
     /**
@@ -38,7 +38,7 @@ class {{ class }} extends SecureFormRequest
      */
     public function authorize(): Response|bool
     {
-        $this->resolveMe();
+        $this->mustAuth();
 
         return true;
     }
@@ -51,14 +51,15 @@ class {{ class }} extends SecureFormRequest
         $validity = new {{ validity }}();
 
         return [
-            'filter' => Validity::make()->object()->nullable()->filled(),
-            'filter.id' => Validity::make()->collection(static::TAKE_MAX)->nullable()->filled(),
+            'filter' => Validity::make()->unsafeArray()->nullable()->filled(),
+            'filter.id' => Validity::make()->collection(static::TAKE_MAX, null)->nullable()->filled(),
             'filter.id.*' => $validity->id()->distinct()->nullable()->filled(),
             'filter.search' => Validity::make()->varchar()->nullable()->filled(),
-            'take' => Validity::make()->positive(1, static::TAKE_MAX)->nullable()->filled(),
-            'select' => Validity::make()->boolean()->nullable()->filled(),
-            'sort' => Validity::make()->collection(\count(static::SORTS))->nullable()->filled(),
-            'sort.*' => Validity::make()->string()->in(static::SORTS)->distinct()->nullable()->filled(),
+            'take' => Validity::make()->positive(1, static::TAKE_MAX)->nullable()->filled()->missingWith(['count']),
+            'select' => Validity::make()->boolean()->nullable()->filled()->missingWith(['count']),
+            'count' => Validity::make()->boolean()->nullable()->filled()->missingWith(['take', 'select', 'sort']),
+            'sort' => Validity::make()->collection(\count(static::SORTS), null)->nullable()->filled()->missingWith(['count']),
+            'sort.*' => Validity::make()->inString(static::SORTS)->distinct()->nullable()->filled(),
         ];
     }
 }

@@ -41,7 +41,10 @@ class LaratchiServiceProvider extends ServiceProvider
     protected function modelRestrictions(): void
     {
         Model::unguard();
-        Model::shouldBeStrict();
+
+        if ($this->app->environment('production') !== true) {
+            Model::shouldBeStrict();
+        }
     }
 
     /**

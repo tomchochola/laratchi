@@ -27,9 +27,15 @@ class ViewService
      */
     public function background(string $color): string
     {
-        $phase = $this->sunPhase();
+        $now = resolveDate()->now();
 
-        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make("exceptions::phases.{$phase}")->render());
+        $phase = [
+            'day',
+            'sunrise',
+            'sunset',
+        ][($now->hour + $now->year + $now->month + $now->day) % 3];
+
+        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make("exceptions::phases.{$phase}", ['color' => $color])->render());
     }
 
     /**
@@ -37,61 +43,14 @@ class ViewService
      */
     public function nightBackground(string $color): string
     {
-        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make('exceptions::phases.night')->render());
+        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make('exceptions::phases.night', ['color' => $color])->render());
     }
 
     /**
      * Get illustration.
      */
-    public function illustration(string $color): string
+    public function illustration(string $color, int $status, int $code): string
     {
-        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make('exceptions::illustrations.1xx', ['color' => $color])->render());
-    }
-
-    /**
-     * Get sun phase.
-     *
-     * @return 'day'|'sunrise'|'sunset'|'night'
-     */
-    protected function sunPhase(): string
-    {
-        $timestamp = resolveDate()->now()->getTimestamp();
-
-        [$lat, $lng] = $this->sunLatLng();
-
-        $sun = \date_sun_info($timestamp, $lat, $lng);
-
-        $sunrise = (int) $sun['sunrise'];
-        $sunset = (int) $sun['sunset'];
-        $mid = (int) $sun['transit'];
-
-        $riseDuration = ($mid - $sunrise) / 2;
-
-        if ($timestamp >= $sunrise && $timestamp <= $sunrise + $riseDuration) {
-            return 'sunrise';
-        }
-
-        if ($timestamp >= $sunrise && $timestamp <= $sunset - $riseDuration) {
-            return 'day';
-        }
-
-        if ($timestamp > $sunset || $timestamp < $sunrise) {
-            return 'night';
-        }
-
-        return 'sunset';
-    }
-
-    /**
-     * Get lat, lng for sun phase.
-     *
-     * @return array{float, float}
-     */
-    protected function sunLatLng(): array
-    {
-        return [
-            50.075538,
-            14.437801,
-        ];
+        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->first(["exceptions::illustrations.{$status}", 'exceptions::illustrations.'.\mb_substr((string) $status, 0, -2).'xx', 'exceptions::illustrations.1xx'], ['color' => $color])->render());
     }
 }

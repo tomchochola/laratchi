@@ -32,7 +32,7 @@ class {{ class }} extends TransactionController
         $title = $request->validatedInput()->string('title');
 
         if ($title !== null) {
-            [$hit] = $this->throttle(Limit::perMinutes(15, 5)->by(requestSignature()->data('key', 'title')->user($request->resolveMe())->hash()));
+            [$hit] = $this->throttle(Limit::perMinutes(15, 5)->by(requestSignature()->data('key', 'title')->user($request->mustAuth())->hash()));
 
             $qualifier = new {{ model }}();
 

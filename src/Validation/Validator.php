@@ -154,6 +154,14 @@ class Validator extends IlluminateValidator
     }
 
     /**
+     * Validate the attribute is collection.
+     */
+    public function validateCollection(string $attribute, mixed $value): bool
+    {
+        return \is_array($value) && \array_keys($value) === \array_keys(\array_values($value));
+    }
+
+    /**
      * Replace all place-holders for the prohibited_with rule.
      *
      * @param array<int ,string> $parameters
@@ -221,5 +229,13 @@ class Validator extends IlluminateValidator
     protected function replaceStrlen(string $message, string $attribute, string $rule, array $parameters): string
     {
         return \str_replace(':size', (string) $parameters[0], $message);
+    }
+
+    /**
+     * Replace all place-holders for the collection rule.
+     */
+    protected function replaceCollection(string $message): string
+    {
+        return $message;
     }
 }

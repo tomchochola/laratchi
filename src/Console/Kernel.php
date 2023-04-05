@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     protected function authClearResets(Schedule $schedule): void
     {
         foreach (mustConfigArray('auth.passwords') as $passwordBrokerName => $config) {
-            $schedule->command("auth:clear-resets {$passwordBrokerName}")->dailyAt('04:00')->timezone(static::SCHEDULE_TIMEZONE)->withoutOverlapping()->runInBackground();
+            $schedule->command("auth:clear-resets {$passwordBrokerName}")->dailyAt('04:00')->timezone(static::SCHEDULE_TIMEZONE)->runInBackground();
         }
     }
 

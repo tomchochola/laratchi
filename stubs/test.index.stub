@@ -83,6 +83,38 @@ class {{ class }} extends TestCase
         $this->validateJsonApiCollectionResponse($response, [$this->structure{{ model }}Select()], []);
     }
 
+        /**
+         * @dataProvider localeDataProvider
+         */
+        public function test_fetch_{{ table }}_count(string $locale): void
+        {
+            $this->locale($locale);
+
+            $me = {{ userModelFactory }}::new()->createOne();
+
+            \assert($me instanceof {{ userModel }});
+
+            $model = {{ factory }}::new()->createOne();
+
+            \assert($model instanceof {{ model }});
+
+            $query = [
+                'filter' => [
+                    'id' => [$model->getKey()],
+                    'search' => $model->getTitle(),
+                ],
+                'count' => true,
+            ];
+
+            $response = $this->be($me, 'users')->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
+
+            $response->assertOk();
+
+            $response->assertExactJson([
+                'data' => 1,
+            ]);
+        }
+
     /**
      * {{ model }} index structure.
      */

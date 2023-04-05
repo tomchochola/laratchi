@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @template T of User
@@ -14,7 +13,7 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    public const VALID_PASSWORD = 'password';
+    public const PASSWORD = 'password';
 
     /**
      * @inheritDoc
@@ -30,9 +29,9 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => resolveDate()->now(),
-            'password' => Str::random(10),
-            'remember_token' => Str::random(10),
-            'locale' => fake()->randomElement(mustConfigArray('app.locales')),
+            'password' => 'password',
+            'remember_token' => 'remember_token',
+            'locale' => resolveApp()->getLocale(),
         ];
     }
 
@@ -45,10 +44,18 @@ class UserFactory extends Factory
     }
 
     /**
-     * Create model with valid password filled.
+     * Create model with password filled.
      */
-    public function withValidPassword(): static
+    public function password(?string $password = null): static
     {
-        return $this->set('password', resolveHasher()->make(static::VALID_PASSWORD));
+        return $this->set('password', resolveHasher()->make($password ?? static::PASSWORD));
+    }
+
+    /**
+     * Create model with given locale.
+     */
+    public function locale(string $locale): static
+    {
+        return $this->set('locale', $locale);
     }
 }

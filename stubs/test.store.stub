@@ -41,6 +41,8 @@ class {{ class }} extends TestCase
         $response->assertSuccessful();
 
         $this->validateJsonApiResponse($response, $this->structure('{{ table }}'), []);
+
+        $this->assertDatabaseCount($model->getTable(), 1);
     }
 
     /**
@@ -68,5 +70,7 @@ class {{ class }} extends TestCase
         $response->assertStatus(422);
 
         $this->validateJsonApiValidationError($response, ['title']);
+
+        $this->assertDatabaseCount($model->getTable(), 1);
     }
 }

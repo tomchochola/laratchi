@@ -56,6 +56,7 @@ class AuthShouldUseMiddleware
 
         if ($current !== $want) {
             resolveAuthManager()->shouldUse($want);
+            resolvePasswordBrokerManager()->setDefaultDriver($want);
         }
 
         return $next($request);

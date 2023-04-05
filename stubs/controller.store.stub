@@ -30,7 +30,7 @@ class {{ class }} extends TransactionController
      */
     protected function validateUnique({{ storeRequest }} $request): void
     {
-        [$hit] = $this->throttle(Limit::perMinutes(15, 5)->by(requestSignature()->data('key', 'title')->user($request->resolveMe())->hash()));
+        [$hit] = $this->throttle(Limit::perMinutes(15, 5)->by(requestSignature()->data('key', 'title')->user($request->mustAuth())->hash()));
 
         $qualifier = new {{ model }}();
 

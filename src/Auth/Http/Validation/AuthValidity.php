@@ -68,7 +68,7 @@ class AuthValidity
      */
     public function locale(string $guardName): Validity
     {
-        return Validity::make()->char(2)->in(mustConfigArray('app.locales'))->if(static::$allowedLocales !== null)->in(static::$allowedLocales ?? []);
+        return Validity::make()->inString(static::$allowedLocales ?? mustConfigArray('app.locales'));
     }
 
     /**
@@ -100,7 +100,7 @@ class AuthValidity
      */
     public function rememberToken(string $guardName): Validity
     {
-        return Validity::make()->char(CycleRememberTokenAction::$rememberTokenLength);
+        return Validity::make()->varchar(CycleRememberTokenAction::$rememberTokenLength);
     }
 
     /**

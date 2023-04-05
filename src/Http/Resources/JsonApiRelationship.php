@@ -59,11 +59,11 @@ class JsonApiRelationship extends JsonResource
     /**
      * Get items.
      *
-     * @return Collection<int, JsonApiResource>
+     * @return Collection<array-key, JsonApiResource>
      */
     public function items(): Collection
     {
-        $collection = collect([]);
+        $collection = new Collection();
 
         if ($this->include === false) {
             return $collection;

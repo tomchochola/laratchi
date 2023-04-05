@@ -7,7 +7,7 @@
 
   $favicon = $favicon ?? $viewService->faviconUrl();
 
-  $illustration = $illustration ?? $viewService->illustration($color);
+  $illustration = $illustration ?? $viewService->illustration($color, $status, $code);
 
   $background = $background ?? $viewService->background($color);
   $nightBackground = $nightBackground ?? $viewService->nightBackground($color);
@@ -18,23 +18,25 @@
 <!DOCTYPE html>
 <html lang="{{ $locale }}">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="utf-8" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
 
   @if($noindex === true)
-  <meta name="robots" content="noindex, nofollow"/>
+  <meta name="robots" content="noindex, nofollow" />
   @endif
+
+  <meta name="author" content="Tomáš Chochola <chocholatom1997@gmail.com>" />
 
   <title>{{ $title ?? $status }}</title>
 
   @isset($favicon)
-  <link rel="icon" href="{{ $favicon }}"/>
+  <link rel="icon" href="{{ $favicon }}" />
   @endisset
 
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;900&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;900&display=swap" rel="stylesheet" />
 
   <style>
     @include('exceptions::css')
@@ -46,7 +48,7 @@
     }
 
     body {
-      word-break: break-all;
+      word-break: break-word;
     }
   </style>
 </head>
@@ -74,7 +76,7 @@
 
     <div class="justify-center items-center hidden lg:flex w-1/2" role="presentation">
       <div class="w-4/6 relative z-30 flex justify-center items-center">
-        <img alt="{{ $title ?? $status }}" src="{{ $illustration }}" style="width: 100%;"/>
+        <img alt="{{ $title ?? $status }}" src="{{ $illustration }}" style="width: 100%;" />
       </div>
     </div>
 

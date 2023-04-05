@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Observers;
 
-use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Tomchochola\Laratchi\Auth\Actions\CycleRememberTokenAction;
 use Tomchochola\Laratchi\Auth\Actions\LogoutOtherDevicesAction;
@@ -17,7 +16,7 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        if (blank($user->getAuthPassword())) {
+        if ($user->getAuthPassword() === '') {
             $this->sendPasswordInit($user);
         }
     }
@@ -45,12 +44,8 @@ class UserObserver
             $this->sendEmailVerificationNotification($user);
         }
 
-        if ($user->wasChanged('email')) {
-            $this->clearPasswordResetAfterEmailUpdate($user);
-
-            if (blank($user->getAuthPassword())) {
-                $this->sendPasswordInit($user);
-            }
+        if ($user->wasChanged('email') && $user->getAuthPassword() === '') {
+            $this->sendPasswordInit($user);
         }
 
         if ($user->wasChanged('password')) {
@@ -64,20 +59,7 @@ class UserObserver
     public function deleted(User $user): void
     {
         $this->clearNotifications($user);
-        $this->clearPasswordReset($user);
         $this->logoutOtherDevices($user);
-    }
-
-    /**
-     * Delete all user password reset tokens.
-     */
-    protected function clearPasswordReset(User $user): void
-    {
-        $broker = resolvePasswordBrokerManager()->broker($user->getPasswordBrokerName());
-
-        \assert($broker instanceof PasswordBroker);
-
-        $broker->deleteToken($user);
     }
 
     /**
@@ -85,11 +67,7 @@ class UserObserver
      */
     protected function sendPasswordInit(User $user): void
     {
-        $broker = resolvePasswordBrokerManager()->broker($user->getPasswordBrokerName());
-
-        \assert($broker instanceof PasswordBroker);
-
-        $broker->sendResetLink(['email' => $user->getEmailForPasswordReset()]);
+        $user->sendPasswordResetNotification(resolvePasswordBroker($user->getPasswordBrokerName())->createToken($user));
     }
 
     /**
@@ -97,7 +75,7 @@ class UserObserver
      */
     protected function clearEmailVerifiedAt(User&MustVerifyEmailContract $user): void
     {
-        $user->fill(['email_verified_at' => null]);
+        $user->setAttribute('email_verified_at', null);
     }
 
     /**
@@ -122,21 +100,6 @@ class UserObserver
     protected function clearNotifications(User $user): void
     {
         $user->notifications()->getQuery()->delete();
-    }
-
-    /**
-     * Clear password resets table after email update.
-     */
-    protected function clearPasswordResetAfterEmailUpdate(User $user): void
-    {
-        $oldEmail = $user->getOriginal('email');
-        $newEmail = $user->getAttribute('email');
-
-        $user->fill(['email' => $oldEmail]);
-
-        $this->clearPasswordReset($user);
-
-        $user->fill(['email' => $newEmail]);
     }
 
     /**

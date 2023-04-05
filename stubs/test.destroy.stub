@@ -39,5 +39,7 @@ class {{ class }} extends TestCase
         $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ destroyController }}::class, $query), $data);
 
         $response->assertNoContent();
+
+        $this->assertDatabaseEmpty($model->getTable());
     }
 }

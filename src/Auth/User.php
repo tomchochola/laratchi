@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth;
 
 use Closure;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Translation\HasLocalePreference as HasLocalePreferenceContract;
 use Illuminate\Foundation\Auth\User as IlluminateUser;
 use Illuminate\Notifications\Notifiable;
@@ -14,6 +15,7 @@ use Tomchochola\Laratchi\Auth\Notifications\ResetPasswordNotification;
 use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
 use Tomchochola\Laratchi\Database\IntModelTrait;
 use Tomchochola\Laratchi\Database\ModelTrait;
+use Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException;
 
 class User extends IlluminateUser implements DatabaseTokenableInterface, HasLocalePreferenceContract
 {
@@ -71,11 +73,61 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     }
 
     /**
+     * User auth or null.
+     */
+    public static function auth(): ?static
+    {
+        $me = resolveAuthManager()->guard()->user();
+
+        if ($me === null) {
+            return null;
+        }
+
+        \assert($me instanceof static);
+
+        return $me;
+    }
+
+    /**
+     * Mandatory user auth.
+     */
+    public static function mustAuth(): static
+    {
+        $me = static::auth();
+
+        if ($me !== null) {
+            return $me;
+        }
+
+        throw new AuthenticationException();
+    }
+
+    /**
+     * Guest user.
+     */
+    public static function guest(): bool
+    {
+        return resolveAuthManager()->guard()->guest();
+    }
+
+    /**
+     * Mandatory guest user.
+     */
+    public static function mustGuest(): bool
+    {
+        if (static::guest()) {
+            return true;
+        }
+
+        throw new MustBeGuestHttpException();
+    }
+
+    /**
      * @inheritDoc
      */
     public function sendPasswordResetNotification(mixed $token): void
     {
-        if (blank($this->getAuthPassword())) {
+        if ($this->getAuthPassword() === '') {
             $this->notifyPasswordInit($token);
         } else {
             $this->notifyPasswordReset($token);
@@ -85,17 +137,17 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     /**
      * Send only password reset notification.
      */
-    public function notifyPasswordReset(?string $token = null, ?string $spa = null, ?string $url = null): void
+    public function notifyPasswordReset(string $token): void
     {
-        $this->notify(new ResetPasswordNotification($this->getUserProviderName(), $token, $spa, $url));
+        $this->notify(new ResetPasswordNotification($this->getUserProviderName(), $token));
     }
 
     /**
      * Send only password init notification.
      */
-    public function notifyPasswordInit(?string $token = null, ?string $spa = null, ?string $url = null): void
+    public function notifyPasswordInit(string $token): void
     {
-        $this->notify(new PasswordInitNotification($this->getUserProviderName(), $token, $spa, $url));
+        $this->notify(new PasswordInitNotification($this->getUserProviderName(), $token));
     }
 
     /**

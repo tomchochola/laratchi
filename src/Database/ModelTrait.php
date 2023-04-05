@@ -145,25 +145,25 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function mustResolveFromRequest(FormRequest $request, ?Closure $closure = null): static
+    public static function mustResolveFromRequest(FormRequest $request, ?Closure $closure = null, string $idKey = 'id', string $routeKey = 'slug'): static
     {
-        $id = $request->fastInteger('id');
+        $id = $request->fastInteger($idKey);
 
         if ($id !== null) {
-            return static::mustFindByKey($id, $closure, static function () use ($request): never {
-                $request->throwSingleValidationException(['id'], 'Exists');
+            return static::mustFindByKey($id, $closure, static function () use ($request, $idKey): never {
+                $request->throwSingleValidationException([$idKey], 'Exists');
             });
         }
 
-        $slug = $request->fastString('slug');
+        $slug = $request->fastString($routeKey);
 
         if ($slug !== null) {
-            return static::mustFindByRouteKey($slug, $closure, static function () use ($request): never {
-                $request->throwSingleValidationException(['slug'], 'Exists');
+            return static::mustFindByRouteKey($slug, $closure, static function () use ($request, $routeKey): never {
+                $request->throwSingleValidationException([$routeKey], 'Exists');
             });
         }
 
-        $request->throwSingleValidationException(['id', 'slug'], 'Required');
+        $request->throwSingleValidationException([$idKey, $routeKey], 'Required');
     }
 
     /**

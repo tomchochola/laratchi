@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Testing;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Arr;
@@ -11,8 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 use Stringable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Tomchochola\Laratchi\Auth\DatabaseTokenableInterface;
-use Tomchochola\Laratchi\Auth\DatabaseTokenGuard;
+use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Validation\SecureValidator;
 use Tomchochola\Laratchi\Validation\Validity;
 
@@ -50,8 +50,6 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         Storage::fake('public');
-
-        \assert(\count($this->getProvidedData()) > 0, '@dataProvider localeDataProvider must be used in every test!');
     }
 
     /**
@@ -109,6 +107,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function call(mixed $method, mixed $uri, mixed $parameters = [], mixed $cookies = [], mixed $files = [], mixed $server = [], mixed $content = null): TestResponse
     {
+        \assert(\in_array($method, ['GET', 'POST'], true), 'Only GET and POST method is allowed');
+
         $params = $this->transformParameters($parameters);
 
         return parent::call($method, $uri, $params, $cookies, $files, $server, $content);
@@ -128,34 +128,18 @@ abstract class TestCase extends BaseTestCase
     /**
      * @inheritDoc
      *
-     * @param array<mixed> $data
-     * @param array<mixed> $headers
+     * @return $this
      */
-    public function put(mixed $uri, array $data = [], array $headers = []): never
+    public function be(Authenticatable $user, mixed $guard = null): static
     {
-        assertNever();
-    }
+        \assert($user instanceof User);
+        \assert($guard === null || $guard === $user->getUserProviderName());
 
-    /**
-     * @inheritDoc
-     *
-     * @param array<mixed> $data
-     * @param array<mixed> $headers
-     */
-    public function patch(mixed $uri, array $data = [], array $headers = []): never
-    {
-        assertNever();
-    }
+        $user->wasRecentlyCreated = false;
 
-    /**
-     * @inheritDoc
-     *
-     * @param array<mixed> $data
-     * @param array<mixed> $headers
-     */
-    public function delete(mixed $uri, array $data = [], array $headers = []): never
-    {
-        assertNever();
+        resolveAuthManager()->guard($user->getUserProviderName())->setUser($user);
+
+        return $this;
     }
 
     /**
@@ -188,74 +172,6 @@ abstract class TestCase extends BaseTestCase
         }
 
         return $parameters;
-    }
-
-    /**
-     * Set default auth guard.
-     *
-     * @return $this
-     */
-    protected function guard(string $guardName): static
-    {
-        \assert(\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true));
-
-        resolveAuthManager()->shouldUse($guardName);
-
-        return $this;
-    }
-
-    /**
-     * Set default password broker.
-     *
-     * @return $this
-     */
-    protected function passwordBroker(string $passwordBrokerName): static
-    {
-        \assert(\in_array($passwordBrokerName, \array_keys(mustConfigArray('auth.passwords')), true));
-
-        resolvePasswordBrokerManager()->setDefaultDriver($passwordBrokerName);
-
-        return $this;
-    }
-
-    /**
-     *  Login user using database token in header.
-     *
-     * @return $this
-     */
-    protected function beViaDatabaseToken(DatabaseTokenableInterface $user, string $guardName): static
-    {
-        \assert(\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true));
-
-        $guard = resolveAuthManager()->guard($guardName);
-
-        \assert($guard instanceof DatabaseTokenGuard);
-
-        $databaseToken = $guard->createToken($user);
-
-        return $this->withHeader('Authorization', "Bearer {$databaseToken->bearer}");
-    }
-
-    /**
-     *  Login user with database token set.
-     *
-     * @return $this
-     */
-    protected function beWithDatabaseToken(DatabaseTokenableInterface $user, string $guardName): static
-    {
-        \assert(\in_array($guardName, \array_keys(mustConfigArray('auth.guards')), true));
-
-        $guard = resolveAuthManager()->guard($guardName);
-
-        \assert($guard instanceof DatabaseTokenGuard);
-
-        $databaseToken = $guard->createToken($user);
-
-        $user->setDatabaseToken($databaseToken);
-
-        $guard->databaseToken = $databaseToken;
-
-        return $this->be($user, $guardName);
     }
 
     /**
@@ -557,16 +473,6 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Validate validator.
-     */
-    protected function validate(ValidatorContract $validator): void
-    {
-        if ($validator->fails()) {
-            static::assertEmpty($validator->failed(), 'Json api response validation failed: '.\json_encode($validator->failed()));
-        }
-    }
-
-    /**
      * Set locale.
      */
     protected function locale(string $locale): void
@@ -581,5 +487,15 @@ abstract class TestCase extends BaseTestCase
         $this->defaultHeaders['Accept-Language'] = $locale;
 
         $this->localeCalled = true;
+    }
+
+    /**
+     * Validate validator.
+     */
+    private function validate(ValidatorContract $validator): void
+    {
+        if ($validator->fails()) {
+            static::assertEmpty($validator->failed(), 'Json api response validation failed: '.\json_encode($validator->failed()));
+        }
     }
 }

@@ -39,14 +39,4 @@ class {{ class }} extends Notification implements ShouldQueueContract
         return (new MailMessage())
             ->line(mustTransString('notifications.'.static::class.'.line1'));
     }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(mixed $notifiable): array
-    {
-        return [];
-    }
 }

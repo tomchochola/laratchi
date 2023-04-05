@@ -52,6 +52,7 @@ class Kernel extends HttpKernel
     protected $middlewareGroups = [
         'session' => [
             StartSession::class,
+            AuthenticateSession::class,
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
         ],

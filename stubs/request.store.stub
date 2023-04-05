@@ -12,11 +12,11 @@ use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 class {{ class }} extends SecureFormRequest
 {
     /**
-     * Resolve me.
+     * @inheritDoc
      */
-    public function resolveMe(): {{ userModel }}
+    public function mustAuth(): {{ userModel }}
     {
-        return once(static fn (): {{ userModel }} => {{ userModel }}::mustResolve());
+        return once(static fn (): {{ userModel }} => {{ userModel }}::mustAuth());
     }
 
     /**
@@ -24,7 +24,7 @@ class {{ class }} extends SecureFormRequest
      */
     public function authorize(): Response|bool
     {
-        $this->resolveMe();
+        $this->mustAuth();
 
         return true;
     }

@@ -180,7 +180,7 @@ class Handler extends IlluminateHandler
                 $internal = \trim("{$exception->getMessage()} {$httpException->getMessage()}");
             }
 
-            if (blank($internal)) {
+            if ($internal === '') {
                 $internal = $this->httpExceptionMessage($httpException);
             }
 

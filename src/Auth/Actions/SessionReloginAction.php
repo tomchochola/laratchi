@@ -21,7 +21,7 @@ class SessionReloginAction implements ReloginActionInterface
 
         $rememberToken = $user->getRememberToken();
 
-        if (blank($rememberToken)) {
+        if ($rememberToken === '') {
             return;
         }
 

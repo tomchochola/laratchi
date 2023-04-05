@@ -28,7 +28,7 @@ if (! \function_exists('mustRandomElement')) {
      *
      * @template T
      *
-     * @param non-empty-array<T> $arr
+     * @param array<T> $arr
      *
      * @return T
      */
@@ -42,7 +42,7 @@ if (! \function_exists('extendedTrim')) {
     /**
      * Trim string using defaults plus provided characters.
      */
-    function extendedTrim(string $string, string $characters = ''): string
+    function extendedTrim(string $string, string $characters): string
     {
         return \trim($string, " \t\n\r\0\x0B{$characters}");
     }
@@ -52,9 +52,11 @@ if (! \function_exists('arrayFilterNull')) {
     /**
      * Filter null values from array.
      *
-     * @param array<mixed> $array
+     * @template T
      *
-     * @return array<mixed>
+     * @param array<T> $array
+     *
+     * @return array<T>
      */
     function arrayFilterNull(array $array): array
     {
@@ -68,7 +70,7 @@ if (! \function_exists('nonProductionThrow')) {
      */
     function nonProductionThrow(Throwable $throwable): void
     {
-        if (isEnv(['staging', 'production']) === false) {
+        if (! isEnv(['production'])) {
             throw $throwable;
         }
 
@@ -401,6 +403,34 @@ if (! \function_exists('resolveAuthManager')) {
     }
 }
 
+if (! \function_exists('resolveGuard')) {
+    /**
+     * Resolve guard.
+     */
+    function resolveGuard(?string $name = null): Tomchochola\Laratchi\Auth\DatabaseTokenGuard
+    {
+        $resolved = resolveAuthManager()->guard($name);
+
+        \assert($resolved instanceof Tomchochola\Laratchi\Auth\DatabaseTokenGuard);
+
+        return $resolved;
+    }
+}
+
+if (! \function_exists('resolveUserProvider')) {
+    /**
+     * Resolve user provider.
+     */
+    function resolveUserProvider(?string $name = null): Illuminate\Auth\EloquentUserProvider
+    {
+        $resolved = resolveAuthManager()->createUserProvider($name);
+
+        \assert($resolved instanceof Illuminate\Auth\EloquentUserProvider);
+
+        return $resolved;
+    }
+}
+
 if (! \function_exists('resolveBlade')) {
     /**
      * Resolve blade.
@@ -457,6 +487,16 @@ if (! \function_exists('resolveCacheManager')) {
     }
 }
 
+if (! \function_exists('resolveCache')) {
+    /**
+     * Resolve cache.
+     */
+    function resolveCache(?string $name = null): Illuminate\Contracts\Cache\Repository
+    {
+        return resolveCacheManager()->store($name);
+    }
+}
+
 if (! \function_exists('resolveConfig')) {
     /**
      * Resolve config.
@@ -510,6 +550,16 @@ if (! \function_exists('resolveDatabaseManager')) {
         \assert($resolved instanceof Illuminate\Database\DatabaseManager);
 
         return $resolved;
+    }
+}
+
+if (! \function_exists('resolveDatabase')) {
+    /**
+     * Resolve database.
+     */
+    function resolveDatabase(?string $name = null): Illuminate\Database\Connection
+    {
+        return resolveDatabaseManager()->connection($name);
     }
 }
 
@@ -676,6 +726,34 @@ if (! \function_exists('resolvePasswordBrokerManager')) {
         $resolved = Illuminate\Support\Facades\Password::getFacadeRoot();
 
         \assert($resolved instanceof Illuminate\Auth\Passwords\PasswordBrokerManager);
+
+        return $resolved;
+    }
+}
+
+if (! \function_exists('resolvePasswordBroker')) {
+    /**
+     * Resolve password broker.
+     */
+    function resolvePasswordBroker(?string $name = null): Illuminate\Auth\Passwords\PasswordBroker
+    {
+        $resolved = resolvePasswordBrokerManager()->broker($name);
+
+        \assert($resolved instanceof Illuminate\Auth\Passwords\PasswordBroker);
+
+        return $resolved;
+    }
+}
+
+if (! \function_exists('resolvePasswordTokenRepository')) {
+    /**
+     * Resolve password token repository.
+     */
+    function resolvePasswordTokenRepository(?string $name = null): Illuminate\Auth\Passwords\DatabaseTokenRepository
+    {
+        $resolved = resolvePasswordBroker($name)->getRepository();
+
+        \assert($resolved instanceof Illuminate\Auth\Passwords\DatabaseTokenRepository);
 
         return $resolved;
     }
@@ -1053,6 +1131,18 @@ if (! \function_exists('requestSignature')) {
     }
 }
 
+if (! \function_exists('unsafeEnv')) {
+    /**
+     * Unsafe env resolver.
+     */
+    function unsafeEnv(string $key, mixed $default = null): mixed
+    {
+        \assert(! resolveApp()->bound('env'), 'read ENV only in config files');
+
+        return Illuminate\Support\Env::get($key, $default);
+    }
+}
+
 if (! \function_exists('envString')) {
     /**
      * Env string resolver.
@@ -1061,10 +1151,10 @@ if (! \function_exists('envString')) {
      */
     function envString(string $key, ?string $default = null, bool $trim = true, array $in = []): ?string
     {
-        $value = env($key, $default) ?? $default;
+        $value = unsafeEnv($key, $default) ?? $default;
 
         if ($value === null) {
-            return $default;
+            return null;
         }
 
         $value = \filter_var($value);
@@ -1076,7 +1166,11 @@ if (! \function_exists('envString')) {
         }
 
         if ($value === '') {
-            $value = $default;
+            $value = $trim && $default !== null ? \trim($default) : $default;
+        }
+
+        if ($value === null || $value === '') {
+            return null;
         }
 
         \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] env is not in available options");
@@ -1109,10 +1203,10 @@ if (! \function_exists('envBool')) {
      */
     function envBool(string $key, ?bool $default = null, array $in = []): ?bool
     {
-        $value = env($key, $default) ?? $default;
+        $value = unsafeEnv($key, $default) ?? $default;
 
         if ($value === null) {
-            return $default;
+            return null;
         }
 
         $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
@@ -1148,10 +1242,10 @@ if (! \function_exists('envInt')) {
      */
     function envInt(string $key, ?int $default = null, array $in = []): ?int
     {
-        $value = env($key, $default) ?? $default;
+        $value = unsafeEnv($key, $default) ?? $default;
 
         if ($value === null) {
-            return $default;
+            return null;
         }
 
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
@@ -1187,10 +1281,10 @@ if (! \function_exists('envFloat')) {
      */
     function envFloat(string $key, ?float $default = null, array $in = []): ?float
     {
-        $value = env($key, $default) ?? $default;
+        $value = unsafeEnv($key, $default) ?? $default;
 
         if ($value === null) {
-            return $default;
+            return null;
         }
 
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
@@ -1221,24 +1315,30 @@ if (! \function_exists('mustEnvFloat')) {
 if (! \function_exists('currentEnv')) {
     /**
      * Get current env.
+     *
+     * @return "local"|"testing"|"development"|"staging"|"production"
      */
     function currentEnv(): string
     {
-        $current = resolveApp()->make('env');
+        $app = resolveApp();
 
-        \assert(\is_string($current));
+        $value = $app->bound('env') ? $app->make('env') : mustEnvString('APP_ENV');
 
-        return $current;
+        \assert(\in_array($value, ['local', 'testing', 'development', 'staging', 'production'], true));
+
+        return $value;
     }
 }
 
 if (! \function_exists('currentEnvEnv')) {
     /**
-     * Get current env in env scope.
+     * Get current env.
+     *
+     * @return "local"|"testing"|"development"|"staging"|"production"
      */
     function currentEnvEnv(): string
     {
-        return mustEnvString('APP_ENV');
+        return currentEnv();
     }
 }
 
@@ -1246,7 +1346,7 @@ if (! \function_exists('isEnv')) {
     /**
      * Check for current env.
      *
-     * @param array<int, string> $envs
+     * @param array<"local"|"testing"|"development"|"staging"|"production"> $envs
      */
     function isEnv(array $envs): bool
     {
@@ -1256,13 +1356,13 @@ if (! \function_exists('isEnv')) {
 
 if (! \function_exists('isEnvEnv')) {
     /**
-     * Check for current env in env scope.
+     * Check for current env.
      *
-     * @param array<int, string> $envs
+     * @param array<"local"|"testing"|"development"|"staging"|"production"> $envs
      */
     function isEnvEnv(array $envs): bool
     {
-        return \in_array(currentEnvEnv(), $envs, true);
+        return isEnv($envs);
     }
 }
 
@@ -1284,31 +1384,23 @@ if (! \function_exists('mapEnv')) {
     /**
      * Map env.
      *
-     * @param array<string, mixed> $mapping
+     * @param array{local: mixed, testing: mixed, development: mixed, staging: mixed, production: mixed} $mapping
      */
-    function mapEnv(array $mapping, mixed $default = null): mixed
+    function mapEnv(array $mapping): mixed
     {
-        if ($default === null) {
-            return $mapping[currentEnv()];
-        }
-
-        return $mapping[currentEnv()] ?? $default;
+        return $mapping[currentEnv()];
     }
 }
 
 if (! \function_exists('mapEnvEnv')) {
     /**
-     * Map env in env scope.
+     * Map env.
      *
-     * @param array<string, mixed> $mapping
+     * @param array{local: mixed, testing: mixed, development: mixed, staging: mixed, production: mixed} $mapping
      */
-    function mapEnvEnv(array $mapping, mixed $default = null): mixed
+    function mapEnvEnv(array $mapping): mixed
     {
-        if ($default === null) {
-            return $mapping[currentEnvEnv()];
-        }
-
-        return $mapping[currentEnvEnv()] ?? $default;
+        return mapEnv($mapping);
     }
 }
 

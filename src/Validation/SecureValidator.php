@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation;
 
-use Illuminate\Contracts\Validation\Rule as RuleContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ClosureValidationRule;
@@ -13,7 +12,6 @@ use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\Rules\ImageFile;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Validation\ValidationRuleParser;
 use Tomchochola\Laratchi\Validation\Rules\CallbackRule;
 use Tomchochola\Laratchi\Validation\Rules\CzBankAccountNumberRule;
 use Tomchochola\Laratchi\Validation\Rules\IcoRule;
@@ -32,6 +30,7 @@ class SecureValidator extends Validator
         'alpha_dash' => 'alpha_dash',
         'alpha_num' => 'alpha_num',
         'array' => 'array',
+        'collection' => 'array',
         'ascii' => 'ascii',
         'before' => 'before::date',
         'before_or_equal' => 'before_or_equal::date',
@@ -218,8 +217,6 @@ class SecureValidator extends Validator
      */
     public function passes(): bool
     {
-        \assert($this->allMessagesDefined());
-
         $passes = parent::passes();
 
         if ($passes === false) {
@@ -232,20 +229,20 @@ class SecureValidator extends Validator
         );
 
         foreach ($extraAttributes as $attribute => $value) {
-            if (\count($this->getExplicitKeys($attribute)) === 0) {
+            if (\count($this->getExplicitKeys((string) $attribute)) === 0) {
                 if (\in_array($attribute, static::$excluded, true)) {
                     continue;
                 }
 
-                if (Str::endsWith($attribute, '_confirmation')) {
-                    $attr = Str::before($attribute, '_confirmation');
+                if (Str::endsWith((string) $attribute, '_confirmation')) {
+                    $attr = Str::before((string) $attribute, '_confirmation');
 
                     if (\in_array('confirmed', $this->rules[$attr] ?? [], true)) {
                         continue;
                     }
                 }
 
-                $this->addFailure($attribute, 'missing', []);
+                $this->addFailure((string) $attribute, 'missing', []);
             }
         }
 
@@ -291,8 +288,8 @@ class SecureValidator extends Validator
      */
     protected function shouldStopValidating(mixed $attribute): bool
     {
-        if (static::$bail) {
-            return $this->messages->has($this->replacePlaceholderInString($attribute));
+        if (static::$bail && $this->messages->has($this->replacePlaceholderInString($attribute))) {
+            return true;
         }
 
         return parent::shouldStopValidating($attribute);
@@ -340,42 +337,6 @@ class SecureValidator extends Validator
         \assert($message !== 'fallback', "Json api validation message not defined for rule class: [{$lowerRule}]");
 
         return $message;
-    }
-
-    /**
-     * Check that all rules has defined message.
-     */
-    protected function allMessagesDefined(): bool
-    {
-        foreach ($this->rules as $attribute => $rules) {
-            foreach ($rules as $rule) {
-                [$rule] = ValidationRuleParser::parse($rule);
-
-                if (blank($rule)) {
-                    continue;
-                }
-
-                if (\in_array($rule, $this->excludeRules, true)) {
-                    continue;
-                }
-
-                if (\is_string($rule) && \in_array(\mb_strtolower($rule), ['sometimes', 'nullable', 'bail'], true)) {
-                    continue;
-                }
-
-                if ($rule instanceof RuleContract) {
-                    if ($this->getFromLocalArray($attribute, $rule instanceof InvokableValidationRule ? \get_class($rule->invokable()) : $rule::class) === null) {
-                        return false;
-                    }
-                } else {
-                    if ($this->getInlineMessage($attribute, $rule) === null) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
     }
 
     /**

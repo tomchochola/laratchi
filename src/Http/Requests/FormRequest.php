@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
+use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Validation\AllInput;
 use Tomchochola\Laratchi\Validation\ValidatedInput;
 
@@ -67,7 +68,7 @@ class FormRequest extends IlluminateFormRequest
         $validator ??= resolveValidatorFactory()->make([], []);
 
         foreach ($keys as $key) {
-            $validator->addFailure($key, $rule, [
+            $validator->addFailure((string) $key, $rule, [
                 'seconds' => (string) $seconds,
                 'minutes' => (string) \ceil($seconds / 60),
             ]);
@@ -275,6 +276,10 @@ class FormRequest extends IlluminateFormRequest
             return collect($this->only($key));
         }
 
+        if ($key === null) {
+            return collect($this->all());
+        }
+
         $value = $this->input($key);
 
         if ($value instanceof Collection) {
@@ -390,5 +395,21 @@ class FormRequest extends IlluminateFormRequest
     public function mustFastFile(string $key, ?UploadedFile $default = null): UploadedFile
     {
         return $this->allInput()->mustFile($key, $default);
+    }
+
+    /**
+     * Authenticate user.
+     */
+    public function auth(): ?User
+    {
+        return once(static fn (): ?User => User::auth());
+    }
+
+    /**
+     * Mandatory user authentication.
+     */
+    public function mustAuth(): User
+    {
+        return once(static fn (): User => User::mustAuth());
     }
 }

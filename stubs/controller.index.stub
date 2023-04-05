@@ -20,15 +20,19 @@ class {{ class }} extends Controller
      */
     public function __invoke({{ indexRequest }} $request): SymfonyResponse
     {
-        $data = {{ model }}::query()->tap(function (Builder $builder) use ($request): void {
-            $this->select($builder, $request);
-            $this->filterSearch($builder, $request);
-            $this->filterId($builder, $request);
-            $this->sort($builder, $request);
-            $this->take($builder, $request);
-        })->get();
+        $builder = {{ model }}::query();
 
-        return (new JsonApiCollectionResponse($data, $request->validatedInput()->mustBool('select', false) ? {{ selectResource }}::class : {{ indexResource }}::class))->toResponse($request);
+        $this->select($builder, $request);
+        $this->filterSearch($builder, $request);
+        $this->filterId($builder, $request);
+        $this->sort($builder, $request);
+        $this->take($builder, $request);
+
+        if ($request->validatedInput()->mustBool('count', false)) {
+            return resolveResponseFactory()->json(['data' => $builder->getQuery()->count()]);
+        }
+
+        return (new JsonApiCollectionResponse($builder->get(), $request->validatedInput()->mustBool('select', false) ? {{ selectResource }}::class : {{ indexResource }}::class))->toResponse($request);
     }
 
     /**
@@ -45,7 +49,7 @@ class {{ class }} extends Controller
         foreach ($sorts as $sort) {
             match ($sort) {
                 '-created_at', '-updated_at', '-id', '-title' => $builder->getQuery()->orderByDesc($builder->qualifyColumn(\mb_substr($sort, 1))),
-                'created_at', 'updated_at', 'id', 'title' => $builder->getQuery()->orderByDesc($builder->qualifyColumn($sort)),
+                'created_at', 'updated_at', 'id', 'title' => $builder->getQuery()->orderBy($builder->qualifyColumn($sort)),
                 default => assertNever(),
             };
         }

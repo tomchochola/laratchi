@@ -154,7 +154,7 @@ abstract class JsonApiResource extends JsonResource
 
         if (\count($relationships) > 0) {
             foreach ($relationships as $name => $relationship) {
-                $data['relationships'][Str::snake($name)] = [
+                $data['relationships'][Str::snake((string) $name)] = [
                     'data' => $relationship === null ? null : (\is_array($relationship) ? \array_map(static function (mixed $resource): array {
                         \assert($resource instanceof self);
 

@@ -29,6 +29,10 @@ class {{ class }} extends Model
      */
     public static function scopeSearch(Builder $builder, string $search): void
     {
+        if (resolveApp()->runningUnitTests()) {
+            return;
+        }
+
         $builder->getQuery()->whereFullText($builder->qualifyColumn('title'), $search);
     }
 
