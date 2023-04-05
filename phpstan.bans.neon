@@ -41,7 +41,7 @@ parameters:
       message: 'use resolveCacheManager()->get() instead'
     -
       function: 'config()'
-      message: 'use mustConfigXxx(), configXxx() instead, sample: mustConfigString('app.name')'
+      message: 'use mustConfigXxx(), configXxx() instead, sample: mustConfigString()'
     -
       function: 'config_path()'
       message: 'use resolveApp()->configPath() instead'
@@ -439,7 +439,7 @@ parameters:
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Env'
-      message: 'envXxx(), mustEnvXxx() instead, sample: mustEnvString('APP_ENV')'
+      message: 'envXxx(), mustEnvXxx() instead, sample: mustEnvString()'
       allowIn:
         - tests/*
         - src/Helpers/functions.php
