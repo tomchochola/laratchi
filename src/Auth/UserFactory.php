@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @template T of User
@@ -29,8 +30,8 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => resolveDate()->now(),
-            'password' => 'password',
-            'remember_token' => 'remember_token',
+            'password' => Str::random(),
+            'remember_token' => Str::random(),
             'locale' => resolveApp()->getLocale(),
         ];
     }

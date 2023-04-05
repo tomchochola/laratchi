@@ -19,7 +19,7 @@ class MediaSeedSupport
     public static function randomAvatarUrl(int $width = 100): string
     {
         $query = \http_build_query([
-            'u' => Str::random(30),
+            'u' => Str::random(),
         ]);
 
         return "https://i.pravatar.cc/{$width}?{$query}";
@@ -72,7 +72,7 @@ class MediaSeedSupport
      */
     public static function randomSvg(): File
     {
-        $randomName = Str::random(30);
+        $randomName = Str::random();
 
         return UploadedFile::fake()->createWithContent("{$randomName}.svg", (new GeoPattern())->toSVG());
     }
@@ -84,7 +84,7 @@ class MediaSeedSupport
      */
     public static function fakeImage(string $extension = 'webp', int $width = 10, int $height = 10): File
     {
-        $randomName = Str::random(30);
+        $randomName = Str::random();
 
         return UploadedFile::fake()->image("{$randomName}.{$extension}", $width, $height);
     }
@@ -94,7 +94,7 @@ class MediaSeedSupport
      */
     public static function fakeSvg(int $width = 10, int $height = 10): File
     {
-        $randomName = Str::random(30);
+        $randomName = Str::random();
 
         return (new FileFactory())->createWithContent("{$randomName}.svg", "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{$width}\" height=\"{$height}\"/>");
     }
