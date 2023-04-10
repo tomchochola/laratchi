@@ -3088,7 +3088,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    protected function addRule(mixed $rule, ?array $arguments = null): static
+    public function addRule(mixed $rule, ?array $arguments = null): static
     {
         \assert($this->skipNext === false);
 
