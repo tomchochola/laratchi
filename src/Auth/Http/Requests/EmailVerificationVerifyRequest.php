@@ -4,32 +4,31 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Requests;
 
+use Illuminate\Auth\Access\Response;
 use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
-use Tomchochola\Laratchi\Http\Requests\SignedRequest;
+use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
-class EmailVerificationVerifyRequest extends SignedRequest
+class EmailVerificationVerifyRequest extends SecureFormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): Response|bool
+    {
+        return true;
+    }
+
     /**
      * @inheritDoc
      */
     public function rules(): array
     {
-        $authValidity = inject(AuthValidity::class);
+        $authValidity = AuthValidity::inject();
 
-        $guardName = $this->guardName();
-
-        return \array_replace(parent::rules(), [
-            'email' => $authValidity->email($guardName)->required(),
-            'id' => $authValidity->id($guardName)->required(),
-        ]);
-    }
-
-    /**
-     * Get guard name.
-     */
-    public function guardName(): string
-    {
-        return resolveAuthManager()->getDefaultDriver();
+        return [
+            'email' => $authValidity->email()->nullable()->filled()->requiredIfRule($this->guest()),
+            'token' => $authValidity->emailVerificationToken()->required(),
+        ];
     }
 
     /**
@@ -39,6 +38,6 @@ class EmailVerificationVerifyRequest extends SignedRequest
      */
     public function credentials(): array
     {
-        return $this->validatedInput()->only(['id', 'email']);
+        return $this->validatedInput()->except(['token']);
     }
 }

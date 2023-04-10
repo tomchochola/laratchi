@@ -4,26 +4,18 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use Tomchochola\Laratchi\Http\Resources\ModelJsonApiResource;
+use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use {{ namespacedModel }};
 
 /**
- * @property {{ model }} $resource
+ * @extends ModelResource<{{ model }}>
  */
-class {{ class }} extends ModelJsonApiResource
+class {{ class }} extends ModelResource
 {
     /**
      * @inheritDoc
      */
-    public function __construct({{ model }} $resource)
-    {
-        parent::__construct($resource);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAttributes(): array
+    public function attributes(): array
     {
         return [
             'title' => $this->resource->getTitle(),
@@ -35,7 +27,7 @@ class {{ class }} extends ModelJsonApiResource
     /**
      * @inheritDoc
      */
-    public function getRelationships(): array
+    public function relationships(): array
     {
         return [];
     }

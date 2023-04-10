@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use {{ namespacedIndexRequest }};
-use {{ namespacedIndexResource }};
-use {{ namespacedSelectResource }};
 use {{ namespacedModel }};
 use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Tomchochola\Laratchi\Http\Resources\JsonApiCollectionResponse;
+use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
+use Tomchochola\Laratchi\Http\JsonApi\JsonApiResourceCollection;
+use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Routing\Controller;
 
 class {{ class }} extends Controller
@@ -32,7 +32,9 @@ class {{ class }} extends Controller
             return resolveResponseFactory()->json(['data' => $builder->getQuery()->count()]);
         }
 
-        return (new JsonApiCollectionResponse($builder->get(), $request->validatedInput()->mustBool('select', false) ? {{ selectResource }}::class : {{ indexResource }}::class))->toResponse($request);
+        $select = $request->validatedInput()->mustBool('select', false);
+
+        return (new JsonApiResourceCollection($builder->get(), fn ({{ model }} $model): JsonApiResource => $select ? $this->selectResource($model) : $this->indexResource($model)))->response();
     }
 
     /**
@@ -101,5 +103,31 @@ class {{ class }} extends Controller
     protected function take(Builder $builder, {{ indexRequest }} $request): void
     {
         $builder->getQuery()->take($request->validatedInput()->mustInt('take', {{ indexRequest }}::TAKE_MAX));
+    }
+
+    /**
+     * Select resource.
+     */
+    protected function selectResource({{ model }} $model): JsonApiResource
+    {
+        return new ModelResource($model, static function ({{ model }} $model): array {
+            return [
+                'title' => $model->getTitle(),
+            ];
+        });
+    }
+
+    /**
+     * Index resource.
+     */
+    protected function indexResource({{ model }} $model): JsonApiResource
+    {
+        return new ModelResource($model, static function ({{ model }} $model): array {
+            return [
+                'title' => $model->getTitle(),
+                'created_at' => $model->getCreatedAt(),
+                'updated_at' => $model->getUpdatedAt(),
+            ];
+        });
     }
 }

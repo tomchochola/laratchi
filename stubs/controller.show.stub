@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use {{ namespacedShowRequest }};
-use {{ namespacedShowResource }};
 use {{ namespacedModel }};
 use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Routing\Controller;
 
 class {{ class }} extends Controller
@@ -18,11 +18,17 @@ class {{ class }} extends Controller
      */
     public function __invoke({{ showRequest }} $request): SymfonyResponse
     {
-        $data = {{ model }}::clean($request->resolve{{ model }}(), function (Builder $builder) use ($request): void {
+        $data = $request->resolve{{ model }}()->clean(function (Builder $builder) use ($request): void {
             $this->select($builder, $request);
         });
 
-        return (new {{ showResource }}($data))->toResponse($request);
+        return (new ModelResource($data, static function ({{ model }} $model): array {
+            return [
+                'title' => $model->getTitle(),
+                'created_at' => $model->getCreatedAt(),
+                'updated_at' => $model->getUpdatedAt(),
+            ];
+        }))->response();
     }
 
     /**

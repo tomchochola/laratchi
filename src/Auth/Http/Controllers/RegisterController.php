@@ -4,45 +4,22 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
-use Closure;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\Access\Response;
-use Illuminate\Auth\EloquentUserProvider;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
-use Tomchochola\Laratchi\Auth\Actions\LoginAction;
 use Tomchochola\Laratchi\Auth\Http\Requests\RegisterRequest;
-use Tomchochola\Laratchi\Auth\Services\AuthService;
-use Tomchochola\Laratchi\Providers\LaratchiServiceProvider;
+use Tomchochola\Laratchi\Auth\Notifications\EmailConfirmationNotification;
+use Tomchochola\Laratchi\Auth\Services\CanLoginService;
+use Tomchochola\Laratchi\Auth\Services\EmailBrokerService;
+use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class RegisterController extends TransactionController
 {
     /**
-     * Throttle max attempts.
+     * E-mail confirmation.
      */
-    public static int $throttle = 5;
-
-    /**
-     * Throttle decay in minutes.
-     */
-    public static int $decay = 15;
-
-    /**
-     * Login user after register.
-     */
-    public static bool $loginAfterRegister = true;
-
-    /**
-     * Throw simple throttle errors.
-     */
-    public static bool $simpleThrottle = false;
+    public static bool $emailConfirmation = true;
 
     /**
      * Handle the incoming request.
@@ -51,151 +28,73 @@ class RegisterController extends TransactionController
     {
         $this->validateUnique($request);
 
-        $response = $this->beforeCreating($request);
+        $shortcut = $this->shortcut($request);
 
-        if ($response !== null) {
-            return $response;
+        if ($shortcut !== null) {
+            return $shortcut;
         }
 
-        $user = $this->createUser($request);
+        $shortcut = $this->emailConfirmation($request);
 
-        $this->fireRegisteredEvent($request, $user);
-
-        if ($this->loginAfterRegister() === false) {
-            return resolveResponseFactory()->noContent();
+        if ($shortcut !== null) {
+            return $shortcut;
         }
 
-        $this->ensureCanLogin($request, $user);
+        $me = $this->store($request);
 
-        $this->login($request, $user);
+        $shortcut = $this->canLogin($request, $me);
 
-        return $this->response($request, $user);
-    }
+        if ($shortcut !== null) {
+            return $shortcut;
+        }
 
-    /**
-     * Throttle limit.
-     */
-    protected function limit(RegisterRequest $request, string $key): Limit
-    {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->hash());
-    }
+        $this->login($request, $me);
 
-    /**
-     * Throttle callback.
-     *
-     * @param array<string, mixed> $credentials
-     *
-     * @return (Closure(int): never)|null
-     */
-    protected function onThrottle(RegisterRequest $request, array $credentials): ?Closure
-    {
-        return static function (int $seconds) use ($credentials, $request): never {
-            if (static::$simpleThrottle) {
-                throw new ThrottleRequestsException();
-            }
-
-            $request->throwThrottleValidationError(\array_keys($credentials), $seconds);
-        };
-    }
-
-    /**
-     * Retrieve by credentials.
-     *
-     * @param array<string, mixed> $credentials
-     */
-    protected function retrieveByCredentials(RegisterRequest $request, array $credentials): ?AuthenticatableContract
-    {
-        return $this->userProvider($request)->retrieveByCredentials($credentials);
-    }
-
-    /**
-     * Get user provider.
-     */
-    protected function userProvider(RegisterRequest $request): UserProviderContract
-    {
-        return inject(AuthService::class)->userProvider(resolveAuthManager()->guard($request->guardName()));
+        return $this->response($request, $me);
     }
 
     /**
      * Login.
      */
-    protected function login(RegisterRequest $request, AuthenticatableContract $user): void
+    protected function login(RegisterRequest $request, User $me): void
     {
-        inject(LoginAction::class)->handle($request->guardName(), $user, false);
+        resolveGuard()->login($me);
+    }
+
+    /**
+     * Check if user can login.
+     */
+    protected function canLogin(RegisterRequest $request, User $me): ?SymfonyResponse
+    {
+        if (CanLoginService::inject()->authorize($me)->denied()) {
+            return resolveResponseFactory()->noContent();
+        }
+
+        return null;
     }
 
     /**
      * Make response.
      */
-    protected function response(RegisterRequest $request, AuthenticatableContract $user): SymfonyResponse
+    protected function response(RegisterRequest $request, User $me): SymfonyResponse
     {
-        $user = $this->modifyUser($request, $user);
-
-        return (new LaratchiServiceProvider::$meResource($user))->toResponse($request);
-    }
-
-    /**
-     * Modify user before response.
-     */
-    protected function modifyUser(RegisterRequest $request, AuthenticatableContract $user): AuthenticatableContract
-    {
-        return inject(AuthService::class)->modifyUser($user);
-    }
-
-    /**
-     * Throw duplicate credentials error.
-     *
-     * @param array<string, mixed> $credentials
-     */
-    protected function throwDuplicateCredentialsError(RegisterRequest $request, array $credentials): never
-    {
-        $request->throwUniqueValidationException(\array_keys($credentials));
+        return $me->meResource()->response();
     }
 
     /**
      * Create new user.
      */
-    protected function createUser(RegisterRequest $request): AuthenticatableContract
+    protected function store(RegisterRequest $request): User
     {
-        $userProvider = $this->userProvider($request);
+        $me = resolveUserProvider()->createModel();
 
-        \assert($userProvider instanceof EloquentUserProvider);
+        \assert($me instanceof User);
 
-        $user = $userProvider->createModel();
+        $me->fill($request->data());
 
-        \assert($user instanceof AuthenticatableContract);
+        $me->save();
 
-        $data = $request->data();
-
-        $password = $request->password()['password'] ?? null;
-
-        if (\is_string($password)) {
-            $data = \array_replace($data, ['password' => resolveHasher()->make($password)]);
-        }
-
-        $user->fill($data);
-
-        $this->makeChanges($request, $user);
-
-        $user->save();
-
-        return $user->refresh();
-    }
-
-    /**
-     * Fire registered event.
-     */
-    protected function fireRegisteredEvent(RegisterRequest $request, AuthenticatableContract $user): void
-    {
-        resolveEventDispatcher()->dispatch(new Registered($user));
-    }
-
-    /**
-     * Before creating shortcut.
-     */
-    protected function beforeCreating(RegisterRequest $request): ?SymfonyResponse
-    {
-        return null;
+        return $me;
     }
 
     /**
@@ -206,68 +105,84 @@ class RegisterController extends TransactionController
         $credentialsArray = $request->credentials();
 
         foreach ($credentialsArray as $index => $credentials) {
-            [$hit] = $this->throttle($this->limit($request, "credentials.{$index}"), $this->onThrottle($request, $credentials));
+            [$hit] = $this->throttle($this->limit("credentials.{$index}"), $this->onThrottle($request, \array_keys($credentials)));
 
-            $user = $this->retrieveByCredentials($request, $credentials);
+            $user = resolveUserProvider()->retrieveByCredentials($credentials);
 
-            if ($user !== null) {
+            if ($user instanceof User) {
                 $hit();
-
-                $this->throwDuplicateCredentialsError($request, $credentials);
+                $request->throwUniqueValidationException(\array_keys($credentials));
             }
         }
     }
 
     /**
-     * Check if user can login.
+     * Shortcut.
      */
-    protected function ensureCanLogin(RegisterRequest $request, AuthenticatableContract $user): void
+    protected function shortcut(RegisterRequest $request): ?SymfonyResponse
     {
-        $response = inject(CanLoginAction::class)->authorize($user);
+        return null;
+    }
 
-        if ($response->denied()) {
-            $this->throwCanNotLoginError($request, $user, $response);
+    /**
+     * Email confirmation.
+     */
+    protected function emailConfirmation(RegisterRequest $request): ?SymfonyResponse
+    {
+        if (static::$emailConfirmation === false) {
+            return null;
+        }
+
+        $email = $request->validatedInput()->string('email');
+
+        if ($email === null) {
+            return null;
+        }
+
+        $token = $request->validatedInput()->string('token');
+
+        $guard = resolveAuthManager()->getDefaultDriver();
+        $broker = EmailBrokerService::inject();
+
+        if ($token === null) {
+            $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['token']));
+
+            (new AnonymousNotifiable())->route('mail', $email)->notify((new EmailConfirmationNotification($guard, $broker->store($guard, $email), $email))->locale($request->validatedInput()->mustString('locale')));
+
+            return resolveResponseFactory()->noContent(202);
+        }
+
+        [$hit] = $this->throttle($this->limit('email_confirmation_validate'), $this->onThrottle($request, ['token']));
+
+        if (! $broker->validate($guard, $email, $token)) {
+            $hit();
+            $request->throwExistsValidationException(['token']);
+        }
+
+        return null;
+    }
+
+    /**
+     * Password init.
+     */
+    protected function passwordInit(RegisterRequest $request, User $me): void
+    {
+        if ($me->getAuthPassword() === '' && $me->getEmailForPasswordReset() !== '') {
+            $this->hit($this->limit('password_init'), $this->onThrottle($request, ['email']));
+
+            $me->sendPasswordInitNotification(resolvePasswordBroker($me->getTable())->createToken($me));
         }
     }
 
     /**
-     * Throw can not login error.
+     * E-mail verification.
      */
-    protected function throwCanNotLoginError(RegisterRequest $request, AuthenticatableContract $user, Response $response): never
+    protected function emailVerification(RegisterRequest $request, User $me): void
     {
-        $message = $response->message();
+        if ($me instanceof MustVerifyEmail && ! $me->hasVerifiedEmail() && $me->getEmailForVerification() !== '') {
+            $this->hit($this->limit('email_verification'), $this->onThrottle($request, ['email']));
 
-        if ($message === null || \trim($message) === '') {
-            $message = 'auth.blocked';
+            $me->sendEmailVerificationNotification();
         }
-
-        if ($response->code() === null) {
-            $keys = [];
-
-            foreach ($request->credentials() as $credentials) {
-                $keys = \array_merge($keys, $credentials);
-            }
-
-            $request->throwSingleValidationException(\array_keys($keys), $message, $response->status());
-        }
-
-        throw (new AuthorizationException($message, $response->code()))
-            ->setResponse($response)
-            ->withStatus($response->status());
-    }
-
-    /**
-     * If should login after register.
-     */
-    protected function loginAfterRegister(): bool
-    {
-        return static::$loginAfterRegister;
-    }
-
-    /**
-     * Make changes.
-     */
-    protected function makeChanges(RegisterRequest $request, Model&AuthenticatableContract $user): void
-    {
     }
 }

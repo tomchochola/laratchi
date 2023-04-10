@@ -75,24 +75,8 @@ abstract class TestCase extends BaseTestCase
             'en' => [
                 'en',
             ],
-        ];
-    }
-
-    /**
-     * Locale bool data provider.
-     *
-     * @return array<string, array{string,bool}>
-     */
-    public function localeBoolDataProvider(): array
-    {
-        return [
-            'en|false' => [
-                'en',
-                false,
-            ],
-            'en|true' => [
-                'en',
-                true,
+            'cs' => [
+                'cs',
             ],
         ];
     }
@@ -133,11 +117,10 @@ abstract class TestCase extends BaseTestCase
     public function be(Authenticatable $user, mixed $guard = null): static
     {
         \assert($user instanceof User);
-        \assert($guard === null || $guard === $user->getUserProviderName());
 
         $user->wasRecentlyCreated = false;
 
-        resolveAuthManager()->guard($user->getUserProviderName())->setUser($user);
+        resolveAuthManager()->guard($guard ?? $user->getTable())->setUser($user);
 
         return $this;
     }
@@ -185,26 +168,12 @@ abstract class TestCase extends BaseTestCase
         $response->assertStatus($status);
 
         $keys = [
-            'status',
             'code',
         ];
-
-        $debug = resolveApp()->hasDebugModeEnabled();
-
-        if ($debug) {
-            $keys = \array_merge($keys, [
-                'exception',
-                'file',
-                'line',
-                'trace',
-                'internal',
-            ]);
-        }
 
         $response->assertJsonStructure($keys);
 
         $data = [
-            'status' => $status,
             'code' => $code,
         ];
 
@@ -214,21 +183,16 @@ abstract class TestCase extends BaseTestCase
 
         \assert(\is_array($json));
 
+        $json = Arr::except($json, [
+            'exception',
+            'file',
+            'line',
+            'trace',
+            'internal',
+        ]);
+
         $this->validate(resolveValidatorFactory()->make($json, [
-            'status' => Validity::make()->required()->unsigned(100, 599),
-            'code' => Validity::make()->required()->unsigned(),
-            'internal' => Validity::make()->nullable()->filled()->string()->requiredIfRule($debug),
-            'exception' => Validity::make()->nullable()->filled()->string()->requiredIfRule($debug),
-            'file' => Validity::make()->nullable()->filled()->string()->requiredIfRule($debug),
-            'line' => Validity::make()->nullable()->filled()->unsigned()->requiredIfRule($debug),
-            'trace' => Validity::make()->array()->requiredIfRule($debug),
-            'trace.*' => Validity::make()->required()->object(),
-            'trace.*.function' => Validity::make()->nullable()->string(),
-            'trace.*.line' => Validity::make()->nullable()->unsigned(),
-            'trace.*.file' => Validity::make()->nullable()->string(),
-            'trace.*.class' => Validity::make()->nullable()->string(),
-            'trace.*.object' => Validity::make()->nullable()->object(),
-            'trace.*.type' => Validity::make()->nullable()->string(),
+            'code' => Validity::make()->required()->inInteger([$code]),
         ]));
     }
 
@@ -237,9 +201,11 @@ abstract class TestCase extends BaseTestCase
      *
      * @param array<int, string>|array<string, array<int, string>> $errors
      */
-    protected function validateJsonApiValidationError(TestResponse $response, array $errors, int $status = 422, int $code = 0): void
+    protected function validateJsonApiValidationError(TestResponse $response, array $errors, int $code = 0): void
     {
-        $this->validateJsonApiError($response, $status, $code);
+        $response->assertUnprocessable();
+
+        $this->validateJsonApiError($response, 422, $code);
 
         $response->assertJsonStructure(['errors']);
 
@@ -249,18 +215,26 @@ abstract class TestCase extends BaseTestCase
 
         \assert(\is_array($json));
 
+        $json = Arr::except($json, [
+            'exception',
+            'file',
+            'line',
+            'trace',
+            'internal',
+        ]);
+
         $jsonErrors = Arr::get($json, 'errors');
 
         foreach ($errors as $key => $value) {
             Arr::forget($jsonErrors, \is_int($key) ? $value : $key);
         }
 
-        static::assertCount(0, $jsonErrors, 'Unexpected validation errors occured: '.\json_encode($jsonErrors).'.');
+        static::assertCount(0, $jsonErrors, 'Unexpected validation errors occurred: '.\json_encode($jsonErrors).'.');
 
         $this->validate(resolveValidatorFactory()->make($json, [
-            'errors' => Validity::make()->required()->object(),
-            'errors.*' => Validity::make()->required()->array(),
-            'errors.*.*' => Validity::make()->required()->string(),
+            'errors' => Validity::make()->required()->array(null),
+            'errors.*' => Validity::make()->required()->collection(null),
+            'errors.*.*' => Validity::make()->required()->string(null),
         ]));
     }
 
@@ -333,28 +307,28 @@ abstract class TestCase extends BaseTestCase
 
         $this->validate(resolveValidatorFactory()->make($json, [
             'data' => Validity::make()->nullable()->object(['id', 'type', 'slug']),
-            'data.id' => Validity::make()->nullable()->filled()->string(),
-            'data.type' => Validity::make()->nullable()->filled()->string(),
-            'data.slug' => Validity::make()->nullable()->filled()->string(),
-            'data.attributes' => Validity::make()->nullable()->filled()->object(),
-            'data.meta' => Validity::make()->nullable()->filled()->object(),
-            'data.relationships' => Validity::make()->nullable()->filled()->object(),
+            'data.id' => Validity::make()->nullable()->filled()->id(),
+            'data.type' => Validity::make()->nullable()->filled()->string(null),
+            'data.slug' => Validity::make()->nullable()->filled()->slug(),
+            'data.attributes' => Validity::make()->nullable()->filled()->array(null),
+            'data.meta' => Validity::make()->nullable()->filled()->array(null),
+            'data.relationships' => Validity::make()->nullable()->filled()->array(null),
             'data.relationships.*' => Validity::make()->required()->object(['data']),
-            'data.relationships.*.data' => Validity::make()->nullable()->object(),
-            'data.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
-            'data.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
-            'included' => Validity::make()->nullable()->filled()->array(),
+            'data.relationships.*.data' => Validity::make()->nullable()->array(null),
+            'data.relationships.*.meta' => Validity::make()->nullable()->filled()->array(null),
+            'data.relationships.*.links' => Validity::make()->nullable()->filled()->array(null),
+            'included' => Validity::make()->nullable()->filled()->collection(null),
             'included.*' => Validity::make()->required()->object(['id', 'type', 'slug']),
-            'included.*.id' => Validity::make()->required()->string(),
-            'included.*.type' => Validity::make()->required()->string(),
-            'included.*.slug' => Validity::make()->required()->string(),
-            'included.*.attributes' => Validity::make()->nullable()->filled()->object(),
-            'included.*.meta' => Validity::make()->nullable()->filled()->object(),
-            'included.*.relationships' => Validity::make()->nullable()->filled()->object(),
+            'included.*.id' => Validity::make()->required()->id(),
+            'included.*.type' => Validity::make()->required()->string(null),
+            'included.*.slug' => Validity::make()->required()->slug(),
+            'included.*.attributes' => Validity::make()->nullable()->filled()->array(null),
+            'included.*.meta' => Validity::make()->nullable()->filled()->array(null),
+            'included.*.relationships' => Validity::make()->nullable()->filled()->array(null),
             'included.*.relationships.*' => Validity::make()->required()->object(['data']),
-            'included.*.relationships.*.data' => Validity::make()->nullable()->object(),
-            'included.*.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
-            'included.*.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships.*.data' => Validity::make()->nullable()->array(null),
+            'included.*.relationships.*.meta' => Validity::make()->nullable()->filled()->array(null),
+            'included.*.relationships.*.links' => Validity::make()->nullable()->filled()->array(null),
         ]));
 
         if ($validator !== null) {
@@ -423,30 +397,30 @@ abstract class TestCase extends BaseTestCase
         \assert(\is_array($json));
 
         $this->validate(resolveValidatorFactory()->make($json, [
-            'data' => Validity::make()->array(),
+            'data' => Validity::make()->nullable()->collection(null),
             'data.*' => Validity::make()->required()->object(['id', 'type', 'slug']),
-            'data.*.id' => Validity::make()->required()->string(),
-            'data.*.type' => Validity::make()->required()->string(),
-            'data.*.slug' => Validity::make()->required()->string(),
-            'data.*.attributes' => Validity::make()->nullable()->filled()->object(),
-            'data.*.meta' => Validity::make()->nullable()->filled()->object(),
-            'data.*.relationships' => Validity::make()->nullable()->filled()->object(),
+            'data.*.id' => Validity::make()->required()->id(),
+            'data.*.type' => Validity::make()->required()->string(null),
+            'data.*.slug' => Validity::make()->required()->slug(),
+            'data.*.attributes' => Validity::make()->nullable()->filled()->array(null),
+            'data.*.meta' => Validity::make()->nullable()->filled()->array(null),
+            'data.*.relationships' => Validity::make()->nullable()->filled()->array(null),
             'data.*.relationships.*' => Validity::make()->required()->object(['data']),
-            'data.*.relationships.*.data' => Validity::make()->nullable()->object(),
-            'data.*.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
-            'data.*.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
-            'included' => Validity::make()->nullable()->filled()->array(),
+            'data.*.relationships.*.data' => Validity::make()->nullable()->array(null),
+            'data.*.relationships.*.meta' => Validity::make()->nullable()->filled()->array(null),
+            'data.*.relationships.*.links' => Validity::make()->nullable()->filled()->array(null),
+            'included' => Validity::make()->nullable()->filled()->collection(null),
             'included.*' => Validity::make()->required()->object(['id', 'type', 'slug']),
-            'included.*.id' => Validity::make()->required()->string(),
-            'included.*.type' => Validity::make()->required()->string(),
-            'included.*.slug' => Validity::make()->required()->string(),
-            'included.*.attributes' => Validity::make()->nullable()->filled()->object(),
-            'included.*.meta' => Validity::make()->nullable()->filled()->object(),
-            'included.*.relationships' => Validity::make()->nullable()->filled()->object(),
+            'included.*.id' => Validity::make()->required()->id(),
+            'included.*.type' => Validity::make()->required()->string(null),
+            'included.*.slug' => Validity::make()->required()->slug(),
+            'included.*.attributes' => Validity::make()->nullable()->filled()->array(null),
+            'included.*.meta' => Validity::make()->nullable()->filled()->array(null),
+            'included.*.relationships' => Validity::make()->nullable()->filled()->array(null),
             'included.*.relationships.*' => Validity::make()->required()->object(['data']),
-            'included.*.relationships.*.data' => Validity::make()->nullable()->object(),
-            'included.*.relationships.*.meta' => Validity::make()->nullable()->filled()->object(),
-            'included.*.relationships.*.links' => Validity::make()->nullable()->filled()->object(),
+            'included.*.relationships.*.data' => Validity::make()->nullable()->array(null),
+            'included.*.relationships.*.meta' => Validity::make()->nullable()->filled()->array(null),
+            'included.*.relationships.*.links' => Validity::make()->nullable()->filled()->array(null),
         ]));
 
         $collection = $response->json('data');

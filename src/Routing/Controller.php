@@ -6,18 +6,29 @@ namespace Tomchochola\Laratchi\Routing;
 
 use Closure;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Routing\Controller as IlluminateController;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Http\Requests\FormRequest;
+use Tomchochola\Laratchi\Http\Requests\RequestSignature;
 use Tomchochola\Laratchi\Support\ThrottleSupport;
 
 class Controller extends IlluminateController
 {
     /**
-     * Methods that should be wrapped inside DB::transaction().
-     *
-     * @var array<int, string>
+     * Throttle max attempts.
      */
-    protected array $transactions = [];
+    public static int $throttle = 5;
+
+    /**
+     * Throttle decay in minutes.
+     */
+    public static int $decay = 15;
+
+    /**
+     * Throw simple throttle errors.
+     */
+    public static bool $simpleThrottle = false;
 
     /**
      * @inheritDoc
@@ -26,25 +37,7 @@ class Controller extends IlluminateController
      */
     public function callAction(mixed $method, mixed $parameters): SymfonyResponse
     {
-        if (\in_array($method, $this->transactions, true) || \in_array('*', $this->transactions, true)) {
-            $response = resolveDatabaseManager()->connection()->transaction(fn (): SymfonyResponse => parent::callAction($method, $parameters));
-        } else {
-            $response = parent::callAction($method, $parameters);
-        }
-
-        \assert($response instanceof SymfonyResponse);
-
-        return $response;
-    }
-
-    /**
-     * Set methods that should be wrapped inside DB::transaction().
-     *
-     * @param array<int, string> $methods
-     */
-    protected function transaction(array $methods = ['*']): void
-    {
-        $this->transactions = $methods;
+        return parent::callAction($method, $parameters);
     }
 
     /**
@@ -69,5 +62,33 @@ class Controller extends IlluminateController
     protected function hit(Limit $limit, ?Closure $onError = null): Closure
     {
         return ThrottleSupport::hit($limit, $onError);
+    }
+
+    /**
+     * Throttle limit.
+     */
+    protected function limit(string|RequestSignature $signature): Limit
+    {
+        $signature = $signature instanceof RequestSignature ? $signature : new RequestSignature($signature);
+
+        return Limit::perMinutes(static::$decay, static::$throttle)->by($signature->hash());
+    }
+
+    /**
+     * Throttle callback.
+     *
+     * @param array<array-key> $keys
+     *
+     * @return (Closure(int): never)|null
+     */
+    protected function onThrottle(FormRequest $request, array $keys = [], string $rule = 'throttled'): ?Closure
+    {
+        return static function (int $seconds) use ($request, $keys, $rule): never {
+            if (static::$simpleThrottle || \count($keys) === 0) {
+                throw new ThrottleRequestsException();
+            }
+
+            $request->throwThrottleValidationError($keys, $seconds, $rule);
+        };
     }
 }

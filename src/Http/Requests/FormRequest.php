@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest as IlluminateFormRequest;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -16,6 +16,7 @@ use Illuminate\Validation\Validator;
 use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Validation\AllInput;
 use Tomchochola\Laratchi\Validation\ValidatedInput;
+use Tomchochola\Laratchi\Validation\Validity;
 
 class FormRequest extends IlluminateFormRequest
 {
@@ -39,7 +40,7 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<string, array<string, array<string>>> $errors
      */
-    public static function createValidationException(?Validator $validator, array $errors, ?int $status = null): ValidationException
+    public static function createValidationException(?Validator $validator, array $errors): ValidationException
     {
         $validator ??= resolveValidatorFactory()->make([], []);
 
@@ -49,13 +50,7 @@ class FormRequest extends IlluminateFormRequest
             }
         }
 
-        $exception = new ValidationException($validator);
-
-        if ($status !== null) {
-            $exception->status($status);
-        }
-
-        return $exception;
+        return new ValidationException($validator);
     }
 
     /**
@@ -63,7 +58,7 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<array-key> $keys
      */
-    public static function createThrottleValidationException(?Validator $validator, array $keys, int $seconds, string $rule = 'throttled', ?int $status = null): ValidationException
+    public static function createThrottleValidationException(?Validator $validator, array $keys, int $seconds, string $rule = 'throttled'): ValidationException
     {
         $validator ??= resolveValidatorFactory()->make([], []);
 
@@ -74,13 +69,7 @@ class FormRequest extends IlluminateFormRequest
             ]);
         }
 
-        $exception = new ValidationException($validator);
-
-        if ($status !== null) {
-            $exception->status($status);
-        }
-
-        return $exception;
+        return new ValidationException($validator);
     }
 
     /**
@@ -88,11 +77,23 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<string> $keys
      */
-    public static function createUniqueValidationException(?Validator $validator, array $keys, ?int $status = null): ValidationException
+    public static function createUniqueValidationException(?Validator $validator, array $keys): ValidationException
     {
         $validator ??= resolveValidatorFactory()->make([], []);
 
-        return static::createSingleValidationException($validator, $keys, 'Unique', $status);
+        return static::createSingleValidationException($validator, $keys, 'Unique');
+    }
+
+    /**
+     * Create exists validation exception.
+     *
+     * @param array<string> $keys
+     */
+    public static function createExistsValidationException(?Validator $validator, array $keys): ValidationException
+    {
+        $validator ??= resolveValidatorFactory()->make([], []);
+
+        return static::createSingleValidationException($validator, $keys, 'Exists');
     }
 
     /**
@@ -100,11 +101,11 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<string> $keys
      */
-    public static function createSingleValidationException(?Validator $validator, array $keys, string $rule, ?int $status = null): ValidationException
+    public static function createSingleValidationException(?Validator $validator, array $keys, string $rule): ValidationException
     {
         $validator ??= resolveValidatorFactory()->make([], []);
 
-        return static::createValidationException($validator, \array_map(static fn (): array => [$rule => []], \array_flip($keys)), $status);
+        return static::createValidationException($validator, \array_map(static fn (): array => [$rule => []], \array_flip($keys)));
     }
 
     /**
@@ -160,13 +161,13 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<string, array<string, array<string>>> $errors
      */
-    public function throwValidationException(array $errors, ?int $status = null): never
+    public function throwValidationException(array $errors): never
     {
         $validator = $this->getValidatorInstance();
 
         \assert($validator instanceof Validator);
 
-        throw static::createValidationException($validator, $errors, $status);
+        throw static::createValidationException($validator, $errors);
     }
 
     /**
@@ -174,13 +175,13 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<array-key> $keys
      */
-    public function throwThrottleValidationError(array $keys, int $seconds, string $rule = 'throttled', ?int $status = null): never
+    public function throwThrottleValidationError(array $keys, int $seconds, string $rule = 'throttled'): never
     {
         $validator = $this->getValidatorInstance();
 
         \assert($validator instanceof Validator);
 
-        throw static::createThrottleValidationException($validator, $keys, $seconds, $rule, $status);
+        throw static::createThrottleValidationException($validator, $keys, $seconds, $rule);
     }
 
     /**
@@ -188,13 +189,27 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<string> $keys
      */
-    public function throwUniqueValidationException(array $keys, ?int $status = null): never
+    public function throwUniqueValidationException(array $keys): never
     {
         $validator = $this->getValidatorInstance();
 
         \assert($validator instanceof Validator);
 
-        throw static::createUniqueValidationException($validator, $keys, $status);
+        throw static::createUniqueValidationException($validator, $keys);
+    }
+
+    /**
+     * Throw exists validation exception.
+     *
+     * @param array<string> $keys
+     */
+    public function throwExistsValidationException(array $keys): never
+    {
+        $validator = $this->getValidatorInstance();
+
+        \assert($validator instanceof Validator);
+
+        throw static::createExistsValidationException($validator, $keys);
     }
 
     /**
@@ -202,13 +217,13 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<string> $keys
      */
-    public function throwSingleValidationException(array $keys, string $rule, ?int $status = null): never
+    public function throwSingleValidationException(array $keys, string $rule): never
     {
         $validator = $this->getValidatorInstance();
 
         \assert($validator instanceof Validator);
 
-        throw static::createSingleValidationException($validator, $keys, $rule, $status);
+        throw static::createSingleValidationException($validator, $keys, $rule);
     }
 
     /**
@@ -302,107 +317,11 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
-     * Resolve nullable string from request.
-     */
-    public function fastString(string $key, ?string $default = null): ?string
-    {
-        return $this->allInput()->string($key, $default);
-    }
-
-    /**
-     * Resolve nullable int from request.
-     */
-    public function fastInteger(string $key, ?int $default = null): ?int
-    {
-        return $this->allInput()->int($key, $default);
-    }
-
-    /**
-     * Resolve nullable float from request.
-     */
-    public function fastFloat(string $key, ?float $default = null): ?float
-    {
-        return $this->allInput()->float($key, $default);
-    }
-
-    /**
-     * Resolve nullable boolean from request.
-     */
-    public function fastBoolean(string $key, ?bool $default = null): ?bool
-    {
-        return $this->allInput()->bool($key, $default);
-    }
-
-    /**
-     * Resolve nullable date from request.
-     */
-    public function fastDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): ?Carbon
-    {
-        return $this->allInput()->date($key, $default, $format, $tz);
-    }
-
-    /**
-     * Resolvenullable  file from request.
-     */
-    public function fastFile(string $key, ?UploadedFile $default = null): ?UploadedFile
-    {
-        return $this->allInput()->file($key, $default);
-    }
-
-    /**
-     * Mandatory resolve string from request.
-     */
-    public function mustFastString(string $key, ?string $default = null): string
-    {
-        return $this->allInput()->mustString($key, $default);
-    }
-
-    /**
-     * Mandatory resolve int from request.
-     */
-    public function mustFastInteger(string $key, ?int $default = null): int
-    {
-        return $this->allInput()->mustInt($key, $default);
-    }
-
-    /**
-     * Mandatory resolve float from request.
-     */
-    public function mustFastFloat(string $key, ?float $default = null): float
-    {
-        return $this->allInput()->mustFloat($key, $default);
-    }
-
-    /**
-     * Mandatory resolve boolean from request.
-     */
-    public function mustFastBoolean(string $key, ?bool $default = null): bool
-    {
-        return $this->allInput()->mustBool($key, $default);
-    }
-
-    /**
-     * Mandatory resolve date from request.
-     */
-    public function mustFastDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): Carbon
-    {
-        return $this->allInput()->mustDate($key, $default, $format, $tz);
-    }
-
-    /**
-     * Mandatory resolve file from request.
-     */
-    public function mustFastFile(string $key, ?UploadedFile $default = null): UploadedFile
-    {
-        return $this->allInput()->mustFile($key, $default);
-    }
-
-    /**
      * Authenticate user.
      */
     public function auth(): ?User
     {
-        return once(static fn (): ?User => User::auth());
+        return User::auth();
     }
 
     /**
@@ -410,6 +329,126 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustAuth(): User
     {
-        return once(static fn (): User => User::mustAuth());
+        return User::mustAuth();
+    }
+
+    /**
+     * Guest user.
+     */
+    public function guest(): bool
+    {
+        return User::guest();
+    }
+
+    /**
+     * Mandatory guest authentication.
+     */
+    public function mustGuest(): bool
+    {
+        return User::mustGuest();
+    }
+
+    /**
+     * Must has valid signature.
+     */
+    public function mustHasValidSignature(): bool
+    {
+        if (resolveApp()->runningUnitTests()) {
+            return true;
+        }
+
+        if (! $this->hasValidSignature()) {
+            throw new InvalidSignatureException();
+        }
+
+        return true;
+    }
+
+    /**
+     * Merge rules.
+     *
+     * @param array<string, mixed> $rules
+     * @param ?array<int, string> $sort
+     *
+     * @return array<string, mixed>
+     */
+    protected function mergeRules(array $rules, bool $signed = false, bool $cursor = false, bool $page = false, ?int $take = null, bool $filter = false, bool $id = false, bool $slug = false, bool $select = false, bool $count = false, bool $filterId = false, bool $filterSearch = false, ?array $sort = null): array
+    {
+        if ($signed) {
+            $rules = \array_replace($rules, [
+                'signature' => Validity::make()->nullable()->filled()->string(null),
+                'expires' => Validity::make()->nullable()->filled()->unsigned(),
+            ]);
+        }
+
+        if ($cursor) {
+            $rules = \array_replace($rules, [
+                'cursor' => Validity::make()->nullable()->filled()->string(null)->cursor(),
+            ]);
+        }
+
+        if ($page) {
+            $rules = \array_replace($rules, [
+                'page' => Validity::make()->nullable()->filled()->positive(),
+            ]);
+        }
+
+        if ($take !== null) {
+            $rules = \array_replace($rules, [
+                'take' => Validity::make()->nullable()->filled()->positive($take > 0 ? $take : null)->missingWith(['count']),
+            ]);
+        }
+
+        if ($filter) {
+            $rules = \array_replace($rules, [
+                'filter' => Validity::make()->nullable()->filled()->array(null),
+            ]);
+        }
+
+        if ($id) {
+            $rules = \array_replace($rules, [
+                'id' => Validity::make()->nullable()->filled()->id()->missingWith(['slug']),
+            ]);
+        }
+
+        if ($slug) {
+            $rules = \array_replace($rules, [
+                'slug' => Validity::make()->nullable()->filled()->slug()->missingWith(['id']),
+            ]);
+        }
+
+        if ($select) {
+            $rules = \array_replace($rules, [
+                'select' => Validity::make()->nullable()->filled()->true()->missingWith(['count']),
+            ]);
+        }
+
+        if ($count) {
+            $rules = \array_replace($rules, [
+                'count' => Validity::make()->nullable()->filled()->true()->missingWith(['take', 'select', 'sort']),
+            ]);
+        }
+
+        if ($filterId) {
+            $rules = \array_replace($rules, [
+                'filter.id' => Validity::make()->nullable()->filled()->collection(null),
+                'filter.id.*' => Validity::make()->nullable()->filled()->distinct()->id(),
+            ]);
+        }
+
+        if ($filterSearch) {
+            $rules = \array_replace($rules, [
+                'filter.search' => Validity::make()->nullable()->filled()->varchar(),
+            ]);
+        }
+
+        if ($sort !== null) {
+            $rules = \array_replace($rules, [
+                'sort' => Validity::make()->nullable()->filled()->collection(null)->missingWith(['count']),
+                'sort.*' => Validity::make()->nullable()->filled()->distinct()->inString($sort),
+            ]);
+        }
+
+        return $rules;
     }
 }

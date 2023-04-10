@@ -17,9 +17,7 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public function boot(): void
     {
-        $this->loadTranslationsFrom(__DIR__.'/../../lang/exceptions', 'exceptions');
-
-        $this->loadViewsFrom(__DIR__.'/../../resources/exceptions/views', 'exceptions');
+        $this->loadTranslationsFrom(__DIR__.'/../../lang', 'laratchi');
 
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'laratchi');
 
@@ -32,12 +30,12 @@ class ServiceProvider extends IlluminateServiceProvider
         \assert($app instanceof Application);
 
         $this->publishes([
-            __DIR__.'/../../lang/exceptions' => $app->langPath('vendor/exceptions'),
-        ], ['laratchi-exceptions-lang', 'laratchi-exceptions', 'lang']);
+            __DIR__.'/../../lang' => $app->langPath('vendor/laratchi'),
+        ], ['laratchi-lang', 'laratchi', 'lang']);
 
         $this->publishes([
             __DIR__.'/../../database/migrations' => $app->databasePath('migrations'),
-        ], ['laratchi-migrations', 'migrations']);
+        ], ['laratchi-migrations', 'laratchi', 'migrations']);
 
         $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
 

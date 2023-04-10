@@ -11,8 +11,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Session\TokenMismatchException;
-use Illuminate\Support\Str;
-use Illuminate\Support\ViewErrorBag;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -23,23 +21,11 @@ use Throwable;
 class Handler extends IlluminateHandler
 {
     /**
-     * HTTP exception message.
-     */
-    final public const ERROR_MESSAGE_UNEXPECTED_ERROR = 'Unexpected Error';
-
-    /**
-     * Status messages map.
-     */
-    public const STATUS_MESSAGES = [
-        419 => 'Csrf Token Mismatch',
-        MustBeGuestHttpException::ERROR_STATUS => MustBeGuestHttpException::ERROR_MESSAGE,
-    ];
-
-    /**
      * @inheritDoc
      */
     protected $dontFlash = [
         'current_password',
+        'current_password_confirmation',
         'password',
         'password_confirmation',
         'new_password',
@@ -48,36 +34,23 @@ class Handler extends IlluminateHandler
 
     /**
      * Convert throwable to HTTP exception.
-     *
-     * @param array<mixed> $headers
      */
-    public function httpException(int $status, string $message, Throwable $exception, array $headers = []): HttpExceptionInterface
+    public function httpException(int $status, Throwable $exception): HttpExceptionInterface
     {
         if ($exception instanceof HttpExceptionInterface) {
             return $exception;
         }
 
-        $code = 0;
-        $previousCode = $exception->getCode();
-
-        if (\is_int($previousCode)) {
-            $code = $previousCode;
-        }
-
-        return match (true) {
-            $exception instanceof AuthorizationException => new HttpException($exception->status() ?? 403, $exception->getMessage(), $exception, $headers, $code),
-            $exception instanceof TokenMismatchException => new HttpException(419, 'Csrf Token Mismatch', $exception, $headers, $code),
-            $exception instanceof SuspiciousOperationException => new HttpException(404, 'Bad Hostname Provided', $exception, $headers, $code),
-            default => new HttpException($status, $message, $exception, $headers, $code),
+        $status = match (true) {
+            $exception instanceof AuthorizationException => $exception->status() ?? 403,
+            $exception instanceof TokenMismatchException => 419,
+            $exception instanceof SuspiciousOperationException => 404,
+            default => $status,
         };
-    }
 
-    /**
-     * Get HTTP exception message.
-     */
-    public function httpExceptionMessage(HttpExceptionInterface $httpException): string
-    {
-        return $httpException->getMessage() !== '' ? $httpException->getMessage() : static::STATUS_MESSAGES[$httpException->getStatusCode()] ?? SymfonyResponse::$statusTexts[$httpException->getStatusCode()] ?? static::ERROR_MESSAGE_UNEXPECTED_ERROR;
+        $code = $exception->getCode();
+
+        return new HttpException($status, $exception->getMessage(), $exception, [], \is_int($code) ? $code : 0);
     }
 
     /**
@@ -93,23 +66,17 @@ class Handler extends IlluminateHandler
      */
     protected function unauthenticated(mixed $request, AuthenticationException $exception): SymfonyResponse
     {
-        $httpException = $this->httpException(401, $exception->getMessage(), $exception);
+        $httpException = $this->httpException(401, $exception);
 
         if ($this->shouldReturnJson($request, $exception)) {
             return $this->jsonResponse($request, $exception, $httpException);
         }
 
         if (resolveApp()->hasDebugModeEnabled()) {
-            return $this->debugResponse($request, $exception, $httpException);
+            return $this->symfony($request, $exception, $httpException);
         }
 
-        $to = $exception->redirectTo() ?? $this->loginUrl($exception);
-
-        if ($to !== null && resolveUrlFactory()->current() !== $to) {
-            return resolveRedirector()->guest($to);
-        }
-
-        return $this->viewResponse($request, $exception, $httpException);
+        return $this->laratchi($request, $exception, $httpException);
     }
 
     /**
@@ -117,7 +84,7 @@ class Handler extends IlluminateHandler
      */
     protected function invalidJson(mixed $request, ValidationException $exception): JsonResponse
     {
-        $httpException = $this->httpException($exception->status, 'The Given Data Was Invalid', $exception);
+        $httpException = $this->httpException($exception->status, $exception);
 
         return $this->jsonResponse($request, $exception, $httpException, [
             'errors' => $exception->errors(),
@@ -129,27 +96,27 @@ class Handler extends IlluminateHandler
      */
     protected function invalid(mixed $request, ValidationException $exception): Response
     {
-        if (resolveApp()->hasDebugModeEnabled()) {
-            $httpException = $this->httpException($exception->status, 'The Given Data Was Invalid', $exception);
+        $httpException = $this->httpException($exception->status, $exception);
 
-            return $this->debugResponse($request, $exception, $httpException);
+        if (resolveApp()->hasDebugModeEnabled()) {
+            return $this->symfony($request, $exception, $httpException);
         }
 
-        return parent::invalid($request, $exception);
+        return $this->laratchi($request, $exception, $httpException);
     }
 
     /**
      * @inheritDoc
      */
-    protected function prepareResponse(mixed $request, Throwable $e): SymfonyResponse
+    protected function prepareResponse(mixed $request, Throwable $e): Response
     {
-        $httpException = $this->httpException(500, SymfonyResponse::$statusTexts[500], $e);
+        $httpException = $this->httpException(500, $e);
 
         if (resolveApp()->hasDebugModeEnabled()) {
-            return $this->debugResponse($request, $e, $httpException);
+            return $this->symfony($request, $e, $httpException);
         }
 
-        return $this->viewResponse($request, $e, $httpException);
+        return $this->laratchi($request, $e, $httpException);
     }
 
     /**
@@ -157,7 +124,7 @@ class Handler extends IlluminateHandler
      */
     protected function prepareJsonResponse(mixed $request, Throwable $e): JsonResponse
     {
-        $httpException = $this->httpException(500, SymfonyResponse::$statusTexts[500], $e);
+        $httpException = $this->httpException(500, $e);
 
         return $this->jsonResponse($request, $e, $httpException);
     }
@@ -169,25 +136,20 @@ class Handler extends IlluminateHandler
      */
     protected function jsonResponse(Request $request, Throwable $exception, HttpExceptionInterface $httpException, array $data = []): JsonResponse
     {
-        $json = $this->convertExceptionToArray($exception);
+        $json = [];
 
-        unset($json['message']);
+        $status = $httpException->getStatusCode();
 
         if (resolveApp()->hasDebugModeEnabled()) {
-            if ($exception->getMessage() === $httpException->getMessage()) {
-                $internal = \trim($exception->getMessage());
-            } else {
-                $internal = \trim("{$exception->getMessage()} {$httpException->getMessage()}");
+            if (! $exception instanceof ValidationException) {
+                $json = $this->convertExceptionToArray($exception);
+
+                unset($json['message']);
             }
 
-            if ($internal === '') {
-                $internal = $this->httpExceptionMessage($httpException);
-            }
-
-            $json['internal'] = $internal;
+            $json['internal'] = $exception->getMessage() === '' ? (SymfonyResponse::$statusTexts[$status] ?? (string) $status) : $exception->getMessage();
         }
 
-        $json['status'] = $httpException->getStatusCode();
         $json['code'] = $httpException->getCode();
 
         return new JsonResponse(
@@ -195,23 +157,6 @@ class Handler extends IlluminateHandler
             $httpException->getStatusCode(),
             $httpException->getHeaders(),
         );
-    }
-
-    /**
-     * Where to redirect when unauthenticated.
-     */
-    protected function loginUrl(AuthenticationException $exception): ?string
-    {
-        $route = 'login';
-
-        $router = resolveRouter();
-        $urlFactory = resolveUrlFactory();
-
-        if ($router->has($route)) {
-            return $urlFactory->route($route);
-        }
-
-        return $urlFactory->to('/');
     }
 
     /**
@@ -223,9 +168,9 @@ class Handler extends IlluminateHandler
     }
 
     /**
-     * Send debug response.
+     * Symfony response.
      */
-    protected function debugResponse(Request $request, Throwable $exception, HttpExceptionInterface $httpException): Response
+    protected function symfony(Request $request, Throwable $exception, HttpExceptionInterface $httpException): Response
     {
         $response = new SymfonyResponse(
             $this->renderExceptionContent($exception),
@@ -239,72 +184,16 @@ class Handler extends IlluminateHandler
     /**
      * Send view response.
      */
-    protected function viewResponse(Request $request, Throwable $exception, HttpExceptionInterface $httpException): SymfonyResponse
+    protected function laratchi(Request $request, Throwable $exception, HttpExceptionInterface $httpException): Response
     {
-        $response = resolveResponseFactory()->view('exceptions::xxx', $this->viewData($request, $exception, $httpException), $httpException->getStatusCode(), $httpException->getHeaders());
+        $data = [
+            'title' => mustTransString("laratchi::statuses.{$httpException->getStatusCode()}"),
+            'status' => $httpException->getStatusCode(),
+            'code' => $httpException->getCode(),
+        ];
+
+        $response = resolveResponseFactory()->view('laratchi::status', $data, $httpException->getStatusCode(), $httpException->getHeaders());
 
         return $this->toIlluminateResponse($response, $exception)->prepare($request);
-    }
-
-    /**
-     * Get data passed to HTTP exception view.
-     *
-     * @return array<mixed>
-     */
-    protected function viewData(Request $request, Throwable $exception, HttpExceptionInterface $httpException): array
-    {
-        $message = $this->httpExceptionMessage($httpException);
-        $title = $this->httpExceptionTitle($httpException);
-
-        return [
-            'errors' => new ViewErrorBag(),
-            'exception' => $exception,
-            'httpException' => $httpException,
-            'message' => $message,
-            'title' => $title,
-        ];
-    }
-
-    /**
-     * Get HTTP exception title.
-     */
-    protected function httpExceptionTitle(HttpExceptionInterface $httpException): string
-    {
-        $message = $this->httpExceptionMessage($httpException);
-
-        $translator = resolveTranslator();
-
-        $messageToTry = "exceptions::titles.{$message}";
-
-        if ($translator->has($messageToTry)) {
-            return mustTransString($messageToTry);
-        }
-
-        $normalizedMessage = $this->normalizeMessage($message);
-        $messageToTry = "exceptions::titles.{$normalizedMessage}";
-
-        if ($translator->has($messageToTry)) {
-            return mustTransString($messageToTry);
-        }
-
-        if ($translator->has($message)) {
-            return mustTransString($message);
-        }
-
-        if ($translator->has($normalizedMessage)) {
-            return mustTransString($normalizedMessage);
-        }
-
-        $message = static::STATUS_MESSAGES[$httpException->getStatusCode()] ?? SymfonyResponse::$statusTexts[$httpException->getStatusCode()] ?? static::ERROR_MESSAGE_UNEXPECTED_ERROR;
-
-        return mustTransString("exceptions::titles.{$message}");
-    }
-
-    /**
-     * Normalize message.
-     */
-    protected function normalizeMessage(string $message): string
-    {
-        return Str::title(extendedTrim($message, '.'));
     }
 }

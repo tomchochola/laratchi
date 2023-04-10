@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Requests;
 
 use Illuminate\Auth\Access\Response;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Tomchochola\Laratchi\Auth\Http\Controllers\MeUpdateController;
 use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
@@ -16,7 +16,7 @@ class MeUpdateRequest extends SecureFormRequest
      */
     public function authorize(): Response|bool
     {
-        $this->resolveMe();
+        $this->mustAuth();
 
         return true;
     }
@@ -26,23 +26,14 @@ class MeUpdateRequest extends SecureFormRequest
      */
     public function rules(): array
     {
-        $authValidity = inject(AuthValidity::class);
-
-        $guardName = $this->guardName();
+        $authValidity = AuthValidity::inject();
 
         return [
-            'email' => $authValidity->email($guardName)->nullable()->filled(),
-            'name' => $authValidity->name($guardName)->nullable()->filled(),
-            'locale' => $authValidity->locale($guardName)->nullable()->filled(),
+            'email' => $authValidity->email()->nullable()->filled(),
+            'name' => $authValidity->name()->nullable()->filled(),
+            'locale' => $authValidity->locale()->nullable()->filled(),
+            'token' => $authValidity->emailVerificationToken()->nullable()->filled(),
         ];
-    }
-
-    /**
-     * Get guard name.
-     */
-    public function guardName(): string
-    {
-        return resolveAuthManager()->getDefaultDriver();
     }
 
     /**
@@ -62,14 +53,6 @@ class MeUpdateRequest extends SecureFormRequest
      */
     public function data(): array
     {
-        return $this->validatedInput()->all();
-    }
-
-    /**
-     * Resolve me.
-     */
-    public function resolveMe(): AuthenticatableContract
-    {
-        return once(fn (): AuthenticatableContract => mustResolveUser([$this->guardName()]));
+        return $this->validatedInput()->merge(MeUpdateController::$emailConfirmation && $this->has('email') ? ['email_verified_at' => resolveDate()->now()] : [])->except(['token']);
     }
 }

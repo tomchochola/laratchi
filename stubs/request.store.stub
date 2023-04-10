@@ -16,7 +16,7 @@ class {{ class }} extends SecureFormRequest
      */
     public function mustAuth(): {{ userModel }}
     {
-        return once(static fn (): {{ userModel }} => {{ userModel }}::mustAuth());
+        return {{ userModel }}::mustAuth();
     }
 
     /**

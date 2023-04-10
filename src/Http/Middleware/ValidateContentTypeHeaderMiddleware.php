@@ -7,25 +7,10 @@ namespace Tomchochola\Laratchi\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
 class ValidateContentTypeHeaderMiddleware
 {
-    /**
-     * Header name.
-     */
-    final public const HEADER_NAME = 'Content-Type';
-
-    /**
-     * HTTP Exception message.
-     */
-    final public const ERROR_MESSAGE = 'Content-Type Header Invalid';
-
-    /**
-     * HTTP Exception status.
-     */
-    final public const ERROR_STATUS = SymfonyResponse::HTTP_UNSUPPORTED_MEDIA_TYPE;
-
     /**
      * Handle an incoming request.
      *
@@ -42,7 +27,7 @@ class ValidateContentTypeHeaderMiddleware
         $contentType = $request->getContentTypeFormat();
 
         if (! \in_array($contentType, $contentTypes, true)) {
-            throw new HttpException(static::ERROR_STATUS, static::ERROR_MESSAGE);
+            throw new UnsupportedMediaTypeHttpException('Content-Type Header Invalid');
         }
 
         return $next($request);

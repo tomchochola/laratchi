@@ -4,20 +4,23 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use Tomchochola\Laratchi\Database\Model;
 
 class DatabaseToken extends Model
 {
     /**
-     * Bearer length.
+     * Template.
+     *
+     * @var class-string<self>
      */
-    public static int $bearerLength = 100;
+    public static string $template = self::class;
 
     /**
      * Plain text bearer.
      */
-    public string $bearer = '';
+    public ?string $bearer = null;
 
     /**
      * @inheritDoc
@@ -28,9 +31,17 @@ class DatabaseToken extends Model
     ];
 
     /**
+     * Inject.
+     */
+    public static function inject(): self
+    {
+        return new static::$template();
+    }
+
+    /**
      * Find database token matching given bearer.
      */
-    public function find(string $bearer): ?static
+    public function resolve(string $bearer): ?static
     {
         if (! \str_contains($bearer, '|')) {
             return null;
@@ -52,7 +63,7 @@ class DatabaseToken extends Model
 
         \assert($instance instanceof static);
 
-        if (! \hash_equals($instance->getHash(), \hash('sha256', $token))) {
+        if (! \hash_equals($instance->mustString('hash'), \hash('sha256', $token))) {
             return null;
         }
 
@@ -60,110 +71,45 @@ class DatabaseToken extends Model
     }
 
     /**
-     * Create a new database token instance.
+     * Login user.
      */
-    public function store(DatabaseTokenableInterface $user): static
+    public function login(string $guardName, User $user): static
     {
-        $token = Str::random(static::$bearerLength);
+        $token = Str::random(40);
         $hash = \hash('sha256', $token);
 
-        $authId = $user->getAuthIdentifier();
+        $this->setAttribute('hash', $hash);
 
-        \assert(\is_scalar($authId));
+        $this->relationship($guardName, $user)->associate($user);
 
-        $databaseToken = new static();
+        $this->save();
 
-        $databaseToken->setHash($hash);
-        $databaseToken->setProvider($user->getUserProviderName());
-        $databaseToken->setAuthId((string) $authId);
+        $this->bearer = "{$this->getKey()}|{$token}";
 
-        $this->modify($user);
-
-        $databaseToken->save();
-
-        $databaseToken->bearer = "{$databaseToken->getKey()}|{$token}";
-
-        return $databaseToken;
+        return $this;
     }
 
     /**
-     * Clear database tokens for given user.
+     * Auth user.
      */
-    public function clear(DatabaseTokenableInterface $user): void
+    public function auth(string $guardName): ?User
     {
-        $builder = $this->newQuery();
+        $user = $this->relationship($guardName, null)->getResults();
 
-        $builder->where($builder->qualifyColumn('provider'), $user->getUserProviderName())->where($builder->qualifyColumn('auth_id'), $user->getAuthIdentifier())->delete();
-    }
-
-    /**
-     * Get user.
-     */
-    public function user(): ?DatabaseTokenableInterface
-    {
-        $user = resolveAuthManager()->createUserProvider($this->getProvider())?->retrieveById($this->getAuthId());
-
-        if ($user === null) {
-            return null;
-        }
-
-        \assert($user instanceof DatabaseTokenableInterface);
+        \assert($user === null || $user instanceof User);
 
         return $user;
     }
 
     /**
-     * Hash getter.
+     * Relationship.
      */
-    public function getHash(): string
+    protected function relationship(string $guardName, ?User $user): BelongsTo
     {
-        return $this->mustString('hash');
-    }
+        $instance = new (mustConfigString("auth.providers.{$guardName}.model"))();
 
-    /**
-     * Provider getter.
-     */
-    public function getProvider(): string
-    {
-        return $this->mustString('provider');
-    }
+        \assert($instance instanceof User);
 
-    /**
-     * Auth id getter.
-     */
-    public function getAuthId(): string
-    {
-        return $this->mustString('auth_id');
-    }
-
-    /**
-     * Hash setter.
-     */
-    public function setHash(string $value): void
-    {
-        $this->setAttribute('hash', $value);
-    }
-
-    /**
-     * Provider getter.
-     */
-    public function setProvider(string $value): void
-    {
-        $this->setAttribute('provider', $value);
-    }
-
-    /**
-     * Auth id setter.
-     */
-    public function setAuthId(string $value): void
-    {
-        $this->setAttribute('auth_id', $value);
-    }
-
-    /**
-     * Modify before save.
-     */
-    protected function modify(DatabaseTokenableInterface $user): void
-    {
+        return $this->belongsTo($instance::class, $instance->getForeignKey(), $instance->getKeyName(), 'auth');
     }
 }

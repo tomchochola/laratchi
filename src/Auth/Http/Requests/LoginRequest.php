@@ -15,7 +15,7 @@ class LoginRequest extends SecureFormRequest
      */
     public function authorize(): Response|bool
     {
-        mustBeGuest([$this->guardName()]);
+        $this->mustGuest();
 
         return true;
     }
@@ -25,23 +25,12 @@ class LoginRequest extends SecureFormRequest
      */
     public function rules(): array
     {
-        $authValidity = inject(AuthValidity::class);
-
-        $guardName = $this->guardName();
+        $authValidity = AuthValidity::inject();
 
         return [
-            'remember' => $authValidity->remember($guardName)->required(),
-            'email' => $authValidity->email($guardName)->required(),
-            'password' => $authValidity->password($guardName)->required(),
+            'email' => $authValidity->email()->required(),
+            'password' => $authValidity->password()->required(),
         ];
-    }
-
-    /**
-     * Get guard name.
-     */
-    public function guardName(): string
-    {
-        return resolveAuthManager()->getDefaultDriver();
     }
 
     /**
@@ -51,24 +40,6 @@ class LoginRequest extends SecureFormRequest
      */
     public function credentials(): array
     {
-        return $this->validatedInput()->only(['email']);
-    }
-
-    /**
-     * Get password.
-     *
-     * @return array<string, mixed>
-     */
-    public function password(): array
-    {
-        return $this->validatedInput()->only(['password']);
-    }
-
-    /**
-     * Get remember.
-     */
-    public function remember(): bool
-    {
-        return $this->validatedInput()->mustBool('remember');
+        return $this->validatedInput()->except(['password']);
     }
 }

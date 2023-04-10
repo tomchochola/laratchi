@@ -15,7 +15,7 @@ class {{ class }} extends SecureFormRequest
      */
     public function mustAuth(): \{{ namespacedUserModel }}
     {
-        return once(static fn (): \{{ namespacedUserModel }} => \{{ namespacedUserModel }}::mustAuth());
+        return \{{ namespacedUserModel }}::mustAuth();
     }
 
     /**

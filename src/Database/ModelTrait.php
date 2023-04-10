@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
+use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Http\Requests\FormRequest;
 
 /**
@@ -27,43 +29,11 @@ trait ModelTrait
     }
 
     /**
-     * Get qualified key column name.
-     */
-    public static function getQualifiedKey(): string
-    {
-        return (new static())->getQualifiedKeyName();
-    }
-
-    /**
-     * Get qualified key column name.
-     */
-    public static function getKeyColumn(): string
-    {
-        return static::getQualifiedKey();
-    }
-
-    /**
-     * Get qualified route key column name.
-     */
-    public static function getQualifiedRouteKey(): string
-    {
-        return (new static())->getQualifiedRouteKeyName();
-    }
-
-    /**
-     * Get qualified route key column name.
-     */
-    public static function getRouteKeyColumn(): string
-    {
-        return static::getQualifiedRouteKey();
-    }
-
-    /**
      * Find instance by key.
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByKey(int|string $key, ?Closure $closure = null): ?static
+    public static function findByKey(int $key, ?Closure $closure = null): ?static
     {
         $builder = static::query();
 
@@ -88,7 +58,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param Closure(): never $onError
      */
-    public static function mustFindByKey(int|string $key, ?Closure $closure, Closure $onError): static
+    public static function mustFindByKey(int $key, ?Closure $closure, Closure $onError): static
     {
         $instance = static::findByKey($key, $closure);
 
@@ -106,7 +76,9 @@ trait ModelTrait
      */
     public static function findByRouteKey(string $key, ?Closure $closure = null): ?static
     {
-        $builder = static::query()->where(static::getRouteKeyColumn(), $key);
+        $qualifier = new static();
+
+        $builder = static::query()->where($qualifier->getQualifiedRouteKeyName(), $key);
 
         if ($closure !== null) {
             $builder = $builder->tap($closure);
@@ -114,11 +86,7 @@ trait ModelTrait
 
         $instance = $builder->first();
 
-        if ($instance === null) {
-            return null;
-        }
-
-        \assert($instance instanceof static);
+        \assert($instance === null || $instance instanceof static);
 
         return $instance;
     }
@@ -147,19 +115,19 @@ trait ModelTrait
      */
     public static function mustResolveFromRequest(FormRequest $request, ?Closure $closure = null, string $idKey = 'id', string $routeKey = 'slug'): static
     {
-        $id = $request->fastInteger($idKey);
+        $id = $request->allInput()->int($idKey);
 
         if ($id !== null) {
             return static::mustFindByKey($id, $closure, static function () use ($request, $idKey): never {
-                $request->throwSingleValidationException([$idKey], 'Exists');
+                $request->throwExistsValidationException([$idKey]);
             });
         }
 
-        $slug = $request->fastString($routeKey);
+        $slug = $request->allInput()->string($routeKey);
 
         if ($slug !== null) {
             return static::mustFindByRouteKey($slug, $closure, static function () use ($request, $routeKey): never {
-                $request->throwSingleValidationException([$routeKey], 'Exists');
+                $request->throwExistsValidationException([$routeKey]);
             });
         }
 
@@ -186,17 +154,6 @@ trait ModelTrait
     }
 
     /**
-     * Create new model.
-     *
-     * @param array<mixed> $attributes
-     * @param (Closure(static): void)|null $closure
-     */
-    public static function mustCreate(array $attributes, ?Closure $closure = null): static
-    {
-        return static::create($attributes, $closure);
-    }
-
-    /**
      * Make new model.
      *
      * @param array<mixed> $attributes
@@ -211,47 +168,6 @@ trait ModelTrait
         }
 
         return $model;
-    }
-
-    /**
-     * Make new model.
-     *
-     * @param array<mixed> $attributes
-     * @param (Closure(static): void)|null $closure
-     */
-    public static function mustMake(array $attributes, ?Closure $closure = null): static
-    {
-        return static::mustMake($attributes, $closure);
-    }
-
-    /**
-     * Get clean instance.
-     *
-     * @param (Closure(Builder): void)|null $closure
-     */
-    public static function clean(mixed $key, ?Closure $closure = null): static
-    {
-        $query = (new static())->newQueryWithoutScopes();
-
-        \assert($query instanceof Builder);
-
-        $query->whereKey($key);
-
-        $query->getQuery()->useWritePdo();
-
-        if ($closure !== null) {
-            $closure($query);
-        }
-
-        $instance = $query->first();
-
-        \assert($instance instanceof static);
-
-        if ($key instanceof Model) {
-            $instance->wasRecentlyCreated = $key->wasRecentlyCreated;
-        }
-
-        return $instance;
     }
 
     /**
@@ -271,27 +187,35 @@ trait ModelTrait
      */
     public static function scopeRouteKeys(Builder $builder, array $slugs): void
     {
-        $builder->getQuery()->whereIn(static::getRouteKeyColumn(), $slugs);
+        $qualifier = new static();
+
+        $builder->getQuery()->whereIn($qualifier->getQualifiedRouteKeyName(), $slugs);
     }
 
     /**
-     * Get qualified column.
+     * Get clean instance.
+     *
+     * @param Closure(Builder): void $closure
      */
-    public static function getQualifiedColumn(string $column): string
+    public function clean(Closure $closure): static
     {
-        return (new static())->qualifyColumn($column);
-    }
+        $query = $this->newQueryWithoutScopes();
 
-    /**
-     * Get qualified columns.
-     *
-     * @param array<int, string> $columns
-     *
-     * @return array<int, string>
-     */
-    public static function getQualifiedColumns(array $columns): array
-    {
-        return (new static())->qualifyColumns($columns);
+        \assert($query instanceof Builder);
+
+        $query->whereKey($this->getKey());
+
+        $query->getQuery()->useWritePdo();
+
+        $closure($query);
+
+        $instance = $query->first();
+
+        \assert($instance instanceof static);
+
+        $instance->wasRecentlyCreated = $this->wasRecentlyCreated;
+
+        return $instance;
     }
 
     /**
@@ -303,76 +227,15 @@ trait ModelTrait
     }
 
     /**
-     * Update model.
-     *
-     * @param array<mixed> $attributes
-     * @param (Closure(static): void)|null $closure
-     *
-     * @return $this
-     */
-    public function mustUpdate(array $attributes, ?Closure $closure = null): static
-    {
-        assertNeverIfNot($this->exists, 'model not exists');
-
-        $this->fill($attributes);
-
-        if ($closure !== null) {
-            $closure($this);
-        }
-
-        if ($this->isDirty()) {
-            $this->save();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Save if dirty.
-     *
-     * @return $this
-     */
-    public function mustSaveIfDirty(): static
-    {
-        if ($this->isDirty() || ! $this->exists) {
-            $this->save();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Store into database.
-     *
-     * @return $this
-     */
-    public function mustSave(): static
-    {
-        $this->save();
-
-        return $this;
-    }
-
-    /**
-     * Delete model from database.
-     */
-    public function mustDelete(): static
-    {
-        $this->delete();
-
-        return $this;
-    }
-
-    /**
      * Get the value of the model's primary key.
      */
-    public function getKey(): int|string
+    public function getKey(): int
     {
         \assert($this->attributeLoaded($this->getKeyName()));
 
         $value = $this->getAttributeValue($this->getKeyName());
 
-        \assert(\is_int($value) || \is_string($value), 'model key is not int or string');
+        \assert(\is_int($value), 'model key is not int');
 
         return $value;
     }
@@ -626,26 +489,6 @@ trait ModelTrait
      *
      * @param class-string<T> $type
      *
-     * @return T
-     */
-    public function mustRelation(string $key, string $type): Model
-    {
-        \assert($this->relationLoaded($key), "[{$key}] relationship is not loaded");
-
-        $value = $this->getRelationValue($key);
-
-        \assert($value instanceof $type, "[{$key}] relationship is not of type [{$type}]");
-
-        return $value;
-    }
-
-    /**
-     * Must resolve relationship.
-     *
-     * @template T of Model
-     *
-     * @param class-string<T> $type
-     *
      * @return Collection<array-key, T>
      */
     public function mustRelations(string $key, string $type): Collection
@@ -758,5 +601,13 @@ trait ModelTrait
         }
 
         return true;
+    }
+
+    /**
+     * Embed resource.
+     */
+    public function embedResource(): JsonApiResource
+    {
+        return new ModelResource($this);
     }
 }

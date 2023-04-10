@@ -2,82 +2,6 @@
 
 declare(strict_types=1);
 
-if (! \function_exists('randomElement')) {
-    /**
-     * Select random element from array or return null on empty array.
-     *
-     * @template T
-     *
-     * @param array<T> $arr
-     *
-     * @return ?T
-     */
-    function randomElement(array $arr): mixed
-    {
-        if (\count($arr) === 0) {
-            return null;
-        }
-
-        return $arr[\array_rand($arr)];
-    }
-}
-
-if (! \function_exists('mustRandomElement')) {
-    /**
-     * Select random element from array.
-     *
-     * @template T
-     *
-     * @param array<T> $arr
-     *
-     * @return T
-     */
-    function mustRandomElement(array $arr): mixed
-    {
-        return $arr[\array_rand($arr)];
-    }
-}
-
-if (! \function_exists('extendedTrim')) {
-    /**
-     * Trim string using defaults plus provided characters.
-     */
-    function extendedTrim(string $string, string $characters): string
-    {
-        return \trim($string, " \t\n\r\0\x0B{$characters}");
-    }
-}
-
-if (! \function_exists('arrayFilterNull')) {
-    /**
-     * Filter null values from array.
-     *
-     * @template T
-     *
-     * @param array<T> $array
-     *
-     * @return array<T>
-     */
-    function arrayFilterNull(array $array): array
-    {
-        return \array_filter($array, static fn (mixed $el): bool => $el !== null);
-    }
-}
-
-if (! \function_exists('nonProductionThrow')) {
-    /**
-     * Throw exception only on production.
-     */
-    function nonProductionThrow(Throwable $throwable): void
-    {
-        if (! isEnv(['production'])) {
-            throw $throwable;
-        }
-
-        resolveExceptionHandler()->report($throwable);
-    }
-}
-
 if (! \function_exists('mustTransString')) {
     /**
      * Mandatory string translation resolver.
@@ -127,18 +51,6 @@ if (! \function_exists('mustTransArray')) {
         \assert(\is_array($resolved), "[{$key}] translation is not array");
 
         return $resolved;
-    }
-}
-
-if (! \function_exists('pathJoin')) {
-    /**
-     * Join paths using directory separator.
-     *
-     * @param array<string> $paths
-     */
-    function pathJoin(array $paths): string
-    {
-        return \implode(\DIRECTORY_SEPARATOR, $paths);
     }
 }
 
@@ -1013,124 +925,6 @@ if (! \function_exists('resolveVite')) {
     }
 }
 
-if (! \function_exists('mustBeGuest')) {
-    /**
-     * Throw if authenticated.
-     *
-     * @param array<string|null> $guards
-     * @param (Closure(): never)|null $onError
-     */
-    function mustBeGuest(array $guards = [null], ?Closure $onError = null): void
-    {
-        $authManager = resolveAuthManager();
-
-        foreach ($guards as $guard) {
-            if (! $authManager->guard($guard)->guest()) {
-                if ($onError !== null) {
-                    $onError();
-                }
-
-                throw new Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException();
-            }
-        }
-    }
-}
-
-if (! \function_exists('isGuest')) {
-    /**
-     * Check if authenticated.
-     *
-     * @param array<string|null> $guards
-     */
-    function isGuest(array $guards = [null]): bool
-    {
-        $authManager = resolveAuthManager();
-
-        foreach ($guards as $guard) {
-            if (! $authManager->guard($guard)->guest()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-}
-
-if (! \function_exists('resolveUser')) {
-    /**
-     * Resolve user or null.
-     *
-     * @template T of Illuminate\Contracts\Auth\Authenticatable
-     *
-     * @param array<string|null> $guards
-     * @param class-string<T> $template
-     *
-     * @return ?T
-     */
-    function resolveUser(array $guards = [null], string $template = Illuminate\Contracts\Auth\Authenticatable::class): ?Illuminate\Contracts\Auth\Authenticatable
-    {
-        $authManager = resolveAuthManager();
-
-        foreach ($guards as $guard) {
-            $user = $authManager->guard($guard)->user();
-
-            if ($user !== null) {
-                \assert($user instanceof $template);
-
-                return $user;
-            }
-        }
-
-        return null;
-    }
-}
-
-if (! \function_exists('mustResolveUser')) {
-    /**
-     * Resolve user or throw 401.
-     *
-     * @template T of Illuminate\Contracts\Auth\Authenticatable
-     *
-     * @param array<string|null> $guards
-     * @param class-string<T> $template
-     * @param (Closure(): never)|null $onError
-     *
-     * @return T
-     */
-    function mustResolveUser(array $guards = [null], string $template = Illuminate\Contracts\Auth\Authenticatable::class, ?Closure $onError = null): Illuminate\Contracts\Auth\Authenticatable
-    {
-        $authManager = resolveAuthManager();
-
-        foreach ($guards as $guard) {
-            $user = $authManager->guard($guard)->user();
-
-            if ($user !== null) {
-                \assert($user instanceof $template);
-
-                return $user;
-            }
-        }
-
-        if ($onError !== null) {
-            $onError();
-        }
-
-        throw new Illuminate\Auth\AuthenticationException();
-    }
-}
-
-if (! \function_exists('requestSignature')) {
-    /**
-     * Make request signature.
-     *
-     * @param array<mixed> $data
-     */
-    function requestSignature(array $data = [], bool $defaults = true): Tomchochola\Laratchi\Http\Requests\RequestSignature
-    {
-        return new Tomchochola\Laratchi\Http\Requests\RequestSignature($data, $defaults);
-    }
-}
-
 if (! \function_exists('unsafeEnv')) {
     /**
      * Unsafe env resolver.
@@ -1330,18 +1124,6 @@ if (! \function_exists('currentEnv')) {
     }
 }
 
-if (! \function_exists('currentEnvEnv')) {
-    /**
-     * Get current env.
-     *
-     * @return "local"|"testing"|"development"|"staging"|"production"
-     */
-    function currentEnvEnv(): string
-    {
-        return currentEnv();
-    }
-}
-
 if (! \function_exists('isEnv')) {
     /**
      * Check for current env.
@@ -1354,32 +1136,6 @@ if (! \function_exists('isEnv')) {
     }
 }
 
-if (! \function_exists('isEnvEnv')) {
-    /**
-     * Check for current env.
-     *
-     * @param array<"local"|"testing"|"development"|"staging"|"production"> $envs
-     */
-    function isEnvEnv(array $envs): bool
-    {
-        return isEnv($envs);
-    }
-}
-
-if (! \function_exists('envConfig')) {
-    /**
-     * Get config in env scope.
-     */
-    function envConfig(): Illuminate\Config\Repository
-    {
-        $resolved = resolveApp()->make('config');
-
-        \assert($resolved instanceof Illuminate\Config\Repository);
-
-        return $resolved;
-    }
-}
-
 if (! \function_exists('mapEnv')) {
     /**
      * Map env.
@@ -1389,18 +1145,6 @@ if (! \function_exists('mapEnv')) {
     function mapEnv(array $mapping): mixed
     {
         return $mapping[currentEnv()];
-    }
-}
-
-if (! \function_exists('mapEnvEnv')) {
-    /**
-     * Map env.
-     *
-     * @param array{local: mixed, testing: mixed, development: mixed, staging: mixed, production: mixed} $mapping
-     */
-    function mapEnvEnv(array $mapping): mixed
-    {
-        return mapEnv($mapping);
     }
 }
 

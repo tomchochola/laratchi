@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Auth\User;
 
 class HasLocalePreferenceMiddleware
 {
@@ -18,18 +18,18 @@ class HasLocalePreferenceMiddleware
      */
     public function handle(Request $request, Closure $next): SymfonyResponse
     {
-        $me = resolveUser();
+        $me = User::auth();
 
-        if ($me instanceof HasLocalePreference) {
-            $locale = $me->preferredLocale();
+        if ($me === null) {
+            return $next($request);
+        }
 
-            if ($locale !== null) {
-                $app = resolveApp();
+        $locale = $me->preferredLocale();
 
-                if ($app->getLocale() !== $locale) {
-                    $app->setLocale($locale);
-                }
-            }
+        $app = resolveApp();
+
+        if ($app->getLocale() !== $locale) {
+            $app->setLocale($locale);
         }
 
         return $next($request);

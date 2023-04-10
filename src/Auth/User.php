@@ -4,27 +4,22 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth;
 
-use Closure;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Translation\HasLocalePreference as HasLocalePreferenceContract;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as IlluminateUser;
 use Illuminate\Notifications\Notifiable;
-use Tomchochola\Laratchi\Auth\Http\Controllers\EmailVerificationVerifyController;
+use Tomchochola\Laratchi\Auth\Notifications\EmailVerificationNotification;
 use Tomchochola\Laratchi\Auth\Notifications\PasswordInitNotification;
-use Tomchochola\Laratchi\Auth\Notifications\ResetPasswordNotification;
-use Tomchochola\Laratchi\Auth\Notifications\VerifyEmailNotification;
-use Tomchochola\Laratchi\Database\IntModelTrait;
+use Tomchochola\Laratchi\Auth\Notifications\PasswordResetNotification;
+use Tomchochola\Laratchi\Auth\Services\EmailBrokerService;
 use Tomchochola\Laratchi\Database\ModelTrait;
 use Tomchochola\Laratchi\Exceptions\MustBeGuestHttpException;
+use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
+use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 
-class User extends IlluminateUser implements DatabaseTokenableInterface, HasLocalePreferenceContract
+class User extends IlluminateUser implements HasLocalePreferenceContract
 {
-    use DatabaseTokenableTrait;
-    use IntModelTrait {
-        IntModelTrait::getKey insteadof ModelTrait;
-        IntModelTrait::findByKey insteadof ModelTrait;
-        IntModelTrait::mustFindByKey insteadof ModelTrait;
-    }
     use ModelTrait;
     use Notifiable;
 
@@ -39,7 +34,6 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     protected $hidden = [
         'password',
         'remember_token',
-        'database_token',
     ];
 
     /**
@@ -52,40 +46,17 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
     ];
 
     /**
-     * Resolve user or null.
-     *
-     * @param array<string|null> $guards
-     */
-    public static function resolve(array $guards = [null]): ?static
-    {
-        return resolveUser($guards, static::class);
-    }
-
-    /**
-     * Resolve user or throw 401.
-     *
-     * @param array<string|null> $guards
-     * @param (Closure(): never)|null $onError
-     */
-    public static function mustResolve(array $guards = [null], ?Closure $onError = null): static
-    {
-        return mustResolveUser($guards, static::class, $onError);
-    }
-
-    /**
      * User auth or null.
      */
     public static function auth(): ?static
     {
         $me = resolveAuthManager()->guard()->user();
 
-        if ($me === null) {
-            return null;
+        if ($me instanceof static) {
+            return $me;
         }
 
-        \assert($me instanceof static);
-
-        return $me;
+        return null;
     }
 
     /**
@@ -107,7 +78,7 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
      */
     public static function guest(): bool
     {
-        return resolveAuthManager()->guard()->guest();
+        return static::auth() === null;
     }
 
     /**
@@ -127,27 +98,23 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
      */
     public function sendPasswordResetNotification(mixed $token): void
     {
-        if ($this->getAuthPassword() === '') {
-            $this->notifyPasswordInit($token);
-        } else {
-            $this->notifyPasswordReset($token);
+        if ($this->getEmailForPasswordReset() === '') {
+            return;
         }
+
+        $this->notify(new PasswordResetNotification($this->getTable(), $token, $this->getEmailForPasswordReset()));
     }
 
     /**
-     * Send only password reset notification.
+     * Send password init notification.
      */
-    public function notifyPasswordReset(string $token): void
+    public function sendPasswordInitNotification(string $token): void
     {
-        $this->notify(new ResetPasswordNotification($this->getUserProviderName(), $token));
-    }
+        if ($this->getEmailForPasswordReset() === '') {
+            return;
+        }
 
-    /**
-     * Send only password init notification.
-     */
-    public function notifyPasswordInit(string $token): void
-    {
-        $this->notify(new PasswordInitNotification($this->getUserProviderName(), $token));
+        $this->notify(new PasswordInitNotification($this->getTable(), $token, $this->getEmailForPasswordReset()));
     }
 
     /**
@@ -155,13 +122,19 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
      */
     public function sendEmailVerificationNotification(): void
     {
-        $this->notify(new VerifyEmailNotification($this->getUserProviderName(), EmailVerificationVerifyController::class));
+        if ($this->getEmailForVerification() === '') {
+            return;
+        }
+
+        $token = EmailBrokerService::inject()->store($this->getTable(), $this->getEmailForVerification());
+
+        $this->notify(new EmailVerificationNotification($this->getTable(), $token, $this->getEmailForVerification()));
     }
 
     /**
      * @inheritDoc
      */
-    public function preferredLocale(): ?string
+    public function preferredLocale(): string
     {
         return $this->mustString('locale');
     }
@@ -195,7 +168,7 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
      */
     public function getEmailForPasswordReset(): string
     {
-        return $this->mustString('email');
+        return $this->string('email') ?? '';
     }
 
     /**
@@ -211,6 +184,22 @@ class User extends IlluminateUser implements DatabaseTokenableInterface, HasLoca
      */
     public function getEmailForVerification(): string
     {
-        return $this->mustString('email');
+        return $this->string('email') ?? '';
+    }
+
+    /**
+     * Database token relationship.
+     */
+    public function databaseTokens(): HasMany
+    {
+        return $this->hasMany(DatabaseToken::$template);
+    }
+
+    /**
+     * Me resource.
+     */
+    public function meResource(): JsonApiResource
+    {
+        return new ModelResource($this);
     }
 }

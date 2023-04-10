@@ -6,7 +6,6 @@ namespace {{ namespace }};
 
 use {{ namespacedUpdateRequest }};
 use {{ namespacedModel }};
-use Illuminate\Cache\RateLimiting\Limit;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
@@ -32,11 +31,9 @@ class {{ class }} extends TransactionController
         $title = $request->validatedInput()->string('title');
 
         if ($title !== null) {
-            [$hit] = $this->throttle(Limit::perMinutes(15, 5)->by(requestSignature()->data('key', 'title')->user($request->mustAuth())->hash()));
+            [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ['title']));
 
-            $qualifier = new {{ model }}();
-
-            if ({{ model }}::query()->whereKeyNot($request->resolve{{ model }}()->getKey())->getQuery()->where($qualifier->qualifyColumn('title'), $title)->exists()) {
+            if ({{ model }}::query()->whereKeyNot($request->resolve{{ model }}()->getKey())->getQuery()->where('title', $title)->exists()) {
                 $hit();
                 $request->throwUniqueValidationException(['title']);
             }

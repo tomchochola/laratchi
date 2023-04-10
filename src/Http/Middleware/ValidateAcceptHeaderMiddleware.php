@@ -7,25 +7,10 @@ namespace Tomchochola\Laratchi\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
 class ValidateAcceptHeaderMiddleware
 {
-    /**
-     * Header name.
-     */
-    final public const HEADER_NAME = 'Accept';
-
-    /**
-     * HTTP Exception message.
-     */
-    final public const ERROR_MESSAGE = 'Accept Header Invalid';
-
-    /**
-     * HTTP Exception status.
-     */
-    final public const ERROR_STATUS = SymfonyResponse::HTTP_NOT_ACCEPTABLE;
-
     /**
      * Handle an incoming request.
      *
@@ -35,12 +20,12 @@ class ValidateAcceptHeaderMiddleware
     {
         \assert(\count($accepts) > 0);
 
-        if (! $request->hasHeader(static::HEADER_NAME)) {
+        if (! $request->hasHeader('Accept')) {
             return $next($request);
         }
 
         if (! $request->accepts($accepts)) {
-            throw new HttpException(static::ERROR_STATUS, static::ERROR_MESSAGE);
+            throw new NotAcceptableHttpException('Accept Header Invalid');
         }
 
         return $next($request);

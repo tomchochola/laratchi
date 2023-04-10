@@ -4,116 +4,75 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
-use Closure;
-use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
-use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\PasswordForgotRequest;
+use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class PasswordForgotController extends TransactionController
 {
     /**
-     * Throttle max attempts.
-     */
-    public static int $throttle = 5;
-
-    /**
-     * Throttle decay in minutes.
-     */
-    public static int $decay = 15;
-
-    /**
-     * Throw simple throttle errors.
-     */
-    public static bool $simpleThrottle = false;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(PasswordForgotRequest $request): SymfonyResponse
     {
-        [$hit] = $this->throttle($this->limit($request, 'status'), $this->onThrottle($request));
+        $me = $this->me($request);
 
-        $response = $this->beforeSending($request);
+        $this->validateToken($request, $me);
 
-        if ($response !== null) {
-            return $response;
-        }
+        $this->send($request, $me);
 
-        $status = $this->sendResetLink($request);
-
-        if ($status !== PasswordBrokerContract::RESET_LINK_SENT) {
-            $hit();
-
-            $this->throwInvalidStatus($request, $status);
-        }
-
-        return $this->response($request);
-    }
-
-    /**
-     * Throttle limit.
-     */
-    protected function limit(PasswordForgotRequest $request, string $key): Limit
-    {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->hash());
-    }
-
-    /**
-     * Throttle callback.
-     *
-     * @return (Closure(int): never)|null
-     */
-    protected function onThrottle(PasswordForgotRequest $request): ?Closure
-    {
-        return static function (int $seconds) use ($request): never {
-            if (static::$simpleThrottle) {
-                throw new ThrottleRequestsException();
-            }
-
-            $request->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
-        };
-    }
-
-    /**
-     * Send reset link.
-     */
-    protected function sendResetLink(PasswordForgotRequest $request): string
-    {
-        return $this->passwordBroker($request)->sendResetLink($request->credentials());
-    }
-
-    /**
-     * Get password broker.
-     */
-    protected function passwordBroker(PasswordForgotRequest $request): PasswordBrokerContract
-    {
-        return resolvePasswordBrokerManager()->broker($request->passwordBrokerName());
-    }
-
-    /**
-     * Throw invalid status error.
-     */
-    protected function throwInvalidStatus(PasswordForgotRequest $request, string $status): never
-    {
-        $request->throwSingleValidationException(\array_keys($request->credentials()), $status);
+        return $this->response($request, $me);
     }
 
     /**
      * Make response.
      */
-    protected function response(PasswordForgotRequest $request): SymfonyResponse
+    protected function response(PasswordForgotRequest $request, User $me): SymfonyResponse
     {
-        return resolveResponseFactory()->noContent();
+        return resolveResponseFactory()->noContent(202);
     }
 
     /**
-     * Before sending shortcut.
+     * Send password reset notification.
      */
-    protected function beforeSending(PasswordForgotRequest $request): ?SymfonyResponse
+    protected function send(PasswordForgotRequest $request, User $me): void
     {
-        return null;
+        $me->sendPasswordResetNotification(resolvePasswordBroker()->createToken($me));
+    }
+
+    /**
+     * Me.
+     */
+    protected function me(PasswordForgotRequest $request): User
+    {
+        $credentials = $request->credentials();
+
+        [$hit] = $this->throttle($this->limit('credentials'), $this->onThrottle($request, \array_keys($credentials), 'auth.throttle'));
+
+        $me = resolveUserProvider()->retrieveByCredentials($credentials);
+
+        if (! $me instanceof User) {
+            $hit();
+            $request->throwSingleValidationException(\array_keys($credentials), 'auth.failed');
+        }
+
+        if ($me->getEmailForPasswordReset() === '') {
+            throw new AuthorizationException();
+        }
+
+        return $me;
+    }
+
+    /**
+     * Validate token.
+     */
+    protected function validateToken(PasswordForgotRequest $request, User $me): void
+    {
+        if (resolvePasswordBroker()->getRepository()->recentlyCreatedToken($me)) {
+            $request->throwSingleValidationException(\array_keys($request->credentials()), PasswordBrokerContract::RESET_THROTTLED);
+        }
     }
 }

@@ -15,7 +15,7 @@ class PasswordResetRequest extends SecureFormRequest
      */
     public function authorize(): Response|bool
     {
-        mustBeGuest([$this->guardName()]);
+        $this->mustGuest();
 
         return true;
     }
@@ -25,14 +25,12 @@ class PasswordResetRequest extends SecureFormRequest
      */
     public function rules(): array
     {
-        $authValidity = inject(AuthValidity::class);
-
-        $guardName = $this->guardName();
+        $authValidity = AuthValidity::inject();
 
         return [
-            'token' => $authValidity->passwordResetToken($guardName)->required(),
-            'email' => $authValidity->email($guardName)->required(),
-            'password' => $authValidity->password($guardName)->required()->confirmed(),
+            'token' => $authValidity->passwordResetToken()->required(),
+            'email' => $authValidity->email()->required(),
+            'password' => $authValidity->password()->required(),
         ];
     }
 
@@ -43,22 +41,6 @@ class PasswordResetRequest extends SecureFormRequest
      */
     public function credentials(): array
     {
-        return $this->validatedInput()->only(['email', 'token', 'password']);
-    }
-
-    /**
-     * Get guard name.
-     */
-    public function guardName(): string
-    {
-        return resolveAuthManager()->getDefaultDriver();
-    }
-
-    /**
-     * Get password broker name.
-     */
-    public function passwordBrokerName(): string
-    {
-        return $this->guardName();
+        return $this->validatedInput()->except(['token', 'password']);
     }
 }

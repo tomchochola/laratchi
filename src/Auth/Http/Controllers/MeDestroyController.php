@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Tomchochola\Laratchi\Auth\Actions\LogoutCurrentDeviceActionAction;
 use Tomchochola\Laratchi\Auth\Http\Requests\MeDestroyRequest;
+use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class MeDestroyController extends TransactionController
@@ -17,38 +16,59 @@ class MeDestroyController extends TransactionController
      */
     public function __invoke(MeDestroyRequest $request): SymfonyResponse
     {
-        $this->destroyMe($request);
+        $me = $this->me($request);
 
-        $this->logoutCurrentDevice($request);
+        $this->validatePassword($request, $me);
 
-        return $this->response($request);
+        $this->logout($request, $me);
+
+        $this->delete($request, $me);
+
+        return $this->response($request, $me);
     }
 
     /**
-     * Make response.
+     * Response.
      */
-    protected function response(MeDestroyRequest $request): SymfonyResponse
+    protected function response(MeDestroyRequest $request, User $me): SymfonyResponse
     {
         return resolveResponseFactory()->noContent();
     }
 
     /**
-     * Logout current device.
+     * Logout.
      */
-    protected function logoutCurrentDevice(MeDestroyRequest $request): void
+    protected function logout(MeDestroyRequest $request, User $me): void
     {
-        inject(LogoutCurrentDeviceActionAction::class)->handle($request->guardName());
+        resolveGuard()->logout();
     }
 
     /**
-     * Destroy me.
+     * Delete me.
      */
-    protected function destroyMe(MeDestroyRequest $request): void
+    protected function delete(MeDestroyRequest $request, User $me): void
     {
-        $user = $request->resolveMe();
+        $me->delete();
+    }
 
-        \assert($user instanceof Model);
+    /**
+     * Validate password.
+     */
+    protected function validatePassword(MeDestroyRequest $request, User $me): void
+    {
+        [$hit] = $this->throttle($this->limit('password'), $this->onThrottle($request, ['password'], 'auth.throttle'));
 
-        $user->delete();
+        if (! resolveHasher()->check($request->validatedInput()->mustString('password'), $me->getAuthPassword())) {
+            $hit();
+            $request->throwSingleValidationException(['password'], 'auth.password');
+        }
+    }
+
+    /**
+     * Me.
+     */
+    protected function me(MeDestroyRequest $request): User
+    {
+        return $request->mustAuth();
     }
 }

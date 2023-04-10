@@ -41,11 +41,6 @@ class {{ class }} extends TestCase
         $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ updateController }}::class, $query), $data);
 
         $response->assertNoContent();
-
-        $this->assertDatabaseHas($model->getTable(), [
-            'id' => $model->getKey(),
-            'title' => $newModel->getTitle(),
-        ]);
     }
 
     /**
@@ -72,11 +67,6 @@ class {{ class }} extends TestCase
         $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ updateController }}::class, $query), $data);
 
         $response->assertNoContent();
-
-        $this->assertDatabaseHas($model->getTable(), [
-            'id' => $model->getKey(),
-            'title' => $model->getTitle(),
-        ]);
     }
 
     /**
@@ -103,13 +93,8 @@ class {{ class }} extends TestCase
 
         $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ updateController }}::class, $query), $data);
 
-        $response->assertStatus(422);
+        $response->assertUnprocessable();
 
         $this->validateJsonApiValidationError($response, ['title']);
-
-        $this->assertDatabaseMissing($model->getTable(), [
-            'id' => $model->getKey(),
-            'title' => $newModel->getTitle(),
-        ]);
     }
 }

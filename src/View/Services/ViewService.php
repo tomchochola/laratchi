@@ -7,11 +7,18 @@ namespace Tomchochola\Laratchi\View\Services;
 class ViewService
 {
     /**
-     * Get favicon url.
+     * Templates.
+     *
+     * @var class-string<self>
      */
-    public function faviconUrl(): ?string
+    public static string $template = self::class;
+
+    /**
+     * Inject.
+     */
+    public static function inject(): self
     {
-        return null;
+        return new static::$template();
     }
 
     /**
@@ -25,32 +32,31 @@ class ViewService
     /**
      * Get background.
      */
-    public function background(string $color): string
+    public function background(): string
     {
-        $now = resolveDate()->now();
-
-        $phase = [
+        $phase = \array_rand([
             'day',
             'sunrise',
             'sunset',
-        ][($now->hour + $now->year + $now->month + $now->day) % 3];
+            'night',
+        ]);
 
-        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make("exceptions::phases.{$phase}", ['color' => $color])->render());
+        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make("laratchi::phases.{$phase}", ['color' => $this->color()])->render());
     }
 
     /**
      * Get night background.
      */
-    public function nightBackground(string $color): string
+    public function nightBackground(): string
     {
-        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make('exceptions::phases.night', ['color' => $color])->render());
+        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make('laratchi::phases.night', ['color' => $this->color()])->render());
     }
 
     /**
      * Get illustration.
      */
-    public function illustration(string $color, int $status, int $code): string
+    public function illustration(int $status): string
     {
-        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->first(["exceptions::illustrations.{$status}", 'exceptions::illustrations.'.\mb_substr((string) $status, 0, -2).'xx', 'exceptions::illustrations.1xx'], ['color' => $color])->render());
+        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->first(["laratchi::illustrations.{$status}", 'laratchi::illustrations.'.\mb_substr((string) $status, 0, -2).'xx', 'laratchi::illustrations.1xx'], ['color' => $this->color()])->render());
     }
 }

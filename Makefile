@@ -17,7 +17,6 @@ check: audit lint
 
 .PHONY: audit
 audit: vendor tools
-	tools/local-php-security-checker/vendor/bin/local-php-security-checker
 	${MAKE_COMPOSER} audit
 
 .PHONY: lint
@@ -58,7 +57,7 @@ update-full: update-tools update-composer
 clean: clean-tools clean-composer clean-npm
 
 # Dependencies
-tools: tools/prettier/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer tools/local-php-security-checker/vendor/bin/local-php-security-checker
+tools: tools/prettier/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer
 
 tools/prettier/node_modules/.bin/prettier:
 	npm --prefix=tools/prettier update
@@ -71,6 +70,3 @@ tools/phpstan/vendor/bin/phpstan:
 
 tools/php-cs-fixer/vendor/bin/php-cs-fixer:
 	${MAKE_COMPOSER} --working-dir=tools/php-cs-fixer update -o
-
-tools/local-php-security-checker/vendor/bin/local-php-security-checker:
-	${MAKE_COMPOSER} --working-dir=tools/local-php-security-checker update -o

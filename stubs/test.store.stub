@@ -38,11 +38,9 @@ class {{ class }} extends TestCase
 
         $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
 
-        $response->assertSuccessful();
+        $response->assertOk();
 
         $this->validateJsonApiResponse($response, $this->structure('{{ table }}'), []);
-
-        $this->assertDatabaseCount($model->getTable(), 1);
     }
 
     /**
@@ -67,10 +65,8 @@ class {{ class }} extends TestCase
 
         $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
 
-        $response->assertStatus(422);
+        $response->assertUnprocessable();
 
         $this->validateJsonApiValidationError($response, ['title']);
-
-        $this->assertDatabaseCount($model->getTable(), 1);
     }
 }

@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use {{ namespacedStoreRequest }};
-use Tomchochola\Laratchi\Http\Resources\ModelJsonApiResource;
 use {{ namespacedModel }};
-use Illuminate\Cache\RateLimiting\Limit;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class {{ class }} extends TransactionController
@@ -22,7 +21,7 @@ class {{ class }} extends TransactionController
 
         $model = {{ model }}::create($request->validatedInput()->only(['title']));
 
-        return (new ModelJsonApiResource($model))->toResponse($request);
+        return (new ModelResource($model))->response();
     }
 
     /**
@@ -30,13 +29,15 @@ class {{ class }} extends TransactionController
      */
     protected function validateUnique({{ storeRequest }} $request): void
     {
-        [$hit] = $this->throttle(Limit::perMinutes(15, 5)->by(requestSignature()->data('key', 'title')->user($request->mustAuth())->hash()));
+        $title = $request->validatedInput()->string('title');
 
-        $qualifier = new {{ model }}();
+        if ($title !== null) {
+            [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ['title']));
 
-        if ({{ model }}::query()->getQuery()->where($qualifier->qualifyColumn('title'), $request->validatedInput()->mustString('title'))->exists()) {
-            $hit();
-            $request->throwUniqueValidationException(['title']);
+            if ({{ model }}::query()->getQuery()->where('title', $title)->exists()) {
+                $hit();
+                $request->throwUniqueValidationException(['title']);
+            }
         }
     }
 }

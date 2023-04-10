@@ -4,179 +4,96 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
-use Closure;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
-use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
-use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Tomchochola\Laratchi\Auth\Http\Requests\EmailVerificationVerifyRequest;
-use Tomchochola\Laratchi\Auth\Services\AuthService;
+use Tomchochola\Laratchi\Auth\Services\EmailBrokerService;
+use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class EmailVerificationVerifyController extends TransactionController
 {
     /**
-     * Throttle max attempts.
-     */
-    public static int $throttle = 5;
-
-    /**
-     * Throttle decay in minutes.
-     */
-    public static int $decay = 15;
-
-    /**
-     * Throw simple throttle errors.
-     */
-    public static bool $simpleThrottle = false;
-
-    /**
      * Handle the incoming request.
      */
     public function __invoke(EmailVerificationVerifyRequest $request): SymfonyResponse
     {
-        $this->hit($this->limit($request, ''), $this->onThrottle($request));
+        $me = $this->me($request);
 
-        $user = $this->retrieveUser($request);
+        $this->hasVerifiedEmail($request, $me);
 
-        $response = $this->beforeVerifing($request, $user);
+        $this->validateToken($request, $me);
 
-        if ($response !== null) {
-            return $response;
-        }
+        $this->verify($request, $me);
 
-        $ok = $this->markEmailAsVerified($request, $user);
-
-        if ($ok) {
-            $this->fireVerifiedEvent($request, $user);
-        }
-
-        return $this->response($request, $user);
+        return $this->response($request, $me);
     }
 
     /**
-     * Retrieve user.
+     * Me.
      */
-    public function retrieveUser(EmailVerificationVerifyRequest $request): AuthenticatableContract&MustVerifyEmailContract
+    protected function me(EmailVerificationVerifyRequest $request): User&MustVerifyEmail
     {
-        $user = $this->retrieveByCredentials($request);
+        $credentials = $request->credentials();
 
-        if ($user === null) {
-            $this->throwRetrieveByCredentialsFailedError($request);
-        }
+        [$hit] = $this->throttle($this->limit('credentials'), $this->onThrottle($request, \array_keys($credentials)));
 
-        if (! $user instanceof MustVerifyEmailContract) {
-            throw new HttpException(SymfonyResponse::HTTP_FORBIDDEN);
-        }
+        if (\count($credentials) > 0) {
+            $me = resolveUserProvider()->retrieveByCredentials($credentials);
 
-        return $user;
-    }
-
-    /**
-     * Throttle limit.
-     */
-    protected function limit(EmailVerificationVerifyRequest $request, string $key): Limit
-    {
-        return Limit::perMinutes(static::$decay, static::$throttle)->by(requestSignature()->data('key', $key)->hash());
-    }
-
-    /**
-     * Throttle callback.
-     *
-     * @return (Closure(int): never)|null
-     */
-    protected function onThrottle(EmailVerificationVerifyRequest $request): ?Closure
-    {
-        return static function (int $seconds) use ($request): never {
-            if (static::$simpleThrottle) {
-                throw new ThrottleRequestsException();
+            if (! $me instanceof User) {
+                $hit();
+                $request->throwSingleValidationException(\array_keys($credentials), 'auth.failed');
             }
+        } else {
+            $me = $request->mustAuth();
+        }
 
-            $request->throwThrottleValidationError(\array_keys($request->credentials()), $seconds);
-        };
+        if (! $me instanceof MustVerifyEmail || $me->getEmailForVerification() === '') {
+            throw new AuthorizationException();
+        }
+
+        return $me;
     }
 
     /**
      * Mark email as verified.
      */
-    protected function markEmailAsVerified(EmailVerificationVerifyRequest $request, AuthenticatableContract&MustVerifyEmailContract $user): bool
+    protected function verify(EmailVerificationVerifyRequest $request, User&MustVerifyEmail $me): void
     {
-        if (! $user->hasVerifiedEmail()) {
-            return $user->markEmailAsVerified();
-        }
-
-        return false;
-    }
-
-    /**
-     * Fire verified event.
-     */
-    protected function fireVerifiedEvent(EmailVerificationVerifyRequest $request, AuthenticatableContract&MustVerifyEmailContract $user): void
-    {
-        resolveEventDispatcher()->dispatch(new Verified($user));
+        $me->markEmailAsVerified();
     }
 
     /**
      * Make response.
      */
-    protected function response(EmailVerificationVerifyRequest $request, AuthenticatableContract&MustVerifyEmailContract $user): SymfonyResponse
-    {
-        if ($request->expectsJson()) {
-            return $this->jsonResponse($request, $user);
-        }
-
-        return $this->viewResponse($request, $user);
-    }
-
-    /**
-     * Before verifing shortcut.
-     */
-    protected function beforeVerifing(EmailVerificationVerifyRequest $request, AuthenticatableContract&MustVerifyEmailContract $user): ?SymfonyResponse
-    {
-        return null;
-    }
-
-    /**
-     * Get user provider.
-     */
-    protected function userProvider(EmailVerificationVerifyRequest $request): UserProviderContract
-    {
-        return inject(AuthService::class)->userProvider(resolveAuthManager()->guard($request->guardName()));
-    }
-
-    /**
-     * Retrieve user by credentials.
-     */
-    protected function retrieveByCredentials(EmailVerificationVerifyRequest $request): ?AuthenticatableContract
-    {
-        return $this->userProvider($request)->retrieveByCredentials($request->credentials());
-    }
-
-    /**
-     * Throw retrieve by credentials failed error.
-     */
-    protected function throwRetrieveByCredentialsFailedError(EmailVerificationVerifyRequest $request): never
-    {
-        $request->throwSingleValidationException(\array_keys($request->credentials()), 'auth.failed');
-    }
-
-    /**
-     * Return json response.
-     */
-    protected function jsonResponse(EmailVerificationVerifyRequest $request, AuthenticatableContract&MustVerifyEmailContract $user): SymfonyResponse
+    protected function response(EmailVerificationVerifyRequest $request, User&MustVerifyEmail $me): SymfonyResponse
     {
         return resolveResponseFactory()->noContent();
     }
 
     /**
-     * Return view response.
+     * Check user has verified email.
      */
-    protected function viewResponse(EmailVerificationVerifyRequest $request, AuthenticatableContract&MustVerifyEmailContract $user): SymfonyResponse
+    protected function hasVerifiedEmail(EmailVerificationVerifyRequest $request, User&MustVerifyEmail $me): void
     {
-        return resolveResponseFactory()->view('laratchi::ok');
+        if ($me->hasVerifiedEmail()) {
+            throw new ConflictHttpException();
+        }
+    }
+
+    /**
+     * Validate token.
+     */
+    protected function validateToken(EmailVerificationVerifyRequest $request, User&MustVerifyEmail $me): void
+    {
+        [$hit] = $this->throttle($this->limit('credentials'), $this->onThrottle($request, ['token']));
+
+        if (! EmailBrokerService::inject()->validate($me->getTable(), $me->getEmailForVerification(), $request->validatedInput()->mustString('token'))) {
+            $hit();
+            $request->throwExistsValidationException(['token']);
+        }
     }
 }

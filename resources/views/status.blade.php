@@ -1,18 +1,14 @@
 @php
-  $locale = \str_replace('_', '-', $locale ?? resolveApp()->getLocale());
+  $locale = \str_replace('_', '-', resolveApp()->getLocale());
 
-  $viewService = inject(Tomchochola\Laratchi\View\Services\ViewService::class);
+  $viewService = Tomchochola\Laratchi\View\Services\ViewService::inject();
 
-  $color = $color ?? $viewService->color();
+  $color = $viewService->color();
 
-  $favicon = $favicon ?? $viewService->faviconUrl();
+  $illustration = $viewService->illustration($status);
 
-  $illustration = $illustration ?? $viewService->illustration($color, $status, $code);
-
-  $background = $background ?? $viewService->background($color);
-  $nightBackground = $nightBackground ?? $viewService->nightBackground($color);
-
-  $noindex = $noindex ?? false;
+  $background = $viewService->background();
+  $nightBackground = $viewService->nightBackground();
 @endphp
 
 <!DOCTYPE html>
@@ -22,30 +18,18 @@
 
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  @if($noindex === true)
   <meta name="robots" content="noindex, nofollow" />
-  @endif
 
   <meta name="author" content="Tomáš Chochola <chocholatom1997@gmail.com>" />
 
-  <title>{{ $title ?? $status }}</title>
-
-  @isset($favicon)
-  <link rel="icon" href="{{ $favicon }}" />
-  @endisset
+  <title>{{ $title }}</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;900&display=swap" rel="stylesheet" />
 
   <style>
-    @include('exceptions::css')
-
-    .button:hover,
-    .button:focus {
-      border-color: {{ $color }};
-      background-color: {{ $color }};
-    }
+    @include('laratchi::css')
 
     body {
       word-break: break-word;
@@ -56,27 +40,15 @@
   <div class="px-4 py-8 min-h-screen relative flex overflow-hidden">
     <div class="flex justify-center items-center lg:w-1/2 flex-grow">
       <div class="z-30">
-        @isset($status)
         <div class="text-9xl md:text-[10rem] font-black mb-2">{{ $status }}</div>
-          <div class="w-1/2 border-b-8 rounded-lg mb-8" style="border-color: {{ $color }}" role="presentation"></div>
-        @endisset
-        @isset($title)
+        <div class="w-1/2 border-b-8 rounded-lg mb-8" style="border-color: {{ $color }}" role="presentation"></div>
         <div class="text-3xl max-w-sm mb-8">{{ $title }}</div>
-        @endisset
-        @if(isset($buttonUrl) && resolveUrlFactory()->current() !== $buttonUrl)
-          <a
-            href="{{ $buttonUrl }}"
-            class="button inline-block animate-bounce transition px-4 py-2 border border-gray-900 focus:outline-none focus:text-white rounded-lg hover:text-white text-2xl"
-          >
-            {{ $buttonLabel ?? $buttonUrl }}
-          </a>
-        @endif
       </div>
     </div>
 
     <div class="justify-center items-center hidden lg:flex w-1/2" role="presentation">
       <div class="w-4/6 relative z-30 flex justify-center items-center">
-        <img alt="{{ $title ?? $status }}" src="{{ $illustration }}" style="width: 100%;" />
+        <img alt="{{ $title }}" src="{{ $illustration }}" style="width: 100%;" />
       </div>
     </div>
 

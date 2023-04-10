@@ -4,56 +4,62 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Notifications;
 
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
-class PasswordInitNotification extends ResetPassword implements ShouldQueueContract
+class PasswordInitNotification extends Notification implements ShouldQueueContract
 {
     use Queueable;
 
     /**
-     * @inheritDoc
+     * Create a new notification instance.
      */
-    public function __construct(protected ?string $guardName = null, ?string $token = null, protected ?string $spa = null, protected ?string $url = null)
+    public function __construct(protected string $guardName, protected ?string $token = null, protected ?string $email = null, protected ?string $spa = null, protected ?string $url = null)
     {
-        parent::__construct($token ?? '');
-
         $this->afterCommit();
     }
 
     /**
-     * @inheritDoc
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
      */
-    protected function buildMailMessage(mixed $url): MailMessage
+    public function via(mixed $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(mixed $notifiable): MailMessage
     {
         return (new MailMessage())
             ->subject(mustTransJsonString('Init Password Notification'))
             ->line(mustTransJsonString('You are receiving this email because we received a password init request for your account.'))
-            ->action(mustTransJsonString('Init Password'), $url)
-            ->line(mustTransJsonString('This password init link will expire in :count minutes.', ['count' => (string) mustConfigInt('auth.passwords.'.mustConfigString('auth.defaults.passwords').'.expire')]))
+            ->action(mustTransJsonString('Init Password'), $this->getUrl($notifiable))
+            ->line(mustTransJsonString('This password init link will expire in :count minutes.', ['count' => (string) mustConfigInt("auth.passwords.{$this->guardName}.expire")]))
             ->line(mustTransJsonString('If you did not request a password init, no further action is required.'));
     }
 
     /**
-     * @inheritDoc
+     * Get url.
      */
-    protected function resetUrl(mixed $notifiable): string
+    protected function getUrl(mixed $notifiable): string
     {
         if ($this->url !== null) {
             return $this->url;
         }
 
-        \assert($notifiable instanceof CanResetPasswordContract);
-
-        \assert($this->guardName !== null && $this->token !== null);
+        \assert($this->token !== null && $this->email !== null && $this->locale !== null);
 
         $query = \http_build_query([
             'guard' => $this->guardName,
             'token' => $this->token,
-            'email' => $notifiable->getEmailForPasswordReset(),
+            'email' => $this->email,
+            'locale' => $this->locale,
         ]);
 
         return ($this->spa ?? mustTransString('spa.password_init_url')).'?'.$query;

@@ -18,8 +18,16 @@ return new class() extends Migration {
         resolveSchema()->create('database_tokens', static function (Blueprint $table): void {
             $table->id();
 
-            $table->string('provider');
-            $table->string('auth_id');
+            foreach (mustConfigArray('auth.providers') as $config) {
+                \assert(\is_array($config));
+
+                $model = $config['model'];
+
+                \assert(\is_string($model));
+
+                $table->foreignIdFor($model)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            }
+
             $table->char('hash', 64);
 
             $table->timestamp('created_at');

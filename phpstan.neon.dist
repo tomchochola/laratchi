@@ -16,4 +16,3 @@ parameters:
   stubFiles:
     - phpstan.stub
   checkTooWideReturnTypesInProtectedAndPublicMethods: false
-  checkUninitializedProperties: false

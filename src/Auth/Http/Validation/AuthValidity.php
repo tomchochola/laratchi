@@ -9,6 +9,13 @@ use Tomchochola\Laratchi\Validation\Validity;
 class AuthValidity
 {
     /**
+     * Template.
+     *
+     * @var class-string<self>
+     */
+    public static string $template = self::class;
+
+    /**
      * Allowed locales.
      *
      * @var ?array<int, string>
@@ -16,14 +23,17 @@ class AuthValidity
     public static ?array $allowedLocales = null;
 
     /**
-     * Password max length.
+     * Inject.
      */
-    public static int $passwordMaxLength = 1024;
+    public static function inject(): self
+    {
+        return new static::$template();
+    }
 
     /**
      * Remember validation rules.
      */
-    public function remember(string $guardName): Validity
+    public function remember(): Validity
     {
         return Validity::make()->boolean();
     }
@@ -31,7 +41,7 @@ class AuthValidity
     /**
      * Name validation rules.
      */
-    public function name(string $guardName): Validity
+    public function name(): Validity
     {
         return Validity::make()->varchar();
     }
@@ -39,7 +49,7 @@ class AuthValidity
     /**
      * Email validation rules.
      */
-    public function email(string $guardName): Validity
+    public function email(): Validity
     {
         return Validity::make()->varchar()->email();
     }
@@ -47,17 +57,23 @@ class AuthValidity
     /**
      * Password validation rules.
      */
-    public function password(string $guardName): Validity
+    public function password(): Validity
     {
-        \assert(static::$passwordMaxLength <= 1024, 'hashing algorithm performance issue');
-
-        return Validity::make()->varchar(static::$passwordMaxLength)->password();
+        return Validity::make()->string(1024)->password();
     }
 
     /**
      * Password reset token validation rules.
      */
-    public function passwordResetToken(string $guardName): Validity
+    public function passwordResetToken(): Validity
+    {
+        return Validity::make()->varchar();
+    }
+
+    /**
+     * Email verification token validation rules.
+     */
+    public function emailVerificationToken(): Validity
     {
         return Validity::make()->varchar();
     }
@@ -65,7 +81,7 @@ class AuthValidity
     /**
      * Locale validation rules.
      */
-    public function locale(string $guardName): Validity
+    public function locale(): Validity
     {
         return Validity::make()->inString(static::$allowedLocales ?? mustConfigArray('app.locales'));
     }
@@ -73,7 +89,7 @@ class AuthValidity
     /**
      * Id validation rules.
      */
-    public function id(string $guardName): Validity
+    public function id(): Validity
     {
         return Validity::make()->id();
     }
@@ -81,7 +97,7 @@ class AuthValidity
     /**
      * Slug validation rules.
      */
-    public function slug(string $guardName): Validity
+    public function slug(): Validity
     {
         return Validity::make()->slug();
     }
@@ -89,7 +105,7 @@ class AuthValidity
     /**
      * E-mail verified at validation rules.
      */
-    public function emailVerifiedAt(string $guardName): Validity
+    public function emailVerifiedAt(): Validity
     {
         return Validity::make()->dateTime();
     }
@@ -97,7 +113,7 @@ class AuthValidity
     /**
      * Remember token validation rules.
      */
-    public function rememberToken(string $guardName): Validity
+    public function rememberToken(): Validity
     {
         return Validity::make()->varchar(100);
     }
@@ -105,7 +121,7 @@ class AuthValidity
     /**
      * Created at validation rules.
      */
-    public function createdAt(string $guardName): Validity
+    public function createdAt(): Validity
     {
         return Validity::make()->dateTime();
     }
@@ -113,7 +129,7 @@ class AuthValidity
     /**
      * Updated at validation rules.
      */
-    public function updatedAt(string $guardName): Validity
+    public function updatedAt(): Validity
     {
         return Validity::make()->dateTime();
     }

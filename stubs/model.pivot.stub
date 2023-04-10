@@ -37,9 +37,9 @@ class {{ class }} extends Pivot
     /**
      * First getter.
      */
-    public function getFirst(): First
+    public function getFirst(): ?First
     {
-        return $this->mustRelation('first', First::class);
+        return $this->relation('first', First::class);
     }
 
     /**
@@ -61,9 +61,9 @@ class {{ class }} extends Pivot
     /**
      * Second getter.
      */
-    public function getSecond(): Second
+    public function getSecond(): ?Second
     {
-        return $this->mustRelation('second', Second::class);
+        return $this->relation('second', Second::class);
     }
 
     /**

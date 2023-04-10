@@ -8,7 +8,6 @@ use Closure;
 use Illuminate\Contracts\Support\Arrayable as ArrayableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Builder as SchmeaBuilder;
 use Illuminate\Validation\Rules\Dimensions;
 use Illuminate\Validation\Rules\Enum;
@@ -17,6 +16,7 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rules\ProhibitedIf;
 use Illuminate\Validation\Rules\RequiredIf;
 use Tomchochola\Laratchi\Validation\Rules\CallbackRule;
+use Tomchochola\Laratchi\Validation\Rules\CursorRule;
 
 /**
  * @implements ArrayableContract<int, mixed>
@@ -58,72 +58,72 @@ class Validity implements ArrayableContract
     /**
      * Bail flag.
      */
-    public bool $bail = true;
+    protected bool $bail = true;
 
     /**
      * Sometimes flag.
      */
-    public bool $sometimes = false;
+    protected bool $sometimes = false;
 
     /**
      * Nullable flag.
      */
-    public bool $nullable = false;
+    protected bool $nullable = false;
 
     /**
      * Required flag.
      */
-    public bool $required = false;
+    protected bool $required = false;
 
     /**
      * Filled flag.
      */
-    public bool $filled = false;
+    protected bool $filled = false;
 
     /**
      * Missing flag.
      */
-    public bool $missing = false;
+    protected bool $missing = false;
 
     /**
      * Prohibited flag.
      */
-    public bool $prohibited = false;
+    protected bool $prohibited = false;
 
     /**
      * Array flag.
      */
-    public bool $array = false;
+    protected bool $array = false;
 
     /**
      * Collection flag.
      */
-    public bool $collection = false;
+    protected bool $collection = false;
 
     /**
      * Boolean flag.
      */
-    public bool $boolean = false;
+    protected bool $boolean = false;
 
     /**
      * File flag.
      */
-    public bool $file = false;
+    protected bool $file = false;
 
     /**
      * Integer flag.
      */
-    public bool $integer = false;
+    protected bool $integer = false;
 
     /**
      * Numeric flag.
      */
-    public bool $numeric = false;
+    protected bool $numeric = false;
 
     /**
      * String flag.
      */
-    public bool $string = false;
+    protected bool $string = false;
 
     /**
      * Rules.
@@ -140,40 +140,16 @@ class Validity implements ArrayableContract
     /**
      * Validity constructor.
      */
-    final public function __construct(protected bool $unsafe = true)
+    final public function __construct()
     {
     }
 
     /**
      * Create a new validity instance.
      */
-    public static function make(bool $unsafe = true): static
+    public static function make(): static
     {
-        return new static($unsafe);
-    }
-
-    /**
-     * Add new rule.
-     *
-     * @param ?array<int, mixed> $arguments
-     *
-     * @return $this
-     */
-    public function addRule(mixed $rule, ?array $arguments = null): static
-    {
-        \assert($this->skipNext === false);
-
-        if (\is_string($rule)) {
-            if ($arguments !== null && \count($arguments) > 0) {
-                $rule = $rule.(\str_contains($rule, ':') ? ',' : ':').$this->formatArguments($arguments);
-            }
-        }
-
-        if (! \in_array($rule, $this->rules, true)) {
-            $this->rules[] = $rule;
-        }
-
-        return $this;
+        return new static();
     }
 
     /**
@@ -377,26 +353,6 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add unsafe array rule.
-     *
-     * @return $this
-     */
-    public function unsafeArray(): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        $this->array = true;
-
-        \assert($this->unsafe || $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
-
-        return $this;
-    }
-
-    /**
      * Add collection rule.
      *
      * @return $this
@@ -411,7 +367,7 @@ class Validity implements ArrayableContract
 
         $this->collection = true;
 
-        \assert($this->unsafe || $this->array === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert($this->array === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
 
         if ($maxItems !== null) {
             \assert($maxItems >= 0);
@@ -433,11 +389,10 @@ class Validity implements ArrayableContract
      * Add array rule.
      *
      * @param ?array<int, string> $structure
-     * @param ?array<int, string> $keys
      *
      * @return $this
      */
-    public function array(?array $structure = null, ?array $keys = null): static
+    public function array(?array $structure): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -447,14 +402,10 @@ class Validity implements ArrayableContract
 
         $this->array = true;
 
-        \assert($this->unsafe || $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert($this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
 
         if ($structure !== null) {
             $this->addRule('array', $structure);
-        }
-
-        if ($keys !== null) {
-            $this->requiredArrayKeys($keys);
         }
 
         return $this;
@@ -479,12 +430,11 @@ class Validity implements ArrayableContract
     /**
      * Add object rule.
      *
-     * @param ?array<int, string> $keys
-     * @param ?array<int, string> $structure
+     * @param array<int, string> $keys
      *
      * @return $this
      */
-    public function object(?array $keys = null, ?array $structure = null): static
+    public function object(array $keys): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -494,17 +444,9 @@ class Validity implements ArrayableContract
 
         $this->array = true;
 
-        \assert($this->unsafe || $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert($this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
 
-        if ($structure !== null) {
-            $this->addRule('array', $structure);
-        }
-
-        if ($keys !== null) {
-            $this->requiredArrayKeys($keys);
-        }
-
-        return $this;
+        return $this->requiredArrayKeys($keys);
     }
 
     /**
@@ -590,7 +532,7 @@ class Validity implements ArrayableContract
 
         $this->boolean = true;
 
-        \assert($this->unsafe || $this->array === false && $this->collection === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert($this->array === false && $this->collection === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
 
         return $this;
     }
@@ -1157,31 +1099,13 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add unsafe file rule.
-     *
-     * @return $this
-     */
-    public function unsafeFile(): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        $this->file = true;
-
-        \assert($this->unsafe || $this->array === false && $this->collection === false && $this->boolean === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
-
-        return $this;
-    }
-
-    /**
      * Add file rule.
      *
+     * @param ?array<int, string> $mimetypes
+     *
      * @return $this
      */
-    public function file(): static
+    public function file(?int $max, ?array $mimetypes): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1191,7 +1115,15 @@ class Validity implements ArrayableContract
 
         $this->file = true;
 
-        \assert($this->unsafe || $this->array === false && $this->collection === false && $this->boolean === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+
+        if ($mimetypes !== null) {
+            $this->mimetypes($mimetypes);
+        }
+
+        if ($max !== null) {
+            $this->max($max);
+        }
 
         return $this;
     }
@@ -1285,11 +1217,11 @@ class Validity implements ArrayableContract
     /**
      * Add image rule.
      *
-     * @param array<int, string> $mimeTypes
+     * @param ?array<int, string> $mimeTypes
      *
      * @return $this
      */
-    public function image(array $mimeTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/svg', 'image/webp', 'image/bmp', 'image/x-bmp', 'image/x-ms-bmp', 'image/heif', 'image/heic'], int $max = 10240): static
+    public function image(?int $max, ?array $mimeTypes): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1297,17 +1229,17 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->file()->mimetypes($mimeTypes)->max($max);
+        return $this->file($max ?? 10240, $mimeTypes ?? ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/svg', 'image/webp', 'image/bmp', 'image/x-bmp', 'image/x-ms-bmp', 'image/heif', 'image/heic']);
     }
 
     /**
      * Add video rule.
      *
-     * @param array<int, string> $mimeTypes
+     * @param ?array<int, string> $mimeTypes
      *
      * @return $this
      */
-    public function video(array $mimeTypes = ['video/mp4', 'video/mpeg', 'video/ogg', 'video/quicktime', 'video/webm'], int $max = 10240): static
+    public function video(?int $max, ?array $mimeTypes): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1315,7 +1247,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->file()->mimetypes($mimeTypes)->max($max);
+        return $this->file($max ?? 10240, $mimeTypes ?? ['video/mp4', 'video/mpeg', 'video/ogg', 'video/quicktime', 'video/webm']);
     }
 
     /**
@@ -1351,7 +1283,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->unsafeInteger()->in($values);
+        return $this->integer(null, null)->in($values);
     }
 
     /**
@@ -1369,7 +1301,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->unsafeString()->in($values);
+        return $this->string(null)->in($values);
     }
 
     /**
@@ -1389,31 +1321,11 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add unsafe integer rule.
-     *
-     * @return $this
-     */
-    public function unsafeInteger(): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        $this->integer = true;
-
-        \assert($this->unsafe || $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->numeric === false && $this->string === false, 'validation type cross');
-
-        return $this;
-    }
-
-    /**
      * Add integer rule.
      *
      * @return $this
      */
-    public function integer(?int $min = null, ?int $max = null): static
+    public function integer(?int $max, ?int $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1423,7 +1335,7 @@ class Validity implements ArrayableContract
 
         $this->integer = true;
 
-        \assert($this->unsafe || $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->numeric === false && $this->string === false, 'validation type cross');
 
         if ($min !== null) {
             \assert($max === null || $min <= $max);
@@ -1775,31 +1687,11 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add unsafe numeric rule.
-     *
-     * @return $this
-     */
-    public function unsafeNumeric(): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        $this->numeric = true;
-
-        \assert($this->unsafe || $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->string === false, 'validation type cross');
-
-        return $this;
-    }
-
-    /**
      * Add numeric rule.
      *
      * @return $this
      */
-    public function numeric(): static
+    public function numeric(?float $max, ?float $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1809,7 +1701,19 @@ class Validity implements ArrayableContract
 
         $this->numeric = true;
 
-        \assert($this->unsafe || $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->string === false, 'validation type cross');
+        \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->string === false, 'validation type cross');
+
+        if ($min !== null) {
+            \assert($max === null || $min <= $max);
+
+            $this->min($min);
+        }
+
+        if ($max !== null) {
+            \assert($min === null || $min <= $max);
+
+            $this->max($max);
+        }
 
         return $this;
     }
@@ -2145,31 +2049,11 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add unsafe string rule.
-     *
-     * @return $this
-     */
-    public function unsafeString(): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        $this->string = true;
-
-        \assert($this->unsafe || $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false, 'validation type cross');
-
-        return $this;
-    }
-
-    /**
      * Add string rule.
      *
      * @return $this
      */
-    public function string(?int $max = null, ?int $min = null): static
+    public function string(?int $max, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2179,7 +2063,7 @@ class Validity implements ArrayableContract
 
         $this->string = true;
 
-        \assert($this->unsafe || $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false, 'validation type cross');
+        \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false, 'validation type cross');
 
         if ($min !== null) {
             \assert($min >= 0);
@@ -2511,7 +2395,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->string()->strlen($length);
+        return $this->string(null)->strlen($length);
     }
 
     /**
@@ -2531,7 +2415,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::TINY_TEXT_MAX);
 
-        $this->string()->strlenMax($max);
+        $this->string(null)->strlenMax($max);
 
         if ($min !== null) {
             \assert($min <= $max);
@@ -2559,7 +2443,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::TEXT_MAX);
 
-        $this->string()->strlenMax($max);
+        $this->string(null)->strlenMax($max);
 
         if ($min !== null) {
             \assert($min <= $max);
@@ -2587,7 +2471,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::MEDIUM_TEXT_MAX);
 
-        $this->string()->strlenMax($max);
+        $this->string(null)->strlenMax($max);
 
         if ($min !== null) {
             \assert($min <= $max);
@@ -2615,7 +2499,7 @@ class Validity implements ArrayableContract
 
         \assert($max <= static::LONG_TEXT_MAX);
 
-        $this->string()->strlenMax($max);
+        $this->string(null)->strlenMax($max);
 
         if ($min !== null) {
             \assert($min <= $max);
@@ -2631,7 +2515,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function tinyInt(?int $min = null, ?int $max = null): static
+    public function tinyInt(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2645,7 +2529,7 @@ class Validity implements ArrayableContract
         \assert($min >= static::TINY_INT_MIN);
         \assert($max <= static::TINY_INT_MAX);
 
-        return $this->integer($min, $max);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2653,7 +2537,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedTinyInt(?int $min = null, ?int $max = null): static
+    public function unsignedTinyInt(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2667,7 +2551,7 @@ class Validity implements ArrayableContract
         \assert($min >= static::UNSIGNED_TINY_INT_MIN);
         \assert($max <= static::UNSIGNED_TINY_INT_MAX);
 
-        return $this->integer($min, $max);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2675,7 +2559,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function smallInt(?int $min = null, ?int $max = null): static
+    public function smallInt(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2689,7 +2573,7 @@ class Validity implements ArrayableContract
         \assert($min >= static::SMALL_INT_MIN);
         \assert($max <= static::SMALL_INT_MAX);
 
-        return $this->integer($min, $max);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2697,7 +2581,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedSmallInt(?int $min = null, ?int $max = null): static
+    public function unsignedSmallInt(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2711,7 +2595,7 @@ class Validity implements ArrayableContract
         \assert($min >= static::UNSIGNED_SMALL_INT_MIN);
         \assert($max <= static::UNSIGNED_SMALL_INT_MAX);
 
-        return $this->integer($min, $max);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2719,7 +2603,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function mediumInt(?int $min = null, ?int $max = null): static
+    public function mediumInt(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2733,7 +2617,7 @@ class Validity implements ArrayableContract
         \assert($min >= static::MEDIUM_INT_MIN);
         \assert($max <= static::MEDIUM_INT_MAX);
 
-        return $this->integer($min, $max);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2741,7 +2625,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedMediumInt(?int $min = null, ?int $max = null): static
+    public function unsignedMediumInt(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2755,7 +2639,7 @@ class Validity implements ArrayableContract
         \assert($min >= static::UNSIGNED_MEDIUM_INT_MIN);
         \assert($max <= static::UNSIGNED_MEDIUM_INT_MAX);
 
-        return $this->integer($min, $max);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2763,7 +2647,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function int(?int $min = null, ?int $max = null): static
+    public function int(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2777,7 +2661,7 @@ class Validity implements ArrayableContract
         \assert($min >= static::INT_MIN);
         \assert($max <= static::INT_MAX);
 
-        return $this->integer($min, $max);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2785,7 +2669,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedInt(?int $min = null, ?int $max = null): static
+    public function unsignedInt(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2799,7 +2683,7 @@ class Validity implements ArrayableContract
         \assert($min >= static::UNSIGNED_INT_MIN);
         \assert($max <= static::UNSIGNED_INT_MAX);
 
-        return $this->integer($min, $max);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2807,7 +2691,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function bigInt(?int $min = null, ?int $max = null): static
+    public function bigInt(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2821,7 +2705,7 @@ class Validity implements ArrayableContract
         \assert($min >= static::BIG_INT_MIN);
         \assert($max <= static::BIG_INT_MAX);
 
-        return $this->integer($min, $max);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2829,7 +2713,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedBigInt(?int $min = null, ?int $max = null): static
+    public function unsignedBigInt(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2843,7 +2727,7 @@ class Validity implements ArrayableContract
         \assert($min >= static::UNSIGNED_BIG_INT_MIN);
         \assert($max <= static::UNSIGNED_BIG_INT_MAX);
 
-        return $this->integer($min, $max);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2851,7 +2735,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsigned(?int $min = null, ?int $max = null): static
+    public function unsigned(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2859,7 +2743,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->unsignedBigInt($min, $max);
+        return $this->unsignedBigInt($max, $min);
     }
 
     /**
@@ -2867,7 +2751,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function signed(?int $min = null, ?int $max = null): static
+    public function signed(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2875,7 +2759,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->bigInt($min, $max);
+        return $this->bigInt($max, $min);
     }
 
     /**
@@ -2883,7 +2767,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function positive(?int $min = null, ?int $max = null): static
+    public function positive(?int $max = null, ?int $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2895,7 +2779,7 @@ class Validity implements ArrayableContract
 
         \assert($min >= 1);
 
-        return $this->unsigned($min, $max);
+        return $this->unsigned($max, $min);
     }
 
     /**
@@ -2914,70 +2798,6 @@ class Validity implements ArrayableContract
         }
 
         return $this->addRule(new CallbackRule($callback, $message));
-    }
-
-    /**
-     * Add query rule.
-     *
-     * @template T of Relation|Builder
-     *
-     * @param T $query
-     * @param (Closure(T, mixed=, mixed=): void)|null $callback
-     *
-     * @return $this
-     */
-    public function query(Relation|Builder $query, ?Closure $callback = null, string $message = 'validation.exists'): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($query, $callback): bool {
-            $query = clone $query;
-
-            $eloquent = $query instanceof Relation ? $query->getQuery() : $query;
-
-            if ($callback !== null) {
-                $callback($query, $value, $attribute);
-            }
-
-            return $eloquent->toBase()->exists();
-        }, $message));
-    }
-
-    /**
-     * Add query key rule.
-     *
-     * @template T of Relation|Builder
-     *
-     * @param T $query
-     * @param (Closure(T, mixed=, mixed=): void)|null $callback
-     *
-     * @return $this
-     */
-    public function queryKey(Relation|Builder $query, ?Closure $callback = null, string $message = 'validation.exists'): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($query, $callback): bool {
-            $query = clone $query;
-
-            $eloquent = $query instanceof Relation ? $query->getQuery() : $query;
-
-            $eloquent->whereKey($value);
-
-            if ($callback !== null) {
-                $callback($query, $value, $attribute);
-            }
-
-            return $eloquent->toBase()->exists();
-        }, $message));
     }
 
     /**
@@ -3173,7 +2993,23 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->varchar()->date();
+        return $this->string(null)->date();
+    }
+
+    /**
+     * Cursor rules.
+     *
+     * @return $this
+     */
+    public function cursor(): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CursorRule());
     }
 
     /**
@@ -3181,9 +3017,8 @@ class Validity implements ArrayableContract
      */
     public function toArray(): array
     {
-        \assert($this->unsafe || $this->array || $this->collection || $this->boolean || $this->file || $this->integer || $this->numeric || $this->string, 'attribute must be validated against base type (array|object|collection|boolean|file|integer|numeric|string)');
-        \assert($this->unsafe || $this->required || $this->nullable, 'attribute must be validated against nullable or required');
-        \assert($this->unsafe || $this->filled === false || $this->nullable, 'when validating against filled it must be nullable');
+        \assert($this->array || $this->collection || $this->boolean || $this->file || $this->integer || $this->numeric || $this->string || $this->prohibited || $this->missing, 'attribute must be validated against base type (array|object|collection|boolean|file|integer|numeric|string)');
+        \assert($this->required || $this->nullable || $this->missing || $this->prohibited, 'attribute must be validated against nullable or required');
 
         $rules = [];
 
@@ -3244,6 +3079,30 @@ class Validity implements ArrayableContract
         }
 
         return \array_merge($rules, $this->rules);
+    }
+
+    /**
+     * Add new rule.
+     *
+     * @param ?array<int, mixed> $arguments
+     *
+     * @return $this
+     */
+    protected function addRule(mixed $rule, ?array $arguments = null): static
+    {
+        \assert($this->skipNext === false);
+
+        if (\is_string($rule)) {
+            if ($arguments !== null && \count($arguments) > 0) {
+                $rule = $rule.(\str_contains($rule, ':') ? ',' : ':').$this->formatArguments($arguments);
+            }
+        }
+
+        if (! \in_array($rule, $this->rules, true)) {
+            $this->rules[] = $rule;
+        }
+
+        return $this;
     }
 
     /**

@@ -5,24 +5,15 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Providers;
 
 use Illuminate\Auth\AuthManager;
-use Illuminate\Contracts\Auth\Guard as GuardContract;
 use Illuminate\Contracts\Validation\Factory as ValidationFactoryContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Tomchochola\Laratchi\Auth\DatabaseTokenGuard;
-use Tomchochola\Laratchi\Auth\Http\Resources\MeResource;
 use Tomchochola\Laratchi\Validation\Validator;
 
 class LaratchiServiceProvider extends ServiceProvider
 {
-    /**
-     * Me resource.
-     *
-     * @var class-string<MeResource>
-     */
-    public static string $meResource = MeResource::class;
-
     /**
      * @inheritDoc
      */
@@ -63,8 +54,8 @@ class LaratchiServiceProvider extends ServiceProvider
     protected function registerDatabaseTokenGuard(): void
     {
         $this->app->afterResolving('auth', static function (AuthManager $authManager): void {
-            $authManager->extend('database_token', static function (Application $app, string $name, array $config): GuardContract {
-                return new DatabaseTokenGuard($name, $config['provider']);
+            $authManager->extend('database_token', static function (Application $app, string $name): DatabaseTokenGuard {
+                return new DatabaseTokenGuard($name);
             });
         });
     }

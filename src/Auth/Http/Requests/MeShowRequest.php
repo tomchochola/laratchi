@@ -4,24 +4,16 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Requests;
 
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Auth\Access\Response;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
 class MeShowRequest extends SecureFormRequest
 {
     /**
-     * Get guard name.
+     * Determine if the user is authorized to make this request.
      */
-    public function guardName(): string
+    public function authorize(): Response|bool
     {
-        return resolveAuthManager()->getDefaultDriver();
-    }
-
-    /**
-     * Resolve me.
-     */
-    public function resolveMe(): ?AuthenticatableContract
-    {
-        return once(fn (): ?AuthenticatableContract => resolveUser([$this->guardName()]));
+        return true;
     }
 }

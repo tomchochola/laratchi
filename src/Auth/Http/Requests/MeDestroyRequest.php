@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Requests;
 
 use Illuminate\Auth\Access\Response;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
 class MeDestroyRequest extends SecureFormRequest
@@ -15,24 +15,20 @@ class MeDestroyRequest extends SecureFormRequest
      */
     public function authorize(): Response|bool
     {
-        $this->resolveMe();
+        $this->mustAuth();
 
         return true;
     }
 
     /**
-     * Get guard name.
+     * @inheritDoc
      */
-    public function guardName(): string
+    public function rules(): array
     {
-        return resolveAuthManager()->getDefaultDriver();
-    }
+        $authValidity = AuthValidity::inject();
 
-    /**
-     * Resolve me.
-     */
-    public function resolveMe(): AuthenticatableContract
-    {
-        return once(fn (): AuthenticatableContract => mustResolveUser([$this->guardName()]));
+        return [
+            'password' => $authValidity->password()->required(),
+        ];
     }
 }

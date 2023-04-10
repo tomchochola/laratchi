@@ -59,4 +59,20 @@ class UserFactory extends Factory
     {
         return $this->set('locale', $locale);
     }
+
+    /**
+     * Create model with blank password.
+     */
+    public function blankPassword(): static
+    {
+        return $this->set('password', null);
+    }
+
+    /**
+     * Create model with blank remember token.
+     */
+    public function blankRememberToken(): static
+    {
+        return $this->set('remember_token', null);
+    }
 }

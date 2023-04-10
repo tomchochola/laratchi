@@ -6,6 +6,8 @@ namespace {{ namespace }};
 
 use Illuminate\Database\Eloquent\Builder;
 use Tomchochola\Laratchi\Database\Model;
+use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
+use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 
 class {{ class }} extends Model
 {
@@ -42,5 +44,17 @@ class {{ class }} extends Model
     public function getTitle(): string
     {
         return $this->mustString('title');
+    }
+
+    /**
+     * Embed resource.
+     */
+    public function embedResource(): JsonApiResource
+    {
+        return new ModelResource($this, static function (self $model): array {
+            return [
+                'title' => $model->getTitle(),
+            ];
+        });
     }
 }

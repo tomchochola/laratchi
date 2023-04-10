@@ -4,21 +4,17 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth;
 
-use Illuminate\Auth\Events\Authenticated;
-use Illuminate\Auth\Events\CurrentDeviceLogout;
-use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Guard as GuardContract;
-use Illuminate\Contracts\Auth\UserProvider as UserProviderContract;
 use Illuminate\Support\Str;
-use Tomchochola\Laratchi\Auth\Actions\CanLoginAction;
+use Tomchochola\Laratchi\Auth\Services\CanLoginService;
 
 class DatabaseTokenGuard implements GuardContract
 {
     /**
      * The currently authenticated user.
      */
-    public DatabaseTokenableInterface|false|null $user = null;
+    public User|false|null $user = null;
 
     /**
      * The currently authenticated database token.
@@ -28,7 +24,7 @@ class DatabaseTokenGuard implements GuardContract
     /**
      * Create a new guard instance.
      */
-    public function __construct(public string $guardName, public string $userProviderName)
+    public function __construct(public string $guardName)
     {
     }
 
@@ -37,7 +33,9 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function cookieName(): string
     {
-        return (resolveApp()->isLocal() ? '' : '__Host-').Str::slug(mustConfigString('app.name').'_'.currentEnv()."_database_token_{$this->guardName}", '_');
+        $env = currentEnv();
+
+        return ($env === 'local' ? '' : '__Host-').Str::slug(mustConfigString('app.name').'_'.$env."_database_token_{$this->guardName}", '_');
     }
 
     /**
@@ -59,7 +57,7 @@ class DatabaseTokenGuard implements GuardContract
     /**
      * @inheritDoc
      */
-    public function user(): ?DatabaseTokenableInterface
+    public function user(): ?User
     {
         if ($this->user === false) {
             return null;
@@ -75,22 +73,20 @@ class DatabaseTokenGuard implements GuardContract
             return $this->user = $this->databaseToken = null;
         }
 
-        $databaseToken = inject(DatabaseToken::class)->find($bearer);
+        $databaseToken = DatabaseToken::inject()->resolve($bearer);
 
         if ($databaseToken === null) {
             return $this->user = $this->databaseToken = null;
         }
 
-        $user = $databaseToken->user();
+        $user = $databaseToken->auth($this->guardName);
 
-        if ($user === null || inject(CanLoginAction::class)->authorize($user)->denied()) {
+        if ($user === null || CanLoginService::inject()->authorize($user)->denied()) {
             return $this->user = $this->databaseToken = null;
         }
 
-        $user->setDatabaseToken($databaseToken);
-
         $this->databaseToken = $databaseToken;
-        $this->setUser($user);
+        $this->user = $user;
 
         return $user;
     }
@@ -98,19 +94,9 @@ class DatabaseTokenGuard implements GuardContract
     /**
      * @inheritDoc
      */
-    public function id(): int|string|null
+    public function id(): ?int
     {
-        $user = $this->user();
-
-        if ($user === null) {
-            return null;
-        }
-
-        $id = $user->getAuthIdentifier();
-
-        \assert(\is_int($id) || \is_string($id));
-
-        return $id;
+        return $this->user()?->getKey();
     }
 
     /**
@@ -128,98 +114,52 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function hasUser(): bool
     {
-        return $this->user instanceof DatabaseTokenableInterface;
+        return $this->user instanceof User;
     }
 
     /**
      * @inheritDoc
      */
-    public function setUser(AuthenticatableContract $user, bool $events = true): void
+    public function setUser(AuthenticatableContract $user): void
     {
-        \assert($user instanceof DatabaseTokenableInterface);
-        assertNeverIfNot($user->getUserProviderName() === $this->userProviderName);
+        \assert($user instanceof User);
 
         $this->user = $user;
-
-        if ($events) {
-            resolveEventDispatcher()->dispatch(new Authenticated($this->guardName, $user));
-        }
     }
 
     /**
      * Log a user into the application.
      */
-    public function login(DatabaseTokenableInterface $user, bool $remember = false, bool $events = true): DatabaseToken
+    public function login(User $user): DatabaseToken
     {
-        assertNeverIfNot($user->getUserProviderName() === $this->userProviderName);
-
-        $databaseToken = $this->createToken($user);
-
-        $user->setDatabaseToken($databaseToken);
-
-        $this->queueCookie($databaseToken);
-
-        if ($events) {
-            resolveEventDispatcher()->dispatch(new Login($this->guardName, $user, false));
-        }
+        $databaseToken = DatabaseToken::inject()->login($this->guardName, $user);
 
         $this->databaseToken = $databaseToken;
-        $this->setUser($user, $events);
+        $this->user = $user;
+
+        $bearer = $databaseToken->bearer;
+
+        \assert($bearer !== null);
+
+        $cookieJar = resolveCookieJar();
+        $cookieJar->queue($cookieJar->forever($this->cookieName(), $bearer, '/', null, true, true, false, mustConfigString('session.same_site', 'none')));
 
         return $databaseToken;
     }
 
     /**
-     * Queue authorization cookie.
+     * Logout.
      */
-    public function queueCookie(DatabaseToken $databaseToken): void
+    public function logout(): void
     {
-        $cookieJar = resolveCookieJar();
-
-        $cookieJar->queue($cookieJar->forever($this->cookieName(), $databaseToken->bearer, '/', null, true, true, false, mustConfigString('session.same_site', 'lax')));
-    }
-
-    /**
-     * Create a new database token.
-     */
-    public function createToken(DatabaseTokenableInterface $user): DatabaseToken
-    {
-        assertNeverIfNot($user->getUserProviderName() === $this->userProviderName);
-
-        return inject(DatabaseToken::class)->store($user);
-    }
-
-    /**
-     * Log the user out of the application on their current device only.
-     */
-    public function logoutCurrentDevice(bool $events = true): void
-    {
-        $user = $this->user();
-
-        \assert($user !== null);
-
-        $this->databaseToken?->delete();
-
-        $user->setDatabaseToken(null);
-
-        if ($events) {
-            resolveEventDispatcher()->dispatch(new CurrentDeviceLogout($this->guardName, $user));
+        if ($this->databaseToken !== null) {
+            $this->databaseToken->newQuery()->whereKey($this->databaseToken->getKey())->delete();
         }
 
         $this->databaseToken = null;
         $this->user = false;
-    }
 
-    /**
-     * Get the user provider used by the guard.
-     */
-    public function getProvider(): UserProviderContract
-    {
-        $userProvider = resolveAuthManager()->createUserProvider($this->userProviderName);
-
-        \assert($userProvider !== null);
-
-        return $userProvider;
+        resolveCookieJar()->expire($this->cookieName(), '/', null);
     }
 
     /**

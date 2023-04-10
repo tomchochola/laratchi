@@ -15,7 +15,7 @@ class PasswordForgotRequest extends SecureFormRequest
      */
     public function authorize(): Response|bool
     {
-        mustBeGuest([$this->guardName()]);
+        $this->mustGuest();
 
         return true;
     }
@@ -25,12 +25,10 @@ class PasswordForgotRequest extends SecureFormRequest
      */
     public function rules(): array
     {
-        $authValidity = inject(AuthValidity::class);
-
-        $guardName = $this->guardName();
+        $authValidity = AuthValidity::inject();
 
         return [
-            'email' => $authValidity->email($guardName)->required(),
+            'email' => $authValidity->email()->required(),
         ];
     }
 
@@ -41,22 +39,6 @@ class PasswordForgotRequest extends SecureFormRequest
      */
     public function credentials(): array
     {
-        return $this->validatedInput()->only(['email']);
-    }
-
-    /**
-     * Get guard name.
-     */
-    public function guardName(): string
-    {
-        return resolveAuthManager()->getDefaultDriver();
-    }
-
-    /**
-     * Get password broker name.
-     */
-    public function passwordBrokerName(): string
-    {
-        return $this->guardName();
+        return $this->validatedInput()->all();
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Requests;
 
 use Illuminate\Auth\Access\Response;
+use Tomchochola\Laratchi\Auth\Http\Controllers\RegisterController;
 use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
@@ -15,7 +16,7 @@ class RegisterRequest extends SecureFormRequest
      */
     public function authorize(): Response|bool
     {
-        mustBeGuest([$this->guardName()]);
+        $this->mustGuest();
 
         return true;
     }
@@ -25,24 +26,15 @@ class RegisterRequest extends SecureFormRequest
      */
     public function rules(): array
     {
-        $authValidity = inject(AuthValidity::class);
-
-        $guardName = $this->guardName();
+        $authValidity = AuthValidity::inject();
 
         return [
-            'email' => $authValidity->email($guardName)->required(),
-            'password' => $authValidity->password($guardName)->confirmed()->required(),
-            'name' => $authValidity->name($guardName)->required(),
-            'locale' => $authValidity->locale($guardName)->required(),
+            'email' => $authValidity->email()->required(),
+            'password' => $authValidity->password()->nullable()->filled()->requiredWith(['token']),
+            'name' => $authValidity->name()->nullable()->filled()->requiredWith(['token']),
+            'locale' => $authValidity->locale()->required(),
+            'token' => $authValidity->emailVerificationToken()->nullable()->filled(),
         ];
-    }
-
-    /**
-     * Get guard name.
-     */
-    public function guardName(): string
-    {
-        return resolveAuthManager()->getDefaultDriver();
     }
 
     /**
@@ -56,22 +48,16 @@ class RegisterRequest extends SecureFormRequest
     }
 
     /**
-     * Get password.
-     *
-     * @return array<string, mixed>
-     */
-    public function password(): array
-    {
-        return $this->validatedInput()->only(['password']);
-    }
-
-    /**
      * Get data.
      *
      * @return array<string, mixed>
      */
     public function data(): array
     {
-        return $this->validatedInput()->except(['password', 'password_confirmation']);
+        return $this->validatedInput()->merge([
+            'password' => resolveHasher()->make($this->validatedInput()->mustString('password')),
+            'email_verified_at' => RegisterController::$emailConfirmation ? resolveDate()->now() : null,
+            'remember_token' => null,
+        ])->except(['token']);
     }
 }

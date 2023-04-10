@@ -30,7 +30,7 @@ class SecureValidator extends Validator
         'alpha_dash' => 'alpha_dash',
         'alpha_num' => 'alpha_num',
         'array' => 'array',
-        'collection' => 'array',
+        'collection' => 'collection',
         'ascii' => 'ascii',
         'before' => 'before::date',
         'before_or_equal' => 'before_or_equal::date',
@@ -169,6 +169,8 @@ class SecureValidator extends Validator
         'strlen_min' => 'strlen_min::min',
 
         'throttled' => 'throttled::seconds',
+        'invalid' => 'invalid',
+        'fallback' => 'fallback',
 
         'auth.failed' => 'auth_failed',
         'auth.password' => 'auth_password',
@@ -196,18 +198,6 @@ class SecureValidator extends Validator
     ];
 
     /**
-     * Excluded keys.
-     *
-     * @var array<int, string>
-     */
-    public static array $excluded = [];
-
-    /**
-     * Bail on every attribute.
-     */
-    public static bool $bail = true;
-
-    /**
      * @var array<string, string|array<string, string>>
      */
     public static array $customMsgs = [];
@@ -230,19 +220,7 @@ class SecureValidator extends Validator
 
         foreach ($extraAttributes as $attribute => $value) {
             if (\count($this->getExplicitKeys((string) $attribute)) === 0) {
-                if (\in_array($attribute, static::$excluded, true)) {
-                    continue;
-                }
-
-                if (Str::endsWith((string) $attribute, '_confirmation')) {
-                    $attr = Str::before((string) $attribute, '_confirmation');
-
-                    if (\in_array('confirmed', $this->rules[$attr] ?? [], true)) {
-                        continue;
-                    }
-                }
-
-                $this->addFailure((string) $attribute, 'missing', []);
+                $this->addFailure((string) $attribute, 'missing');
             }
         }
 
@@ -288,7 +266,7 @@ class SecureValidator extends Validator
      */
     protected function shouldStopValidating(mixed $attribute): bool
     {
-        if (static::$bail && $this->messages->has($this->replacePlaceholderInString($attribute))) {
+        if ($this->messages->has($this->replacePlaceholderInString($attribute))) {
             return true;
         }
 

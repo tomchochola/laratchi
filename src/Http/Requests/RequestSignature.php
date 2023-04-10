@@ -4,37 +4,36 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Http\Requests;
 
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Stringable;
+use Tomchochola\Laratchi\Auth\User;
 
 class RequestSignature implements Stringable
 {
     /**
      * Request signature data.
      *
-     * @var array<mixed>
+     * @var array<string, string>
      */
     public array $data = [];
 
     /**
      * Internal signature data.
      *
-     * @var array<mixed>
+     * @var array<string, string>
      */
     protected array $internal = [];
 
     /**
      * Create a new request signature instance.
-     *
-     * @param array<mixed> $data
      */
-    public function __construct(array $data = [], bool $defaults = true)
+    public function __construct(string $key, bool $defaults = true)
     {
-        $this->data = $data;
+        $this->key($key);
 
         if ($defaults) {
+            $this->auth();
             $this->ip();
-            $this->url();
+            $this->action();
         }
     }
 
@@ -47,13 +46,27 @@ class RequestSignature implements Stringable
     }
 
     /**
+     * Add auth to request signature.
+     *
+     * @return $this
+     */
+    public function auth(): static
+    {
+        return $this->user(User::auth());
+    }
+
+    /**
      * Add user to request signature.
      *
      * @return $this
      */
-    public function user(AuthenticatableContract $user): static
+    public function user(?User $user): static
     {
-        $this->internal['user'] = $user->getAuthIdentifier().':'.$user::class;
+        if ($user === null) {
+            $this->internal['user'] = '';
+        } else {
+            $this->internal['user'] = "{$user->getTable()}:{$user->getKey()}";
+        }
 
         return $this;
     }
@@ -65,19 +78,23 @@ class RequestSignature implements Stringable
      */
     public function ip(): static
     {
-        $this->internal['ip'] = resolveRequest()->ip();
+        $this->internal['ip'] = resolveRequest()->ip() ?? '';
 
         return $this;
     }
 
     /**
-     * Add url to request signature.
+     * Add action to request signature.
      *
      * @return $this
      */
-    public function url(): static
+    public function action(): static
     {
-        $this->internal['url'] = resolveRequest()->getMethod().':'.resolveUrlFactory()->current();
+        $route = resolveRouter()->current();
+
+        \assert($route !== null);
+
+        $this->internal['action'] = $route->getActionName();
 
         return $this;
     }
@@ -95,29 +112,25 @@ class RequestSignature implements Stringable
     }
 
     /**
-     * Add route name to request signature.
-     *
-     * @return $this
-     */
-    public function route(): static
-    {
-        $this->internal['route'] = resolveRouter()->current()?->getName();
-
-        return $this;
-    }
-
-    /**
      * Add query to request signature.
      *
      * @return $this
      */
     public function query(): static
     {
-        $query = resolveRequest()->query->all();
+        $this->internal['query'] = resolveRequest()->getQueryString() ?? '';
 
-        \ksort($query);
+        return $this;
+    }
 
-        $this->internal['query'] = $query;
+    /**
+     * Add key to request signature.
+     *
+     * @return $this
+     */
+    public function key(string $key): static
+    {
+        $this->internal['key'] = $key;
 
         return $this;
     }
@@ -127,7 +140,7 @@ class RequestSignature implements Stringable
      *
      * @return $this
      */
-    public function data(string $key, mixed $data): static
+    public function data(string $key, string $data): static
     {
         $this->data[$key] = $data;
 
@@ -139,6 +152,6 @@ class RequestSignature implements Stringable
      */
     public function hash(): string
     {
-        return \hash('sha256', \serialize([$this->data, $this->internal]));
+        return \hash('sha256', \implode('|', \array_replace($this->internal, $this->data)));
     }
 }
