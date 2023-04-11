@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Services;
 
+use Illuminate\Notifications\AnonymousNotifiable;
+use Tomchochola\Laratchi\Auth\Notifications\EmailConfirmationNotification;
+
 class EmailBrokerService
 {
     /**
@@ -45,6 +48,14 @@ class EmailBrokerService
         }
 
         return $pass || $token === '111111';
+    }
+
+    /**
+     * Send anonymous notification.
+     */
+    public function send(string $guard, string $email, string $locale): void
+    {
+        (new AnonymousNotifiable())->route('mail', $email)->notify((new EmailConfirmationNotification($guard, $this->store($guard, $email), $email))->locale($locale));
     }
 
     /**

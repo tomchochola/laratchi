@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Notifications\AnonymousNotifiable;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\RegisterRequest;
-use Tomchochola\Laratchi\Auth\Notifications\EmailConfirmationNotification;
 use Tomchochola\Laratchi\Auth\Services\CanLoginService;
 use Tomchochola\Laratchi\Auth\Services\EmailBrokerService;
 use Tomchochola\Laratchi\Auth\User;
@@ -147,7 +145,7 @@ class RegisterController extends TransactionController
         if ($token === null) {
             $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['token']));
 
-            (new AnonymousNotifiable())->route('mail', $email)->notify((new EmailConfirmationNotification($guard, $broker->store($guard, $email), $email))->locale($request->validatedInput()->mustString('locale')));
+            $broker->send($guard, $email, resolveApp()->getLocale());
 
             return resolveResponseFactory()->noContent(202);
         }

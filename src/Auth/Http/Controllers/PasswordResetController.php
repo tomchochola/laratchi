@@ -6,7 +6,6 @@ namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\PasswordBroker;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\PasswordResetRequest;
 use Tomchochola\Laratchi\Auth\Services\CanLoginService;
@@ -83,13 +82,7 @@ class PasswordResetController extends TransactionController
      */
     protected function reset(PasswordResetRequest $request, User $me): void
     {
-        if ($me->getRememberToken() !== '') {
-            $me->setRememberToken(Str::random(60));
-        }
-
         $me->update(['password' => resolveHasher()->make($request->validatedInput()->mustString('password'))]);
-
-        $me->databaseTokens()->getQuery()->delete();
     }
 
     /**

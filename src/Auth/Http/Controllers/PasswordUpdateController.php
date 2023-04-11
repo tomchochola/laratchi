@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\PasswordUpdateRequest;
 use Tomchochola\Laratchi\Auth\User;
@@ -33,13 +32,7 @@ class PasswordUpdateController extends TransactionController
      */
     protected function update(PasswordUpdateRequest $request, User $me): void
     {
-        if ($me->getRememberToken() !== '') {
-            $me->setRememberToken(Str::random(60));
-        }
-
         $me->update(['password' => resolveHasher()->make($request->validatedInput()->mustString('new_password'))]);
-
-        $me->databaseTokens()->getQuery()->delete();
     }
 
     /**

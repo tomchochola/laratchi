@@ -14,6 +14,8 @@ class {{ class }} extends ModelResource
 {
     /**
      * @inheritDoc
+     *
+     * @return array<string, mixed>
      */
     public function attributes(): array
     {
@@ -22,13 +24,5 @@ class {{ class }} extends ModelResource
             'created_at' => $this->resource->getCreatedAt(),
             'updated_at' => $this->resource->getUpdatedAt(),
         ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function relationships(): array
-    {
-        return [];
     }
 }

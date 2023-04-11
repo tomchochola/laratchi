@@ -27,7 +27,7 @@ class {{ class }} extends Model
      */
     public static function queryEmbed(Builder $builder): void
     {
-        $builder->getQuery()->select($builder->qualifyColumns(['id', 'title']));
+        $builder->getQuery()->select($builder->qualifyColumns(['id', 'title', 'created_at', 'updated_at']));
     }
 
     /**
@@ -58,6 +58,8 @@ class {{ class }} extends Model
         return new ModelResource($this, static function (self $model): array {
             return [
                 'title' => $model->getTitle(),
+                'created_at' => $model->getCreatedAt(),
+                'updated_at' => $model->getUpdatedAt(),
             ];
         });
     }
