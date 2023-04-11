@@ -905,6 +905,16 @@ if (! \function_exists('resolveDate')) {
     }
 }
 
+if (! \function_exists('resolveNow')) {
+    /**
+     * Resolve now.
+     */
+    function resolveNow(): Illuminate\Support\Carbon
+    {
+        return resolveDate()->now();
+    }
+}
+
 if (! \function_exists('resolveMix')) {
     /**
      * Resolve mix.
@@ -1221,5 +1231,35 @@ if (! \function_exists('strPutCsv')) {
 
             return (string) $value;
         }, $data));
+    }
+}
+
+if (! \function_exists('locale')) {
+    /**
+     * Locale.
+     */
+    function locale(): string
+    {
+        return resolveApp()->getLocale();
+    }
+}
+
+if (! \function_exists('locales')) {
+    /**
+     * Locales.
+     *
+     * @return array<int, string>
+     */
+    function locales(): array
+    {
+        $locales = [];
+
+        foreach (mustConfigArray('app.locales') as $locale) {
+            assert(is_string($locale));
+
+            $locales[] = $locale;
+        }
+
+        return $locales;
     }
 }

@@ -619,7 +619,7 @@ class MakeTchiCommand extends GeneratorCommand
             $databaseSeeder = \str_replace("{\n", "{\n    /**\n     * @inheritDoc\n     */\n    public function run(): void\n    {\n    }\n", $databaseSeeder);
         }
 
-        $databaseSeeder = \str_replace("public function run(): void\n    {\n", "public function run(): void\n    {\n        \$this->call({$modelName}Seeder::class);\n", $databaseSeeder);
+        $databaseSeeder = \str_replace("public function run(): void\n    {\n", "public function run(): void\n    {\n        \$this->callOnce({$modelName}Seeder::class);\n", $databaseSeeder);
 
         $this->files->put($path, $databaseSeeder);
     }
@@ -634,7 +634,7 @@ class MakeTchiCommand extends GeneratorCommand
 
         $databaseSchema = $this->files->get($path);
 
-        $databaseSchema = \str_replace("erDiagram\n", "erDiagram\n\n{$table} {\n  id id PK\n  string title \"fulltext\"\n  timestamp created_at\n  timestamp updated_at\n}\n", $databaseSchema);
+        $databaseSchema = \str_replace("erDiagram\n", "erDiagram\n\n{$table} {\n  id id PK\n  string title\n  timestamp created_at\n  timestamp updated_at\n}\n", $databaseSchema);
 
         $this->files->put($path, $databaseSchema);
     }

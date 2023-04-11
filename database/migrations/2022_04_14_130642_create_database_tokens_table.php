@@ -25,7 +25,7 @@ return new class() extends Migration {
 
                 \assert(\is_string($model));
 
-                $table->foreignIdFor($model)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+                $table->foreignIdFor($model)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             }
 
             $table->char('hash', 64);
