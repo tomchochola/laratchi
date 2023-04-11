@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
+use App\Support\ScoutSupport;
 use Illuminate\Database\Eloquent\Builder;
 use Tomchochola\Laratchi\Database\Model;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
+use Laravel\Scout\Searchable;
 
 class {{ class }} extends Model
 {
+    use Searchable;
+
     /**
      * @inheritDoc
      *
@@ -35,7 +39,7 @@ class {{ class }} extends Model
             return;
         }
 
-        $builder->getQuery()->whereFullText($builder->qualifyColumn('title'), $search);
+        ScoutSupport::exactPartial($builder, static::search($search));
     }
 
     /**
@@ -56,5 +60,17 @@ class {{ class }} extends Model
                 'title' => $model->getTitle(),
             ];
         });
+    }
+
+    /**
+    * @inheritDoc
+    *
+    * @return array<string, ?string>
+    */
+    public function toSearchableArray(): array
+    {
+        return [
+            'title' => $this->getTitle(),
+        ];
     }
 }
