@@ -38,7 +38,8 @@ class {{ class }} extends SecureFormRequest
         $validity = new {{ validity }}();
 
         return [
-            'id' => $validity->id()->required(),
+            'id' => $validity->id()->nullable()->filled()->requiredWithout(['slug'])->missingWith(['slug']),
+            'slug' => $validity->slug()->nullable()->filled()->requiredWithout(['id'])->missingWith(['id']),
         ];
     }
 

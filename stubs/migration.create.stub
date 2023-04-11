@@ -14,7 +14,7 @@ return new class() extends Migration {
         resolveSchema()->create('{{ table }}', static function (Blueprint $table): void {
             $table->id();
 
-            $table->string('title')->fulltext();
+            $table->string('title');
 
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

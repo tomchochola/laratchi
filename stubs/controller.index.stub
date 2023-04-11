@@ -25,6 +25,7 @@ class {{ class }} extends Controller
         $this->select($builder, $request);
         $this->filterSearch($builder, $request);
         $this->filterId($builder, $request);
+        $this->filterSlug($builder, $request);
         $this->sort($builder, $request);
         $this->take($builder, $request);
 
@@ -83,6 +84,20 @@ class {{ class }} extends Controller
         }
 
         {{ model }}::scopeKeys($builder, $filter);
+    }
+
+    /**
+     * Filter by slug.
+     */
+    protected function filterSlug(Builder $builder, {{ indexRequest }} $request): void
+    {
+        $filter = $request->validatedInput()->array('filter.slug');
+
+        if ($filter === null) {
+            return;
+        }
+
+        {{ model }}::scopeRouteKeys($builder, $filter);
     }
 
     /**

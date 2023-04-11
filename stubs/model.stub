@@ -63,10 +63,10 @@ class {{ class }} extends Model
     }
 
     /**
-    * @inheritDoc
-    *
-    * @return array<string, ?string>
-    */
+     * @inheritDoc
+     *
+     * @return array<string, ?string>
+     */
     public function toSearchableArray(): array
     {
         return [

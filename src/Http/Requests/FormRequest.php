@@ -372,7 +372,7 @@ class FormRequest extends IlluminateFormRequest
      *
      * @return array<string, mixed>
      */
-    protected function mergeRules(array $rules, bool $signed = false, bool $cursor = false, bool $page = false, ?int $take = null, bool $filter = false, bool $id = false, bool $slug = false, bool $select = false, bool $count = false, bool $filterId = false, bool $filterSearch = false, ?array $sort = null): array
+    protected function mergeRules(array $rules, bool $signed = false, bool $cursor = false, bool $page = false, ?int $take = null, bool $filter = false, bool $id = false, bool $slug = false, bool $select = false, bool $count = false, bool $filterId = false, bool $filterSearch = false, ?array $sort = null, bool $filterSlug = false): array
     {
         if ($signed) {
             $rules = \array_replace($rules, [
@@ -431,8 +431,15 @@ class FormRequest extends IlluminateFormRequest
 
         if ($filterId) {
             $rules = \array_replace($rules, [
-                'filter.id' => Validity::make()->nullable()->filled()->collection(null),
+                'filter.id' => Validity::make()->nullable()->filled()->collection(null)->missingWith(['filter.slug']),
                 'filter.id.*' => Validity::make()->nullable()->filled()->distinct()->id(),
+            ]);
+        }
+
+        if ($filterSlug) {
+            $rules = \array_replace($rules, [
+                'filter.slug' => Validity::make()->nullable()->filled()->collection(null)->missingWith(['filter.id']),
+                'filter.slug.*' => Validity::make()->nullable()->filled()->distinct()->slug(),
             ]);
         }
 

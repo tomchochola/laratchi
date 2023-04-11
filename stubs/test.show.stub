@@ -34,7 +34,7 @@ class {{ class }} extends TestCase
         \assert($model instanceof {{ model }});
 
         $query = [
-            'slug' => $model->getRouteKey(),
+            'id' => $model->getKey(),
         ];
 
         $response = $this->be($me, 'users')->get(resolveUrlFactory()->action({{ showController }}::class, $query));

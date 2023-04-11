@@ -46,6 +46,6 @@ class {{ class }} extends SecureFormRequest
      */
     public function rules(): array
     {
-        return $this->mergeRules([], filter: true, filterId: true, filterSearch: true, take: static::TAKE_MAX, select: true, count: true, sort: static::SORTS);
+        return $this->mergeRules([], filter: true, filterId: true, filterSlug: true, filterSearch: true, take: static::TAKE_MAX, select: true, count: true, sort: static::SORTS);
     }
 }
