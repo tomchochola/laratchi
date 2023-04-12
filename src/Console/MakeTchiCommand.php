@@ -228,7 +228,6 @@ class MakeTchiCommand extends GeneratorCommand
                         'description' => 'sort',
                         'in' => 'query',
                         'name' => 'sort',
-                        'explode' => false,
                         'schema' => [
                             'description' => 'sort',
                             'type' => 'array',

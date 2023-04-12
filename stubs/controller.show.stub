@@ -36,6 +36,6 @@ class {{ class }} extends Controller
      */
     protected function select(Builder $builder, {{ showRequest }} $request): void
     {
-        $builder->getQuery()->select($builder->qualifyColumns(['id', 'title', 'created_at', 'updated_at']));
+        $builder->getQuery()->select($builder->qualifyColumns(['*']));
     }
 }

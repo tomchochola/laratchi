@@ -5,26 +5,15 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use Illuminate\Auth\Access\Response;
-use {{ namespacedUserModel }};
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
 class {{ class }} extends SecureFormRequest
 {
     /**
-     * @inheritDoc
-     */
-    public function mustAuth(): \{{ namespacedUserModel }}
-    {
-        return \{{ namespacedUserModel }}::mustAuth();
-    }
-
-    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): Response|bool
     {
-        $this->mustAuth();
-
         return true;
     }
 

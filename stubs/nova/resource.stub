@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Tomchochola\Laratchi\Validation\Validity;
 
+/**
+ * @extends Resource<\{{ namespacedModel }}>
+ */
 class {{ class }} extends Resource
 {
     /**
@@ -33,18 +35,9 @@ class {{ class }} extends Resource
 
     /**
      * @inheritDoc
-     *
-     * @var array<mixed>
-     */
-    public static $search = [];
-
-    /**
-     * @inheritDoc
      */
     public static function indexQuery(NovaRequest $request, mixed $query): Builder
     {
-        $query = parent::indexQuery($request, $query);
-
         $query->getQuery()->select($query->qualifyColumns(['id']));
 
         return $query;
@@ -55,9 +48,17 @@ class {{ class }} extends Resource
      */
     public static function detailQuery(NovaRequest $request, mixed $query): Builder
     {
-        $query = parent::detailQuery($request, $query);
+        $query->getQuery()->select($query->qualifyColumns(['*']));
 
-        $query->getQuery()->select($query->qualifyColumns(['id']));
+        return $query;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function editQuery(NovaRequest $request, mixed $query): Builder
+    {
+        $query->getQuery()->select($query->qualifyColumns(['*']));
 
         return $query;
     }
@@ -67,9 +68,7 @@ class {{ class }} extends Resource
      */
     public static function relatableQuery(NovaRequest $request, mixed $query): Builder
     {
-        $query = parent::relatableQuery($request, $query);
-
-        $query->getQuery()->select($query->qualifyColumns(\array_unique(['id', static::$title])));
+        $query->getQuery()->select($query->qualifyColumns(['id']));
 
         return $query;
     }
@@ -89,10 +88,8 @@ class {{ class }} extends Resource
      */
     public function fields(NovaRequest $request): array
     {
-        $validity = new Validity();
-
         return [
-            ID::make()->sortable(),
+            ID::make(),
         ];
     }
 

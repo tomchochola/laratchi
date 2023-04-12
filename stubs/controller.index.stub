@@ -49,11 +49,13 @@ class {{ class }} extends Controller
         }
 
         foreach ($sorts as $sort) {
-            match ($sort) {
-                '-created_at', '-updated_at', '-id', '-title' => $builder->getQuery()->orderByDesc($builder->qualifyColumn(\mb_substr($sort, 1))),
-                'created_at', 'updated_at', 'id', 'title' => $builder->getQuery()->orderBy($builder->qualifyColumn($sort)),
-                default => assertNever(),
-            };
+            \assert(\is_string($sort));
+
+            if (\str_starts_with($sort, '-')) {
+                $builder->getQuery()->orderByDesc($builder->qualifyColumn(\mb_substr($sort, 1)));
+            } else {
+                $builder->getQuery()->orderBy($builder->qualifyColumn($sort))
+            }
         }
     }
 
