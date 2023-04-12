@@ -1255,7 +1255,7 @@ if (! \function_exists('locales')) {
         $locales = [];
 
         foreach (mustConfigArray('app.locales') as $locale) {
-            assert(is_string($locale));
+            \assert(\is_string($locale));
 
             $locales[] = $locale;
         }
