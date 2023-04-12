@@ -79,9 +79,9 @@ class Controller extends IlluminateController
      *
      * @param array<array-key> $keys
      *
-     * @return (Closure(int): never)|null
+     * @return Closure(int): never
      */
-    protected function onThrottle(FormRequest $request, array $keys = [], string $rule = 'throttled'): ?Closure
+    protected function onThrottle(FormRequest $request, array $keys, string $rule = 'throttled'): Closure
     {
         return static function (int $seconds) use ($request, $keys, $rule): never {
             if (static::$simpleThrottle || \count($keys) === 0) {

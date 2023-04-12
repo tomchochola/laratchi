@@ -14,6 +14,13 @@ class ViewService
     public static string $template = self::class;
 
     /**
+     * Constructor.
+     */
+    protected function __construct()
+    {
+    }
+
+    /**
      * Inject.
      */
     public static function inject(): self
@@ -34,12 +41,14 @@ class ViewService
      */
     public function background(): string
     {
-        $phase = \array_rand([
+        $phases = [
             'day',
             'sunrise',
             'sunset',
             'night',
-        ]);
+        ];
+
+        $phase = $phases[\array_rand($phases)];
 
         return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make("laratchi::phases.{$phase}", ['color' => $this->color()])->render());
     }

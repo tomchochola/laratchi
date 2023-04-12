@@ -23,6 +23,13 @@ class AuthValidity
     public static ?array $allowedLocales = null;
 
     /**
+     * Constructor.
+     */
+    protected function __construct()
+    {
+    }
+
+    /**
      * Inject.
      */
     public static function inject(): self

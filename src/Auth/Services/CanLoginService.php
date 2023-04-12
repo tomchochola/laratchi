@@ -17,6 +17,13 @@ class CanLoginService
     public static string $template = self::class;
 
     /**
+     * Constructor.
+     */
+    protected function __construct()
+    {
+    }
+
+    /**
      * Inject.
      */
     public static function inject(): self

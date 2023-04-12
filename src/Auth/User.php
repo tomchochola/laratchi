@@ -53,11 +53,9 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
     {
         $me = resolveAuthManager()->guard()->user();
 
-        if ($me instanceof static) {
-            return $me;
-        }
+        \assert($me === null || $me instanceof static);
 
-        return null;
+        return $me;
     }
 
     /**
@@ -79,7 +77,7 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
      */
     public static function guest(): bool
     {
-        return static::auth() === null;
+        return resolveAuthManager()->guard()->guest();
     }
 
     /**
@@ -103,7 +101,7 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
             return;
         }
 
-        $this->notify(new PasswordResetNotification($this->getTable(), $token, $this->getEmailForPasswordReset()));
+        $this->notify(PasswordResetNotification::inject($this->getTable(), $token, $this->getEmailForPasswordReset()));
     }
 
     /**
@@ -115,7 +113,7 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
             return;
         }
 
-        $this->notify(new PasswordInitNotification($this->getTable(), $token, $this->getEmailForPasswordReset()));
+        $this->notify(PasswordInitNotification::inject($this->getTable(), $token, $this->getEmailForPasswordReset()));
     }
 
     /**
@@ -127,9 +125,7 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
             return;
         }
 
-        $token = EmailBrokerService::inject()->store($this->getTable(), $this->getEmailForVerification());
-
-        $this->notify(new EmailVerificationNotification($this->getTable(), $token, $this->getEmailForVerification()));
+        $this->notify(EmailVerificationNotification::inject($this->getTable(), EmailBrokerService::inject()->store($this->getTable(), $this->getEmailForVerification()), $this->getEmailForVerification()));
     }
 
     /**
@@ -211,12 +207,16 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
     {
         parent::booted();
 
-        static::updated(static function (self $user): void {
-            if ($user->wasChanged('password')) {
+        static::updating(static function (self $user): void {
+            if ($user->isDirty('password')) {
                 if ($user->getRememberToken() !== '') {
                     $user->setRememberToken(Str::random(60));
                 }
+            }
+        });
 
+        static::updated(static function (self $user): void {
+            if ($user->wasChanged('password')) {
                 $user->databaseTokens()->getQuery()->delete();
             }
         });

@@ -14,11 +14,26 @@ class EmailConfirmationNotification extends Notification implements ShouldQueueC
     use Queueable;
 
     /**
+     * Template.
+     *
+     * @var class-string<self>
+     */
+    public static string $template = self::class;
+
+    /**
      * Create a new notification instance.
      */
-    public function __construct(protected string $guardName, protected string $token, protected string $email)
+    protected function __construct(protected string $guardName, protected string $token, protected string $email)
     {
         $this->afterCommit();
+    }
+
+    /**
+     * Inject.
+     */
+    public static function inject(string $guardName, string $token, string $email): self
+    {
+        return new static::$template($guardName, $token, $email);
     }
 
     /**

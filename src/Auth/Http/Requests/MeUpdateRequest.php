@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Requests;
 
 use Illuminate\Auth\Access\Response;
-use Tomchochola\Laratchi\Auth\Http\Controllers\MeUpdateController;
 use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
@@ -53,6 +52,6 @@ class MeUpdateRequest extends SecureFormRequest
      */
     public function data(): array
     {
-        return $this->validatedInput()->merge(MeUpdateController::$emailConfirmation && $this->has('email') ? ['email_verified_at' => resolveDate()->now()] : [])->except(['token']);
+        return $this->validatedInput()->except(['token']);
     }
 }

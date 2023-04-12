@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\RegisterRequest;
 use Tomchochola\Laratchi\Auth\Services\CanLoginService;
@@ -145,7 +144,7 @@ class RegisterController extends TransactionController
         if ($token === null) {
             $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['token']));
 
-            $broker->send($guard, $email, resolveApp()->getLocale());
+            $broker->anonymous($guard, $email, resolveApp()->getLocale());
 
             return resolveResponseFactory()->noContent(202);
         }
@@ -158,29 +157,5 @@ class RegisterController extends TransactionController
         }
 
         return null;
-    }
-
-    /**
-     * Password init.
-     */
-    protected function passwordInit(RegisterRequest $request, User $me): void
-    {
-        if ($me->getAuthPassword() === '' && $me->getEmailForPasswordReset() !== '') {
-            $this->hit($this->limit('password_init'), $this->onThrottle($request, ['email']));
-
-            $me->sendPasswordInitNotification(resolvePasswordBroker($me->getTable())->createToken($me));
-        }
-    }
-
-    /**
-     * E-mail verification.
-     */
-    protected function emailVerification(RegisterRequest $request, User $me): void
-    {
-        if ($me instanceof MustVerifyEmail && ! $me->hasVerifiedEmail() && $me->getEmailForVerification() !== '') {
-            $this->hit($this->limit('email_verification'), $this->onThrottle($request, ['email']));
-
-            $me->sendEmailVerificationNotification();
-        }
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Auth\Http\Requests;
 
 use Illuminate\Auth\Access\Response;
-use Tomchochola\Laratchi\Auth\Http\Controllers\RegisterController;
 use Tomchochola\Laratchi\Auth\Http\Validation\AuthValidity;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
@@ -56,7 +55,7 @@ class RegisterRequest extends SecureFormRequest
     {
         return $this->validatedInput()->merge([
             'password' => resolveHasher()->make($this->validatedInput()->mustString('password')),
-            'email_verified_at' => RegisterController::$emailConfirmation ? resolveDate()->now() : null,
+            'email_verified_at' => null,
             'remember_token' => null,
         ])->except(['token']);
     }

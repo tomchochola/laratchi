@@ -56,6 +56,13 @@ class Validity implements ArrayableContract
     public const VARCHAR_MAX = 65535;
 
     /**
+     * Templates.
+     *
+     * @var class-string<self>
+     */
+    public static string $template = self::class;
+
+    /**
      * Bail flag.
      */
     protected bool $bail = true;
@@ -138,18 +145,18 @@ class Validity implements ArrayableContract
     protected bool $skipNext = false;
 
     /**
-     * Validity constructor.
+     * Constructor.
      */
-    final public function __construct()
+    protected function __construct()
     {
     }
 
     /**
      * Create a new validity instance.
      */
-    public static function make(): static
+    public static function make(): self
     {
-        return new static();
+        return new static::$template();
     }
 
     /**

@@ -60,7 +60,7 @@ class EmailVerificationResendController extends TransactionController
      */
     protected function send(EmailVerificationResendRequest $request, User&MustVerifyEmail $me): void
     {
-        $this->hit($this->limit('send'), $this->onThrottle($request));
+        $this->hit($this->limit('send'));
 
         $me->sendEmailVerificationNotification();
     }

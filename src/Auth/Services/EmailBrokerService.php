@@ -17,6 +17,13 @@ class EmailBrokerService
     public static string $template = self::class;
 
     /**
+     * Constructor.
+     */
+    protected function __construct()
+    {
+    }
+
+    /**
      * Inject.
      */
     public static function inject(): self
@@ -53,9 +60,9 @@ class EmailBrokerService
     /**
      * Send anonymous notification.
      */
-    public function send(string $guard, string $email, string $locale): void
+    public function anonymous(string $guard, string $email, string $locale): void
     {
-        (new AnonymousNotifiable())->route('mail', $email)->notify((new EmailConfirmationNotification($guard, $this->store($guard, $email), $email))->locale($locale));
+        (new AnonymousNotifiable())->route('mail', $email)->notify(EmailConfirmationNotification::inject($guard, $this->store($guard, $email), $email)->locale($locale));
     }
 
     /**

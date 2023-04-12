@@ -14,11 +14,26 @@ class PasswordResetNotification extends Notification implements ShouldQueueContr
     use Queueable;
 
     /**
+     * Template.
+     *
+     * @var class-string<self>
+     */
+    public static string $template = self::class;
+
+    /**
      * Create a new notification instance.
      */
-    public function __construct(protected string $guardName, protected ?string $token = null, protected ?string $email = null, protected ?string $spa = null, protected ?string $url = null)
+    protected function __construct(protected string $guardName, protected ?string $token = null, protected ?string $email = null, protected ?string $spa = null, protected ?string $url = null)
     {
         $this->afterCommit();
+    }
+
+    /**
+     * Inject.
+     */
+    public static function inject(string $guardName, ?string $token = null, ?string $email = null, ?string $spa = null, ?string $url = null): self
+    {
+        return new static::$template($guardName, $token, $email, $spa, $url);
     }
 
     /**
