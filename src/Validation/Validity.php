@@ -2410,7 +2410,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function tinyText(?int $max = null, ?int $min = null): static
+    public function tinyText(?int $max = null, ?int $min = null, bool $bytes = false): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2418,16 +2418,24 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        $max ??= static::TINY_TEXT_MAX;
+        if ($bytes) {
+            $max ??= static::TINY_TEXT_MAX;
 
-        \assert($max <= static::TINY_TEXT_MAX);
+            \assert($max <= static::TINY_TEXT_MAX);
 
-        $this->string(null)->strlenMax($max);
+            $this->string(null)->strlenMax($max);
 
-        if ($min !== null) {
-            \assert($min <= $max);
+            if ($min !== null) {
+                \assert($min <= $max);
 
-            $this->strlenMin($min);
+                $this->strlenMin($min);
+            }
+        } else {
+            $max ??= (int) (static::TINY_TEXT_MAX / 4);
+
+            \assert($max <= (int) (static::TINY_TEXT_MAX / 4), 'text columns are in bytes');
+
+            $this->string($max, $min);
         }
 
         return $this;
@@ -2438,7 +2446,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function text(?int $max = null, ?int $min = null): static
+    public function text(?int $max = null, ?int $min = null, bool $bytes = false): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2446,16 +2454,24 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        $max ??= static::TEXT_MAX;
+        if ($bytes) {
+            $max ??= static::TEXT_MAX;
 
-        \assert($max <= static::TEXT_MAX);
+            \assert($max <= static::TEXT_MAX);
 
-        $this->string(null)->strlenMax($max);
+            $this->string(null)->strlenMax($max);
 
-        if ($min !== null) {
-            \assert($min <= $max);
+            if ($min !== null) {
+                \assert($min <= $max);
 
-            $this->strlenMin($min);
+                $this->strlenMin($min);
+            }
+        } else {
+            $max ??= (int) (static::TEXT_MAX / 4);
+
+            \assert($max <= (int) (static::TEXT_MAX / 4), 'text columns are in bytes');
+
+            $this->string($max, $min);
         }
 
         return $this;
@@ -2466,7 +2482,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function mediumText(?int $max = null, ?int $min = null): static
+    public function mediumText(?int $max = null, ?int $min = null, bool $bytes = false): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2474,16 +2490,24 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        $max ??= static::MEDIUM_TEXT_MAX;
+        if ($bytes) {
+            $max ??= static::MEDIUM_TEXT_MAX;
 
-        \assert($max <= static::MEDIUM_TEXT_MAX);
+            \assert($max <= static::MEDIUM_TEXT_MAX);
 
-        $this->string(null)->strlenMax($max);
+            $this->string(null)->strlenMax($max);
 
-        if ($min !== null) {
-            \assert($min <= $max);
+            if ($min !== null) {
+                \assert($min <= $max);
 
-            $this->strlenMin($min);
+                $this->strlenMin($min);
+            }
+        } else {
+            $max ??= (int) (static::MEDIUM_TEXT_MAX / 4);
+
+            \assert($max <= (int) (static::MEDIUM_TEXT_MAX / 4), 'text columns are in bytes');
+
+            $this->string($max, $min);
         }
 
         return $this;
@@ -2494,7 +2518,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function longText(?int $max = null, ?int $min = null): static
+    public function longText(?int $max = null, ?int $min = null, bool $bytes = false): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2502,16 +2526,24 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        $max ??= static::LONG_TEXT_MAX;
+        if ($bytes) {
+            $max ??= static::LONG_TEXT_MAX;
 
-        \assert($max <= static::LONG_TEXT_MAX);
+            \assert($max <= static::LONG_TEXT_MAX);
 
-        $this->string(null)->strlenMax($max);
+            $this->string(null)->strlenMax($max);
 
-        if ($min !== null) {
-            \assert($min <= $max);
+            if ($min !== null) {
+                \assert($min <= $max);
 
-            $this->strlenMin($min);
+                $this->strlenMin($min);
+            }
+        } else {
+            $max ??= (int) (static::LONG_TEXT_MAX / 4);
+
+            \assert($max <= (int) (static::LONG_TEXT_MAX / 4), 'text columns are in bytes');
+
+            $this->string($max, $min);
         }
 
         return $this;
