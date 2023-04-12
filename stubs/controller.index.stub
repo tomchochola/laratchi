@@ -27,15 +27,14 @@ class {{ class }} extends Controller
         $this->filterId($builder, $request);
         $this->filterSlug($builder, $request);
         $this->sort($builder, $request);
-        $this->take($builder, $request);
 
         if ($request->validatedInput()->mustBool('count', false)) {
             return resolveResponseFactory()->json(['data' => $builder->getQuery()->count()]);
         }
 
-        $select = $request->validatedInput()->mustBool('select', false);
+        $data = $builder->simplePaginate($request->validatedInput()->mustInt('take', {{ indexRequest }}::TAKE_MAX);
 
-        return (new JsonApiResourceCollection($builder->get(), fn ({{ model }} $model): JsonApiResource => $select ? $this->selectResource($model) : $this->indexResource($model)))->response();
+        return (new JsonApiResourceCollection($data, $request->validatedInput()->mustBool('select', false) ? fn ({{ model }} $model): JsonApiResource => $this->selectResource($model) : fn ({{ model }} $model): JsonApiResource => $this->indexResource($model)))->response();
     }
 
     /**
@@ -110,14 +109,6 @@ class {{ class }} extends Controller
         } else {
             $builder->getQuery()->select($builder->qualifyColumns(['id', 'title', 'created_at', 'updated_at']));
         }
-    }
-
-    /**
-     * Limit count.
-     */
-    protected function take(Builder $builder, {{ indexRequest }} $request): void
-    {
-        $builder->getQuery()->take($request->validatedInput()->mustInt('take', {{ indexRequest }}::TAKE_MAX));
     }
 
     /**
