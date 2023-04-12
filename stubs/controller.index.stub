@@ -32,7 +32,7 @@ class {{ class }} extends Controller
             return resolveResponseFactory()->json(['data' => $builder->getQuery()->count()]);
         }
 
-        $data = $builder->simplePaginate($request->validatedInput()->mustInt('take', {{ indexRequest }}::TAKE_MAX);
+        $data = $builder->simplePaginate($request->validatedInput()->mustInt('take', {{ indexRequest }}::TAKE_MAX));
 
         return (new JsonApiResourceCollection($data, $request->validatedInput()->mustBool('select', false) ? fn ({{ model }} $model): JsonApiResource => $this->selectResource($model) : fn ({{ model }} $model): JsonApiResource => $this->indexResource($model)))->response();
     }
@@ -54,7 +54,7 @@ class {{ class }} extends Controller
             if (\str_starts_with($sort, '-')) {
                 $builder->getQuery()->orderByDesc($builder->qualifyColumn(\mb_substr($sort, 1)));
             } else {
-                $builder->getQuery()->orderBy($builder->qualifyColumn($sort))
+                $builder->getQuery()->orderBy($builder->qualifyColumn($sort));
             }
         }
     }
