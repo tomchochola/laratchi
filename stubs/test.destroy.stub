@@ -36,7 +36,7 @@ class {{ class }} extends TestCase
             'id' => $model->getKey(),
         ];
 
-        $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ destroyController }}::class, $query), $data);
+        $response = $this->be($me)->post(resolveUrlFactory()->action({{ destroyController }}::class, $query), $data);
 
         $response->assertNoContent();
     }

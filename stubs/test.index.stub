@@ -43,7 +43,7 @@ class {{ class }} extends TestCase
             'sort' => {{ indexRequest }}::SORTS,
         ];
 
-        $response = $this->be($me, 'users')->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
+        $response = $this->be($me)->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
 
         $response->assertOk();
 
@@ -75,7 +75,7 @@ class {{ class }} extends TestCase
             'sort' => {{ indexRequest }}::SORTS,
         ];
 
-        $response = $this->be($me, 'users')->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
+        $response = $this->be($me)->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
 
         $response->assertOk();
 
@@ -105,7 +105,7 @@ class {{ class }} extends TestCase
                 'count' => true,
             ];
 
-            $response = $this->be($me, 'users')->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
+            $response = $this->be($me)->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
 
             $response->assertOk();
 

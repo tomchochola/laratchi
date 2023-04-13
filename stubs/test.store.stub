@@ -36,7 +36,7 @@ class {{ class }} extends TestCase
             'title' => $model->getTitle(),
         ];
 
-        $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
+        $response = $this->be($me)->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
 
         $response->assertOk();
 
@@ -63,7 +63,7 @@ class {{ class }} extends TestCase
             'title' => $model->getTitle(),
         ];
 
-        $response = $this->be($me, 'users')->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
+        $response = $this->be($me)->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
 
         $response->assertUnprocessable();
 

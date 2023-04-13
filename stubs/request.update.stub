@@ -15,7 +15,7 @@ class {{ class }} extends SecureFormRequest
     /**
      * @inheritDoc
      */
-    public function mustAuth(): {{ userModel }}
+    public function me(): {{ userModel }}
     {
         return {{ userModel }}::mustAuth();
     }
@@ -25,7 +25,7 @@ class {{ class }} extends SecureFormRequest
      */
     public function authorize(): Response|bool
     {
-        $this->mustAuth();
+        $this->me();
 
         return true;
     }
