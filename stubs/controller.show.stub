@@ -18,24 +18,14 @@ class {{ class }} extends Controller
      */
     public function __invoke({{ showRequest }} $request): SymfonyResponse
     {
-        $data = $request->resolve{{ model }}()->clean(function (Builder $builder) use ($request): void {
-            $this->select($builder, $request);
+        $model = $request->resolve{{ model }}()->clean( static function (Builder $builder) use ($request): void {
+            $builder->getQuery()->select($builder->qualifyColumns(['*']));
         });
 
-        return (new ModelResource($data, static function ({{ model }} $model): array {
-            return [
-                'title' => $model->getTitle(),
-                'created_at' => $model->getCreatedAt(),
-                'updated_at' => $model->getUpdatedAt(),
-            ];
-        }))->response();
-    }
-
-    /**
-     * Modify select query.
-     */
-    protected function select(Builder $builder, {{ showRequest }} $request): void
-    {
-        $builder->getQuery()->select($builder->qualifyColumns(['*']));
+        return (new ModelResource($model, static fn ({{ model }} $resource): array => [
+            'title' => $resource->getTitle(),
+            'created_at' => $resource->getCreatedAt(),
+            'updated_at' => $resource->getUpdatedAt(),
+        ]))->response();
     }
 }

@@ -38,7 +38,7 @@ class {{ class }} extends Resource
      */
     public static function indexQuery(NovaRequest $request, mixed $query): Builder
     {
-        $query->getQuery()->select($query->qualifyColumns(['id']));
+        $query->getQuery()->select($query->qualifyColumns(['*']));
 
         return $query;
     }
@@ -68,7 +68,7 @@ class {{ class }} extends Resource
      */
     public static function relatableQuery(NovaRequest $request, mixed $query): Builder
     {
-        $query->getQuery()->select($query->qualifyColumns(['id']));
+        $query->getQuery()->select($query->qualifyColumns(['*']));
 
         return $query;
     }

@@ -41,6 +41,7 @@ class {{ class }} extends TestCase
             ],
             'take' => {{ indexRequest }}::TAKE_MAX,
             'sort' => {{ indexRequest }}::SORTS,
+            'page' => 1,
         ];
 
         $response = $this->be($me)->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
@@ -73,6 +74,7 @@ class {{ class }} extends TestCase
             'take' => {{ indexRequest }}::TAKE_MAX,
             'select' => true,
             'sort' => {{ indexRequest }}::SORTS,
+            'page' => 1,
         ];
 
         $response = $this->be($me)->get(resolveUrlFactory()->action({{ indexController }}::class, $query));

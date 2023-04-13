@@ -64,13 +64,11 @@ class {{ class }} extends Controller
      */
     protected function filterSearch(Builder $builder, {{ indexRequest }} $request): void
     {
-        $filter = $request->validatedInput()->string('filter.search');
-
-        if ($filter === null) {
+        if ($request->validatedInput()->missing('filter.search')) {
             return;
         }
 
-        {{ model }}::scopeSearch($builder, $filter);
+        {{ model }}::scopeSearch($builder, $request->validatedInput()->mustString('filter.search'));
     }
 
     /**
@@ -78,13 +76,11 @@ class {{ class }} extends Controller
      */
     protected function filterId(Builder $builder, {{ indexRequest }} $request): void
     {
-        $filter = $request->validatedInput()->array('filter.id');
-
-        if ($filter === null) {
+        if ($request->validatedInput()->missing('filter.id')) {
             return;
         }
 
-        {{ model }}::scopeKeys($builder, $filter);
+        {{ model }}::scopeKeys($builder, $request->validatedInput()->mustArray('filter.id', []));
     }
 
     /**
@@ -92,13 +88,11 @@ class {{ class }} extends Controller
      */
     protected function filterSlug(Builder $builder, {{ indexRequest }} $request): void
     {
-        $filter = $request->validatedInput()->array('filter.slug');
-
-        if ($filter === null) {
+        if ($request->validatedInput()->missing('filter.slug')) {
             return;
         }
 
-        {{ model }}::scopeRouteKeys($builder, $filter);
+        {{ model }}::scopeRouteKeys($builder, $request->validatedInput()->mustArray('filter.slug', []));
     }
 
     /**
@@ -106,11 +100,7 @@ class {{ class }} extends Controller
      */
     protected function select(Builder $builder, {{ indexRequest }} $request): void
     {
-        if ($request->validatedInput()->mustBool('select', false)) {
-            $builder->getQuery()->select($builder->qualifyColumns(['id', 'title']));
-        } else {
-            $builder->getQuery()->select($builder->qualifyColumns(['id', 'title', 'created_at', 'updated_at']));
-        }
+        $builder->getQuery()->select($builder->qualifyColumns(['*']));
     }
 
     /**
@@ -118,11 +108,9 @@ class {{ class }} extends Controller
      */
     protected function selectResource({{ model }} $model): JsonApiResource
     {
-        return new ModelResource($model, static function ({{ model }} $model): array {
-            return [
-                'title' => $model->getTitle(),
-            ];
-        });
+        return new ModelResource($model, static function ({{ model }} $resource): array => [
+            'title' => $resource->getTitle(),
+        ]);
     }
 
     /**
@@ -130,12 +118,10 @@ class {{ class }} extends Controller
      */
     protected function indexResource({{ model }} $model): JsonApiResource
     {
-        return new ModelResource($model, static function ({{ model }} $model): array {
-            return [
-                'title' => $model->getTitle(),
-                'created_at' => $model->getCreatedAt(),
-                'updated_at' => $model->getUpdatedAt(),
-            ];
-        });
+        return new ModelResource($model, static fn ({{ model }} $resource): array => [
+            'title' => $resource->getTitle(),
+            'created_at' => $resource->getCreatedAt(),
+            'updated_at' => $resource->getUpdatedAt(),
+        ]);
     }
 }

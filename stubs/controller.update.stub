@@ -28,14 +28,16 @@ class {{ class }} extends TransactionController
      */
     protected function validateUnique({{ updateRequest }} $request): void
     {
-        $title = $request->validatedInput()->string('title');
+        if ($request->validatedInput()->has('title')) {
+            $title = $request->validatedInput()->string('title');
 
-        if ($title !== null) {
-            [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ['title']));
+            if ($title !== null) {
+                [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ['title']));
 
-            if ({{ model }}::query()->whereKeyNot($request->resolve{{ model }}()->getKey())->getQuery()->where('title', $title)->exists()) {
-                $hit();
-                $request->throwUniqueValidationException(['title']);
+                if ({{ model }}::query()->whereKeyNot($request->resolve{{ model }}()->getKey())->getQuery()->where('title', $title)->exists()) {
+                    $hit();
+                    $request->throwUniqueValidationException(['title']);
+                }
             }
         }
     }
