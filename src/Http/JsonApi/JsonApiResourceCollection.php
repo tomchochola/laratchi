@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Http\JsonApi;
 
 use Closure;
 use Illuminate\Contracts\Pagination\CursorPaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -46,17 +47,21 @@ class JsonApiResourceCollection
             $data['included'] = $included->values()->all();
         }
 
-        if ($this->collection instanceof Paginator) {
+        if ($this->collection instanceof CursorPaginator) {
+            $data = \array_merge($data, ['meta' => [
+                'next' => $this->collection->nextCursor()?->encode(),
+                'prev' => $this->collection->previousCursor()?->encode(),
+            ]]);
+        } elseif ($this->collection instanceof Paginator) {
             $data = \array_merge($data, ['meta' => [
                 'next' => $this->collection->hasMorePages() ? $this->collection->currentPage() + 1 : null,
                 'prev' => $this->collection->currentPage() !== 1 ? $this->collection->currentPage() - 1 : null,
             ]]);
         }
 
-        if ($this->collection instanceof CursorPaginator) {
+        if ($this->collection instanceof LengthAwarePaginator) {
             $data = \array_merge($data, ['meta' => [
-                'next' => $this->collection->nextCursor()?->encode(),
-                'prev' => $this->collection->previousCursor()?->encode(),
+                'count' => $this->collection->total(),
             ]]);
         }
 
