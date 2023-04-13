@@ -9,7 +9,7 @@ use Closure;
 /**
  * @template T
  */
-abstract class ClosureResource extends JsonApiResource
+class ClosureResource extends JsonApiResource
 {
     /**
      * Constructor.
