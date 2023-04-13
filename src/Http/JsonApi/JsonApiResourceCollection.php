@@ -43,26 +43,32 @@ class JsonApiResourceCollection
             })->values()->all(),
         ];
 
+        $meta = [];
+
         if ($included->isNotEmpty()) {
             $data['included'] = $included->values()->all();
         }
 
         if ($this->collection instanceof CursorPaginator) {
-            $data = \array_merge($data, ['meta' => [
+            $meta = \array_replace($meta, [
                 'next' => $this->collection->nextCursor()?->encode(),
                 'prev' => $this->collection->previousCursor()?->encode(),
-            ]]);
+            ]);
         } elseif ($this->collection instanceof Paginator) {
-            $data = \array_merge($data, ['meta' => [
+            $meta = \array_replace($meta, [
                 'next' => $this->collection->hasMorePages() ? $this->collection->currentPage() + 1 : null,
                 'prev' => $this->collection->currentPage() !== 1 ? $this->collection->currentPage() - 1 : null,
-            ]]);
+            ]);
         }
 
         if ($this->collection instanceof LengthAwarePaginator) {
-            $data = \array_merge($data, ['meta' => [
+            $meta = \array_replace($meta, [
                 'count' => $this->collection->total(),
-            ]]);
+            ]);
+        }
+
+        if (\count($meta) > 0) {
+            $data = \array_replace($data, ['meta' => $meta]);
         }
 
         $data = \array_replace($data, $merge);
