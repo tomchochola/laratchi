@@ -12,6 +12,7 @@ use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\Rules\ImageFile;
 use Illuminate\Validation\Rules\Password;
+use LogicException;
 use Tomchochola\Laratchi\Validation\Rules\CallbackRule;
 use Tomchochola\Laratchi\Validation\Rules\CzBankAccountNumberRule;
 use Tomchochola\Laratchi\Validation\Rules\IcoRule;
@@ -220,6 +221,10 @@ class SecureValidator extends Validator
 
         foreach ($extraAttributes as $attribute => $value) {
             if (\count($this->getExplicitKeys((string) $attribute)) === 0) {
+                if (resolveApp()->runningUnitTests()) {
+                    throw new LogicException("unvalidated attribute {$attribute}");
+                }
+
                 $this->addFailure((string) $attribute, 'missing');
             }
         }
