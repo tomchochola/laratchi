@@ -211,7 +211,7 @@ class ValidatedInput extends IlluminateValidatedInput
      *
      * @return array<mixed>
      */
-    public function mustArray(string $key, ?array $default = null): array
+    public function mustArray(string $key, ?array $default): array
     {
         $value = $this->array($key, $default);
 
@@ -289,7 +289,7 @@ class ValidatedInput extends IlluminateValidatedInput
      *
      * @param array<mixed>|null $default
      */
-    public function validatedInput(string $key, ?array $default = null): static
+    public function validatedInput(string $key, ?array $default): static
     {
         return new static($this->mustArray($key, $default));
     }
@@ -301,7 +301,7 @@ class ValidatedInput extends IlluminateValidatedInput
      *
      * @return array<int, static>
      */
-    public function validatedInputs(string $key, ?array $default = null): array
+    public function validatedInputs(string $key, ?array $default): array
     {
         $validatedInputs = [];
 
@@ -309,10 +309,10 @@ class ValidatedInput extends IlluminateValidatedInput
 
         foreach ($data as $validatedInput) {
             if (! \is_array($validatedInput)) {
-                throw new LogicException('validated input is not array');
+                $validatedInputs[] = new static(['value' => $validatedInput]);
+            } else {
+                $validatedInputs[] = new static($validatedInput);
             }
-
-            $validatedInputs[] = new static($validatedInput);
         }
 
         return $validatedInputs;

@@ -260,10 +260,10 @@ class AllInput extends IlluminateValidatedInput
 
         foreach ($data as $allInput) {
             if (! \is_array($allInput)) {
-                $allInput = [];
+                $allInputs[] = new static(['value' => $allInput]);
+            } else {
+                $allInputs[] = new static($allInput);
             }
-
-            $allInputs[] = new static($allInput);
         }
 
         return $allInputs;
