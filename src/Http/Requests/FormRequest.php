@@ -317,6 +317,14 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
+     * Get me.
+     */
+    public function me(): ?User
+    {
+        return User::auth();
+    }
+
+    /**
      * Authenticate user.
      */
     public function auth(): ?User
