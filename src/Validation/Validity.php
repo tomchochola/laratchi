@@ -145,6 +145,11 @@ class Validity implements ArrayableContract
     protected bool $skipNext = false;
 
     /**
+     * Unsafe.
+     */
+    protected bool $unsafe = false;
+
+    /**
      * Constructor.
      */
     protected function __construct()
@@ -3056,8 +3061,8 @@ class Validity implements ArrayableContract
      */
     public function toArray(): array
     {
-        \assert($this->array || $this->collection || $this->boolean || $this->file || $this->integer || $this->numeric || $this->string || $this->prohibited || $this->missing, 'attribute must be validated against base type (array|object|collection|boolean|file|integer|numeric|string)');
-        \assert($this->required || $this->nullable || $this->missing || $this->prohibited, 'attribute must be validated against nullable or required');
+        \assert($this->unsafe || $this->array || $this->collection || $this->boolean || $this->file || $this->integer || $this->numeric || $this->string || $this->prohibited || $this->missing, 'attribute must be validated against base type (array|object|collection|boolean|file|integer|numeric|string)');
+        \assert($this->unsafe || $this->required || $this->nullable || $this->missing || $this->prohibited, 'attribute must be validated against nullable or required');
 
         $rules = [];
 
@@ -3140,6 +3145,18 @@ class Validity implements ArrayableContract
         if (! \in_array($rule, $this->rules, true)) {
             $this->rules[] = $rule;
         }
+
+        return $this;
+    }
+
+    /**
+     * Mark as unsafe.
+     *
+     * @return $this
+     */
+    public function unsafe(bool $flag = true): static
+    {
+        $this->unsafe = $flag;
 
         return $this;
     }
