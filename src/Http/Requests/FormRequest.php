@@ -38,7 +38,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Create validation exception.
      *
-     * @param array<string, array<string, array<string>>> $errors
+     * @param array<array-key, array<string, array<string>>> $errors
      */
     public static function createValidationException(?Validator $validator, array $errors): ValidationException
     {
@@ -46,7 +46,7 @@ class FormRequest extends IlluminateFormRequest
 
         foreach ($errors as $field => $exceptions) {
             foreach ($exceptions as $exception => $params) {
-                $validator->addFailure($field, $exception, $params);
+                $validator->addFailure((string) $field, $exception, $params);
             }
         }
 
@@ -75,7 +75,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Create unique validation exception.
      *
-     * @param array<string> $keys
+     * @param array<array-key> $keys
      */
     public static function createUniqueValidationException(?Validator $validator, array $keys): ValidationException
     {
@@ -87,7 +87,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Create exists validation exception.
      *
-     * @param array<string> $keys
+     * @param array<array-key> $keys
      */
     public static function createExistsValidationException(?Validator $validator, array $keys): ValidationException
     {
@@ -99,7 +99,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Create single validation exception.
      *
-     * @param array<string> $keys
+     * @param array<array-key> $keys
      */
     public static function createSingleValidationException(?Validator $validator, array $keys, string $rule): ValidationException
     {
@@ -151,15 +151,15 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Slug getter.
      */
-    public function slug(): string
+    public function slug(string $key = 'slug'): string
     {
-        return $this->routeParameters()->mustString('slug');
+        return $this->routeParameters()->mustString($key);
     }
 
     /**
      * Throw validation exception.
      *
-     * @param array<string, array<string, array<string>>> $errors
+     * @param array<array-key, array<string, array<string>>> $errors
      */
     public function throwValidationException(array $errors): never
     {
@@ -187,7 +187,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Throw unique validation exception.
      *
-     * @param array<string> $keys
+     * @param array<array-key> $keys
      */
     public function throwUniqueValidationException(array $keys): never
     {
@@ -201,7 +201,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Throw exists validation exception.
      *
-     * @param array<string> $keys
+     * @param array<array-key> $keys
      */
     public function throwExistsValidationException(array $keys): never
     {
@@ -215,7 +215,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Throw single validation exception.
      *
-     * @param array<string> $keys
+     * @param array<array-key> $keys
      */
     public function throwSingleValidationException(array $keys, string $rule): never
     {
@@ -231,7 +231,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function string(mixed $key, mixed $default = null): Stringable
     {
-        $value = $this->input($key, $default);
+        $value = $this->allInput()->get($key, $default);
 
         if ($value instanceof Stringable) {
             return $value;
@@ -263,6 +263,14 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
+     * Nullable integer.
+     */
+    public function nullableInteger(string $key, ?int $default = null): ?int
+    {
+        return $this->allInput()->int($key, $default);
+    }
+
+    /**
      * @inheritDoc
      */
     public function float(mixed $key, mixed $default = 0.0): float
@@ -271,11 +279,27 @@ class FormRequest extends IlluminateFormRequest
     }
 
     /**
+     * Nullable float.
+     */
+    public function nullableFloat(string $key, ?float $default = null): ?float
+    {
+        return $this->allInput()->float($key, $default);
+    }
+
+    /**
      * @inheritDoc
      */
     public function date(mixed $key, mixed $format = null, mixed $tz = null): Carbon
     {
         return $this->allInput()->mustDate($key, null, $format, $tz);
+    }
+
+    /**
+     * Nullable date.
+     */
+    public function nullableDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): ?Carbon
+    {
+        return $this->allInput()->date($key, $default, $format, $tz);
     }
 
     /**
@@ -288,14 +312,14 @@ class FormRequest extends IlluminateFormRequest
     public function collect(mixed $key = null): Collection
     {
         if (\is_array($key)) {
-            return collect($this->only($key));
+            return collect($this->allInput()->only($key));
         }
 
         if ($key === null) {
-            return collect($this->all());
+            return collect($this->allInput()->all());
         }
 
-        $value = $this->input($key);
+        $value = $this->allInput()->get($key);
 
         if ($value instanceof Collection) {
             return $value;
@@ -314,6 +338,14 @@ class FormRequest extends IlluminateFormRequest
     public function varchar(string $key, ?string $default = null): string
     {
         return $this->allInput()->mustString($key, $default);
+    }
+
+    /**
+     * Nullable varchar.
+     */
+    public function nullableVarchar(string $key, ?string $default = null): ?string
+    {
+        return $this->allInput()->string($key, $default);
     }
 
     /**
@@ -385,7 +417,7 @@ class FormRequest extends IlluminateFormRequest
         if ($signed) {
             $rules = \array_replace($rules, [
                 'signature' => Validity::make()->nullable()->filled()->string(null),
-                'expires' => Validity::make()->nullable()->filled()->unsigned(),
+                'expires' => Validity::make()->nullable()->filled()->integer(null, null),
             ]);
         }
 
@@ -397,13 +429,13 @@ class FormRequest extends IlluminateFormRequest
 
         if ($page) {
             $rules = \array_replace($rules, [
-                'page' => Validity::make()->nullable()->filled()->positive(),
+                'page' => Validity::make()->nullable()->filled()->positive(null, null),
             ]);
         }
 
         if ($take !== null) {
             $rules = \array_replace($rules, [
-                'take' => Validity::make()->nullable()->filled()->positive($take > 0 ? $take : null)->missingWith(['count']),
+                'take' => Validity::make()->nullable()->filled()->positive($take > 0 ? $take : null, null)->missingWith(['count']),
             ]);
         }
 
@@ -440,14 +472,14 @@ class FormRequest extends IlluminateFormRequest
         if ($filterId) {
             $rules = \array_replace($rules, [
                 'filter.id' => Validity::make()->nullable()->filled()->collection(null)->missingWith(['filter.slug']),
-                'filter.id.*' => Validity::make()->nullable()->filled()->distinct()->id(),
+                'filter.id.*' => Validity::make()->required()->distinct()->id(),
             ]);
         }
 
         if ($filterSlug) {
             $rules = \array_replace($rules, [
                 'filter.slug' => Validity::make()->nullable()->filled()->collection(null)->missingWith(['filter.id']),
-                'filter.slug.*' => Validity::make()->nullable()->filled()->distinct()->slug(),
+                'filter.slug.*' => Validity::make()->required()->distinct()->slug(),
             ]);
         }
 
@@ -460,7 +492,7 @@ class FormRequest extends IlluminateFormRequest
         if ($sort !== null) {
             $rules = \array_replace($rules, [
                 'sort' => Validity::make()->nullable()->filled()->collection(null)->missingWith(['count']),
-                'sort.*' => Validity::make()->nullable()->filled()->distinct()->inString($sort),
+                'sort.*' => Validity::make()->required()->distinct()->inString($sort),
             ]);
         }
 
