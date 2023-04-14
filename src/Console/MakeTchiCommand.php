@@ -115,9 +115,7 @@ class MakeTchiCommand extends GeneratorCommand
         $destroyRequest = "{$modelName}DestroyRequest";
         $qualifiedDestroyRequest = "App\\Http\\Requests\\Api\\{$modelName}\\{$destroyRequest}";
 
-        $qualifiedUserModel = $this->userProviderModel();
-
-        \assert($qualifiedUserModel !== null);
+        $qualifiedUserModel = $this->userProviderModel() ?? 'App\\Models\\User';
 
         $userModel = class_basename($qualifiedUserModel);
 
