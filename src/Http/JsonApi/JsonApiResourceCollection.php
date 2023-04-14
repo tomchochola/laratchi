@@ -64,6 +64,7 @@ class JsonApiResourceCollection
         if ($this->collection instanceof LengthAwarePaginator) {
             $meta = \array_replace($meta, [
                 'count' => $this->collection->total(),
+                'prev' => $this->collection->currentPage() !== 1 ? $this->collection->currentPage() <= $this->collection->lastPage() ? $this->collection->currentPage() - 1 : $this->collection->lastPage() : null,
             ]);
         }
 
