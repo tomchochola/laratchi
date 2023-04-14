@@ -2747,7 +2747,6 @@ class Validity implements ArrayableContract
         $max ??= static::BIG_INT_MAX;
 
         \assert($min >= static::BIG_INT_MIN);
-        \assert($max <= static::BIG_INT_MAX);
 
         return $this->integer($max, $min);
     }
@@ -2769,7 +2768,6 @@ class Validity implements ArrayableContract
         $max ??= static::UNSIGNED_BIG_INT_MAX;
 
         \assert($min >= static::UNSIGNED_BIG_INT_MIN);
-        \assert($max <= static::UNSIGNED_BIG_INT_MAX);
 
         return $this->integer($max, $min);
     }
@@ -2779,7 +2777,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsigned(?int $max = null, ?int $min = null): static
+    public function unsigned(?int $max, ?int $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2787,7 +2785,11 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->unsignedBigInt($max, $min);
+        $min ??= 0;
+
+        \assert($min >= 0);
+
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2795,7 +2797,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function signed(?int $max = null, ?int $min = null): static
+    public function signed(?int $max, ?int $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2803,7 +2805,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->bigInt($max, $min);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -2811,7 +2813,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function positive(?int $max = null, ?int $min = null): static
+    public function positive(?int $max, ?int $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2823,7 +2825,7 @@ class Validity implements ArrayableContract
 
         \assert($min >= 1);
 
-        return $this->unsigned($max, $min);
+        return $this->integer($max, $min);
     }
 
     /**
@@ -3005,7 +3007,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->positive();
+        return $this->unsignedBigInt();
     }
 
     /**
