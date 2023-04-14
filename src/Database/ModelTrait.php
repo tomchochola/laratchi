@@ -489,6 +489,24 @@ trait ModelTrait
      *
      * @param class-string<T> $type
      *
+     * @return T
+     */
+    public function mustRelation(string $key, string $type): Model
+    {
+        $value = $this->relation($key, $type);
+
+        \assert($value !== null, "[{$key}] relationship is null");
+
+        return $value;
+    }
+
+    /**
+     * Must resolve relationships.
+     *
+     * @template T of Model
+     *
+     * @param class-string<T> $type
+     *
      * @return Collection<array-key, T>
      */
     public function mustRelations(string $key, string $type): Collection
