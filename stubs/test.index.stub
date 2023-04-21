@@ -68,7 +68,7 @@ class {{ class }} extends TestCase
 
         $query = [
             'filter' => [
-                'slug' => [$model->getRouteKey()],
+                'id' => [$model->getKey()],
                 'search' => $model->getTitle(),
             ],
             'take' => {{ indexRequest }}::TAKE_MAX,

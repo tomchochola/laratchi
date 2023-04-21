@@ -32,13 +32,12 @@ class {{ class }} extends TestCase
 
         \assert($model instanceof {{ model }} && $newModel instanceof {{ model }});
 
-        $query = [];
         $data = [
             'id' => $model->getKey(),
             'title' => $newModel->getTitle(),
         ];
 
-        $response = $this->be($me)->post(resolveUrlFactory()->action({{ updateController }}::class, $query), $data);
+        $response = $this->be($me)->post(resolveUrlFactory()->action({{ updateController }}::class), $data);
 
         $response->assertNoContent();
     }
@@ -58,13 +57,12 @@ class {{ class }} extends TestCase
 
         \assert($model instanceof {{ model }});
 
-        $query = [];
         $data = [
             'id' => $model->getKey(),
             'title' => $model->getTitle(),
         ];
 
-        $response = $this->be($me)->post(resolveUrlFactory()->action({{ updateController }}::class, $query), $data);
+        $response = $this->be($me)->post(resolveUrlFactory()->action({{ updateController }}::class), $data);
 
         $response->assertNoContent();
     }
@@ -85,13 +83,12 @@ class {{ class }} extends TestCase
 
         \assert($model instanceof {{ model }} && $newModel instanceof {{ model }});
 
-        $query = [];
         $data = [
             'id' => $model->getKey(),
             'title' => $newModel->getTitle(),
         ];
 
-        $response = $this->be($me)->post(resolveUrlFactory()->action({{ updateController }}::class, $query), $data);
+        $response = $this->be($me)->post(resolveUrlFactory()->action({{ updateController }}::class), $data);
 
         $response->assertUnprocessable();
 

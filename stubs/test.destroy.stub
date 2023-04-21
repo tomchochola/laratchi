@@ -31,12 +31,11 @@ class {{ class }} extends TestCase
 
         \assert($model instanceof {{ model }});
 
-        $query = [];
         $data = [
             'id' => $model->getKey(),
         ];
 
-        $response = $this->be($me)->post(resolveUrlFactory()->action({{ destroyController }}::class, $query), $data);
+        $response = $this->be($me)->post(resolveUrlFactory()->action({{ destroyController }}::class), $data);
 
         $response->assertNoContent();
     }

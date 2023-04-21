@@ -31,12 +31,11 @@ class {{ class }} extends TestCase
 
         \assert($model instanceof {{ model }});
 
-        $query = [];
         $data = [
             'title' => $model->getTitle(),
         ];
 
-        $response = $this->be($me)->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
+        $response = $this->be($me)->post(resolveUrlFactory()->action({{ storeController }}::class), $data);
 
         $response->assertOk();
 
@@ -58,12 +57,11 @@ class {{ class }} extends TestCase
 
         \assert($model instanceof {{ model }});
 
-        $query = [];
         $data = [
             'title' => $model->getTitle(),
         ];
 
-        $response = $this->be($me)->post(resolveUrlFactory()->action({{ storeController }}::class, $query), $data);
+        $response = $this->be($me)->post(resolveUrlFactory()->action({{ storeController }}::class), $data);
 
         $response->assertUnprocessable();
 

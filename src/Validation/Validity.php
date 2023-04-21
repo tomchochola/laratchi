@@ -9,6 +9,7 @@ use Illuminate\Contracts\Support\Arrayable as ArrayableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Builder as SchmeaBuilder;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rules\Dimensions;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\ExcludeIf;
@@ -381,17 +382,23 @@ class Validity implements ArrayableContract
 
         \assert($this->array === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
 
-        if ($maxItems !== null) {
+        if ($maxItems !== null && $maxItems === $minItems) {
             \assert($maxItems >= 0);
 
-            $this->max($maxItems);
-        }
+            $this->size($maxItems);
+        } else {
+            if ($maxItems !== null) {
+                \assert($maxItems >= 0);
 
-        if ($minItems !== null) {
-            \assert($maxItems === null || $minItems <= $maxItems);
-            \assert($minItems >= 0);
+                $this->max($maxItems);
+            }
 
-            $this->min($minItems);
+            if ($minItems !== null) {
+                \assert($maxItems === null || $minItems <= $maxItems);
+                \assert($minItems >= 0);
+
+                $this->min($minItems);
+            }
         }
 
         return $this;
@@ -1349,16 +1356,20 @@ class Validity implements ArrayableContract
 
         \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->numeric === false && $this->string === false, 'validation type cross');
 
-        if ($min !== null) {
-            \assert($max === null || $min <= $max);
+        if ($min !== null && $min === $max) {
+            $this->size($min);
+        } else {
+            if ($min !== null) {
+                \assert($max === null || $min <= $max);
 
-            $this->min($min);
-        }
+                $this->min($min);
+            }
 
-        if ($max !== null) {
-            \assert($min === null || $min <= $max);
+            if ($max !== null) {
+                \assert($min === null || $min <= $max);
 
-            $this->max($max);
+                $this->max($max);
+            }
         }
 
         return $this;
@@ -1715,16 +1726,20 @@ class Validity implements ArrayableContract
 
         \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->string === false, 'validation type cross');
 
-        if ($min !== null) {
-            \assert($max === null || $min <= $max);
+        if ($max !== null && $max === $min) {
+            $this->size($max);
+        } else {
+            if ($min !== null) {
+                \assert($max === null || $min <= $max);
 
-            $this->min($min);
-        }
+                $this->min($min);
+            }
 
-        if ($max !== null) {
-            \assert($min === null || $min <= $max);
+            if ($max !== null) {
+                \assert($min === null || $min <= $max);
 
-            $this->max($max);
+                $this->max($max);
+            }
         }
 
         return $this;
@@ -2077,18 +2092,64 @@ class Validity implements ArrayableContract
 
         \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false, 'validation type cross');
 
-        if ($min !== null) {
+        if ($max !== null && $max === $min) {
             \assert($min >= 0);
-            \assert($max === null || $min <= $max);
 
-            $this->min($min);
+            $this->size($max);
+        } else {
+            if ($min !== null) {
+                \assert($min >= 0);
+                \assert($max === null || $min <= $max);
+
+                $this->min($min);
+            }
+
+            if ($max !== null) {
+                \assert($max >= 0);
+                \assert($min === null || $min <= $max);
+
+                $this->max($max);
+            }
         }
 
-        if ($max !== null) {
-            \assert($max >= 0);
-            \assert($min === null || $min <= $max);
+        return $this;
+    }
 
-            $this->max($max);
+    /**
+     * Add bytes rule.
+     *
+     * @return $this
+     */
+    public function bytes(?int $max, ?int $min = null): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        $this->string = true;
+
+        \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false, 'validation type cross');
+
+        if ($max !== null && $max === $min) {
+            \assert($min >= 0);
+
+            $this->strlen($max);
+        } else {
+            if ($min !== null) {
+                \assert($min >= 0);
+                \assert($max === null || $min <= $max);
+
+                $this->strlenMin($min);
+            }
+
+            if ($max !== null) {
+                \assert($max >= 0);
+                \assert($min === null || $min <= $max);
+
+                $this->strlenMax($max);
+            }
         }
 
         return $this;
@@ -2428,13 +2489,7 @@ class Validity implements ArrayableContract
 
             \assert($max <= static::TINY_TEXT_MAX);
 
-            $this->string(null)->strlenMax($max);
-
-            if ($min !== null) {
-                \assert($min <= $max);
-
-                $this->strlenMin($min);
-            }
+            $this->bytes($max, $min);
         } else {
             $max ??= (int) (static::TINY_TEXT_MAX / 4);
 
@@ -2464,13 +2519,7 @@ class Validity implements ArrayableContract
 
             \assert($max <= static::TEXT_MAX);
 
-            $this->string(null)->strlenMax($max);
-
-            if ($min !== null) {
-                \assert($min <= $max);
-
-                $this->strlenMin($min);
-            }
+            $this->bytes($max, $min);
         } else {
             $max ??= (int) (static::TEXT_MAX / 4);
 
@@ -2500,13 +2549,7 @@ class Validity implements ArrayableContract
 
             \assert($max <= static::MEDIUM_TEXT_MAX);
 
-            $this->string(null)->strlenMax($max);
-
-            if ($min !== null) {
-                \assert($min <= $max);
-
-                $this->strlenMin($min);
-            }
+            $this->bytes($max, $min);
         } else {
             $max ??= (int) (static::MEDIUM_TEXT_MAX / 4);
 
@@ -2536,13 +2579,7 @@ class Validity implements ArrayableContract
 
             \assert($max <= static::LONG_TEXT_MAX);
 
-            $this->string(null)->strlenMax($max);
-
-            if ($min !== null) {
-                \assert($min <= $max);
-
-                $this->strlenMin($min);
-            }
+            $this->bytes($max, $min);
         } else {
             $max ??= (int) (static::LONG_TEXT_MAX / 4);
 
@@ -2835,7 +2872,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function callback(Closure $callback, string $message = 'validation.regex'): static
+    public function callback(Closure $callback, string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2847,16 +2884,16 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add builder rule.
+     * Add pluck rule.
      *
      * @template T of Builder
      *
-     * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     * @param Closure(): T $callback
+     * @param (Closure(mixed, mixed=): bool)|null $each
      *
      * @return $this
      */
-    public function builder(Closure $callback, ?Closure $each = null, string $message = 'validation.exists'): static
+    public function pluck(Closure $callback, string $column = 'id', ?Closure $each = null, string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2864,22 +2901,19 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
-            $builder = $callback($value, $attribute);
+        $keys = null;
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool {
+            if ($keys === null) {
+                $builder = $callback();
+                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($column));
+            }
 
             if ($each === null) {
-                return $builder->toBase()->exists();
+                return $keys->contains($value);
             }
 
-            $model = $builder->first();
-
-            if ($model === null) {
-                return false;
-            }
-
-            \assert($model instanceof Model);
-
-            return $each($model, $value, $attribute);
+            return $each($value, $attribute);
         }, $message));
     }
 
@@ -2893,7 +2927,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function builderKey(Closure $callback, ?Closure $each = null, string $message = 'validation.exists'): static
+    public function builderKey(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2921,43 +2955,6 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add not builder rule.
-     *
-     * @template T of Builder
-     *
-     * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
-     *
-     * @return $this
-     */
-    public function notBuilder(Closure $callback, ?Closure $each = null, string $message = 'validation.exists'): static
-    {
-        if ($this->skipNext) {
-            $this->skipNext = false;
-
-            return $this;
-        }
-
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
-            $builder = $callback($value, $attribute);
-
-            if ($each === null) {
-                return ! $builder->toBase()->exists();
-            }
-
-            $model = $builder->first();
-
-            if ($model === null) {
-                return true;
-            }
-
-            \assert($model instanceof Model);
-
-            return ! $each($model, $value, $attribute);
-        }, $message));
-    }
-
-    /**
      * Add not builder key rule.
      *
      * @template T of Builder
@@ -2967,7 +2964,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notBuilderKey(Closure $callback, ?Closure $each = null, string $message = 'validation.exists'): static
+    public function notBuilderKey(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3055,7 +3052,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CursorRule());
+        return $this->string(null)->addRule(new CursorRule());
     }
 
     /**

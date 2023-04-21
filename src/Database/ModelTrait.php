@@ -181,6 +181,16 @@ trait ModelTrait
     }
 
     /**
+     * Scope by not keys.
+     *
+     * @param array<mixed> $ids
+     */
+    public static function scopeNotKeys(Builder $builder, array $ids): void
+    {
+        $builder->whereKeyNot($ids);
+    }
+
+    /**
      * Scope by route keys.
      *
      * @param array<mixed> $slugs
@@ -190,6 +200,18 @@ trait ModelTrait
         $qualifier = new static();
 
         $builder->getQuery()->whereIn($qualifier->getQualifiedRouteKeyName(), $slugs);
+    }
+
+    /**
+     * Scope by not route keys.
+     *
+     * @param array<mixed> $slugs
+     */
+    public static function scopeNotRouteKeys(Builder $builder, array $slugs): void
+    {
+        $qualifier = new static();
+
+        $builder->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $slugs);
     }
 
     /**

@@ -28,6 +28,6 @@ class CursorRule implements RuleContract
      */
     public function message(): string|array
     {
-        return mustTransString('validation.regex');
+        return mustTransString('validation.invalid');
     }
 }

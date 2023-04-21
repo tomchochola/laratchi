@@ -232,15 +232,12 @@ class MakeTchiCommand extends GeneratorCommand
                             'items' => [
                                 'description' => 'sort',
                                 'type' => 'string',
-                                'enum' => ['-id', '-created_at', '-updated_at', '-title', 'id', 'created_at', 'updated_at', 'title'],
+                                'enum' => ['-id', 'id'],
                             ],
                         ],
                     ],
                     [
                         '$ref' => '#/components/parameters/filterId',
-                    ],
-                    [
-                        '$ref' => '#/components/parameters/filterSlug',
                     ],
                     [
                         '$ref' => '#/components/parameters/filterSearch',
@@ -477,12 +474,10 @@ class MakeTchiCommand extends GeneratorCommand
                             'schema' => [
                                 'description' => 'request data',
                                 'type' => 'object',
+                                'required' => ['id'],
                                 'properties' => [
                                     'id' => [
                                         '$ref' => '#/components/schemas/id',
-                                    ],
-                                    'slug' => [
-                                        '$ref' => '#/components/schemas/slug',
                                     ],
                                     'title' => [
                                         '$ref' => '#/components/schemas/varchar',
@@ -519,12 +514,10 @@ class MakeTchiCommand extends GeneratorCommand
                             'schema' => [
                                 'description' => 'request data',
                                 'type' => 'object',
+                                'required' => ['id'],
                                 'properties' => [
                                     'id' => [
                                         '$ref' => '#/components/schemas/id',
-                                    ],
-                                    'slug' => [
-                                        '$ref' => '#/components/schemas/slug',
                                     ],
                                 ],
                             ],

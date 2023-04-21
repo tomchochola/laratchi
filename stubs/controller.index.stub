@@ -25,7 +25,6 @@ class {{ class }} extends Controller
         $this->select($builder, $request);
         $this->filterSearch($builder, $request);
         $this->filterId($builder, $request);
-        $this->filterSlug($builder, $request);
         $this->sort($builder, $request);
 
         if ($request->validatedInput()->mustBool('count', false)) {
@@ -81,18 +80,6 @@ class {{ class }} extends Controller
         }
 
         {{ model }}::scopeKeys($builder, $request->validatedInput()->mustArray('filter.id', []));
-    }
-
-    /**
-     * Filter by slug.
-     */
-    protected function filterSlug(Builder $builder, {{ indexRequest }} $request): void
-    {
-        if ($request->validatedInput()->missing('filter.slug')) {
-            return;
-        }
-
-        {{ model }}::scopeRouteKeys($builder, $request->validatedInput()->mustArray('filter.slug', []));
     }
 
     /**
