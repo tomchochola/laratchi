@@ -153,7 +153,7 @@ abstract class TestCase extends BaseTestCase
     {
         foreach ($parameters as $key => $value) {
             if (\is_array($value)) {
-                $parameters[$key] = $this->transformParameters($value);
+                $parameters[$key] = \count($value) === 0 ? '' : $this->transformParameters($value);
             } elseif ($value instanceof UploadedFile) {
                 continue;
             } elseif (\is_bool($value)) {
