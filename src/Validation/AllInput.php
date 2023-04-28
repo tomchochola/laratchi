@@ -268,4 +268,20 @@ class AllInput extends IlluminateValidatedInput
 
         return $allInputs;
     }
+
+    /**
+     * Attribute is null.
+     */
+    public function isNull(string $key): bool
+    {
+        return $this->get($key) === null;
+    }
+
+    /**
+     * Attribute is not null.
+     */
+    public function isNotNull(string $key): bool
+    {
+        return $this->get($key) !== null;
+    }
 }

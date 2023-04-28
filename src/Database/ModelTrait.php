@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use RuntimeException;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Http\Requests\FormRequest;
@@ -56,14 +57,18 @@ trait ModelTrait
      * Mandatory find instance by key.
      *
      * @param (Closure(Builder): void)|null $closure
-     * @param Closure(): never $onError
+     * @param ?Closure(): never $onError
      */
-    public static function mustFindByKey(int $key, ?Closure $closure, Closure $onError): static
+    public static function mustFindByKey(int $key, ?Closure $closure, ?Closure $onError = null): static
     {
         $instance = static::findByKey($key, $closure);
 
         if ($instance === null) {
-            $onError();
+            if ($onError !== null) {
+                $onError();
+            }
+
+            throw new RuntimeException('Instance not found.');
         }
 
         return $instance;
@@ -95,14 +100,18 @@ trait ModelTrait
      * Mandatory find instance by route key.
      *
      * @param (Closure(Builder): void)|null $closure
-     * @param Closure(): never $onError
+     * @param ?Closure(): never $onError
      */
-    public static function mustFindByRouteKey(string $key, ?Closure $closure, Closure $onError): static
+    public static function mustFindByRouteKey(string $key, ?Closure $closure, ?Closure $onError = null): static
     {
         $instance = static::findByRouteKey($key, $closure);
 
         if ($instance === null) {
-            $onError();
+            if ($onError !== null) {
+                $onError();
+            }
+
+            throw new RuntimeException('Instance not found.');
         }
 
         return $instance;
@@ -124,6 +133,29 @@ trait ModelTrait
         }
 
         return null;
+    }
+
+    /**
+     * Must resolve model.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     * @param ?Closure(): never $onError
+     */
+    public static function mustResolve(?int $id = null, ?string $slug = null, ?Closure $closure = null, ?Closure $onError = null): static
+    {
+        if ($id !== null) {
+            return static::mustFindByKey($id, $closure, $onError);
+        }
+
+        if ($slug !== null) {
+            return static::mustFindByRouteKey($slug, $closure, $onError);
+        }
+
+        if ($onError !== null) {
+            $onError();
+        }
+
+        throw new RuntimeException('Instance not found.');
     }
 
     /**
