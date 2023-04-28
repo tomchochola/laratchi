@@ -109,29 +109,51 @@ trait ModelTrait
     }
 
     /**
+     * Resolve model.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     */
+    public static function resolve(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
+    {
+        if ($id !== null) {
+            return static::findByKey($id, $closure);
+        }
+
+        if ($slug !== null) {
+            return static::findByRouteKey($slug, $closure);
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolve from request.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     */
+    public static function resolveFromRequest(FormRequest $request, ?Closure $closure = null, ?string $idKey = 'id', ?string $routeKey = 'slug'): ?static
+    {
+        \assert(! ($idKey === null && $routeKey === null));
+
+        return static::resolve($idKey !== null ? $request->allInput()->int($idKey) : null, $routeKey !== null ? $request->allInput()->string($routeKey) : null, $closure);
+    }
+
+    /**
      * Must resolve from request.
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function mustResolveFromRequest(FormRequest $request, ?Closure $closure = null, string $idKey = 'id', string $routeKey = 'slug'): static
+    public static function mustResolveFromRequest(FormRequest $request, ?Closure $closure = null, ?string $idKey = 'id', ?string $routeKey = 'slug'): static
     {
-        $id = $request->allInput()->int($idKey);
+        \assert(! ($idKey === null && $routeKey === null));
 
-        if ($id !== null) {
-            return static::mustFindByKey($id, $closure, static function () use ($request, $idKey): never {
-                $request->throwExistsValidationException([$idKey]);
-            });
+        $instance = static::resolveFromRequest($request, $closure, $idKey, $routeKey);
+
+        if ($instance === null) {
+            $request->throwSingleValidationException([$idKey ?? $routeKey], 'Required');
         }
 
-        $slug = $request->allInput()->string($routeKey);
-
-        if ($slug !== null) {
-            return static::mustFindByRouteKey($slug, $closure, static function () use ($request, $routeKey): never {
-                $request->throwExistsValidationException([$routeKey]);
-            });
-        }
-
-        $request->throwSingleValidationException([$idKey, $routeKey], 'Required');
+        return $instance;
     }
 
     /**

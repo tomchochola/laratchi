@@ -73,13 +73,13 @@ class DatabaseTokenGuard implements GuardContract
             return $this->user = $this->databaseToken = null;
         }
 
-        $databaseToken = DatabaseToken::inject()->resolve($bearer);
+        $databaseToken = DatabaseToken::inject()->findByBearer($bearer);
 
         if ($databaseToken === null) {
             return $this->user = $this->databaseToken = null;
         }
 
-        $user = $databaseToken->auth($this->guardName);
+        $user = $databaseToken->user($this->guardName);
 
         if ($user === null || CanLoginService::inject()->authorize($user)->denied()) {
             return $this->user = $this->databaseToken = null;

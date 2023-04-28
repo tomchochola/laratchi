@@ -41,7 +41,7 @@ class DatabaseToken extends Model
     /**
      * Find database token matching given bearer.
      */
-    public function resolve(string $bearer): ?static
+    public function findByBearer(string $bearer): ?static
     {
         if (! \str_contains($bearer, '|')) {
             return null;
@@ -90,9 +90,9 @@ class DatabaseToken extends Model
     }
 
     /**
-     * Auth user.
+     * Get user.
      */
-    public function auth(string $guardName): ?User
+    public function user(string $guardName): ?User
     {
         $user = $this->relationship($guardName, null)->getResults();
 
