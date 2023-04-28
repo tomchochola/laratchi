@@ -101,7 +101,7 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
             return;
         }
 
-        $this->notify(PasswordResetNotification::inject($this->getTable(), $token, $this->getEmailForPasswordReset()));
+        $this->notify(PasswordResetNotification::inject($this->getTable(), $token, $this->getEmailForPasswordReset())->locale($this->preferredLocale()));
     }
 
     /**
@@ -113,7 +113,7 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
             return;
         }
 
-        $this->notify(PasswordInitNotification::inject($this->getTable(), $token, $this->getEmailForPasswordReset()));
+        $this->notify(PasswordInitNotification::inject($this->getTable(), $token, $this->getEmailForPasswordReset())->locale($this->preferredLocale()));
     }
 
     /**
@@ -125,7 +125,7 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
             return;
         }
 
-        $this->notify(EmailVerificationNotification::inject($this->getTable(), EmailBrokerService::inject()->store($this->getTable(), $this->getEmailForVerification()), $this->getEmailForVerification()));
+        $this->notify(EmailVerificationNotification::inject($this->getTable(), EmailBrokerService::inject()->store($this->getTable(), $this->getEmailForVerification()), $this->getEmailForVerification())->locale($this->preferredLocale()));
     }
 
     /**
