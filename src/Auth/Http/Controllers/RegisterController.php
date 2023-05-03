@@ -136,26 +136,17 @@ class RegisterController extends TransactionController
             return null;
         }
 
-        $token = $request->validatedInput()->string('token');
-
         $guard = resolveAuthManager()->getDefaultDriver();
         $broker = EmailBrokerService::inject();
 
-        if ($token === null) {
-            $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['token']));
-
-            $broker->anonymous($guard, $email, resolveApp()->getLocale());
-
-            return resolveResponseFactory()->noContent(202);
+        if ($broker->confirmed($guard, $email)) {
+            return null;
         }
 
-        [$hit] = $this->throttle($this->limit('email_confirmation_validate'), $this->onThrottle($request, ['token']));
+        $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['email']));
 
-        if (! $broker->validate($guard, $email, $token)) {
-            $hit();
-            $request->throwExistsValidationException(['token']);
-        }
+        $broker->anonymous($guard, $email, resolveApp()->getLocale());
 
-        return null;
+        return resolveResponseFactory()->noContent(202);
     }
 }

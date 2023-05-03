@@ -58,6 +58,22 @@ class EmailBrokerService
     }
 
     /**
+     * Confirm email.
+     */
+    public function confirm(string $guard, string $email): void
+    {
+        resolveCache()->set($this->cacheKey($guard, $email), true, $this->cacheExpiration());
+    }
+
+    /**
+     * Email is confirmed.
+     */
+    public function confirmed(string $guard, string $email): bool
+    {
+        return resolveCache()->get($this->cacheKey($guard, $email)) === true;
+    }
+
+    /**
      * Send anonymous notification.
      */
     public function anonymous(string $guard, string $email, string $locale): void

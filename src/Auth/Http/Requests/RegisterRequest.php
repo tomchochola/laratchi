@@ -29,10 +29,9 @@ class RegisterRequest extends SecureFormRequest
 
         return [
             'email' => $authValidity->email()->required(),
-            'password' => $authValidity->password()->nullable()->filled()->requiredWith(['token']),
-            'name' => $authValidity->name()->nullable()->filled()->requiredWith(['token']),
+            'password' => $authValidity->password()->required(),
+            'name' => $authValidity->name()->required(),
             'locale' => $authValidity->locale()->required(),
-            'token' => $authValidity->emailVerificationToken()->nullable()->filled(),
         ];
     }
 
@@ -53,10 +52,12 @@ class RegisterRequest extends SecureFormRequest
      */
     public function data(): array
     {
+        $password = $this->validatedInput()->string('password');
+
         return $this->validatedInput()->merge([
-            'password' => resolveHasher()->make($this->validatedInput()->mustString('password')),
+            'password' => $password === null ? null : resolveHasher()->make($password),
             'email_verified_at' => null,
             'remember_token' => null,
-        ])->except(['token']);
+        ])->all();
     }
 }

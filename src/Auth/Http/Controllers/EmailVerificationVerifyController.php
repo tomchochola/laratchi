@@ -89,7 +89,7 @@ class EmailVerificationVerifyController extends TransactionController
      */
     protected function validateToken(EmailVerificationVerifyRequest $request, User&MustVerifyEmail $me): void
     {
-        [$hit] = $this->throttle($this->limit('credentials'), $this->onThrottle($request, ['token']));
+        [$hit] = $this->throttle($this->limit('token'), $this->onThrottle($request, ['token']));
 
         if (! EmailBrokerService::inject()->validate($me->getTable(), $me->getEmailForVerification(), $request->validatedInput()->mustString('token'))) {
             $hit();

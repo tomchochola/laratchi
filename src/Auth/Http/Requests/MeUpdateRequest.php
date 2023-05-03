@@ -31,7 +31,6 @@ class MeUpdateRequest extends SecureFormRequest
             'email' => $authValidity->email()->nullable()->filled(),
             'name' => $authValidity->name()->nullable()->filled(),
             'locale' => $authValidity->locale()->nullable()->filled(),
-            'token' => $authValidity->emailVerificationToken()->nullable()->filled(),
         ];
     }
 
@@ -52,6 +51,6 @@ class MeUpdateRequest extends SecureFormRequest
      */
     public function data(): array
     {
-        return $this->validatedInput()->except(['token']);
+        return $this->validatedInput()->all();
     }
 }
