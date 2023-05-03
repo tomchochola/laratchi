@@ -103,10 +103,10 @@ abstract class JsonApiResource
     /**
      * Get response.
      *
-     * @param array<string, mixed> $merge
+     * @param array<string, mixed> $meta
      * @param array<mixed> $headers
      */
-    public function response(array $merge = [], int $status = 200, array $headers = []): JsonResponse
+    public function response(array $meta = [], int $status = 200, array $headers = []): JsonResponse
     {
         $included = collect();
 
@@ -116,7 +116,9 @@ abstract class JsonApiResource
             $data['included'] = $included->values()->all();
         }
 
-        $data = \array_replace($data, $merge);
+        if (\count($meta) > 0) {
+            $data = \array_replace($data, ['meta' => $meta]);
+        }
 
         return new JsonResponse($data, $status, $headers);
     }

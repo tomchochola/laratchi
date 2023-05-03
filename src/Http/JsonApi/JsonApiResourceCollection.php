@@ -29,10 +29,10 @@ class JsonApiResourceCollection
     /**
      * Get response.
      *
-     * @param array<string, mixed> $merge
+     * @param array<string, mixed> $meta
      * @param array<mixed> $headers
      */
-    public function response(array $merge = [], int $status = 200, array $headers = []): JsonResponse
+    public function response(array $meta = [], int $status = 200, array $headers = []): JsonResponse
     {
         $included = collect();
         $collection = $this->collection instanceof Collection ? $this->collection : collect($this->collection->items());
@@ -42,8 +42,6 @@ class JsonApiResourceCollection
                 return ($this->closureMap)($item)->data($included);
             })->values()->all(),
         ];
-
-        $meta = [];
 
         if ($included->isNotEmpty()) {
             $data['included'] = $included->values()->all();
@@ -71,8 +69,6 @@ class JsonApiResourceCollection
         if (\count($meta) > 0) {
             $data = \array_replace($data, ['meta' => $meta]);
         }
-
-        $data = \array_replace($data, $merge);
 
         return new JsonResponse($data, $status, $headers);
     }
