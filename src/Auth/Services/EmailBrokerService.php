@@ -48,13 +48,7 @@ class EmailBrokerService
      */
     public function validate(string $guard, string $email, string $token): bool
     {
-        $pass = resolveCache()->get($this->cacheKey($guard, $email)) === $token;
-
-        if (resolveApp()->isProduction()) {
-            return $pass;
-        }
-
-        return $pass || $token === '111111';
+        return resolveCache()->get($this->cacheKey($guard, $email)) === $token;
     }
 
     /**
