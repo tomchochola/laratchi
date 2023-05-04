@@ -61,6 +61,14 @@ class UserFactory extends Factory
     }
 
     /**
+     * Create model with random locale.
+     */
+    public function randomLocale(): static
+    {
+        return $this->set('locale', fake()->randomElement(mustConfigArray('app.locales')));
+    }
+
+    /**
      * Create model with blank password.
      */
     public function blankPassword(): static
