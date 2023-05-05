@@ -25,6 +25,7 @@ class {{ class }} extends Controller
         $this->select($builder, $request);
         $this->filterSearch($builder, $request);
         $this->filterId($builder, $request);
+        $this->filterNotId($builder, $request);
         $this->sort($builder, $request);
 
         if ($request->validatedInput()->mustBool('count', false)) {
@@ -80,6 +81,18 @@ class {{ class }} extends Controller
         }
 
         {{ model }}::scopeKeys($builder, $request->validatedInput()->mustArray('filter.id', []));
+    }
+
+    /**
+     * Filter by not id.
+     */
+    protected function filterNotId(Builder $builder, {{ indexRequest }} $request): void
+    {
+        if ($request->validatedInput()->missing('filter.not_id')) {
+            return;
+        }
+
+        {{ model }}::scopeNotKeys($builder, $request->validatedInput()->mustArray('filter.not_id', []));
     }
 
     /**
