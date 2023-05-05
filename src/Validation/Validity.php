@@ -3160,6 +3160,62 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * If then required.
+     */
+    public function ifThenRequired(bool $flag): static
+    {
+        return $this->if($flag)->required();
+    }
+
+    /**
+     * If then filled.
+     */
+    public function ifThenFilled(bool $flag): static
+    {
+        return $this->if($flag)->filled();
+    }
+
+    /**
+     * If then present.
+     */
+    public function ifThenPresent(bool $flag): static
+    {
+        return $this->if($flag)->present();
+    }
+
+    /**
+     * If then prohibited.
+     */
+    public function ifThenProhibited(bool $flag): static
+    {
+        return $this->if($flag)->prohibited();
+    }
+
+    /**
+     * If then missing.
+     */
+    public function ifThenMissing(bool $flag): static
+    {
+        return $this->if($flag)->missing();
+    }
+
+    /**
+     * If then accepted.
+     */
+    public function ifThenAccepted(bool $flag): static
+    {
+        return $this->if($flag)->accepted();
+    }
+
+    /**
+     * If then declined.
+     */
+    public function ifThenDeclined(bool $flag): static
+    {
+        return $this->if($flag)->declined();
+    }
+
+    /**
      * Format arguments.
      *
      * @param array<int, mixed> $arguments
