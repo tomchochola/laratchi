@@ -471,21 +471,21 @@ class FormRequest extends IlluminateFormRequest
 
         if ($filterId) {
             $rules = \array_replace($rules, [
-                'filter.id' => Validity::make()->nullable()->filled()->collection(null)->missingWith(['filter.slug', 'filter.not_id']),
+                'filter.id' => Validity::make()->nullable()->filled()->collection(null),
                 'filter.id.*' => Validity::make()->required()->distinct()->id(),
             ]);
         }
 
         if ($filterNotId) {
             $rules = \array_replace($rules, [
-                'filter.not_id' => Validity::make()->nullable()->filled()->collection(null)->missingWith(['filter.slug', 'filter.id']),
+                'filter.not_id' => Validity::make()->nullable()->filled()->collection(null),
                 'filter.not_id.*' => Validity::make()->required()->distinct()->id(),
             ]);
         }
 
         if ($filterSlug) {
             $rules = \array_replace($rules, [
-                'filter.slug' => Validity::make()->nullable()->filled()->collection(null)->missingWith(['filter.id', 'filter.not_id']),
+                'filter.slug' => Validity::make()->nullable()->filled()->collection(null),
                 'filter.slug.*' => Validity::make()->required()->distinct()->slug(),
             ]);
         }
