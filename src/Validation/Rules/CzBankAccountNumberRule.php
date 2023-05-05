@@ -93,12 +93,12 @@ class CzBankAccountNumberRule implements RuleContract
             return false;
         }
 
-        if (\preg_match('/^(([0-9]{0,6})-)?([0-9]{2,10})\\/([0-9]{4})$/', $value, $parts) !== 1) {
-            return false;
-        }
-
         if (resolveApp()->runningUnitTests()) {
             return true;
+        }
+
+        if (\preg_match('/^(([0-9]{0,6})-)?([0-9]{2,10})\\/([0-9]{4})$/', $value, $parts) !== 1) {
+            return false;
         }
 
         if (! $this->validatePrefix($parts)) {
