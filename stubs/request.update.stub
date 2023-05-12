@@ -7,7 +7,7 @@ namespace {{ namespace }};
 use {{ namespacedValidity }};
 use {{ namespacedUserModel }};
 use {{ namespacedModel }};
-use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Builder;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
 class {{ class }} extends SecureFormRequest
@@ -15,19 +15,9 @@ class {{ class }} extends SecureFormRequest
     /**
      * @inheritDoc
      */
-    public function me(): {{ userModel }}
+    public function me(): ?{{ userModel }}
     {
-        return {{ userModel }}::mustAuth();
-    }
-
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): Response|bool
-    {
-        $this->me();
-
-        return true;
+        return {{ userModel }}::auth();
     }
 
     /**
@@ -37,8 +27,12 @@ class {{ class }} extends SecureFormRequest
     {
         $validity = new {{ validity }}();
 
+        $me = $this->me();
+
         return [
-            'id' => $validity->id()->required(),
+            'id' => $validity->id()->required()->builderKey(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
+                // TODO
+            })),
             'title' => $validity->title()->nullable()->filled(),
         ];
     }
@@ -48,6 +42,6 @@ class {{ class }} extends SecureFormRequest
      */
     public function resolve{{ model }}(): {{ model }}
     {
-        return once(fn (): {{ model }} => {{ model }}::mustResolveFromRequest($this));
+        return once(fn (): {{ model }} => {{ model }}::mustResolve($this, $this->integer('id'));
     }
 }

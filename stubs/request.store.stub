@@ -6,7 +6,6 @@ namespace {{ namespace }};
 
 use {{ namespacedValidity }};
 use {{ namespacedUserModel }};
-use Illuminate\Auth\Access\Response;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
 
 class {{ class }} extends SecureFormRequest
@@ -14,19 +13,9 @@ class {{ class }} extends SecureFormRequest
     /**
      * @inheritDoc
      */
-    public function me(): {{ userModel }}
+    public function me(): ?{{ userModel }}
     {
-        return {{ userModel }}::mustAuth();
-    }
-
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): Response|bool
-    {
-        $this->me();
-
-        return true;
+        return {{ userModel }}::auth();
     }
 
     /**
@@ -35,6 +24,8 @@ class {{ class }} extends SecureFormRequest
     public function rules(): array
     {
         $validity = new {{ validity }}();
+
+        $me = $this->me();
 
         return [
             'title' => $validity->title()->required(),

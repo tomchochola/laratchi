@@ -345,9 +345,6 @@ class MakeTchiCommand extends GeneratorCommand
                             ],
                         ],
                     ],
-                    '401' => [
-                        '$ref' => '#/components/responses/401',
-                    ],
                     '422' => [
                         '$ref' => '#/components/responses/422',
                     ],
@@ -417,9 +414,6 @@ class MakeTchiCommand extends GeneratorCommand
                             ],
                         ],
                     ],
-                    '401' => [
-                        '$ref' => '#/components/responses/401',
-                    ],
                     '422' => [
                         '$ref' => '#/components/responses/422',
                     ],
@@ -453,9 +447,6 @@ class MakeTchiCommand extends GeneratorCommand
                 'responses' => [
                     '200' => [
                         '$ref' => '#/components/responses/Resource',
-                    ],
-                    '401' => [
-                        '$ref' => '#/components/responses/401',
                     ],
                     '422' => [
                         '$ref' => '#/components/responses/422',
@@ -494,9 +485,6 @@ class MakeTchiCommand extends GeneratorCommand
                     '204' => [
                         '$ref' => '#/components/responses/204',
                     ],
-                    '401' => [
-                        '$ref' => '#/components/responses/401',
-                    ],
                     '422' => [
                         '$ref' => '#/components/responses/422',
                     ],
@@ -530,9 +518,6 @@ class MakeTchiCommand extends GeneratorCommand
                 'responses' => [
                     '204' => [
                         '$ref' => '#/components/responses/204',
-                    ],
-                    '401' => [
-                        '$ref' => '#/components/responses/401',
                     ],
                     '422' => [
                         '$ref' => '#/components/responses/422',

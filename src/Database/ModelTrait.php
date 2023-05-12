@@ -124,11 +124,15 @@ trait ModelTrait
      */
     public static function resolve(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
     {
-        if ($id !== null) {
-            return static::findByKey($id, $closure);
+        if ($id !== null && $id > 0) {
+            $instance = static::findByKey($id, $closure);
+
+            if ($instance !== null) {
+                return $instance;
+            }
         }
 
-        if ($slug !== null) {
+        if ($slug !== null && $slug !== '') {
             return static::findByRouteKey($slug, $closure);
         }
 
@@ -143,12 +147,20 @@ trait ModelTrait
      */
     public static function mustResolve(?int $id = null, ?string $slug = null, ?Closure $closure = null, ?Closure $onError = null): static
     {
-        if ($id !== null) {
-            return static::mustFindByKey($id, $closure, $onError);
+        if ($id !== null && $id > 0) {
+            $instance = static::findByKey($id, $closure);
+
+            if ($instance !== null) {
+                return $instance;
+            }
         }
 
-        if ($slug !== null) {
-            return static::mustFindByRouteKey($slug, $closure, $onError);
+        if ($slug !== null && $slug !== '') {
+            $instance = static::findByRouteKey($slug, $closure);
+
+            if ($instance !== null) {
+                return $instance;
+            }
         }
 
         if ($onError !== null) {
@@ -179,13 +191,15 @@ trait ModelTrait
     {
         \assert(! ($idKey === null && $routeKey === null));
 
-        $instance = static::resolveFromRequest($request, $closure, $idKey, $routeKey);
+        return static::mustResolve($idKey !== null ? $request->allInput()->int($idKey) : null, $routeKey !== null ? $request->allInput()->string($routeKey) : null, $closure, static function () use ($request, $idKey, $routeKey): never {
+            if ($idKey !== null && $routeKey !== null) {
+                $request->throwSingleValidationException([$idKey, $routeKey], 'invalid');
+            }
 
-        if ($instance === null) {
-            $request->throwSingleValidationException([$idKey ?? $routeKey], 'Required');
-        }
+            \assert(! ($idKey === null && $routeKey === null));
 
-        return $instance;
+            $request->throwSingleValidationException([$idKey ?? $routeKey], 'invalid');
+        });
     }
 
     /**

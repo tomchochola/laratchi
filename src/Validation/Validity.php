@@ -2991,6 +2991,88 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add builder route key rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function builderRouteKey(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
+            $builder = $callback($value, $attribute);
+
+            $model = $builder->getModel();
+
+            \assert($model instanceof Model);
+
+            if ($each === null) {
+                return $builder->where($model->getRouteKeyName(), $value)->toBase()->exists();
+            }
+
+            $model = $builder->where($model->getRouteKeyName(), $value)->first();
+
+            if ($model === null) {
+                return false;
+            }
+
+            \assert($model instanceof Model);
+
+            return $each($model, $value, $attribute);
+        }, $message));
+    }
+
+    /**
+     * Add not builder route key rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function notBuilderRouteKey(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
+            $builder = $callback($value, $attribute);
+
+            $model = $builder->getModel();
+
+            \assert($model instanceof Model);
+
+            if ($each === null) {
+                return ! $builder->where($model->getRouteKeyName(), $value)->toBase()->exists();
+            }
+
+            $model = $builder->where($model->getRouteKeyName(), $value)->first();
+
+            if ($model === null) {
+                return true;
+            }
+
+            \assert($model instanceof Model);
+
+            return ! $each($model, $value, $attribute);
+        }, $message));
+    }
+
+    /**
      * Id rules.
      *
      * @return $this
