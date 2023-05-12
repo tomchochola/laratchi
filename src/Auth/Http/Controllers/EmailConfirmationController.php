@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Tomchochola\Laratchi\Auth\Http\Requests\EmailConfirmationRequest;
 use Tomchochola\Laratchi\Auth\Services\EmailBrokerService;
-use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class EmailConfirmationController extends TransactionController
