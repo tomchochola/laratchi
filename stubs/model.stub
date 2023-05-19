@@ -20,7 +20,9 @@ class {{ class }} extends Model
      *
      * @var array<mixed>
      */
-    protected $casts = [];
+    protected $casts = [
+        'user_id' => 'integer',
+    ];
 
     /**
      * Modify embed query.
@@ -43,11 +45,47 @@ class {{ class }} extends Model
     }
 
     /**
+     * Scope users.
+     *
+     * @param array<mixed> $ids
+     */
+    public static function scopeUsers(Builder $builder, array $ids): void
+    {
+        $builder->whereHas('user', static function (Builder $builder) use ($ids): void {
+            $builder->whereKey($ids);
+        });
+    }
+
+    /**
      * Title getter.
      */
     public function getTitle(): string
     {
         return $this->mustString('title');
+    }
+
+    /**
+     * User relationship.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id', 'user');
+    }
+
+    /**
+     * User getter.
+     */
+    public function getUser(): User
+    {
+        return $this->mustRelation('user', User::class);
+    }
+
+    /**
+     * User id getter.
+     */
+    public function getUserId(): int
+    {
+        return $this->mustInt('user_id');
     }
 
     /**

@@ -34,7 +34,7 @@ class {{ class }} extends TransactionController
             if ($title !== null) {
                 [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ['title']));
 
-                if ({{ model }}::query()->whereKeyNot($request->resolve{{ model }}()->getKey())->getQuery()->where('title', $title)->exists()) {
+                if ({{ model }}::query()->whereKeyNot($request->resolve{{ model }}()->getKey())->getQuery()->where('title', $title)->where('user_id', $request->me()->getKey())->exists()) {
                     $hit();
                     $request->throwUniqueValidationException(['title']);
                 }

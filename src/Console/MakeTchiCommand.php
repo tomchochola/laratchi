@@ -219,7 +219,7 @@ class MakeTchiCommand extends GeneratorCommand
             'get' => [
                 'tags' => [$table],
                 'summary' => "Fetch {$modelName}",
-                'description' => "Fetch {$modelName}",
+                'description' => "Fetch {$modelName}\n\nUser must be authenticated",
                 'operationId' => "get_{$table}_index",
                 'parameters' => [
                     [
@@ -345,6 +345,9 @@ class MakeTchiCommand extends GeneratorCommand
                             ],
                         ],
                     ],
+                    '401' => [
+                        '$ref' => '#/components/responses/401',
+                    ],
                     '422' => [
                         '$ref' => '#/components/responses/422',
                     ],
@@ -356,7 +359,7 @@ class MakeTchiCommand extends GeneratorCommand
             'get' => [
                 'tags' => [$table],
                 'summary' => "Show {$modelName}",
-                'description' => "Show {$modelName}",
+                'description' => "Show {$modelName}\n\nUser must be authenticated",
                 'operationId' => "get_{$table}_show",
                 'parameters' => [
                     [
@@ -414,6 +417,9 @@ class MakeTchiCommand extends GeneratorCommand
                             ],
                         ],
                     ],
+                    '401' => [
+                        '$ref' => '#/components/responses/401',
+                    ],
                     '422' => [
                         '$ref' => '#/components/responses/422',
                     ],
@@ -425,7 +431,7 @@ class MakeTchiCommand extends GeneratorCommand
             'post' => [
                 'tags' => [$table],
                 'summary' => "Store {$modelName}",
-                'description' => "Store {$modelName}",
+                'description' => "Store {$modelName}\n\nUser must be authenticated",
                 'operationId' => "post_{$table}_store",
                 'requestBody' => [
                     'required' => true,
@@ -448,6 +454,9 @@ class MakeTchiCommand extends GeneratorCommand
                     '200' => [
                         '$ref' => '#/components/responses/Resource',
                     ],
+                    '401' => [
+                        '$ref' => '#/components/responses/401',
+                    ],
                     '422' => [
                         '$ref' => '#/components/responses/422',
                     ],
@@ -459,7 +468,7 @@ class MakeTchiCommand extends GeneratorCommand
             'post' => [
                 'tags' => [$table],
                 'summary' => "Update {$modelName}",
-                'description' => "Update {$modelName}",
+                'description' => "Update {$modelName}\n\nUser must be authenticated",
                 'operationId' => "post_{$table}_update",
                 'requestBody' => [
                     'required' => true,
@@ -485,6 +494,9 @@ class MakeTchiCommand extends GeneratorCommand
                     '204' => [
                         '$ref' => '#/components/responses/204',
                     ],
+                    '401' => [
+                        '$ref' => '#/components/responses/401',
+                    ],
                     '422' => [
                         '$ref' => '#/components/responses/422',
                     ],
@@ -496,7 +508,7 @@ class MakeTchiCommand extends GeneratorCommand
             'post' => [
                 'tags' => [$table],
                 'summary' => "Destroy {$modelName}",
-                'description' => "Destroy {$modelName}",
+                'description' => "Destroy {$modelName}\n\nUser must be authenticated",
                 'operationId' => "post_{$table}_destroy",
                 'requestBody' => [
                     'required' => true,
@@ -518,6 +530,9 @@ class MakeTchiCommand extends GeneratorCommand
                 'responses' => [
                     '204' => [
                         '$ref' => '#/components/responses/204',
+                    ],
+                    '401' => [
+                        '$ref' => '#/components/responses/401',
                     ],
                     '422' => [
                         '$ref' => '#/components/responses/422',
@@ -612,7 +627,7 @@ class MakeTchiCommand extends GeneratorCommand
 
         $databaseSchema = $this->files->get($path);
 
-        $databaseSchema = \str_replace("erDiagram\n", "erDiagram\n\n{$table} {\n  id id PK\n  string title\n  timestamp created_at\n  timestamp updated_at\n}\n", $databaseSchema);
+        $databaseSchema = \str_replace("erDiagram\n", "erDiagram\n\n{$table} {\n  id id PK\n  id user_id FK \"users.id cascadeOnUpdate cascadeOnDelete\"\n  string title\n  timestamp created_at\n  timestamp updated_at\n}\n", $databaseSchema);
 
         $this->files->put($path, $databaseSchema);
     }

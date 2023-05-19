@@ -19,7 +19,7 @@ class {{ class }} extends TransactionController
     {
         $this->validateUnique($request);
 
-        $model = {{ model }}::create($request->validatedInput()->only(['title']));
+        $model = {{ model }}::create($request->validatedInput()->merge(['user_id' => $request->me()->getKey()])->only(['title', 'user_id']));
 
         return (new ModelResource($model))->response();
     }
@@ -34,7 +34,7 @@ class {{ class }} extends TransactionController
         if ($title !== null) {
             [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ['title']));
 
-            if ({{ model }}::query()->getQuery()->where('title', $title)->exists()) {
+            if ({{ model }}::query()->getQuery()->where('title', $title)->where('user_id', $request->me()->getKey())->exists()) {
                 $hit();
                 $request->throwUniqueValidationException(['title']);
             }

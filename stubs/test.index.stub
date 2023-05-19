@@ -30,7 +30,7 @@ class {{ class }} extends TestCase
 
         \assert($me instanceof {{ userModel }});
 
-        $model = {{ factory }}::new()->createOne();
+        $model = {{ factory }}::new()->for($me)->createOne();
 
         \assert($model instanceof {{ model }});
 
@@ -63,7 +63,7 @@ class {{ class }} extends TestCase
 
         \assert($me instanceof {{ userModel }});
 
-        $model = {{ factory }}::new()->createOne();
+        $model = {{ factory }}::new()->for($me)->createOne();
 
         \assert($model instanceof {{ model }});
 
@@ -97,7 +97,7 @@ class {{ class }} extends TestCase
 
             \assert($me instanceof {{ userModel }});
 
-            $model = {{ factory }}::new()->createOne();
+            $model = {{ factory }}::new()->for($me)->createOne();
 
             \assert($model instanceof {{ model }});
 

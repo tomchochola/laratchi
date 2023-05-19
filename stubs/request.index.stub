@@ -19,9 +19,9 @@ class {{ class }} extends SecureFormRequest
     /**
      * @inheritDoc
      */
-    public function me(): ?{{ userModel }}
+    public function me(): {{ userModel }}
     {
-        return {{ userModel }}::auth();
+        return {{ userModel }}::mustAuth();
     }
 
     /**

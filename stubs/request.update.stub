@@ -15,9 +15,9 @@ class {{ class }} extends SecureFormRequest
     /**
      * @inheritDoc
      */
-    public function me(): ?{{ userModel }}
+    public function me(): {{ userModel }}
     {
-        return {{ userModel }}::auth();
+        return {{ userModel }}::mustAuth();
     }
 
     /**
@@ -31,7 +31,7 @@ class {{ class }} extends SecureFormRequest
 
         return [
             'id' => $validity->id()->required()->builderKey(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
-                // TODO
+                {{ model }}::scopeUsers($builder, [$me->getKey()]);
             })),
             'title' => $validity->title()->nullable()->filled(),
         ];
@@ -42,6 +42,6 @@ class {{ class }} extends SecureFormRequest
      */
     public function resolve{{ model }}(): {{ model }}
     {
-        return once(fn (): {{ model }} => {{ model }}::mustResolve($this, $this->integer('id'));
+        return once(fn (): {{ model }} => {{ model }}::mustResolve($this->integer('id')));
     }
 }

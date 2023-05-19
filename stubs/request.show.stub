@@ -15,9 +15,9 @@ class {{ class }} extends SecureFormRequest
     /**
      * @inheritDoc
      */
-    public function me(): ?{{ userModel }}
+    public function me(): {{ userModel }}
     {
-        return {{ userModel }}::auth();
+        return {{ userModel }}::mustAuth();
     }
 
     /**
@@ -30,7 +30,7 @@ class {{ class }} extends SecureFormRequest
         $me = $this->me();
 
         $callback = static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
-            // TODO
+            {{ model }}::scopeUsers($builder, [$me->getKey()]);
         });
 
         return [
@@ -44,6 +44,6 @@ class {{ class }} extends SecureFormRequest
      */
     public function resolve{{ model }}(): {{ model }}
     {
-        return once(fn (): {{ model }} => {{ model }}::mustResolve($this, $this->nullableInteger('id'), $this->nullableVarchar('slug')));
+        return once(fn (): {{ model }} => {{ model }}::mustResolve($this->nullableInteger('id'), $this->nullableVarchar('slug')));
     }
 }

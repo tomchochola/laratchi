@@ -26,6 +26,7 @@ class {{ class }} extends Controller
         $this->filterSearch($builder, $request);
         $this->filterId($builder, $request);
         $this->filterNotId($builder, $request);
+        $this->filterMe($builder, $request);
         $this->sort($builder, $request);
 
         if ($request->validatedInput()->mustBool('count', false)) {
@@ -93,6 +94,14 @@ class {{ class }} extends Controller
         }
 
         {{ model }}::scopeNotKeys($builder, $request->validatedInput()->mustArray('filter.not_id', []));
+    }
+
+    /**
+     * Filter by me.
+     */
+    protected function filterMe(Builder $builder, {{ indexRequest }} $request): void
+    {
+        {{ model }}::scopeUsers($builder, [$request->me()->getKey()]);
     }
 
     /**

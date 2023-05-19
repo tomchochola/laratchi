@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace {{ factoryNamespace }};
 
 use {{ namespacedModel }};
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -24,6 +25,15 @@ class {{ factory }}Factory extends Factory
     {
         return [
             'title' => fake()->sentence(),
+            'user_id' => UserFactory::new(),
         ];
+    }
+
+    /**
+     * Generate model with random user.
+     */
+    public function withRandomUser(): static
+    {
+        return $this->set('user_id', static fn (): mixed => User::query()->getQuery()->inRandomOrder()->value('id'));
     }
 }

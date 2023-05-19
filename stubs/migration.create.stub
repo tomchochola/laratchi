@@ -14,6 +14,8 @@ return new class() extends Migration {
         resolveSchema()->create('{{ table }}', static function (Blueprint $table): void {
             $table->id();
 
+            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
+
             $table->string('title');
 
             $table->timestamp('created_at');
