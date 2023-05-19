@@ -15,7 +15,9 @@ class {{ class }} extends TransactionController
      */
     public function __invoke({{ destroyRequest }} $request): SymfonyResponse
     {
-        $request->resolve{{ model }}()->delete();
+        $model = $request->resolve{{ model }}();
+
+        $model->delete();
 
         return resolveResponseFactory()->noContent();
     }

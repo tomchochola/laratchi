@@ -18,7 +18,9 @@ class {{ class }} extends TransactionController
     {
         $this->validateUnique($request);
 
-        $request->resolve{{ model }}()->update($request->validatedInput()->only(['title']));
+        $model = $request->resolve{{ model }}();
+
+        $model->update($request->validatedInput()->only(['title']));
 
         return resolveResponseFactory()->noContent();
     }

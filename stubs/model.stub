@@ -6,6 +6,7 @@ namespace {{ namespace }};
 
 use App\Support\ScoutSupport;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Tomchochola\Laratchi\Database\Model;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
