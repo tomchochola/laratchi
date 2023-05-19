@@ -91,7 +91,7 @@ class RegisterController extends TransactionController
 
         $me->save();
 
-        return $me;
+        return $me->refresh();
     }
 
     /**
