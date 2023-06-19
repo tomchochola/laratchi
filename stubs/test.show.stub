@@ -55,7 +55,7 @@ class {{ class }} extends TestCase
         return $this->structure('{{ table }}', [
             'title' => $validity->title()->required(),
             'created_at' => Validity::make()->dateTime()->required(),
-            'updated_at' => $validity->updatedAt()->required(),
+            'updated_at' => Validity::make()->dateTime()->required(),
         ]);
     }
 }
