@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use App\Support\ScoutSupport;
+// use App\Support\ScoutSupport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Tomchochola\Laratchi\Database\Model;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
-use Laravel\Scout\Searchable;
+// use Laravel\Scout\Searchable;
 
 class {{ class }} extends Model
 {
-    use Searchable;
+    // use Searchable;
 
     /**
      * @inheritDoc
@@ -38,11 +38,13 @@ class {{ class }} extends Model
      */
     public static function scopeSearch(Builder $builder, string $search): void
     {
+        assertNever();
+
         if (resolveApp()->runningUnitTests()) {
             return;
         }
 
-        ScoutSupport::exactPartial($builder, static::search($search));
+        // ScoutSupport::exactPartial($builder, static::search($search));
     }
 
     /**
@@ -50,7 +52,7 @@ class {{ class }} extends Model
      *
      * @param array<mixed> $ids
      */
-    public static function scopeUserid(Builder $builder, array $ids): void
+    public static function scopeUserId(Builder $builder, array $ids): void
     {
         $builder->getQuery()->whereIn($builder->qualifyColumn('user_id'), $ids);
     }

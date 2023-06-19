@@ -8,7 +8,6 @@ use {{ namespacedUpdateRequest }};
 use {{ namespacedModel }};
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Routing\TransactionController;
-use Tomchochola\Laratchi\Validation\ValidatedInput;
 
 class {{ class }} extends TransactionController
 {
@@ -17,7 +16,7 @@ class {{ class }} extends TransactionController
      */
     public function __invoke({{ updateRequest }} $request): SymfonyResponse
     {
-        $me  = $request->me();
+        $me = $request->me();
 
         $this->validateUnique($request);
 
@@ -31,9 +30,9 @@ class {{ class }} extends TransactionController
     /**
      * Validate given data is unique.
      */
-    protected function validateUnique({{ updateRequest }} $request, ValidatedInput $item, int $index): void
+    protected function validateUnique({{ updateRequest }} $request): void
     {
-        foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
+        foreach ($request->validatedInput()->validatedInputs('items', []) as $index => $item) {
             $title = $item->mustString('title');
 
             [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ["items.{$index}.title"]));

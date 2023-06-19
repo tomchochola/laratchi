@@ -12,7 +12,6 @@ use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResourceCollection;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Routing\TransactionController;
-use Tomchochola\Laratchi\Validation\ValidatedInput;
 
 class {{ class }} extends TransactionController
 {
@@ -37,7 +36,7 @@ class {{ class }} extends TransactionController
     /**
      * Validate given data is unique.
      */
-    protected function validateUnique({{ storeRequest }} $request, ValidatedInput $item, int $index): void
+    protected function validateUnique({{ storeRequest }} $request): void
     {
         foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
             $title = $item->mustString('title');

@@ -43,7 +43,7 @@ class {{ class }} extends TestCase
 
         $response->assertOk();
 
-        $this->validateJsonApiResponse($response, $this->structure('{{ table }}'), []);
+        $this->validateJsonApiCollectionResponse($response, [$this->structure('{{ table }}')], []);
     }
 
     /**

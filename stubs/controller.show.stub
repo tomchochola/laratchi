@@ -20,7 +20,7 @@ class {{ class }} extends Controller
     {
         $me = $request->me();
 
-        $model = {{ model }}::mustFindByIdOrSlug($request->validatedInput()->mustIntOrString('id_or_slug'), static function (Builder $builder) use ($request): void {
+        $model = {{ model }}::mustFindByIdOrSlug($request->validatedInput()->mustIntOrString('id_or_slug'), static function (Builder $builder): void {
             $builder->getQuery()->select($builder->qualifyColumns(['*']));
         });
 

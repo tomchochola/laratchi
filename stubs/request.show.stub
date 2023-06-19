@@ -9,7 +9,6 @@ use {{ namespacedUserModel }};
 use {{ namespacedModel }};
 use Illuminate\Database\Eloquent\Builder;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
-use Tomchochola\Laratchi\Validation\Validity;
 
 class {{ class }} extends SecureFormRequest
 {

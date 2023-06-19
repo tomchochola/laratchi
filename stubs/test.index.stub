@@ -86,38 +86,38 @@ class {{ class }} extends TestCase
         $this->validateJsonApiCollectionResponse($response, [$this->structure{{ model }}Select()], []);
     }
 
-        /**
-         * @dataProvider localeDataProvider
-         */
-        public function test_fetch_{{ table }}_count(string $locale): void
-        {
-            $this->locale($locale);
+    /**
+     * @dataProvider localeDataProvider
+     */
+    public function test_fetch_{{ table }}_count(string $locale): void
+    {
+        $this->locale($locale);
 
-            $me = {{ userModelFactory }}::new()->createOne();
+        $me = {{ userModelFactory }}::new()->createOne();
 
-            \assert($me instanceof {{ userModel }});
+        \assert($me instanceof {{ userModel }});
 
-            $model = {{ factory }}::new()->for($me)->createOne();
+        $model = {{ factory }}::new()->for($me)->createOne();
 
-            \assert($model instanceof {{ model }});
+        \assert($model instanceof {{ model }});
 
-            $query = [
-                'filter' => [
-                    'id_or_slug' => [fake()->randomElement([$model->getKey(), $model->getRouteKey()])],
-                    'not_id_or_slug' => [0],
-                    'search' => $model->getTitle(),
-                ],
-                'count' => true,
-            ];
+        $query = [
+            'filter' => [
+                'id_or_slug' => [fake()->randomElement([$model->getKey(), $model->getRouteKey()])],
+                'not_id_or_slug' => [0],
+                'search' => $model->getTitle(),
+            ],
+            'count' => true,
+        ];
 
-            $response = $this->be($me)->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
+        $response = $this->be($me)->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
 
-            $response->assertOk();
+        $response->assertOk();
 
-            $response->assertExactJson([
-                'data' => 1,
-            ]);
-        }
+        $response->assertExactJson([
+            'data' => 1,
+        ]);
+    }
 
     /**
      * {{ model }} index structure.
