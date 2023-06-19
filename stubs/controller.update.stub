@@ -8,6 +8,7 @@ use {{ namespacedUpdateRequest }};
 use {{ namespacedModel }};
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Routing\TransactionController;
+use Tomchochola\Laratchi\Validation\ValidatedInput;
 
 class {{ class }} extends TransactionController
 {
@@ -16,11 +17,13 @@ class {{ class }} extends TransactionController
      */
     public function __invoke({{ updateRequest }} $request): SymfonyResponse
     {
+        $me  = $request->me();
+
         $this->validateUnique($request);
 
-        $model = $request->resolve{{ model }}();
-
-        $model->update($request->validatedInput()->only(['title']));
+        foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
+            {{ model }}::mustFindById($item->mustInt('id'))->update($item->only(['title']));
+        }
 
         return resolveResponseFactory()->noContent();
     }
@@ -28,18 +31,16 @@ class {{ class }} extends TransactionController
     /**
      * Validate given data is unique.
      */
-    protected function validateUnique({{ updateRequest }} $request): void
+    protected function validateUnique({{ updateRequest }} $request, ValidatedInput $item, int $index): void
     {
-        if ($request->validatedInput()->has('title')) {
-            $title = $request->validatedInput()->string('title');
+        foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
+            $title = $item->mustString('title');
 
-            if ($title !== null) {
-                [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ['title']));
+            [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ["items.{$index}.title"]));
 
-                if ({{ model }}::query()->whereKeyNot($request->resolve{{ model }}()->getKey())->getQuery()->where('title', $title)->where('user_id', $request->me()->getKey())->exists()) {
-                    $hit();
-                    $request->throwUniqueValidationException(['title']);
-                }
+            if ({{ model }}::query()->whereKeyNot($item->mustInt('id'))->getQuery()->where('title', $title)->exists()) {
+                $hit();
+                $request->throwUniqueValidationException(["items.{$index}.title"]);
             }
         }
     }

@@ -33,8 +33,12 @@ class {{ class }} extends TestCase
         \assert($model instanceof {{ model }} && $newModel instanceof {{ model }});
 
         $data = [
-            'id' => $model->getKey(),
-            'title' => $newModel->getTitle(),
+            'items' => [
+                [
+                    'id' => $model->getKey(),
+                    'title' => $newModel->getTitle(),
+                ],
+            ],
         ];
 
         $response = $this->be($me)->post(resolveUrlFactory()->action({{ updateController }}::class), $data);
@@ -58,8 +62,12 @@ class {{ class }} extends TestCase
         \assert($model instanceof {{ model }});
 
         $data = [
-            'id' => $model->getKey(),
-            'title' => $model->getTitle(),
+            'items' => [
+                [
+                    'id' => $model->getKey(),
+                    'title' => $model->getTitle(),
+                ],
+            ],
         ];
 
         $response = $this->be($me)->post(resolveUrlFactory()->action({{ updateController }}::class), $data);
@@ -84,14 +92,18 @@ class {{ class }} extends TestCase
         \assert($model instanceof {{ model }} && $newModel instanceof {{ model }});
 
         $data = [
-            'id' => $model->getKey(),
-            'title' => $newModel->getTitle(),
+            'items' => [
+                [
+                    'id' => $model->getKey(),
+                    'title' => $newModel->getTitle(),
+                ],
+            ],
         ];
 
         $response = $this->be($me)->post(resolveUrlFactory()->action({{ updateController }}::class), $data);
 
         $response->assertUnprocessable();
 
-        $this->validateJsonApiValidationError($response, ['title']);
+        $this->validateJsonApiValidationError($response, ['items.0.title']);
     }
 }

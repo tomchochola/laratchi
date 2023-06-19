@@ -71,7 +71,7 @@ class {{ class }} extends Pivot
      *
      * @param array<int, int> $ids
      */
-    public static function scopeFirst(Builder $builder, array $ids): void
+    public static function scopeFirstId(Builder $builder, array $ids): void
     {
         $builder->getQuery()->whereIn($builder->qualifyColumn('first_id'), $ids);
     }
@@ -81,7 +81,7 @@ class {{ class }} extends Pivot
      *
      * @param array<int, int> $ids
      */
-    public static function scopeSecond(Builder $builder, array $ids): void
+    public static function scopeSecondId(Builder $builder, array $ids): void
     {
         $builder->getQuery()->whereIn($builder->qualifyColumn('second_id'), $ids);
     }

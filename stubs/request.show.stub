@@ -9,6 +9,7 @@ use {{ namespacedUserModel }};
 use {{ namespacedModel }};
 use Illuminate\Database\Eloquent\Builder;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
+use Tomchochola\Laratchi\Validation\Validity;
 
 class {{ class }} extends SecureFormRequest
 {
@@ -29,21 +30,10 @@ class {{ class }} extends SecureFormRequest
 
         $me = $this->me();
 
-        $callback = static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
-            {{ model }}::scopeUsers($builder, [$me->getKey()]);
-        });
-
         return [
-            'id' => $validity->id()->nullable()->filled()->requiredWithout(['slug'])->missingWith(['slug'])->builderKey($callback),
-            'slug' => $validity->slug()->nullable()->filled()->requiredWithout(['id'])->missingWith(['id'])->builderRouteKey($callback),
+            'id_or_slug' => $validity->idOrSlug()->existingIdOrSlug(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
+                {{ model }}::scopeUserId($builder, [$me->getKey()]);
+            }))->required(),
         ];
-    }
-
-    /**
-     * Resolve {{ model }} from request.
-     */
-    public function resolve{{ model }}(): {{ model }}
-    {
-        return once(fn (): {{ model }} => {{ model }}::mustResolve($this->nullableInteger('id'), $this->nullableVarchar('slug')));
     }
 }

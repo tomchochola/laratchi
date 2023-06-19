@@ -46,15 +46,13 @@ class {{ class }} extends Model
     }
 
     /**
-     * Scope users.
+     * Scope user id.
      *
      * @param array<mixed> $ids
      */
-    public static function scopeUsers(Builder $builder, array $ids): void
+    public static function scopeUserid(Builder $builder, array $ids): void
     {
-        $builder->whereHas('user', static function (Builder $builder) use ($ids): void {
-            $builder->whereKey($ids);
-        });
+        $builder->getQuery()->whereIn($builder->qualifyColumn('user_id'), $ids);
     }
 
     /**

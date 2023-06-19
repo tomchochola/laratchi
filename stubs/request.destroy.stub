@@ -9,6 +9,7 @@ use {{ namespacedUserModel }};
 use {{ namespacedModel }};
 use Illuminate\Database\Eloquent\Builder;
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
+use Tomchochola\Laratchi\Validation\Validity;
 
 class {{ class }} extends SecureFormRequest
 {
@@ -30,17 +31,11 @@ class {{ class }} extends SecureFormRequest
         $me = $this->me();
 
         return [
-            'id' => $validity->id()->builderKey(static fn (): Builder => {{ model }}::query()->tap(function (Builder $builder) use ($me): void {
-                {{ model }}::scopeUsers($builder, [$me->getKey()]);
-            }))->required(),
+            'items' => Validity::make()->collection(null)->required(),
+            'items.*' => Validity::make()->object(['id'])->required(),
+            'items.*.id' => $validity->id()->existingId(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
+                {{ model }}::scopeUserId($builder, [$me->getKey()]);
+            }))->distinct()->required(),
         ];
-    }
-
-    /**
-     * Resolve {{ model }} from request.
-     */
-    public function resolve{{ model }}(): {{ model }}
-    {
-        return once(fn (): {{ model }} => {{ model }}::mustResolve($this->integer('id')));
     }
 }

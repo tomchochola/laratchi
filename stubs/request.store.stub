@@ -7,6 +7,7 @@ namespace {{ namespace }};
 use {{ namespacedValidity }};
 use {{ namespacedUserModel }};
 use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
+use Tomchochola\Laratchi\Validation\Validity;
 
 class {{ class }} extends SecureFormRequest
 {
@@ -28,7 +29,9 @@ class {{ class }} extends SecureFormRequest
         $me = $this->me();
 
         return [
-            'title' => $validity->title()->required(),
+            'items' => Validity::make()->collection(null)->required(),
+            'items.*' => Validity::make()->object(['title'])->required(),
+            'items.*.title' => $validity->title()->distinct()->required(),
         ];
     }
 }

@@ -29,6 +29,6 @@ class {{ class }} extends SecureFormRequest
      */
     public function rules(): array
     {
-        return $this->mergeRules([], filter: true, filterId: true, filterNotId: true, filterSearch: true, take: static::TAKE_MAX, select: true, count: true, sort: static::SORTS, page: true);
+        return $this->mergeRules([], filter: true, filterIdOrSlug: true, filterNotIdOrSlug: true, filterSearch: true, take: static::TAKE_MAX, select: true, count: true, sort: static::SORTS, page: true);
     }
 }

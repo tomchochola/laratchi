@@ -24,9 +24,9 @@ class {{ class }} extends Controller
 
         $this->select($builder, $request);
         $this->filterSearch($builder, $request);
-        $this->filterId($builder, $request);
-        $this->filterNotId($builder, $request);
-        $this->filterMe($builder, $request);
+        $this->filterIdOrSlug($builder, $request);
+        $this->filterNotIdOrSlug($builder, $request);
+        $this->filterUserId($builder, $request);
         $this->sort($builder, $request);
 
         if ($request->validatedInput()->mustBool('count', false)) {
@@ -73,35 +73,35 @@ class {{ class }} extends Controller
     }
 
     /**
-     * Filter by id.
+     * Filter by id or slug.
      */
-    protected function filterId(Builder $builder, {{ indexRequest }} $request): void
+    protected function filterIdOrSlug(Builder $builder, {{ indexRequest }} $request): void
     {
-        if ($request->validatedInput()->missing('filter.id')) {
+        if ($request->validatedInput()->missing('filter.id_or_slug')) {
             return;
         }
 
-        {{ model }}::scopeKeys($builder, $request->validatedInput()->mustArray('filter.id', []));
+        {{ model }}::scopeIdOrSlug($builder, $request->validatedInput()->mustArray('filter.id_or_slug', []));
     }
 
     /**
-     * Filter by not id.
+     * Filter by not id or slug.
      */
-    protected function filterNotId(Builder $builder, {{ indexRequest }} $request): void
+    protected function filterNotIdOrSlug(Builder $builder, {{ indexRequest }} $request): void
     {
-        if ($request->validatedInput()->missing('filter.not_id')) {
+        if ($request->validatedInput()->missing('filter.not_id_or_slug')) {
             return;
         }
 
-        {{ model }}::scopeNotKeys($builder, $request->validatedInput()->mustArray('filter.not_id', []));
+        {{ model }}::scopeNotIdOrSlug($builder, $request->validatedInput()->mustArray('filter.not_id_or_slug', []));
     }
 
     /**
-     * Filter by me.
+     * Filter by user id.
      */
-    protected function filterMe(Builder $builder, {{ indexRequest }} $request): void
+    protected function filterUserId(Builder $builder, {{ indexRequest }} $request): void
     {
-        {{ model }}::scopeUsers($builder, [$request->me()->getKey()]);
+        {{ model }}::scopeUserId($builder, [$request->me()->getKey()]);
     }
 
     /**

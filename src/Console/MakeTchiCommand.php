@@ -237,10 +237,10 @@ class MakeTchiCommand extends GeneratorCommand
                         ],
                     ],
                     [
-                        '$ref' => '#/components/parameters/filterId',
+                        '$ref' => '#/components/parameters/filterIdOrSlug',
                     ],
                     [
-                        '$ref' => '#/components/parameters/filterNotId',
+                        '$ref' => '#/components/parameters/filterNotIdOrSlug',
                     ],
                     [
                         '$ref' => '#/components/parameters/filterSearch',
@@ -363,10 +363,7 @@ class MakeTchiCommand extends GeneratorCommand
                 'operationId' => "get_{$table}_show",
                 'parameters' => [
                     [
-                        '$ref' => '#/components/parameters/slug',
-                    ],
-                    [
-                        '$ref' => '#/components/parameters/id',
+                        '$ref' => '#/components/parameters/idOrSlug',
                     ],
                 ],
                 'responses' => [
@@ -440,10 +437,21 @@ class MakeTchiCommand extends GeneratorCommand
                             'schema' => [
                                 'description' => 'request data',
                                 'type' => 'object',
-                                'required' => ['title'],
+                                'required' => ['items'],
                                 'properties' => [
-                                    'title' => [
-                                        '$ref' => '#/components/schemas/varchar',
+                                    'items' => [
+                                        'description' => 'items',
+                                        'type' => 'array',
+                                        'items' => [
+                                            'description' => 'item',
+                                            'type' => 'object',
+                                            'required' => ['title'],
+                                            'properties' => [
+                                                'title' => [
+                                                    '$ref' => '#/components/schemas/varchar',
+                                                ],
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],
@@ -452,7 +460,7 @@ class MakeTchiCommand extends GeneratorCommand
                 ],
                 'responses' => [
                     '200' => [
-                        '$ref' => '#/components/responses/Resource',
+                        '$ref' => '#/components/responses/Resources',
                     ],
                     '401' => [
                         '$ref' => '#/components/responses/401',
@@ -477,13 +485,24 @@ class MakeTchiCommand extends GeneratorCommand
                             'schema' => [
                                 'description' => 'request data',
                                 'type' => 'object',
-                                'required' => ['id'],
+                                'required' => ['items'],
                                 'properties' => [
-                                    'id' => [
-                                        '$ref' => '#/components/schemas/id',
-                                    ],
-                                    'title' => [
-                                        '$ref' => '#/components/schemas/varchar',
+                                    'items' => [
+                                        'description' => 'items',
+                                        'type' => 'array',
+                                        'items' => [
+                                            'description' => 'item',
+                                            'type' => 'object',
+                                            'required' => ['id', 'title'],
+                                            'properties' => [
+                                                'id' => [
+                                                    '$ref' => '#/components/schemas/id',
+                                                ],
+                                                'title' => [
+                                                    '$ref' => '#/components/schemas/varchar',
+                                                ],
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],
@@ -517,10 +536,21 @@ class MakeTchiCommand extends GeneratorCommand
                             'schema' => [
                                 'description' => 'request data',
                                 'type' => 'object',
-                                'required' => ['id'],
+                                'required' => ['items'],
                                 'properties' => [
-                                    'id' => [
-                                        '$ref' => '#/components/schemas/id',
+                                    'items' => [
+                                        'description' => 'items',
+                                        'type' => 'array',
+                                        'items' => [
+                                            'description' => 'item',
+                                            'type' => 'object',
+                                            'required' => ['id'],
+                                            'properties' => [
+                                                'id' => [
+                                                    '$ref' => '#/components/schemas/id',
+                                                ],
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],
@@ -574,6 +604,46 @@ class MakeTchiCommand extends GeneratorCommand
                 ],
             ],
         ];
+
+        if (! isset($json['components']['parameters']['filterIdOrSlug'])) {
+            $json['components']['parameters']['filterIdOrSlug'] = [
+                'description' => 'id or slug filter',
+                'in' => 'query',
+                'name' => 'filter[id_or_slug][]',
+                'schema' => [
+                    'description' => 'id or slug',
+                    'type' => 'array',
+                    'items' => [
+                        '$ref' => '#/components/schemas/idOrSlug',
+                    ],
+                ],
+            ];
+        }
+
+        if (! isset($json['components']['parameters']['filterNotIdOrSlug'])) {
+            $json['components']['parameters']['filterNotIdOrSlug'] = [
+                'description' => 'not id or slug filter',
+                'in' => 'query',
+                'name' => 'filter[not_id_or_slug][]',
+                'schema' => [
+                    'description' => 'not id or slug',
+                    'type' => 'array',
+                    'items' => [
+                        '$ref' => '#/components/schemas/idOrSlug',
+                    ],
+                ],
+            ];
+        }
+
+        if (! isset($json['components']['schemas']['idOrSlug'])) {
+            $json['components']['schemas']['idOrSlug'] = [
+                'description' => 'id or slug',
+                'type' => 'string',
+                'format' => 'identifier',
+                'minLength' => 1,
+                'maxLength' => 255,
+            ];
+        }
 
         $json = \json_encode($json, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE);
 

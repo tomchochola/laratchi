@@ -6,9 +6,13 @@ namespace {{ namespace }};
 
 use {{ namespacedStoreRequest }};
 use {{ namespacedModel }};
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
+use Tomchochola\Laratchi\Http\JsonApi\JsonApiResourceCollection;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Routing\TransactionController;
+use Tomchochola\Laratchi\Validation\ValidatedInput;
 
 class {{ class }} extends TransactionController
 {
@@ -17,26 +21,32 @@ class {{ class }} extends TransactionController
      */
     public function __invoke({{ storeRequest }} $request): SymfonyResponse
     {
+        $me = $request->me();
+
         $this->validateUnique($request);
 
-        $model = {{ model }}::create($request->validatedInput()->merge(['user_id' => $request->me()->getKey()])->only(['title', 'user_id']));
+        $collection = new Collection();
 
-        return (new ModelResource($model))->response();
+        foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
+            $collection->push({{ model }}::create($item->merge(['user_id' => $me->getKey()])->only(['title', 'user_id'])));
+        }
+
+        return (new JsonApiResourceCollection($collection, static fn ({{ model }} $model): JsonApiResource => new ModelResource($model)))->response();
     }
 
     /**
      * Validate given data is unique.
      */
-    protected function validateUnique({{ storeRequest }} $request): void
+    protected function validateUnique({{ storeRequest }} $request, ValidatedInput $item, int $index): void
     {
-        $title = $request->validatedInput()->string('title');
+        foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
+            $title = $item->mustString('title');
 
-        if ($title !== null) {
-            [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ['title']));
+            [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ["items.{$index}.title"]));
 
-            if ({{ model }}::query()->getQuery()->where('title', $title)->where('user_id', $request->me()->getKey())->exists()) {
+            if ({{ model }}::query()->getQuery()->where('title', $title)->exists()) {
                 $hit();
-                $request->throwUniqueValidationException(['title']);
+                $request->throwUniqueValidationException(["items.{$index}.title"]);
             }
         }
     }

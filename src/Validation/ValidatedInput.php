@@ -333,4 +333,60 @@ class ValidatedInput extends IlluminateValidatedInput
     {
         return $this->get($key) !== null;
     }
+
+    /**
+     * String or int resolver.
+     */
+    public function stringOrInt(string $key, string|int|null $default = null): string|int|null
+    {
+        $value = $this->get($key, $default);
+
+        if ($value === null || \is_string($value) || \is_int($value)) {
+            return $value;
+        }
+
+        $filtered = \filter_var($value, \FILTER_VALIDATE_INT);
+
+        if ($filtered !== false) {
+            return $filtered;
+        }
+
+        $filtered = \filter_var($value);
+
+        if ($filtered === false) {
+            throw new LogicException("[{$key}] is not string or int or null");
+        }
+
+        return $filtered;
+    }
+
+    /**
+     * Mandatory string or int resolver.
+     */
+    public function mustStringOrInt(string $key, string|int|null $default = null): string|int
+    {
+        $value = $this->stringOrInt($key, $default);
+
+        if ($value === null) {
+            throw new LogicException("[{$key}] is not string or int");
+        }
+
+        return $value;
+    }
+
+    /**
+     * Int or string resolver.
+     */
+    public function intOrString(string $key, string|int|null $default = null): string|int|null
+    {
+        return $this->stringOrInt($key, $default);
+    }
+
+    /**
+     * Mandatory int or string resolver..
+     */
+    public function mustIntOrString(string $key, string|int|null $default = null): string|int
+    {
+        return $this->mustStringOrInt($key, $default);
+    }
 }

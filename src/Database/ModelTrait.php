@@ -36,13 +36,13 @@ trait ModelTrait
      */
     public static function findByKey(int $key, ?Closure $closure = null): ?static
     {
-        $builder = static::query();
+        $builder = static::query()->whereKey($key);
 
         if ($closure !== null) {
             $builder = $builder->tap($closure);
         }
 
-        $instance = $builder->find($key);
+        $instance = $builder->first();
 
         if ($instance === null) {
             return null;
@@ -59,7 +59,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustFindByKey(int $key, ?Closure $closure, ?Closure $onError = null): static
+    public static function mustFindByKey(int $key, ?Closure $closure = null, ?Closure $onError = null): static
     {
         $instance = static::findByKey($key, $closure);
 
@@ -83,7 +83,9 @@ trait ModelTrait
     {
         $qualifier = new static();
 
-        $builder = static::query()->where($qualifier->getQualifiedRouteKeyName(), $key);
+        $builder = static::query();
+
+        $builder->getQuery()->where($qualifier->getQualifiedRouteKeyName(), $key);
 
         if ($closure !== null) {
             $builder = $builder->tap($closure);
@@ -102,7 +104,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustFindByRouteKey(string $key, ?Closure $closure, ?Closure $onError = null): static
+    public static function mustFindByRouteKey(string $key, ?Closure $closure = null, ?Closure $onError = null): static
     {
         $instance = static::findByRouteKey($key, $closure);
 
@@ -280,6 +282,198 @@ trait ModelTrait
         $qualifier = new static();
 
         $builder->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $slugs);
+    }
+
+    /**
+     * Scope by id or slug.
+     *
+     * @param array<mixed> $values
+     */
+    public static function scopeIdOrSlug(Builder $builder, array $values): void
+    {
+        $qualifier = new static();
+
+        $builder->where(static function (Builder $builder) use ($values, $qualifier): void {
+            $builder->whereKey($values)->getQuery()->orWhereIn($qualifier->getQualifiedRouteKeyName(), $values);
+        });
+    }
+
+    /**
+     * Scope by not id or slug.
+     *
+     * @param array<mixed> $values
+     */
+    public static function scopeNotIdOrSlug(Builder $builder, array $values): void
+    {
+        $qualifier = new static();
+
+        $builder->where(static function (Builder $builder) use ($values, $qualifier): void {
+            $builder->whereKeyNot($values)->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $values);
+        });
+    }
+
+    /**
+     * Find instance by id.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     */
+    public static function findById(int $key, ?Closure $closure = null): ?static
+    {
+        return static::findByKey($key, $closure);
+    }
+
+    /**
+     * Mandatory find instance by key.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     * @param ?Closure(): never $onError
+     */
+    public static function mustFindById(int $key, ?Closure $closure = null, ?Closure $onError = null): static
+    {
+        return static::mustFindByKey($key, $closure, $onError);
+    }
+
+    /**
+     * Find instance by slug.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     */
+    public static function findBySlug(string $key, ?Closure $closure = null): ?static
+    {
+        return static::findByRouteKey($key, $closure);
+    }
+
+    /**
+     * Mandatory find instance by slug.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     * @param ?Closure(): never $onError
+     */
+    public static function mustFindBySlug(string $key, ?Closure $closure = null, ?Closure $onError = null): static
+    {
+        return static::mustFindByRouteKey($key, $closure, $onError);
+    }
+
+    /**
+     * Find instance by id or slug.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     */
+    public static function findByIdOrSlug(int|string $value, ?Closure $closure = null): ?static
+    {
+        $qualifier = new static();
+
+        $builder = static::query()->tap(static function (Builder $builder) use ($value, $qualifier): void {
+            $builder->whereKey($value)->getQuery()->orWhere($qualifier->getQualifiedRouteKeyName(), $value);
+        });
+
+        if ($closure !== null) {
+            $builder = $builder->tap($closure);
+        }
+
+        $instance = $builder->first();
+
+        \assert($instance === null || $instance instanceof static);
+
+        return $instance;
+    }
+
+    /**
+     * Mandatory find instance by id or slug.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     * @param ?Closure(): never $onError
+     */
+    public static function mustFindByIdOrSlug(int|string $value, ?Closure $closure = null, ?Closure $onError = null): static
+    {
+        $instance = static::findByIdOrSlug($value, $closure);
+
+        if ($instance === null) {
+            if ($onError !== null) {
+                $onError();
+            }
+
+            throw new RuntimeException('Instance not found.');
+        }
+
+        return $instance;
+    }
+
+    /**
+     * Find all by key.
+     *
+     * @param array<mixed> $values
+     * @param (Closure(Builder): void)|null $closure
+     *
+     * @return Collection<array-key, static>
+     */
+    public static function allById(array $values, ?Closure $closure = null): Collection
+    {
+        $builder = static::query()->whereKey($values);
+
+        if ($closure !== null) {
+            $builder = $builder->tap($closure);
+        }
+
+        $instances = $builder->get();
+
+        \assert($instances instanceof Collection);
+
+        return $instances;
+    }
+
+    /**
+     * Find all by slug.
+     *
+     * @param array<mixed> $values
+     * @param (Closure(Builder): void)|null $closure
+     *
+     * @return Collection<array-key, static>
+     */
+    public static function allBySlug(array $values, ?Closure $closure = null): Collection
+    {
+        $qualifier = new static();
+
+        $builder = static::query();
+
+        $builder->getQuery()->whereIn($qualifier->getQualifiedRouteKeyName(), $values);
+
+        if ($closure !== null) {
+            $builder = $builder->tap($closure);
+        }
+
+        $instances = $builder->get();
+
+        \assert($instances instanceof Collection);
+
+        return $instances;
+    }
+
+    /**
+     * Find all by id or slug.
+     *
+     * @param array<mixed> $values
+     * @param (Closure(Builder): void)|null $closure
+     *
+     * @return Collection<array-key, static>
+     */
+    public static function allByIdOrSlug(array $values, ?Closure $closure = null): Collection
+    {
+        $qualifier = new static();
+
+        $builder = static::query()->where(static function (Builder $builder) use ($values, $qualifier): void {
+            $builder->whereKey($values)->getQuery()->orWhereIn($qualifier->getQualifiedRouteKeyName(), $values);
+        });
+
+        if ($closure !== null) {
+            $builder = $builder->tap($closure);
+        }
+
+        $instances = $builder->get();
+
+        \assert($instances instanceof Collection);
+
+        return $instances;
     }
 
     /**

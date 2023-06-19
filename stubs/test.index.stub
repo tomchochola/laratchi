@@ -36,8 +36,8 @@ class {{ class }} extends TestCase
 
         $query = [
             'filter' => [
-                'id' => [$model->getKey()],
-                'not_id' => [0],
+                'id_or_slug' => [fake()->randomElement([$model->getKey(), $model->getRouteKey()])],
+                'not_id_or_slug' => [0],
                 'search' => $model->getTitle(),
             ],
             'take' => {{ indexRequest }}::TAKE_MAX,
@@ -69,8 +69,8 @@ class {{ class }} extends TestCase
 
         $query = [
             'filter' => [
-                'id' => [$model->getKey()],
-                'not_id' => [0],
+                'id_or_slug' => [fake()->randomElement([$model->getKey(), $model->getRouteKey()])],
+                'not_id_or_slug' => [0],
                 'search' => $model->getTitle(),
             ],
             'take' => {{ indexRequest }}::TAKE_MAX,
@@ -103,8 +103,8 @@ class {{ class }} extends TestCase
 
             $query = [
                 'filter' => [
-                    'id' => [$model->getKey()],
-                    'not_id' => [0],
+                    'id_or_slug' => [fake()->randomElement([$model->getKey(), $model->getRouteKey()])],
+                    'not_id_or_slug' => [0],
                     'search' => $model->getTitle(),
                 ],
                 'count' => true,

@@ -3073,6 +3073,216 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Add builder id rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function builderId(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        return $this->builderKey($callback, $each, $message);
+    }
+
+    /**
+     * Add not builder id rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function notBuilderId(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        return $this->notBuilderKey($callback, $each, $message);
+    }
+
+    /**
+     * Add builder slug rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function builderSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        return $this->builderRouteKey($callback, $each, $message);
+    }
+
+    /**
+     * Add not builder slug rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function notBuilderSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        return $this->notBuilderRouteKey($callback, $each, $message);
+    }
+
+    /**
+     * Add existing id rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function existingId(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        return $this->builderKey($callback, $each, $message);
+    }
+
+    /**
+     * Add not existing id rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function notExistingId(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        return $this->notBuilderKey($callback, $each, $message);
+    }
+
+    /**
+     * Add existing slug rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function existingSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        return $this->builderRouteKey($callback, $each, $message);
+    }
+
+    /**
+     * Add not existing slug rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function notExistingSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        return $this->notBuilderRouteKey($callback, $each, $message);
+    }
+
+    /**
+     * Add existing id or slug rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function existingIdOrSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
+            $builder = $callback($value, $attribute);
+
+            $model = $builder->getModel();
+
+            \assert($model instanceof Model);
+
+            if ($each === null) {
+                return $builder->where(static function (Builder $builder) use ($value, $model): void {
+                    $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
+                })->toBase()->exists();
+            }
+
+            $model = $builder->where(static function (Builder $builder) use ($value, $model): void {
+                $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
+            })->first();
+
+            if ($model === null) {
+                return false;
+            }
+
+            \assert($model instanceof Model);
+
+            return $each($model, $value, $attribute);
+        }, $message));
+    }
+
+    /**
+     * Add not existing id or slug rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     *
+     * @return $this
+     */
+    public function notExistingIdOrSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
+            $builder = $callback($value, $attribute);
+
+            $model = $builder->getModel();
+
+            \assert($model instanceof Model);
+
+            if ($each === null) {
+                return ! $builder->where(static function (Builder $builder) use ($value, $model): void {
+                    $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
+                })->toBase()->exists();
+            }
+
+            $model = $builder->where(static function (Builder $builder) use ($value, $model): void {
+                $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
+            })->first();
+
+            if ($model === null) {
+                return true;
+            }
+
+            \assert($model instanceof Model);
+
+            return ! $each($model, $value, $attribute);
+        }, $message));
+    }
+
+    /**
      * Id rules.
      *
      * @return $this
@@ -3094,6 +3304,22 @@ class Validity implements ArrayableContract
      * @return $this
      */
     public function slug(): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->varchar();
+    }
+
+    /**
+     * Id or slug rules.
+     *
+     * @return $this
+     */
+    public function idOrSlug(): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;

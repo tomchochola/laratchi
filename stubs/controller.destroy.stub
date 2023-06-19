@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use {{ namespacedDestroyRequest }};
+use {{ namespacedModel }};
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
@@ -15,9 +16,11 @@ class {{ class }} extends TransactionController
      */
     public function __invoke({{ destroyRequest }} $request): SymfonyResponse
     {
-        $model = $request->resolve{{ model }}();
+        $me = $request->me();
 
-        $model->delete();
+        foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
+            {{ model }}::mustFindById($item->mustInt('id'))->delete();
+        }
 
         return resolveResponseFactory()->noContent();
     }

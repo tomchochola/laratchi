@@ -25,6 +25,14 @@ class {{ class }}
     }
 
     /**
+     * Id or slug validation rules.
+     */
+    public function idOrSlug(): Validity
+    {
+        return Validity::make()->slug();
+    }
+
+    /**
      * Title validation rules.
      */
     public function title(): Validity

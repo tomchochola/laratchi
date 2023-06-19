@@ -32,7 +32,11 @@ class {{ class }} extends TestCase
         \assert($model instanceof {{ model }});
 
         $data = [
-            'title' => $model->getTitle(),
+            'items' => [
+                [
+                    'title' => $model->getTitle(),
+                ],
+            ],
         ];
 
         $response = $this->be($me)->post(resolveUrlFactory()->action({{ storeController }}::class), $data);
@@ -58,13 +62,17 @@ class {{ class }} extends TestCase
         \assert($model instanceof {{ model }});
 
         $data = [
-            'title' => $model->getTitle(),
+            'items' => [
+                [
+                    'title' => $model->getTitle(),
+                ],
+            ],
         ];
 
         $response = $this->be($me)->post(resolveUrlFactory()->action({{ storeController }}::class), $data);
 
         $response->assertUnprocessable();
 
-        $this->validateJsonApiValidationError($response, ['title']);
+        $this->validateJsonApiValidationError($response, ['items.0.title']);
     }
 }

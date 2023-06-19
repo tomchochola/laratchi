@@ -18,7 +18,9 @@ class {{ class }} extends Controller
      */
     public function __invoke({{ showRequest }} $request): SymfonyResponse
     {
-        $model = $request->resolve{{ model }}()->clean(static function (Builder $builder) use ($request): void {
+        $me = $request->me();
+
+        $model = {{ model }}::mustFindByIdOrSlug($request->validatedInput()->mustIntOrString('id_or_slug'), static function (Builder $builder) use ($request): void {
             $builder->getQuery()->select($builder->qualifyColumns(['*']));
         });
 
