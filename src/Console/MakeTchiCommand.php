@@ -645,6 +645,17 @@ class MakeTchiCommand extends GeneratorCommand
             ];
         }
 
+        if (! isset($json['components']['parameters']['idOrSlug'])) {
+            $json['components']['parameters']['idOrSlug'] = [
+                'description' => 'id or slug',
+                'in' => 'query',
+                'name' => 'id_or_slug',
+                'schema' => [
+                    '$ref' => '#/components/schemas/idOrSlug',
+                ],
+            ];
+        }
+
         $json = \json_encode($json, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE);
 
         \assert(\is_string($json));

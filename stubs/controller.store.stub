@@ -38,7 +38,7 @@ class {{ class }} extends TransactionController
      */
     protected function validateUnique({{ storeRequest }} $request): void
     {
-        foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
+        foreach ($request->validatedInput()->validatedInputs('items', []) as $index => $item) {
             $title = $item->mustString('title');
 
             [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ["items.{$index}.title"]));

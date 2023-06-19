@@ -33,7 +33,7 @@ class {{ class }} extends SecureFormRequest
         return [
             'items' => Validity::make()->collection(null)->required(),
             'items.*' => Validity::make()->object(['id'])->required(),
-            'items.*.id' => $validity->id()->existingId(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
+            'items.*.id' => Validity::make()->id()->existingId(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
                 {{ model }}::scopeUserId($builder, [$me->getKey()]);
             }))->distinct()->required(),
         ];
