@@ -13,6 +13,7 @@ use {{ namespacedUserModelFactory }};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tomchochola\Laratchi\Testing\JsonApiValidator;
+use Tomchochola\Laratchi\Validation\Validity;
 
 class {{ class }} extends TestCase
 {
@@ -53,7 +54,7 @@ class {{ class }} extends TestCase
 
         return $this->structure('{{ table }}', [
             'title' => $validity->title()->required(),
-            'created_at' => $validity->createdAt()->required(),
+            'created_at' => Validity::make()->dateTime()->required(),
             'updated_at' => $validity->updatedAt()->required(),
         ]);
     }
