@@ -17,6 +17,8 @@ use Illuminate\Validation\Rules\ProhibitedIf;
 use Illuminate\Validation\Rules\RequiredIf;
 use Tomchochola\Laratchi\Validation\Rules\CallbackRule;
 use Tomchochola\Laratchi\Validation\Rules\CursorRule;
+use Tomchochola\Laratchi\Validation\Rules\NullableVoidRule;
+use Tomchochola\Laratchi\Validation\Rules\VoidRule;
 
 /**
  * @implements ArrayableContract<int, mixed>
@@ -2880,6 +2882,42 @@ class Validity implements ArrayableContract
         }
 
         return $this->addRule(new CallbackRule($callback, $message));
+    }
+
+    /**
+     * Add void rule.
+     *
+     * @param Closure(mixed, mixed=): void $callback
+     *
+     * @return $this
+     */
+    public function void(Closure $callback): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new VoidRule($callback));
+    }
+
+    /**
+     * Add nullable void rule.
+     *
+     * @param Closure(mixed, mixed=): void $callback
+     *
+     * @return $this
+     */
+    public function nullableVoid(Closure $callback): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new NullableVoidRule($callback));
     }
 
     /**
