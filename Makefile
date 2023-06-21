@@ -6,7 +6,7 @@ MAKE_PHP_8_1_BIN ?= php8.1
 MAKE_COMPOSER_2_BIN ?= /usr/local/bin/composer2
 
 MAKE_PHP ?= ${MAKE_PHP_8_1_BIN}
-MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_2_BIN}
+MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_2_BIN} -n
 
 # Default goal
 .DEFAULT_GOAL := assert-never
@@ -23,13 +23,13 @@ audit: vendor tools
 lint: vendor tools
 	tools/prettier/node_modules/.bin/prettier --ignore-path .gitignore -c . '!**/*.svg'
 	${MAKE_COMPOSER} validate --strict
-	${MAKE_PHP} tools/phpstan/vendor/bin/phpstan analyse
-	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
+	${MAKE_PHP} tools/phpstan/vendor/bin/phpstan analyse --no-progress -n
+	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff -n
 
 .PHONY: fix
 fix: vendor tools
 	tools/prettier/node_modules/.bin/prettier --ignore-path .gitignore -w . '!**/*.svg'
-	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
+	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix -n
 
 .PHONY: clean-composer
 clean-composer:
@@ -37,7 +37,7 @@ clean-composer:
 
 .PHONY: update-composer
 update-composer: clean-composer
-	${MAKE_COMPOSER} update -o
+	${MAKE_COMPOSER} update -o --no-progress
 
 .PHONY: clean-tools
 clean-tools:
@@ -60,13 +60,13 @@ clean: clean-tools clean-composer clean-npm
 tools: tools/prettier/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer
 
 tools/prettier/node_modules/.bin/prettier:
-	npm --prefix=tools/prettier update
+	npm --prefix=tools/prettier update --no-progress
 
 vendor:
-	${MAKE_COMPOSER} update -o
+	${MAKE_COMPOSER} update -o --no-progress
 
 tools/phpstan/vendor/bin/phpstan:
-	${MAKE_COMPOSER} --working-dir=tools/phpstan update -o
+	${MAKE_COMPOSER} --working-dir=tools/phpstan update -o --no-progress
 
 tools/php-cs-fixer/vendor/bin/php-cs-fixer:
-	${MAKE_COMPOSER} --working-dir=tools/php-cs-fixer update -o
+	${MAKE_COMPOSER} --working-dir=tools/php-cs-fixer update -o --no-progress
