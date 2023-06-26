@@ -3231,7 +3231,7 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add existing id or slug rule.
+     * Add existing id/slug rule.
      *
      * @template T of Builder
      *
@@ -3240,7 +3240,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function existingIdOrSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function existingIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3276,7 +3276,7 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add not existing id or slug rule.
+     * Add not existing id/slug rule.
      *
      * @template T of Builder
      *
@@ -3285,7 +3285,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notExistingIdOrSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function notExistingIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3353,11 +3353,11 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Id or slug rules.
+     * Id slug rules.
      *
      * @return $this
      */
-    public function idOrSlug(): static
+    public function idSlug(): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;

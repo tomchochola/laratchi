@@ -24,8 +24,8 @@ class {{ class }} extends Controller
 
         $this->select($builder, $request);
         $this->filterSearch($builder, $request);
-        $this->filterIdOrSlug($builder, $request);
-        $this->filterNotIdOrSlug($builder, $request);
+        $this->filterIdSlug($builder, $request);
+        $this->filterNotIdSlug($builder, $request);
         $this->filterUserId($builder, $request);
         $this->sort($builder, $request);
 
@@ -73,27 +73,27 @@ class {{ class }} extends Controller
     }
 
     /**
-     * Filter by id or slug.
+     * Filter by id/slug.
      */
-    protected function filterIdOrSlug(Builder $builder, {{ indexRequest }} $request): void
+    protected function filterIdSlug(Builder $builder, {{ indexRequest }} $request): void
     {
-        if ($request->validatedInput()->missing('filter.id_or_slug')) {
+        if ($request->validatedInput()->missing('filter.id_slug')) {
             return;
         }
 
-        {{ model }}::scopeIdOrSlug($builder, $request->validatedInput()->mustArray('filter.id_or_slug', []));
+        {{ model }}::scopeIdSlug($builder, $request->validatedInput()->mustArray('filter.id_slug', []));
     }
 
     /**
-     * Filter by not id or slug.
+     * Filter by not id/slug.
      */
-    protected function filterNotIdOrSlug(Builder $builder, {{ indexRequest }} $request): void
+    protected function filterNotIdSlug(Builder $builder, {{ indexRequest }} $request): void
     {
-        if ($request->validatedInput()->missing('filter.not_id_or_slug')) {
+        if ($request->validatedInput()->missing('filter.not_id_slug')) {
             return;
         }
 
-        {{ model }}::scopeNotIdOrSlug($builder, $request->validatedInput()->mustArray('filter.not_id_or_slug', []));
+        {{ model }}::scopeNotIdSlug($builder, $request->validatedInput()->mustArray('filter.not_id_slug', []));
     }
 
     /**

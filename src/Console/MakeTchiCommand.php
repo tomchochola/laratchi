@@ -237,10 +237,10 @@ class MakeTchiCommand extends GeneratorCommand
                         ],
                     ],
                     [
-                        '$ref' => '#/components/parameters/filterIdOrSlug',
+                        '$ref' => '#/components/parameters/filterIdSlug',
                     ],
                     [
-                        '$ref' => '#/components/parameters/filterNotIdOrSlug',
+                        '$ref' => '#/components/parameters/filterNotIdSlug',
                     ],
                     [
                         '$ref' => '#/components/parameters/filterSearch',
@@ -363,7 +363,7 @@ class MakeTchiCommand extends GeneratorCommand
                 'operationId' => "get_{$table}_show",
                 'parameters' => [
                     [
-                        '$ref' => '#/components/parameters/idOrSlug',
+                        '$ref' => '#/components/parameters/idSlug',
                     ],
                 ],
                 'responses' => [
@@ -605,39 +605,39 @@ class MakeTchiCommand extends GeneratorCommand
             ],
         ];
 
-        if (! isset($json['components']['parameters']['filterIdOrSlug'])) {
-            $json['components']['parameters']['filterIdOrSlug'] = [
-                'description' => 'id or slug filter',
+        if (! isset($json['components']['parameters']['filterIdSlug'])) {
+            $json['components']['parameters']['filterIdSlug'] = [
+                'description' => 'id/slug filter',
                 'in' => 'query',
-                'name' => 'filter[id_or_slug][]',
+                'name' => 'filter[id_slug][]',
                 'schema' => [
-                    'description' => 'id or slug',
+                    'description' => 'id/slug',
                     'type' => 'array',
                     'items' => [
-                        '$ref' => '#/components/schemas/idOrSlug',
+                        '$ref' => '#/components/schemas/idSlug',
                     ],
                 ],
             ];
         }
 
-        if (! isset($json['components']['parameters']['filterNotIdOrSlug'])) {
-            $json['components']['parameters']['filterNotIdOrSlug'] = [
-                'description' => 'not id or slug filter',
+        if (! isset($json['components']['parameters']['filterNotIdSlug'])) {
+            $json['components']['parameters']['filterNotIdSlug'] = [
+                'description' => 'not id/slug filter',
                 'in' => 'query',
-                'name' => 'filter[not_id_or_slug][]',
+                'name' => 'filter[not_id_slug][]',
                 'schema' => [
-                    'description' => 'not id or slug',
+                    'description' => 'not id/slug',
                     'type' => 'array',
                     'items' => [
-                        '$ref' => '#/components/schemas/idOrSlug',
+                        '$ref' => '#/components/schemas/idSlug',
                     ],
                 ],
             ];
         }
 
-        if (! isset($json['components']['schemas']['idOrSlug'])) {
-            $json['components']['schemas']['idOrSlug'] = [
-                'description' => 'id or slug',
+        if (! isset($json['components']['schemas']['idSlug'])) {
+            $json['components']['schemas']['idSlug'] = [
+                'description' => 'id/slug',
                 'type' => 'string',
                 'format' => 'identifier',
                 'minLength' => 1,
@@ -645,13 +645,13 @@ class MakeTchiCommand extends GeneratorCommand
             ];
         }
 
-        if (! isset($json['components']['parameters']['idOrSlug'])) {
-            $json['components']['parameters']['idOrSlug'] = [
-                'description' => 'id or slug',
+        if (! isset($json['components']['parameters']['idSlug'])) {
+            $json['components']['parameters']['idSlug'] = [
+                'description' => 'id/slug',
                 'in' => 'query',
-                'name' => 'id_or_slug',
+                'name' => 'id_slug',
                 'schema' => [
-                    '$ref' => '#/components/schemas/idOrSlug',
+                    '$ref' => '#/components/schemas/idSlug',
                 ],
             ];
         }

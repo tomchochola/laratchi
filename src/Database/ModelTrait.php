@@ -285,31 +285,43 @@ trait ModelTrait
     }
 
     /**
-     * Scope by id or slug.
+     * Scope by id/slug.
      *
      * @param array<mixed> $values
      */
-    public static function scopeIdOrSlug(Builder $builder, array $values): void
+    public static function scopeIdSlug(Builder $builder, array $values, ?bool $preferId = null): void
     {
         $qualifier = new static();
 
-        $builder->where(static function (Builder $builder) use ($values, $qualifier): void {
-            $builder->whereKey($values)->getQuery()->orWhereIn($qualifier->getQualifiedRouteKeyName(), $values);
-        });
+        if ($preferId === null) {
+            $builder->where(static function (Builder $builder) use ($values, $qualifier): void {
+                $builder->whereKey($values)->getQuery()->orWhereIn($qualifier->getQualifiedRouteKeyName(), $values);
+            });
+        } elseif ($preferId) {
+            $builder->whereKey($values);
+        } else {
+            $builder->getQuery()->whereIn($qualifier->getQualifiedRouteKeyName(), $values);
+        }
     }
 
     /**
-     * Scope by not id or slug.
+     * Scope by not id/slug.
      *
      * @param array<mixed> $values
      */
-    public static function scopeNotIdOrSlug(Builder $builder, array $values): void
+    public static function scopeNotIdSlug(Builder $builder, array $values, ?bool $preferId = null): void
     {
         $qualifier = new static();
 
-        $builder->where(static function (Builder $builder) use ($values, $qualifier): void {
-            $builder->whereKeyNot($values)->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $values);
-        });
+        if ($preferId === null) {
+            $builder->where(static function (Builder $builder) use ($values, $qualifier): void {
+                $builder->whereKeyNot($values)->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $values);
+            });
+        } elseif ($preferId) {
+            $builder->whereKeyNot($values);
+        } else {
+            $builder->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $values);
+        }
     }
 
     /**
@@ -355,17 +367,15 @@ trait ModelTrait
     }
 
     /**
-     * Find instance by id or slug.
+     * Find instance by id/slug.
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByIdOrSlug(int|string $value, ?Closure $closure = null): ?static
+    public static function findByIdSlug(int|string $value, ?Closure $closure = null, ?bool $preferId = null): ?static
     {
-        $qualifier = new static();
+        $builder = static::query();
 
-        $builder = static::query()->tap(static function (Builder $builder) use ($value, $qualifier): void {
-            $builder->whereKey($value)->getQuery()->orWhere($qualifier->getQualifiedRouteKeyName(), $value);
-        });
+        static::scopeIdSlug($builder, [$value], $preferId);
 
         if ($closure !== null) {
             $builder = $builder->tap($closure);
@@ -379,14 +389,14 @@ trait ModelTrait
     }
 
     /**
-     * Mandatory find instance by id or slug.
+     * Mandatory find instance by id/slug.
      *
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustFindByIdOrSlug(int|string $value, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindByIdSlug(int|string $value, ?Closure $closure = null, ?Closure $onError = null, ?bool $preferId = null): static
     {
-        $instance = static::findByIdOrSlug($value, $closure);
+        $instance = static::findByIdSlug($value, $closure, $preferId);
 
         if ($instance === null) {
             if ($onError !== null) {
@@ -409,7 +419,9 @@ trait ModelTrait
      */
     public static function allById(array $values, ?Closure $closure = null): Collection
     {
-        $builder = static::query()->whereKey($values);
+        $builder = static::query();
+
+        static::scopeId($builder, $values);
 
         if ($closure !== null) {
             $builder = $builder->tap($closure);
@@ -432,11 +444,9 @@ trait ModelTrait
      */
     public static function allBySlug(array $values, ?Closure $closure = null): Collection
     {
-        $qualifier = new static();
-
         $builder = static::query();
 
-        $builder->getQuery()->whereIn($qualifier->getQualifiedRouteKeyName(), $values);
+        static::scopeSlug($builder, $values);
 
         if ($closure !== null) {
             $builder = $builder->tap($closure);
@@ -450,20 +460,18 @@ trait ModelTrait
     }
 
     /**
-     * Find all by id or slug.
+     * Find all by id/slug.
      *
      * @param array<mixed> $values
      * @param (Closure(Builder): void)|null $closure
      *
      * @return Collection<array-key, static>
      */
-    public static function allByIdOrSlug(array $values, ?Closure $closure = null): Collection
+    public static function allByIdSlug(array $values, ?Closure $closure = null, ?bool $preferId = null): Collection
     {
-        $qualifier = new static();
+        $builder = static::query();
 
-        $builder = static::query()->where(static function (Builder $builder) use ($values, $qualifier): void {
-            $builder->whereKey($values)->getQuery()->orWhereIn($qualifier->getQualifiedRouteKeyName(), $values);
-        });
+        static::scopeIdSlug($builder, $values, $preferId);
 
         if ($closure !== null) {
             $builder = $builder->tap($closure);
@@ -474,6 +482,132 @@ trait ModelTrait
         \assert($instances instanceof Collection);
 
         return $instances;
+    }
+
+    /**
+     * Find by id or slug.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     */
+    public static function findByIdOrSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
+    {
+        if ($id !== null && $id > 0) {
+            $instance = static::findById($id, $closure);
+
+            if ($instance !== null) {
+                return $instance;
+            }
+        }
+
+        if ($slug !== null && $slug !== '') {
+            return static::findBySlug($slug, $closure);
+        }
+
+        return null;
+    }
+
+    /**
+     * Must find by id and slug.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     * @param ?Closure(): never $onError
+     */
+    public static function mustFindByIdAndSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null, ?Closure $onError = null): static
+    {
+        $instance = static::findByIdAndSlug($id, $slug, $closure);
+
+        if ($instance !== null) {
+            return $instance;
+        }
+
+        if ($onError !== null) {
+            $onError();
+        }
+
+        throw new RuntimeException('Instance not found.');
+    }
+
+    /**
+     * Find by id and slug.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     */
+    public static function findByIdAndSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
+    {
+        if ($id !== null && $id > 0) {
+            return static::findById($id, $closure);
+        }
+
+        if ($slug !== null && $slug !== '') {
+            return static::findBySlug($slug, $closure);
+        }
+
+        return null;
+    }
+
+    /**
+     * Must find by id or slug.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     * @param ?Closure(): never $onError
+     */
+    public static function mustFindByIdOrSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null, ?Closure $onError = null): static
+    {
+        $instance = static::findByIdOrSlug($id, $slug, $closure);
+
+        if ($instance !== null) {
+            return $instance;
+        }
+
+        if ($onError !== null) {
+            $onError();
+        }
+
+        throw new RuntimeException('Instance not found.');
+    }
+
+    /**
+     * Scope by id.
+     *
+     * @param array<mixed> $ids
+     */
+    public static function scopeId(Builder $builder, array $ids): void
+    {
+        $builder->whereKey($ids);
+    }
+
+    /**
+     * Scope by not id.
+     *
+     * @param array<mixed> $ids
+     */
+    public static function scopeNotId(Builder $builder, array $ids): void
+    {
+        $builder->whereKeyNot($ids);
+    }
+
+    /**
+     * Scope by slug.
+     *
+     * @param array<mixed> $slugs
+     */
+    public static function scopeSlug(Builder $builder, array $slugs): void
+    {
+        $qualifier = new static();
+
+        $builder->getQuery()->whereIn($qualifier->getQualifiedRouteKeyName(), $slugs);
+    }
+
+    /**
+     * Scope by not slug.
+     *
+     * @param array<mixed> $slugs
+     */
+    public static function scopeNotSlug(Builder $builder, array $slugs): void
+    {
+        $qualifier = new static();
+
+        $builder->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $slugs);
     }
 
     /**

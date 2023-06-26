@@ -412,7 +412,7 @@ class FormRequest extends IlluminateFormRequest
      *
      * @return array<string, mixed>
      */
-    protected function mergeRules(array $rules, bool $signed = false, bool $cursor = false, bool $page = false, ?int $take = null, bool $filter = false, bool $id = false, bool $slug = false, bool $select = false, bool $count = false, bool $filterId = false, bool $filterSearch = false, ?array $sort = null, bool $filterSlug = false, bool $filterNotId = false, bool $filterIdOrSlug = false, bool $filterNotIdOrSlug = false): array
+    protected function mergeRules(array $rules, bool $signed = false, bool $cursor = false, bool $page = false, ?int $take = null, bool $filter = false, bool $id = false, bool $slug = false, bool $select = false, bool $count = false, bool $filterId = false, bool $filterSearch = false, ?array $sort = null, bool $filterSlug = false, bool $filterNotId = false, bool $filterIdSlug = false, bool $filterNotIdSlug = false): array
     {
         if ($signed) {
             $rules = \array_replace($rules, [
@@ -483,17 +483,17 @@ class FormRequest extends IlluminateFormRequest
             ]);
         }
 
-        if ($filterIdOrSlug) {
+        if ($filterIdSlug) {
             $rules = \array_replace($rules, [
-                'filter.id_or_slug' => Validity::make()->nullable()->filled()->collection(null),
-                'filter.id_or_slug.*' => Validity::make()->required()->distinct()->idOrSlug(),
+                'filter.id_slug' => Validity::make()->nullable()->filled()->collection(null),
+                'filter.id_slug.*' => Validity::make()->required()->distinct()->idSlug(),
             ]);
         }
 
-        if ($filterNotIdOrSlug) {
+        if ($filterNotIdSlug) {
             $rules = \array_replace($rules, [
-                'filter.not_id_or_slug' => Validity::make()->nullable()->filled()->collection(null),
-                'filter.not_id_or_slug.*' => Validity::make()->required()->distinct()->idOrSlug(),
+                'filter.not_id_slug' => Validity::make()->nullable()->filled()->collection(null),
+                'filter.not_id_slug.*' => Validity::make()->required()->distinct()->idSlug(),
             ]);
         }
 

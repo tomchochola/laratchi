@@ -31,7 +31,7 @@ class {{ class }} extends SecureFormRequest
         $me = $this->me();
 
         return [
-            'id_or_slug' => Validity::make()->idOrSlug()->existingIdOrSlug(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
+            'id_slug' => Validity::make()->idSlug()->existingIdSlug(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
                 {{ model }}::scopeUserId($builder, [$me->getKey()]);
             }))->required(),
         ];
