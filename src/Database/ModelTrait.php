@@ -485,11 +485,11 @@ trait ModelTrait
     }
 
     /**
-     * Find by id or slug.
+     * Find by id and slug.
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByIdOrSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
+    public static function findByIdAndSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
     {
         if ($id !== null && $id > 0) {
             $instance = static::findById($id, $closure);
@@ -528,11 +528,11 @@ trait ModelTrait
     }
 
     /**
-     * Find by id and slug.
+     * Find by id or slug.
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByIdAndSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
+    public static function findByIdOrSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
     {
         if ($id !== null && $id > 0) {
             return static::findById($id, $closure);
@@ -608,6 +608,46 @@ trait ModelTrait
         $qualifier = new static();
 
         $builder->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $slugs);
+    }
+
+    /**
+     * Scope in.
+     *
+     * @param array<mixed> $values
+     */
+    public static function scopeIn(Builder $builder, string $column, array $values): void
+    {
+        $builder->getQuery()->whereIn($builder->qualifyColumn($column), $values);
+    }
+
+    /**
+     * Scope by not in.
+     *
+     * @param array<mixed> $values
+     */
+    public static function scopeNotIn(Builder $builder, string $column, array $values): void
+    {
+        $builder->getQuery()->whereNotIn($builder->qualifyColumn($column), $values);
+    }
+
+    /**
+     * Scope has.
+     *
+     * @param ?Closure(Builder): void $closure
+     */
+    public static function scopeHas(Builder $builder, string $relation, ?Closure $closure = null, string $operator = '>=', int $count = 1): void
+    {
+        $builder->whereHas($relation, $closure, $operator, $count);
+    }
+
+    /**
+     * Scope not has.
+     *
+     * @param ?Closure(Builder): void $closure
+     */
+    public static function scopeNotHas(Builder $builder, string $relation, ?Closure $closure = null): void
+    {
+        $builder->whereDoesntHave($relation, $closure);
     }
 
     /**
