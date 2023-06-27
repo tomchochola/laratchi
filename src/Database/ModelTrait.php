@@ -651,6 +651,40 @@ trait ModelTrait
     }
 
     /**
+     * Scope has id.
+     *
+     * @param array<mixed> $values
+     * @param ?Closure(Builder): void $closure
+     */
+    public static function scopeHasId(Builder $builder, string $relation, array $values, ?Closure $closure = null, string $operator = '>=', int $count = 1): void
+    {
+        $builder->whereHas($relation, static function (Builder $builder) use ($values, $closure): void {
+            $builder->whereKey($values);
+
+            if ($closure !== null) {
+                $closure($builder);
+            }
+        }, $operator, $count);
+    }
+
+    /**
+     * Scope not has.
+     *
+     * @param array<mixed> $values
+     * @param ?Closure(Builder): void $closure
+     */
+    public static function scopeNotHasId(Builder $builder, string $relation, array $values, ?Closure $closure = null): void
+    {
+        $builder->whereDoesntHave($relation, static function (Builder $builder) use ($values, $closure): void {
+            $builder->whereKey($values);
+
+            if ($closure !== null) {
+                $closure($builder);
+            }
+        });
+    }
+
+    /**
      * Get clean instance.
      *
      * @param Closure(Builder): void $closure
