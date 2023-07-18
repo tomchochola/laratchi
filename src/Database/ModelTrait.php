@@ -485,49 +485,6 @@ trait ModelTrait
     }
 
     /**
-     * Find by id and slug.
-     *
-     * @param (Closure(Builder): void)|null $closure
-     */
-    public static function findByIdAndSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
-    {
-        if ($id !== null && $id > 0) {
-            $instance = static::findById($id, $closure);
-
-            if ($instance !== null) {
-                return $instance;
-            }
-        }
-
-        if ($slug !== null && $slug !== '') {
-            return static::findBySlug($slug, $closure);
-        }
-
-        return null;
-    }
-
-    /**
-     * Must find by id and slug.
-     *
-     * @param (Closure(Builder): void)|null $closure
-     * @param ?Closure(): never $onError
-     */
-    public static function mustFindByIdAndSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null, ?Closure $onError = null): static
-    {
-        $instance = static::findByIdAndSlug($id, $slug, $closure);
-
-        if ($instance !== null) {
-            return $instance;
-        }
-
-        if ($onError !== null) {
-            $onError();
-        }
-
-        throw new RuntimeException('Instance not found.');
-    }
-
-    /**
      * Find by id or slug.
      *
      * @param (Closure(Builder): void)|null $closure
@@ -535,7 +492,11 @@ trait ModelTrait
     public static function findByIdOrSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
     {
         if ($id !== null && $id > 0) {
-            return static::findById($id, $closure);
+            $instance = static::findById($id, $closure);
+
+            if ($instance !== null) {
+                return $instance;
+            }
         }
 
         if ($slug !== null && $slug !== '') {
@@ -554,6 +515,45 @@ trait ModelTrait
     public static function mustFindByIdOrSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null, ?Closure $onError = null): static
     {
         $instance = static::findByIdOrSlug($id, $slug, $closure);
+
+        if ($instance !== null) {
+            return $instance;
+        }
+
+        if ($onError !== null) {
+            $onError();
+        }
+
+        throw new RuntimeException('Instance not found.');
+    }
+
+    /**
+     * Find by id xor slug.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     */
+    public static function findByIdXorSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
+    {
+        if ($id !== null && $id > 0) {
+            return static::findById($id, $closure);
+        }
+
+        if ($slug !== null && $slug !== '') {
+            return static::findBySlug($slug, $closure);
+        }
+
+        return null;
+    }
+
+    /**
+     * Must find by id xor slug.
+     *
+     * @param (Closure(Builder): void)|null $closure
+     * @param ?Closure(): never $onError
+     */
+    public static function mustFindByIdXorSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null, ?Closure $onError = null): static
+    {
+        $instance = static::findByIdXorSlug($id, $slug, $closure);
 
         if ($instance !== null) {
             return $instance;
