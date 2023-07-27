@@ -1263,3 +1263,447 @@ if (! \function_exists('locales')) {
         return $locales;
     }
 }
+
+if (! \function_exists('asString')) {
+    /**
+     * As string.
+     */
+    function asString(mixed $value): string
+    {
+        \assert(\is_string($value));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('asNullableString')) {
+    /**
+     * As nullable string.
+     */
+    function asNullableString(mixed $value): ?string
+    {
+        \assert($value === null || \is_string($value));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('toString')) {
+    /**
+     * To string.
+     */
+    function toString(mixed $value): string
+    {
+        return toNullableString($value) ?? '';
+    }
+}
+
+if (! \function_exists('toNullableString')) {
+    /**
+     * To nullable string.
+     */
+    function toNullableString(mixed $value): ?string
+    {
+        if ($value === null || \is_string($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value);
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustString')) {
+    /**
+     * Must string.
+     */
+    function mustString(mixed $value): string
+    {
+        $value = mustNullableString($value);
+
+        if ($value === null) {
+            throw new LogicException(\sprintf('[%s] is not string', \print_r($value, true)));
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustNullableString')) {
+    /**
+     * Must nullable string.
+     */
+    function mustNullableString(mixed $value): ?string
+    {
+        if ($value === null || \is_string($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value);
+
+        if ($value === false) {
+            throw new LogicException(\sprintf('[%s] is not string or null', \print_r($value, true)));
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('asBool')) {
+    /**
+     * As bool.
+     */
+    function asBool(mixed $value): bool
+    {
+        \assert(\is_bool($value));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('asNullableBool')) {
+    /**
+     * As nullable bool.
+     */
+    function asNullableBool(mixed $value): ?bool
+    {
+        \assert($value === null || \is_bool($value));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('toBool')) {
+    /**
+     * To bool.
+     */
+    function toBool(mixed $value): bool
+    {
+        return toNullableBool($value) ?? false;
+    }
+}
+
+if (! \function_exists('toNullableBool')) {
+    /**
+     * To nullable bool.
+     */
+    function toNullableBool(mixed $value): ?bool
+    {
+        if ($value === null || \is_bool($value)) {
+            return $value;
+        }
+
+        return \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
+    }
+}
+
+if (! \function_exists('mustBool')) {
+    /**
+     * Must bool.
+     */
+    function mustBool(mixed $value): bool
+    {
+        $value = mustNullableBool($value);
+
+        if ($value === null) {
+            throw new LogicException(\sprintf('[%s] is not bool', \print_r($value, true)));
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustNullableBool')) {
+    /**
+     * Must nullable bool.
+     */
+    function mustNullableBool(mixed $value): ?bool
+    {
+        if ($value === null || \is_bool($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
+
+        if ($value === null) {
+            throw new LogicException(\sprintf('[%s] is not bool or null', \print_r($value, true)));
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('asInt')) {
+    /**
+     * As int.
+     */
+    function asInt(mixed $value): int
+    {
+        \assert(\is_int($value));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('asNullableInt')) {
+    /**
+     * As nullable int.
+     */
+    function asNullableInt(mixed $value): ?int
+    {
+        \assert($value === null || \is_int($value));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('toInt')) {
+    /**
+     * To int.
+     */
+    function toInt(mixed $value): int
+    {
+        return toNullableInt($value) ?? 0;
+    }
+}
+
+if (! \function_exists('toNullableInt')) {
+    /**
+     * To nullable int.
+     */
+    function toNullableInt(mixed $value): ?int
+    {
+        if ($value === null || \is_int($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_INT);
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustInt')) {
+    /**
+     * Must int.
+     */
+    function mustInt(mixed $value): int
+    {
+        $value = mustNullableInt($value);
+
+        if ($value === null) {
+            throw new LogicException(\sprintf('[%s] is not int', \print_r($value, true)));
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustNullableInt')) {
+    /**
+     * Must nullable int.
+     */
+    function mustNullableInt(mixed $value): ?int
+    {
+        if ($value === null || \is_int($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_INT);
+
+        if ($value === false) {
+            throw new LogicException(\sprintf('[%s] is not int or null', \print_r($value, true)));
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('asFloat')) {
+    /**
+     * As float.
+     */
+    function asFloat(mixed $value): float
+    {
+        \assert(\is_float($value));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('asNullableFloat')) {
+    /**
+     * As nullable float.
+     */
+    function asNullableFloat(mixed $value): ?float
+    {
+        \assert($value === null || \is_float($value));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('toFloat')) {
+    /**
+     * To float.
+     */
+    function toFloat(mixed $value): float
+    {
+        return toNullableFloat($value) ?? 0.0;
+    }
+}
+
+if (! \function_exists('toNullableFloat')) {
+    /**
+     * To nullable float.
+     */
+    function toNullableFloat(mixed $value): ?float
+    {
+        if ($value === null || \is_float($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustFloat')) {
+    /**
+     * Must float.
+     */
+    function mustFloat(mixed $value): float
+    {
+        $value = mustNullableFloat($value);
+
+        if ($value === null) {
+            throw new LogicException(\sprintf('[%s] is not float', \print_r($value, true)));
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustNullableFloat')) {
+    /**
+     * Must nullable float.
+     */
+    function mustNullableFloat(mixed $value): ?float
+    {
+        if ($value === null || \is_int($value)) {
+            return $value;
+        }
+
+        $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
+
+        if ($value === false) {
+            throw new LogicException(\sprintf('[%s] is not float or null', \print_r($value, true)));
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('asArray')) {
+    /**
+     * As array.
+     *
+     * @return array<mixed>
+     */
+    function asArray(mixed $value): array
+    {
+        \assert(\is_array($value));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('asNullableArray')) {
+    /**
+     * As nullable array.
+     *
+     * @return ?array<mixed>
+     */
+    function asNullableArray(mixed $value): ?array
+    {
+        \assert($value === null || \is_array($value));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('toArray')) {
+    /**
+     * To array.
+     *
+     * @return array<mixed>
+     */
+    function toArray(mixed $value): array
+    {
+        return toNullableArray($value) ?? [];
+    }
+}
+
+if (! \function_exists('toNullableArray')) {
+    /**
+     * To nullable array.
+     *
+     * @return ?array<mixed>
+     */
+    function toNullableArray(mixed $value): ?array
+    {
+        if ($value === null || \is_array($value)) {
+            return $value;
+        }
+
+        return null;
+    }
+}
+
+if (! \function_exists('mustArray')) {
+    /**
+     * Must array.
+     *
+     * @return array<mixed>
+     */
+    function mustArray(mixed $value): array
+    {
+        $value = mustNullableArray($value);
+
+        if ($value === null) {
+            throw new LogicException(\sprintf('[%s] is not array', \print_r($value, true)));
+        }
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustNullableArray')) {
+    /**
+     * Must nullable array.
+     *
+     * @return ?array<mixed>
+     */
+    function mustNullableArray(mixed $value): ?array
+    {
+        if ($value === null || \is_array($value)) {
+            return $value;
+        }
+
+        throw new LogicException(\sprintf('[%s] is not array or null', \print_r($value, true)));
+    }
+}
