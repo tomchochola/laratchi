@@ -2926,11 +2926,11 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(): T $callback
-     * @param (Closure(mixed, mixed=): bool)|null $each
+     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
-    public function pluck(Closure $callback, string $column = 'id', ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function pluck(Closure $callback, string $column = 'id', ?Closure $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2940,7 +2940,7 @@ class Validity implements ArrayableContract
 
         $keys = null;
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool|int {
             if ($keys === null) {
                 $builder = $callback();
                 $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($column));
@@ -2950,7 +2950,339 @@ class Validity implements ArrayableContract
                 return $keys->contains($value);
             }
 
-            return $each($value, $attribute);
+            foreach ($keys as $found) {
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
+            }
+
+            return true;
+        }, $message));
+    }
+
+    /**
+     * Add not pluck rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(): T $callback
+     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     *
+     * @return $this
+     */
+    public function notPluck(Closure $callback, string $column = 'id', ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        $keys = null;
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool|int {
+            if ($keys === null) {
+                $builder = $callback();
+                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($column));
+            }
+
+            if ($each === null) {
+                return ! $keys->contains($value);
+            }
+
+            foreach ($keys as $found) {
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
+            }
+
+            return true;
+        }, $message));
+    }
+
+    /**
+     * Add pluck key rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     *
+     * @return $this
+     */
+    public function pluckKey(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        $keys = null;
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
+            if ($keys === null) {
+                $builder = $callback($value, $attribute);
+
+                $model = $builder->getModel();
+
+                \assert($model instanceof Model);
+
+                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getKeyName()));
+            }
+
+            if ($each === null) {
+                return $keys->contains($value);
+            }
+
+            foreach ($keys as $found) {
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
+            }
+
+            return true;
+        }, $message));
+    }
+
+    /**
+     * Add not pluck key rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     *
+     * @return $this
+     */
+    public function notPluckKey(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        $keys = null;
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
+            if ($keys === null) {
+                $builder = $callback($value, $attribute);
+
+                $model = $builder->getModel();
+
+                \assert($model instanceof Model);
+
+                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getKeyName()));
+            }
+
+            if ($each === null) {
+                return ! $keys->contains($value);
+            }
+
+            foreach ($keys as $found) {
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
+            }
+
+            return true;
+        }, $message));
+    }
+
+    /**
+     * Add pluck route key rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     *
+     * @return $this
+     */
+    public function pluckRouteKey(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        $keys = null;
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
+            if ($keys === null) {
+                $builder = $callback($value, $attribute);
+
+                $model = $builder->getModel();
+
+                \assert($model instanceof Model);
+
+                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getRouteKeyName()));
+            }
+
+            if ($each === null) {
+                return $keys->contains($value);
+            }
+
+            foreach ($keys as $found) {
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
+            }
+
+            return true;
+        }, $message));
+    }
+
+    /**
+     * Add not pluck route key rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     *
+     * @return $this
+     */
+    public function notPluckRouteKey(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        $keys = null;
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
+            if ($keys === null) {
+                $builder = $callback($value, $attribute);
+
+                $model = $builder->getModel();
+
+                \assert($model instanceof Model);
+
+                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getRouteKeyName()));
+            }
+
+            if ($each === null) {
+                return ! $keys->contains($value);
+            }
+
+            foreach ($keys as $found) {
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
+            }
+
+            return true;
+        }, $message));
+    }
+
+    /**
+     * Add builder rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): (bool|int|null))|null $each
+     *
+     * @return $this
+     */
+    public function builder(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
+            $builder = $callback($value, $attribute);
+
+            if ($each === null) {
+                return $builder->toBase()->exists();
+            }
+
+            foreach ($builder->cursor() as $found) {
+                \assert($found instanceof Model);
+
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
+            }
+
+            return true;
+        }, $message));
+    }
+
+    /**
+     * Add not builder rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): (bool|int|null))|null $each
+     *
+     * @return $this
+     */
+    public function notBuilder(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    {
+        if ($this->skipNext) {
+            $this->skipNext = false;
+
+            return $this;
+        }
+
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
+            $builder = $callback($value, $attribute);
+
+            if ($each === null) {
+                return ! $builder->toBase()->exists();
+            }
+
+            foreach ($builder->cursor() as $found) {
+                \assert($found instanceof Model);
+
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
+            }
+
+            return true;
         }, $message));
     }
 
@@ -2960,11 +3292,11 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     * @param (Closure(Model, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
-    public function builderKey(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function builderKey(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2972,22 +3304,26 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
             $builder = $callback($value, $attribute);
 
             if ($each === null) {
                 return $builder->whereKey($value)->toBase()->exists();
             }
 
-            $model = $builder->whereKey($value)->first();
+            foreach ($builder->whereKey($value)->cursor() as $found) {
+                \assert($found instanceof Model);
 
-            if ($model === null) {
-                return false;
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
             }
 
-            \assert($model instanceof Model);
-
-            return $each($model, $value, $attribute);
+            return true;
         }, $message));
     }
 
@@ -2997,11 +3333,11 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     * @param (Closure(Model, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
-    public function notBuilderKey(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function notBuilderKey(Closure $callback, ?Closure $each = null, string|int $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3009,22 +3345,26 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
             $builder = $callback($value, $attribute);
 
             if ($each === null) {
                 return ! $builder->whereKey($value)->toBase()->exists();
             }
 
-            $model = $builder->whereKey($value)->first();
+            foreach ($builder->whereKey($value)->cursor() as $found) {
+                \assert($found instanceof Model);
 
-            if ($model === null) {
-                return true;
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
             }
 
-            \assert($model instanceof Model);
-
-            return ! $each($model, $value, $attribute);
+            return true;
         }, $message));
     }
 
@@ -3034,11 +3374,11 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     * @param (Closure(Model, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
-    public function builderRouteKey(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function builderRouteKey(Closure $callback, ?Closure $each = null, string|int $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3046,7 +3386,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
             $builder = $callback($value, $attribute);
 
             $model = $builder->getModel();
@@ -3057,15 +3397,19 @@ class Validity implements ArrayableContract
                 return $builder->where($model->getRouteKeyName(), $value)->toBase()->exists();
             }
 
-            $model = $builder->where($model->getRouteKeyName(), $value)->first();
+            foreach ($builder->where($model->getRouteKeyName(), $value)->cursor() as $found) {
+                \assert($found instanceof Model);
 
-            if ($model === null) {
-                return false;
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
             }
 
-            \assert($model instanceof Model);
-
-            return $each($model, $value, $attribute);
+            return true;
         }, $message));
     }
 
@@ -3075,11 +3419,11 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     * @param (Closure(Model, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
-    public function notBuilderRouteKey(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function notBuilderRouteKey(Closure $callback, ?Closure $each = null, string|int $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3087,7 +3431,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
             $builder = $callback($value, $attribute);
 
             $model = $builder->getModel();
@@ -3098,15 +3442,19 @@ class Validity implements ArrayableContract
                 return ! $builder->where($model->getRouteKeyName(), $value)->toBase()->exists();
             }
 
-            $model = $builder->where($model->getRouteKeyName(), $value)->first();
+            foreach ($builder->where($model->getRouteKeyName(), $value)->cursor() as $found) {
+                \assert($found instanceof Model);
 
-            if ($model === null) {
-                return true;
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
             }
 
-            \assert($model instanceof Model);
-
-            return ! $each($model, $value, $attribute);
+            return true;
         }, $message));
     }
 
@@ -3236,7 +3584,7 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     * @param (Closure(Model, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
@@ -3248,7 +3596,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
             $builder = $callback($value, $attribute);
 
             $model = $builder->getModel();
@@ -3261,17 +3609,21 @@ class Validity implements ArrayableContract
                 })->toBase()->exists();
             }
 
-            $model = $builder->where(static function (Builder $builder) use ($value, $model): void {
+            foreach ($builder->where(static function (Builder $builder) use ($value, $model): void {
                 $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
-            })->first();
+            })->cursor() as $found) {
+                \assert($found instanceof Model);
 
-            if ($model === null) {
-                return false;
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
             }
 
-            \assert($model instanceof Model);
-
-            return $each($model, $value, $attribute);
+            return true;
         }, $message));
     }
 
@@ -3281,7 +3633,7 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(Model, mixed=, mixed=): bool)|null $each
+     * @param (Closure(Model, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
@@ -3293,7 +3645,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool {
+        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
             $builder = $callback($value, $attribute);
 
             $model = $builder->getModel();
@@ -3306,17 +3658,21 @@ class Validity implements ArrayableContract
                 })->toBase()->exists();
             }
 
-            $model = $builder->where(static function (Builder $builder) use ($value, $model): void {
+            foreach ($builder->where(static function (Builder $builder) use ($value, $model): void {
                 $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
-            })->first();
+            })->cursor() as $found) {
+                \assert($found instanceof Model);
 
-            if ($model === null) {
-                return true;
+                $ok = $each($found, $value, $attribute);
+
+                if ($ok === null) {
+                    continue;
+                }
+
+                return $ok;
             }
 
-            \assert($model instanceof Model);
-
-            return ! $each($model, $value, $attribute);
+            return true;
         }, $message));
     }
 

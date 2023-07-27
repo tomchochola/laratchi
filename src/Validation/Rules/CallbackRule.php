@@ -6,15 +6,16 @@ namespace Tomchochola\Laratchi\Validation\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class CallbackRule implements RuleContract
 {
     /**
      * Create a new rule instance.
      *
-     * @param Closure(mixed, mixed=): bool $callback
+     * @param Closure(mixed, mixed=): (bool|int|string) $callback
      */
-    public function __construct(protected Closure $callback, protected string $message = 'validation.invalid')
+    public function __construct(protected Closure $callback, protected int|string $message = 'validation.invalid')
     {
     }
 
@@ -23,7 +24,23 @@ class CallbackRule implements RuleContract
      */
     public function passes(mixed $attribute, mixed $value): bool
     {
-        return ($this->callback)($value, $attribute);
+        $passes = ($this->callback)($value, $attribute);
+
+        if (\is_string($passes)) {
+            $this->message = $passes;
+
+            return false;
+        }
+
+        if (\is_int($passes)) {
+            throw new UnprocessableEntityHttpException('', null, $passes);
+        }
+
+        if (! $passes && \is_int($this->message)) {
+            throw new UnprocessableEntityHttpException('', null, $this->message);
+        }
+
+        return $passes;
     }
 
     /**
@@ -33,6 +50,6 @@ class CallbackRule implements RuleContract
      */
     public function message(): string|array
     {
-        return mustTransString($this->message);
+        return mustTransString((string) $this->message);
     }
 }
