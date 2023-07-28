@@ -189,13 +189,27 @@ class Validity implements ArrayableContract
     }
 
     /**
+     * Skip next rule.
+     *
+     * @return $this
+     */
+    public function skipNext(): static
+    {
+        $this->skipNext = true;
+
+        return $this;
+    }
+
+    /**
      * Skip next rule if flag not true.
      *
      * @return $this
      */
     public function if(bool $flag): static
     {
-        $this->skipNext = $flag === false;
+        if (! $flag) {
+            return $this->skipNext();
+        }
 
         return $this;
     }
@@ -207,7 +221,9 @@ class Validity implements ArrayableContract
      */
     public function ifNot(bool $flag): static
     {
-        $this->skipNext = $flag;
+        if ($flag) {
+            return $this->skipNext();
+        }
 
         return $this;
     }
@@ -2925,8 +2941,8 @@ class Validity implements ArrayableContract
      *
      * @template T of Builder
      *
-     * @param Closure(): T $callback
-     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
@@ -2942,12 +2958,18 @@ class Validity implements ArrayableContract
 
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool|int {
             if ($keys === null) {
-                $builder = $callback();
+                $builder = $callback($value, $attribute);
                 $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($column));
             }
 
+            $exists = $keys->contains($value);
+
+            if (! $exists) {
+                return false;
+            }
+
             if ($each === null) {
-                return $keys->contains($value);
+                return true;
             }
 
             foreach ($keys as $found) {
@@ -2969,8 +2991,8 @@ class Validity implements ArrayableContract
      *
      * @template T of Builder
      *
-     * @param Closure(): T $callback
-     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
@@ -2990,8 +3012,14 @@ class Validity implements ArrayableContract
                 $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($column));
             }
 
+            $exists = $keys->contains($value);
+
+            if (! $exists) {
+                return true;
+            }
+
             if ($each === null) {
-                return ! $keys->contains($value);
+                return false;
             }
 
             foreach ($keys as $found) {
@@ -3004,7 +3032,7 @@ class Validity implements ArrayableContract
                 return $ok;
             }
 
-            return true;
+            return false;
         }, $message));
     }
 
@@ -3014,7 +3042,7 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
@@ -3039,8 +3067,14 @@ class Validity implements ArrayableContract
                 $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getKeyName()));
             }
 
+            $exists = $keys->contains($value);
+
+            if (! $exists) {
+                return false;
+            }
+
             if ($each === null) {
-                return $keys->contains($value);
+                return true;
             }
 
             foreach ($keys as $found) {
@@ -3063,7 +3097,7 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
@@ -3088,8 +3122,14 @@ class Validity implements ArrayableContract
                 $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getKeyName()));
             }
 
+            $exists = $keys->contains($value);
+
+            if (! $exists) {
+                return true;
+            }
+
             if ($each === null) {
-                return ! $keys->contains($value);
+                return false;
             }
 
             foreach ($keys as $found) {
@@ -3102,7 +3142,7 @@ class Validity implements ArrayableContract
                 return $ok;
             }
 
-            return true;
+            return false;
         }, $message));
     }
 
@@ -3112,7 +3152,7 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
@@ -3137,8 +3177,14 @@ class Validity implements ArrayableContract
                 $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getRouteKeyName()));
             }
 
+            $exists = $keys->contains($value);
+
+            if (! $exists) {
+                return false;
+            }
+
             if ($each === null) {
-                return $keys->contains($value);
+                return true;
             }
 
             foreach ($keys as $found) {
@@ -3161,7 +3207,7 @@ class Validity implements ArrayableContract
      * @template T of Builder
      *
      * @param Closure(mixed=, mixed=): T $callback
-     * @param (Closure(mixed, mixed, mixed=): (bool|int|null))|null $each
+     * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
      */
@@ -3186,8 +3232,14 @@ class Validity implements ArrayableContract
                 $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getRouteKeyName()));
             }
 
+            $exists = $keys->contains($value);
+
+            if (! $exists) {
+                return true;
+            }
+
             if ($each === null) {
-                return ! $keys->contains($value);
+                return false;
             }
 
             foreach ($keys as $found) {
@@ -3200,7 +3252,7 @@ class Validity implements ArrayableContract
                 return $ok;
             }
 
-            return true;
+            return false;
         }, $message));
     }
 
@@ -3225,8 +3277,14 @@ class Validity implements ArrayableContract
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
             $builder = $callback($value, $attribute);
 
+            $exists = $builder->toBase()->exists();
+
+            if (! $exists) {
+                return false;
+            }
+
             if ($each === null) {
-                return $builder->toBase()->exists();
+                return true;
             }
 
             foreach ($builder->cursor() as $found) {
@@ -3266,8 +3324,14 @@ class Validity implements ArrayableContract
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
             $builder = $callback($value, $attribute);
 
+            $exists = $builder->toBase()->exists();
+
+            if (! $exists) {
+                return true;
+            }
+
             if ($each === null) {
-                return ! $builder->toBase()->exists();
+                return false;
             }
 
             foreach ($builder->cursor() as $found) {
@@ -3282,7 +3346,7 @@ class Validity implements ArrayableContract
                 return $ok;
             }
 
-            return true;
+            return false;
         }, $message));
     }
 
@@ -3307,11 +3371,19 @@ class Validity implements ArrayableContract
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
             $builder = $callback($value, $attribute);
 
-            if ($each === null) {
-                return $builder->whereKey($value)->toBase()->exists();
+            $builder->whereKey($value);
+
+            $exists = $builder->toBase()->exists();
+
+            if (! $exists) {
+                return false;
             }
 
-            foreach ($builder->whereKey($value)->cursor() as $found) {
+            if ($each === null) {
+                return true;
+            }
+
+            foreach ($builder->cursor() as $found) {
                 \assert($found instanceof Model);
 
                 $ok = $each($found, $value, $attribute);
@@ -3348,11 +3420,19 @@ class Validity implements ArrayableContract
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
             $builder = $callback($value, $attribute);
 
-            if ($each === null) {
-                return ! $builder->whereKey($value)->toBase()->exists();
+            $builder->whereKey($value);
+
+            $exists = $builder->toBase()->exists();
+
+            if (! $exists) {
+                return true;
             }
 
-            foreach ($builder->whereKey($value)->cursor() as $found) {
+            if ($each === null) {
+                return false;
+            }
+
+            foreach ($builder->cursor() as $found) {
                 \assert($found instanceof Model);
 
                 $ok = $each($found, $value, $attribute);
@@ -3364,7 +3444,7 @@ class Validity implements ArrayableContract
                 return $ok;
             }
 
-            return true;
+            return false;
         }, $message));
     }
 
@@ -3393,11 +3473,19 @@ class Validity implements ArrayableContract
 
             \assert($model instanceof Model);
 
-            if ($each === null) {
-                return $builder->where($model->getRouteKeyName(), $value)->toBase()->exists();
+            $builder->where($model->getRouteKeyName(), $value);
+
+            $exists = $builder->toBase()->exists();
+
+            if (! $exists) {
+                return false;
             }
 
-            foreach ($builder->where($model->getRouteKeyName(), $value)->cursor() as $found) {
+            if ($each === null) {
+                return true;
+            }
+
+            foreach ($builder->cursor() as $found) {
                 \assert($found instanceof Model);
 
                 $ok = $each($found, $value, $attribute);
@@ -3438,11 +3526,19 @@ class Validity implements ArrayableContract
 
             \assert($model instanceof Model);
 
-            if ($each === null) {
-                return ! $builder->where($model->getRouteKeyName(), $value)->toBase()->exists();
+            $builder->where($model->getRouteKeyName(), $value);
+
+            $exists = $builder->toBase()->exists();
+
+            if (! $exists) {
+                return true;
             }
 
-            foreach ($builder->where($model->getRouteKeyName(), $value)->cursor() as $found) {
+            if ($each === null) {
+                return false;
+            }
+
+            foreach ($builder->cursor() as $found) {
                 \assert($found instanceof Model);
 
                 $ok = $each($found, $value, $attribute);
@@ -3454,7 +3550,7 @@ class Validity implements ArrayableContract
                 return $ok;
             }
 
-            return true;
+            return false;
         }, $message));
     }
 
@@ -3579,7 +3675,7 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add existing id/slug rule.
+     * Add builder id/slug rule.
      *
      * @template T of Builder
      *
@@ -3588,7 +3684,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function existingIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function builderIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3603,15 +3699,21 @@ class Validity implements ArrayableContract
 
             \assert($model instanceof Model);
 
-            if ($each === null) {
-                return $builder->where(static function (Builder $builder) use ($value, $model): void {
-                    $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
-                })->toBase()->exists();
+            $builder->where(static function (Builder $builder) use ($value, $model): void {
+                $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
+            });
+
+            $exists = $builder->toBase()->exists();
+
+            if (! $exists) {
+                return false;
             }
 
-            foreach ($builder->where(static function (Builder $builder) use ($value, $model): void {
-                $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
-            })->cursor() as $found) {
+            if ($each === null) {
+                return true;
+            }
+
+            foreach ($builder->cursor() as $found) {
                 \assert($found instanceof Model);
 
                 $ok = $each($found, $value, $attribute);
@@ -3628,7 +3730,7 @@ class Validity implements ArrayableContract
     }
 
     /**
-     * Add not existing id/slug rule.
+     * Add not builder id/slug rule.
      *
      * @template T of Builder
      *
@@ -3637,7 +3739,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notExistingIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function notBuilderIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3652,15 +3754,21 @@ class Validity implements ArrayableContract
 
             \assert($model instanceof Model);
 
-            if ($each === null) {
-                return ! $builder->where(static function (Builder $builder) use ($value, $model): void {
-                    $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
-                })->toBase()->exists();
+            $builder->where(static function (Builder $builder) use ($value, $model): void {
+                $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
+            });
+
+            $exists = $builder->toBase()->exists();
+
+            if (! $exists) {
+                return true;
             }
 
-            foreach ($builder->where(static function (Builder $builder) use ($value, $model): void {
-                $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
-            })->cursor() as $found) {
+            if ($each === null) {
+                return false;
+            }
+
+            foreach ($builder->cursor() as $found) {
                 \assert($found instanceof Model);
 
                 $ok = $each($found, $value, $attribute);
@@ -3672,8 +3780,38 @@ class Validity implements ArrayableContract
                 return $ok;
             }
 
-            return true;
+            return false;
         }, $message));
+    }
+
+    /**
+     * Add existing id/slug rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): (bool|int|null))|null $each
+     *
+     * @return $this
+     */
+    public function existingIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        return $this->builderIdSlug($callback, $each, $message);
+    }
+
+    /**
+     * Add not existing id/slug rule.
+     *
+     * @template T of Builder
+     *
+     * @param Closure(mixed=, mixed=): T $callback
+     * @param (Closure(Model, mixed=, mixed=): (bool|int|null))|null $each
+     *
+     * @return $this
+     */
+    public function notExistingIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    {
+        return $this->notBuilderIdSlug($callback, $each, $message);
     }
 
     /**
