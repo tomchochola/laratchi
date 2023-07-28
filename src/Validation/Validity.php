@@ -2941,7 +2941,7 @@ class Validity implements ArrayableContract
      *
      * @template T of Builder
      *
-     * @param Closure(mixed=, mixed=): T $callback
+     * @param Closure(): T $callback
      * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
@@ -2958,7 +2958,7 @@ class Validity implements ArrayableContract
 
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool|int {
             if ($keys === null) {
-                $builder = $callback($value, $attribute);
+                $builder = $callback();
                 $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($column));
             }
 
@@ -2991,7 +2991,7 @@ class Validity implements ArrayableContract
      *
      * @template T of Builder
      *
-     * @param Closure(mixed=, mixed=): T $callback
+     * @param Closure(): T $callback
      * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
@@ -3041,7 +3041,7 @@ class Validity implements ArrayableContract
      *
      * @template T of Builder
      *
-     * @param Closure(mixed=, mixed=): T $callback
+     * @param Closure(): T $callback
      * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
@@ -3058,7 +3058,7 @@ class Validity implements ArrayableContract
 
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
             if ($keys === null) {
-                $builder = $callback($value, $attribute);
+                $builder = $callback();
 
                 $model = $builder->getModel();
 
@@ -3096,7 +3096,7 @@ class Validity implements ArrayableContract
      *
      * @template T of Builder
      *
-     * @param Closure(mixed=, mixed=): T $callback
+     * @param Closure(): T $callback
      * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
@@ -3113,7 +3113,7 @@ class Validity implements ArrayableContract
 
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
             if ($keys === null) {
-                $builder = $callback($value, $attribute);
+                $builder = $callback();
 
                 $model = $builder->getModel();
 
@@ -3151,7 +3151,7 @@ class Validity implements ArrayableContract
      *
      * @template T of Builder
      *
-     * @param Closure(mixed=, mixed=): T $callback
+     * @param Closure(): T $callback
      * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
@@ -3168,7 +3168,7 @@ class Validity implements ArrayableContract
 
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
             if ($keys === null) {
-                $builder = $callback($value, $attribute);
+                $builder = $callback();
 
                 $model = $builder->getModel();
 
@@ -3206,7 +3206,7 @@ class Validity implements ArrayableContract
      *
      * @template T of Builder
      *
-     * @param Closure(mixed=, mixed=): T $callback
+     * @param Closure(): T $callback
      * @param (Closure(mixed, mixed=, mixed=): (bool|int|null))|null $each
      *
      * @return $this
@@ -3223,7 +3223,7 @@ class Validity implements ArrayableContract
 
         return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
             if ($keys === null) {
-                $builder = $callback($value, $attribute);
+                $builder = $callback();
 
                 $model = $builder->getModel();
 
