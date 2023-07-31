@@ -1,0 +1,35 @@
+# generic
+.DS_Store
+.idea
+.vscode
+.fleet
+
+# node
+/node_modules
+/package-lock.json
+
+# composer
+/vendor
+/composer.lock
+
+# phpunit
+phpunit.xml
+.phpunit.result.cache
+
+# phpstan
+phpstan.neon
+
+# php-cs-fixer
+.php-cs-fixer.cache
+
+# tools
+/tools/*/vendor
+/tools/*/node_modules
+/tools/*/package-lock.json
+/tools/*/composer.lock
+
+# blade
+*.blade.php
+
+# svg
+*.svg
