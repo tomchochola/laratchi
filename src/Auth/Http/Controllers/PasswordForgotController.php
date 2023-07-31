@@ -71,7 +71,11 @@ class PasswordForgotController extends TransactionController
      */
     protected function validateToken(PasswordForgotRequest $request, User $me): void
     {
-        if (resolvePasswordBroker()->getRepository()->recentlyCreatedToken($me)) {
+        if (
+            resolvePasswordBroker()
+                ->getRepository()
+                ->recentlyCreatedToken($me)
+        ) {
             $request->throwSingleValidationException(\array_keys($request->credentials()), PasswordBrokerContract::RESET_THROTTLED);
         }
     }

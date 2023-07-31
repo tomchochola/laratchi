@@ -41,17 +41,8 @@ class Kernel extends HttpKernel
      * @inheritDoc
      */
     protected $middlewareGroups = [
-        'session' => [
-            StartSession::class,
-            AuthenticateSession::class,
-            ShareErrorsFromSession::class,
-            VerifyCsrfToken::class,
-        ],
+        'session' => [StartSession::class, AuthenticateSession::class, ShareErrorsFromSession::class, VerifyCsrfToken::class],
 
-        'api' => [
-            SetRequestFormatMiddleware::class.':json',
-            ValidateAcceptHeaderMiddleware::class.':application/json',
-            ValidateContentTypeHeaderMiddleware::class.':form',
-        ],
+        'api' => [SetRequestFormatMiddleware::class.':json', ValidateAcceptHeaderMiddleware::class.':application/json', ValidateContentTypeHeaderMiddleware::class.':form'],
     ];
 }

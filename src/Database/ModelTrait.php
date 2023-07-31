@@ -193,15 +193,20 @@ trait ModelTrait
     {
         \assert(! ($idKey === null && $routeKey === null));
 
-        return static::mustResolve($idKey !== null ? $request->allInput()->int($idKey) : null, $routeKey !== null ? $request->allInput()->string($routeKey) : null, $closure, static function () use ($request, $idKey, $routeKey): never {
-            if ($idKey !== null && $routeKey !== null) {
-                $request->throwSingleValidationException([$idKey, $routeKey], 'invalid');
-            }
+        return static::mustResolve(
+            $idKey !== null ? $request->allInput()->int($idKey) : null,
+            $routeKey !== null ? $request->allInput()->string($routeKey) : null,
+            $closure,
+            static function () use ($request, $idKey, $routeKey): never {
+                if ($idKey !== null && $routeKey !== null) {
+                    $request->throwSingleValidationException([$idKey, $routeKey], 'invalid');
+                }
 
-            \assert(! ($idKey === null && $routeKey === null));
+                \assert(! ($idKey === null && $routeKey === null));
 
-            $request->throwSingleValidationException([$idKey ?? $routeKey], 'invalid');
-        });
+                $request->throwSingleValidationException([$idKey ?? $routeKey], 'invalid');
+            },
+        );
     }
 
     /**
@@ -295,7 +300,10 @@ trait ModelTrait
 
         if ($preferId === null) {
             $builder->where(static function (Builder $builder) use ($values, $qualifier): void {
-                $builder->whereKey($values)->getQuery()->orWhereIn($qualifier->getQualifiedRouteKeyName(), $values);
+                $builder
+                    ->whereKey($values)
+                    ->getQuery()
+                    ->orWhereIn($qualifier->getQualifiedRouteKeyName(), $values);
             });
         } elseif ($preferId) {
             $builder->whereKey($values);
@@ -315,7 +323,10 @@ trait ModelTrait
 
         if ($preferId === null) {
             $builder->where(static function (Builder $builder) use ($values, $qualifier): void {
-                $builder->whereKeyNot($values)->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $values);
+                $builder
+                    ->whereKeyNot($values)
+                    ->getQuery()
+                    ->whereNotIn($qualifier->getQualifiedRouteKeyName(), $values);
             });
         } elseif ($preferId) {
             $builder->whereKeyNot($values);
@@ -658,13 +669,18 @@ trait ModelTrait
      */
     public static function scopeHasId(Builder $builder, string $relation, array $values, ?Closure $closure = null, string $operator = '>=', int $count = 1): void
     {
-        $builder->whereHas($relation, static function (Builder $builder) use ($values, $closure): void {
-            $builder->whereKey($values);
+        $builder->whereHas(
+            $relation,
+            static function (Builder $builder) use ($values, $closure): void {
+                $builder->whereKey($values);
 
-            if ($closure !== null) {
-                $closure($builder);
-            }
-        }, $operator, $count);
+                if ($closure !== null) {
+                    $closure($builder);
+                }
+            },
+            $operator,
+            $count,
+        );
     }
 
     /**

@@ -23,14 +23,7 @@ class Handler extends IlluminateHandler
     /**
      * @inheritDoc
      */
-    protected $dontFlash = [
-        'current_password',
-        'current_password_confirmation',
-        'password',
-        'password_confirmation',
-        'new_password',
-        'new_password_confirmation',
-    ];
+    protected $dontFlash = ['current_password', 'current_password_confirmation', 'password', 'password_confirmation', 'new_password', 'new_password_confirmation'];
 
     /**
      * Convert throwable to HTTP exception.
@@ -147,16 +140,12 @@ class Handler extends IlluminateHandler
                 unset($json['message']);
             }
 
-            $json['internal'] = $exception->getMessage() === '' ? (SymfonyResponse::$statusTexts[$status] ?? (string) $status) : $exception->getMessage();
+            $json['internal'] = $exception->getMessage() === '' ? SymfonyResponse::$statusTexts[$status] ?? (string) $status : $exception->getMessage();
         }
 
         $json['code'] = $httpException->getCode();
 
-        return new JsonResponse(
-            \array_replace($json, $data),
-            $httpException->getStatusCode(),
-            $httpException->getHeaders(),
-        );
+        return new JsonResponse(\array_replace($json, $data), $httpException->getStatusCode(), $httpException->getHeaders());
     }
 
     /**
@@ -172,11 +161,7 @@ class Handler extends IlluminateHandler
      */
     protected function symfony(Request $request, Throwable $exception, HttpExceptionInterface $httpException): Response
     {
-        $response = new SymfonyResponse(
-            $this->renderExceptionContent($exception),
-            $httpException->getStatusCode(),
-            $httpException->getHeaders(),
-        );
+        $response = new SymfonyResponse($this->renderExceptionContent($exception), $httpException->getStatusCode(), $httpException->getHeaders());
 
         return $this->toIlluminateResponse($response, $exception)->prepare($request);
     }

@@ -11,12 +11,5 @@ class TrimStrings extends Middleware
     /**
      * @inheritDoc
      */
-    protected $except = [
-        'current_password',
-        'current_password_confirmation',
-        'password',
-        'password_confirmation',
-        'new_password',
-        'new_password_confirmation',
-    ];
+    protected $except = ['current_password', 'current_password_confirmation', 'password', 'password_confirmation', 'new_password', 'new_password_confirmation'];
 }

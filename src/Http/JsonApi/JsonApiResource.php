@@ -139,13 +139,16 @@ abstract class JsonApiResource
             if ($relationship->resource === null) {
                 $new = null;
             } elseif ($relationship->resource instanceof Collection) {
-                $new = $relationship->resource->map(function (mixed $item) use ($relationship, $included): array {
-                    $resource = ($relationship->closureMap)($item);
+                $new = $relationship->resource
+                    ->map(function (mixed $item) use ($relationship, $included): array {
+                        $resource = ($relationship->closureMap)($item);
 
-                    $this->include($resource, $included);
+                        $this->include($resource, $included);
 
-                    return $resource->header();
-                })->values()->all();
+                        return $resource->header();
+                    })
+                    ->values()
+                    ->all();
             } else {
                 $resource = ($relationship->closureMap)($relationship->resource);
 

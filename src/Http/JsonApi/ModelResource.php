@@ -24,20 +24,28 @@ class ModelResource extends ClosureResource
      */
     public function __construct(Model $model, ?Closure $closureAttributes = null, ?Closure $closureRelationships = null, ?Closure $closureMeta = null)
     {
-        parent::__construct($model, static function (Model $model): string {
-            $id = $model->getKey();
+        parent::__construct(
+            $model,
+            static function (Model $model): string {
+                $id = $model->getKey();
 
-            \assert(\is_scalar($id));
+                \assert(\is_scalar($id));
 
-            return (string) $id;
-        }, static function (Model $model): string {
-            $id = $model->getRouteKey();
+                return (string) $id;
+            },
+            static function (Model $model): string {
+                $id = $model->getRouteKey();
 
-            \assert(\is_scalar($id));
+                \assert(\is_scalar($id));
 
-            return (string) $id;
-        }, static function (Model $model): string {
-            return $model->getTable();
-        }, $closureAttributes, $closureRelationships, $closureMeta);
+                return (string) $id;
+            },
+            static function (Model $model): string {
+                return $model->getTable();
+            },
+            $closureAttributes,
+            $closureRelationships,
+            $closureMeta,
+        );
     }
 }

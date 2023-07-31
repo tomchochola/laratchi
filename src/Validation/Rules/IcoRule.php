@@ -82,7 +82,9 @@ class IcoRule implements RuleContract
      */
     protected function validateAres(string $value): bool
     {
-        $cache = resolveCacheManager()->getStore()->get(static::class.':'.$value);
+        $cache = resolveCacheManager()
+            ->getStore()
+            ->get(static::class.':'.$value);
 
         if (\is_bool($cache)) {
             return $cache;

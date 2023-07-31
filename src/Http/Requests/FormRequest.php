@@ -412,108 +412,201 @@ class FormRequest extends IlluminateFormRequest
      *
      * @return array<string, mixed>
      */
-    protected function mergeRules(array $rules, bool $signed = false, bool $cursor = false, bool $page = false, ?int $take = null, bool $filter = false, bool $id = false, bool $slug = false, bool $select = false, bool $count = false, bool $filterId = false, bool $filterSearch = false, ?array $sort = null, bool $filterSlug = false, bool $filterNotId = false, bool $filterIdSlug = false, bool $filterNotIdSlug = false): array
-    {
+    protected function mergeRules(
+        array $rules,
+        bool $signed = false,
+        bool $cursor = false,
+        bool $page = false,
+        ?int $take = null,
+        bool $filter = false,
+        bool $id = false,
+        bool $slug = false,
+        bool $select = false,
+        bool $count = false,
+        bool $filterId = false,
+        bool $filterSearch = false,
+        ?array $sort = null,
+        bool $filterSlug = false,
+        bool $filterNotId = false,
+        bool $filterIdSlug = false,
+        bool $filterNotIdSlug = false,
+    ): array {
         if ($signed) {
             $rules = \array_replace($rules, [
-                'signature' => Validity::make()->nullable()->filled()->string(null),
-                'expires' => Validity::make()->nullable()->filled()->integer(null, null),
+                'signature' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->string(null),
+                'expires' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->integer(null, null),
             ]);
         }
 
         if ($cursor) {
             $rules = \array_replace($rules, [
-                'cursor' => Validity::make()->nullable()->filled()->string(null)->cursor(),
+                'cursor' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->string(null)
+                    ->cursor(),
             ]);
         }
 
         if ($page) {
             $rules = \array_replace($rules, [
-                'page' => Validity::make()->nullable()->filled()->positive(null, null),
+                'page' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->positive(null, null),
             ]);
         }
 
         if ($take !== null) {
             $rules = \array_replace($rules, [
-                'take' => Validity::make()->nullable()->filled()->positive($take > 0 ? $take : null, null)->missingWith(['count']),
+                'take' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->positive($take > 0 ? $take : null, null)
+                    ->missingWith(['count']),
             ]);
         }
 
         if ($filter) {
             $rules = \array_replace($rules, [
-                'filter' => Validity::make()->nullable()->filled()->array(null),
+                'filter' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->array(null),
             ]);
         }
 
         if ($id) {
             $rules = \array_replace($rules, [
-                'id' => Validity::make()->nullable()->filled()->id()->missingWith(['slug']),
+                'id' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->id()
+                    ->missingWith(['slug']),
             ]);
         }
 
         if ($slug) {
             $rules = \array_replace($rules, [
-                'slug' => Validity::make()->nullable()->filled()->slug()->missingWith(['id']),
+                'slug' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->slug()
+                    ->missingWith(['id']),
             ]);
         }
 
         if ($select) {
             $rules = \array_replace($rules, [
-                'select' => Validity::make()->nullable()->filled()->true()->missingWith(['count']),
+                'select' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->true()
+                    ->missingWith(['count']),
             ]);
         }
 
         if ($count) {
             $rules = \array_replace($rules, [
-                'count' => Validity::make()->nullable()->filled()->true()->missingWith(['take', 'select', 'sort']),
+                'count' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->true()
+                    ->missingWith(['take', 'select', 'sort']),
             ]);
         }
 
         if ($filterId) {
             $rules = \array_replace($rules, [
-                'filter.id' => Validity::make()->nullable()->filled()->collection(null),
-                'filter.id.*' => Validity::make()->required()->distinct()->id(),
+                'filter.id' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->collection(null),
+                'filter.id.*' => Validity::make()
+                    ->required()
+                    ->distinct()
+                    ->id(),
             ]);
         }
 
         if ($filterNotId) {
             $rules = \array_replace($rules, [
-                'filter.not_id' => Validity::make()->nullable()->filled()->collection(null),
-                'filter.not_id.*' => Validity::make()->required()->distinct()->id(),
+                'filter.not_id' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->collection(null),
+                'filter.not_id.*' => Validity::make()
+                    ->required()
+                    ->distinct()
+                    ->id(),
             ]);
         }
 
         if ($filterIdSlug) {
             $rules = \array_replace($rules, [
-                'filter.id_slug' => Validity::make()->nullable()->filled()->collection(null),
-                'filter.id_slug.*' => Validity::make()->required()->distinct()->idSlug(),
+                'filter.id_slug' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->collection(null),
+                'filter.id_slug.*' => Validity::make()
+                    ->required()
+                    ->distinct()
+                    ->idSlug(),
             ]);
         }
 
         if ($filterNotIdSlug) {
             $rules = \array_replace($rules, [
-                'filter.not_id_slug' => Validity::make()->nullable()->filled()->collection(null),
-                'filter.not_id_slug.*' => Validity::make()->required()->distinct()->idSlug(),
+                'filter.not_id_slug' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->collection(null),
+                'filter.not_id_slug.*' => Validity::make()
+                    ->required()
+                    ->distinct()
+                    ->idSlug(),
             ]);
         }
 
         if ($filterSlug) {
             $rules = \array_replace($rules, [
-                'filter.slug' => Validity::make()->nullable()->filled()->collection(null),
-                'filter.slug.*' => Validity::make()->required()->distinct()->slug(),
+                'filter.slug' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->collection(null),
+                'filter.slug.*' => Validity::make()
+                    ->required()
+                    ->distinct()
+                    ->slug(),
             ]);
         }
 
         if ($filterSearch) {
             $rules = \array_replace($rules, [
-                'filter.search' => Validity::make()->nullable()->filled()->varchar(),
+                'filter.search' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->varchar(),
             ]);
         }
 
         if ($sort !== null) {
             $rules = \array_replace($rules, [
-                'sort' => Validity::make()->nullable()->filled()->collection(null)->missingWith(['count']),
-                'sort.*' => Validity::make()->required()->distinct()->inString($sort),
+                'sort' => Validity::make()
+                    ->nullable()
+                    ->filled()
+                    ->collection(null)
+                    ->missingWith(['count']),
+                'sort.*' => Validity::make()
+                    ->required()
+                    ->distinct()
+                    ->inString($sort),
             ]);
         }
 

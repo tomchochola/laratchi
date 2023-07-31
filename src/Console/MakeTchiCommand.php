@@ -55,11 +55,31 @@ class MakeTchiCommand extends GeneratorCommand
         $this->make("App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreController", null, 'controller.store.stub');
         $this->make("App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyController", null, 'controller.destroy.stub');
 
-        $this->make("Tests\\Feature\\App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexControllerTest", $this->laravel->basePath("tests/Feature/App/Http/Controllers/Api/{$modelName}/{$modelName}IndexControllerTest.php"), 'test.index.stub');
-        $this->make("Tests\\Feature\\App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowControllerTest", $this->laravel->basePath("tests/Feature/App/Http/Controllers/Api/{$modelName}/{$modelName}ShowControllerTest.php"), 'test.show.stub');
-        $this->make("Tests\\Feature\\App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateControllerTest", $this->laravel->basePath("tests/Feature/App/Http/Controllers/Api/{$modelName}/{$modelName}UpdateControllerTest.php"), 'test.update.stub');
-        $this->make("Tests\\Feature\\App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreControllerTest", $this->laravel->basePath("tests/Feature/App/Http/Controllers/Api/{$modelName}/{$modelName}StoreControllerTest.php"), 'test.store.stub');
-        $this->make("Tests\\Feature\\App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyControllerTest", $this->laravel->basePath("tests/Feature/App/Http/Controllers/Api/{$modelName}/{$modelName}DestroyControllerTest.php"), 'test.destroy.stub');
+        $this->make(
+            "Tests\\Feature\\App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexControllerTest",
+            $this->laravel->basePath("tests/Feature/App/Http/Controllers/Api/{$modelName}/{$modelName}IndexControllerTest.php"),
+            'test.index.stub',
+        );
+        $this->make(
+            "Tests\\Feature\\App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowControllerTest",
+            $this->laravel->basePath("tests/Feature/App/Http/Controllers/Api/{$modelName}/{$modelName}ShowControllerTest.php"),
+            'test.show.stub',
+        );
+        $this->make(
+            "Tests\\Feature\\App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateControllerTest",
+            $this->laravel->basePath("tests/Feature/App/Http/Controllers/Api/{$modelName}/{$modelName}UpdateControllerTest.php"),
+            'test.update.stub',
+        );
+        $this->make(
+            "Tests\\Feature\\App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreControllerTest",
+            $this->laravel->basePath("tests/Feature/App/Http/Controllers/Api/{$modelName}/{$modelName}StoreControllerTest.php"),
+            'test.store.stub',
+        );
+        $this->make(
+            "Tests\\Feature\\App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyControllerTest",
+            $this->laravel->basePath("tests/Feature/App/Http/Controllers/Api/{$modelName}/{$modelName}DestroyControllerTest.php"),
+            'test.destroy.stub',
+        );
 
         $this->modifyOpenApi();
         $this->modifyDatabaseSeeder();
@@ -693,7 +713,11 @@ class MakeTchiCommand extends GeneratorCommand
             $databaseSeeder = \str_replace("{\n", "{\n    /**\n     * @inheritDoc\n     */\n    public function run(): void\n    {\n    }\n", $databaseSeeder);
         }
 
-        $databaseSeeder = \str_replace("public function run(): void\n    {\n", "public function run(): void\n    {\n        \$this->callOnce({$modelName}Seeder::class);\n", $databaseSeeder);
+        $databaseSeeder = \str_replace(
+            "public function run(): void\n    {\n",
+            "public function run(): void\n    {\n        \$this->callOnce({$modelName}Seeder::class);\n",
+            $databaseSeeder,
+        );
 
         $this->files->put($path, $databaseSeeder);
     }
@@ -708,7 +732,11 @@ class MakeTchiCommand extends GeneratorCommand
 
         $databaseSchema = $this->files->get($path);
 
-        $databaseSchema = \str_replace("erDiagram\n", "erDiagram\n\n{$table} {\n  id id PK\n  id user_id FK \"users.id cascadeOnUpdate cascadeOnDelete\"\n  string title\n  timestamp created_at\n  timestamp updated_at\n}\n", $databaseSchema);
+        $databaseSchema = \str_replace(
+            "erDiagram\n",
+            "erDiagram\n\n{$table} {\n  id id PK\n  id user_id FK \"users.id cascadeOnUpdate cascadeOnDelete\"\n  string title\n  timestamp created_at\n  timestamp updated_at\n}\n",
+            $databaseSchema,
+        );
 
         $this->files->put($path, $databaseSchema);
     }
@@ -724,7 +752,11 @@ class MakeTchiCommand extends GeneratorCommand
 
         $routes = $this->files->get($path);
 
-        $routes = \str_replace('resolveRouter()->any(', "resolveRouteRegistrar()->prefix('v1/{$table}')->group(static function (): void {\n    resolveRouteRegistrar()->post('store', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreController::class);\n    resolveRouteRegistrar()->get('index', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexController::class);\n    resolveRouteRegistrar()->get('show', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowController::class);\n    resolveRouteRegistrar()->post('update', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateController::class);\n    resolveRouteRegistrar()->post('destroy', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyController::class);\n});\n\nresolveRouter()->any(", $routes);
+        $routes = \str_replace(
+            'resolveRouter()->any(',
+            "resolveRouteRegistrar()->prefix('v1/{$table}')->group(static function (): void {\n    resolveRouteRegistrar()->post('store', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreController::class);\n    resolveRouteRegistrar()->get('index', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexController::class);\n    resolveRouteRegistrar()->get('show', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowController::class);\n    resolveRouteRegistrar()->post('update', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateController::class);\n    resolveRouteRegistrar()->post('destroy', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyController::class);\n});\n\nresolveRouter()->any(",
+            $routes,
+        );
 
         $this->files->put($path, $routes);
     }
@@ -743,7 +775,11 @@ class MakeTchiCommand extends GeneratorCommand
 
         $testCase = $this->files->get($path);
 
-        $testCase = \str_replace("\n}\n", "\n\n    /**\n     * {$modelName} embed structure.\n     */\n    protected function structure{$modelName}Embed(): JsonApiValidator\n    {\n        \$validity = new \\{$qualifiedValidityName}();\n\n        return \$this->structure('{$table}', [\n            'title' => \$validity->title()->required(),\n            'created_at' => \\Tomchochola\\Laratchi\\Validation\\Validity::make()->dateTime()->required(),\n            'updated_at' => \\Tomchochola\\Laratchi\\Validation\\Validity::make()->dateTime()->required(),\n        ]);\n    }\n}\n", $testCase);
+        $testCase = \str_replace(
+            "\n}\n",
+            "\n\n    /**\n     * {$modelName} embed structure.\n     */\n    protected function structure{$modelName}Embed(): JsonApiValidator\n    {\n        \$validity = new \\{$qualifiedValidityName}();\n\n        return \$this->structure('{$table}', [\n            'title' => \$validity->title()->required(),\n            'created_at' => \\Tomchochola\\Laratchi\\Validation\\Validity::make()->dateTime()->required(),\n            'updated_at' => \\Tomchochola\\Laratchi\\Validation\\Validity::make()->dateTime()->required(),\n        ]);\n    }\n}\n",
+            $testCase,
+        );
 
         $this->files->put($path, $testCase);
     }

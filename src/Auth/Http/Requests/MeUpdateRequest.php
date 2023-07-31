@@ -28,9 +28,18 @@ class MeUpdateRequest extends SecureFormRequest
         $authValidity = AuthValidity::inject();
 
         return [
-            'email' => $authValidity->email()->nullable()->filled(),
-            'name' => $authValidity->name()->nullable()->filled(),
-            'locale' => $authValidity->locale()->nullable()->filled(),
+            'email' => $authValidity
+                ->email()
+                ->nullable()
+                ->filled(),
+            'name' => $authValidity
+                ->name()
+                ->nullable()
+                ->filled(),
+            'locale' => $authValidity
+                ->locale()
+                ->nullable()
+                ->filled(),
         ];
     }
 

@@ -26,7 +26,11 @@ class EmailVerificationResendRequest extends SecureFormRequest
         $authValidity = AuthValidity::inject();
 
         return [
-            'email' => $authValidity->email()->nullable()->filled()->requiredIfRule($this->guest()),
+            'email' => $authValidity
+                ->email()
+                ->nullable()
+                ->filled()
+                ->requiredIfRule($this->guest()),
         ];
     }
 

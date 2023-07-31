@@ -19,7 +19,11 @@ class Kernel extends ConsoleKernel
         parent::schedule($schedule);
 
         foreach (mustConfigArray('auth.passwords') as $passwordBrokerName => $config) {
-            $schedule->command("auth:clear-resets {$passwordBrokerName}")->dailyAt('04:00')->timezone(static::SCHEDULE_TIMEZONE)->runInBackground();
+            $schedule
+                ->command("auth:clear-resets {$passwordBrokerName}")
+                ->dailyAt('04:00')
+                ->timezone(static::SCHEDULE_TIMEZONE)
+                ->runInBackground();
         }
     }
 }

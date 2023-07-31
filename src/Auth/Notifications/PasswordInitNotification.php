@@ -23,8 +23,13 @@ class PasswordInitNotification extends Notification implements ShouldQueueContra
     /**
      * Create a new notification instance.
      */
-    protected function __construct(protected string $guardName, protected ?string $token = null, protected ?string $email = null, protected ?string $spa = null, protected ?string $url = null)
-    {
+    protected function __construct(
+        protected string $guardName,
+        protected ?string $token = null,
+        protected ?string $email = null,
+        protected ?string $spa = null,
+        protected ?string $url = null,
+    ) {
         $this->afterCommit();
     }
 

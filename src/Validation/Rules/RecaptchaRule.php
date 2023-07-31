@@ -24,10 +24,13 @@ class RecaptchaRule implements RuleContract
             return true;
         }
 
-        $response = resolveHttp()->acceptJson()->asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => $this->secret,
-            'response' => $value,
-        ]);
+        $response = resolveHttp()
+            ->acceptJson()
+            ->asForm()
+            ->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret' => $this->secret,
+                'response' => $value,
+            ]);
 
         if ($response->successful()) {
             return $response->json('success') === true;

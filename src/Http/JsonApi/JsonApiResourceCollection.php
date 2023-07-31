@@ -38,9 +38,12 @@ class JsonApiResourceCollection
         $collection = $this->collection instanceof Collection ? $this->collection : collect($this->collection->items());
 
         $data = [
-            'data' => $collection->map(function (mixed $item) use ($included): array {
-                return ($this->closureMap)($item)->data($included);
-            })->values()->all(),
+            'data' => $collection
+                ->map(function (mixed $item) use ($included): array {
+                    return ($this->closureMap)($item)->data($included);
+                })
+                ->values()
+                ->all(),
         ];
 
         if ($included->isNotEmpty()) {
@@ -62,7 +65,11 @@ class JsonApiResourceCollection
         if ($this->collection instanceof LengthAwarePaginator) {
             $meta = \array_replace($meta, [
                 'count' => $this->collection->total(),
-                'prev' => $this->collection->currentPage() !== 1 ? $this->collection->currentPage() <= $this->collection->lastPage() ? $this->collection->currentPage() - 1 : $this->collection->lastPage() : null,
+                'prev' => $this->collection->currentPage() !== 1
+                        ? ($this->collection->currentPage() <= $this->collection->lastPage()
+                            ? $this->collection->currentPage() - 1
+                            : $this->collection->lastPage())
+                        : null,
             ]);
         }
 

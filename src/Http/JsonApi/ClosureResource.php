@@ -22,8 +22,15 @@ class ClosureResource extends JsonApiResource
      * @param ?Closure(T): array<string, JsonApiRelationship> $closureRelationships
      * @param ?Closure(T): array<string, mixed> $closureMeta
      */
-    public function __construct(public mixed $resource, public Closure $closureId, public Closure $closureSlug, public Closure $closureType, public ?Closure $closureAttributes = null, public ?Closure $closureRelationships = null, public ?Closure $closureMeta = null)
-    {
+    public function __construct(
+        public mixed $resource,
+        public Closure $closureId,
+        public Closure $closureSlug,
+        public Closure $closureType,
+        public ?Closure $closureAttributes = null,
+        public ?Closure $closureRelationships = null,
+        public ?Closure $closureMeta = null,
+    ) {
     }
 
     /**

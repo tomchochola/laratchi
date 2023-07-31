@@ -1214,23 +1214,26 @@ if (! \function_exists('strPutCsv')) {
      */
     function strPutCsv(array $data): string
     {
-        return \implode(',', \array_map(static function (mixed $value): string {
-            if (\is_string($value)) {
-                return '"'.\str_replace('"', '""', $value).'"';
-            }
+        return \implode(
+            ',',
+            \array_map(static function (mixed $value): string {
+                if (\is_string($value)) {
+                    return '"'.\str_replace('"', '""', $value).'"';
+                }
 
-            if (\is_bool($value)) {
-                return $value ? '1' : '0';
-            }
+                if (\is_bool($value)) {
+                    return $value ? '1' : '0';
+                }
 
-            if ($value === null) {
-                return '';
-            }
+                if ($value === null) {
+                    return '';
+                }
 
-            \assert(\is_scalar($value));
+                \assert(\is_scalar($value));
 
-            return (string) $value;
-        }, $data));
+                return (string) $value;
+            }, $data),
+        );
     }
 }
 

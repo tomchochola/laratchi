@@ -25,10 +25,7 @@ class DatabaseToken extends Model
     /**
      * @inheritDoc
      */
-    protected $hidden = [
-        'hash',
-        'bearer',
-    ];
+    protected $hidden = ['hash', 'bearer'];
 
     /**
      * Inject.

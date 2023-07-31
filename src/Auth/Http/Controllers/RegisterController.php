@@ -63,7 +63,11 @@ class RegisterController extends TransactionController
      */
     protected function canLogin(RegisterRequest $request, User $me): ?SymfonyResponse
     {
-        if (CanLoginService::inject()->authorize($me)->denied()) {
+        if (
+            CanLoginService::inject()
+                ->authorize($me)
+                ->denied()
+        ) {
             return resolveResponseFactory()->noContent();
         }
 

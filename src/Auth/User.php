@@ -32,10 +32,7 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
     /**
      * @inheritDoc
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
     /**
      * @inheritDoc
@@ -51,7 +48,9 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
      */
     public static function auth(): ?static
     {
-        $me = resolveAuthManager()->guard()->user();
+        $me = resolveAuthManager()
+            ->guard()
+            ->user();
 
         \assert($me === null || $me instanceof static);
 
@@ -77,7 +76,9 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
      */
     public static function guest(): bool
     {
-        return resolveAuthManager()->guard()->guest();
+        return resolveAuthManager()
+            ->guard()
+            ->guest();
     }
 
     /**
@@ -125,7 +126,13 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
             return;
         }
 
-        $this->notify(EmailVerificationNotification::inject($this->getTable(), EmailBrokerService::inject()->store($this->getTable(), $this->getEmailForVerification()), $this->getEmailForVerification())->locale($this->preferredLocale()));
+        $this->notify(
+            EmailVerificationNotification::inject(
+                $this->getTable(),
+                EmailBrokerService::inject()->store($this->getTable(), $this->getEmailForVerification()),
+                $this->getEmailForVerification(),
+            )->locale($this->preferredLocale()),
+        );
     }
 
     /**
@@ -217,7 +224,10 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
 
         static::updated(static function (self $user): void {
             if ($user->wasChanged('password')) {
-                $user->databaseTokens()->getQuery()->delete();
+                $user
+                    ->databaseTokens()
+                    ->getQuery()
+                    ->delete();
             }
         });
     }

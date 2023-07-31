@@ -23,12 +23,7 @@ class Validator extends IlluminateValidator
     {
         parent::__construct($translator, $data, $rules, $messages, $customAttributes);
 
-        $this->dependentRules = \array_merge($this->dependentRules, [
-            'ProhibitedWith',
-            'ProhibitedWithAll',
-            'ProhibitedWithout',
-            'ProhibitedWithoutAll',
-        ]);
+        $this->dependentRules = \array_merge($this->dependentRules, ['ProhibitedWith', 'ProhibitedWithAll', 'ProhibitedWithout', 'ProhibitedWithoutAll']);
     }
 
     /**

@@ -54,10 +54,12 @@ class RegisterRequest extends SecureFormRequest
     {
         $password = $this->validatedInput()->string('password');
 
-        return $this->validatedInput()->merge([
-            'password' => $password === null ? null : resolveHasher()->make($password),
-            'email_verified_at' => null,
-            'remember_token' => null,
-        ])->all();
+        return $this->validatedInput()
+            ->merge([
+                'password' => $password === null ? null : resolveHasher()->make($password),
+                'email_verified_at' => null,
+                'remember_token' => null,
+            ])
+            ->all();
     }
 }

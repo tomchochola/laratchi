@@ -29,13 +29,19 @@ class ServiceProvider extends IlluminateServiceProvider
 
         \assert($app instanceof Application);
 
-        $this->publishes([
-            __DIR__.'/../../lang' => $app->langPath('vendor/laratchi'),
-        ], ['laratchi-lang', 'laratchi', 'lang']);
+        $this->publishes(
+            [
+                __DIR__.'/../../lang' => $app->langPath('vendor/laratchi'),
+            ],
+            ['laratchi-lang', 'laratchi', 'lang'],
+        );
 
-        $this->publishes([
-            __DIR__.'/../../database/migrations' => $app->databasePath('migrations'),
-        ], ['laratchi-migrations', 'laratchi', 'migrations']);
+        $this->publishes(
+            [
+                __DIR__.'/../../database/migrations' => $app->databasePath('migrations'),
+            ],
+            ['laratchi-migrations', 'laratchi', 'migrations'],
+        );
 
         $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
 

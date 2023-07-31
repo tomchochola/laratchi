@@ -41,16 +41,16 @@ class ViewService
      */
     public function background(): string
     {
-        $phases = [
-            'day',
-            'sunrise',
-            'sunset',
-            'night',
-        ];
+        $phases = ['day', 'sunrise', 'sunset', 'night'];
 
         $phase = $phases[\array_rand($phases)];
 
-        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make("laratchi::phases.{$phase}", ['color' => $this->color()])->render());
+        return 'data:image/svg+xml;utf8,'.
+            \rawurlencode(
+                resolveViewFactory()
+                    ->make("laratchi::phases.{$phase}", ['color' => $this->color()])
+                    ->render(),
+            );
     }
 
     /**
@@ -58,7 +58,12 @@ class ViewService
      */
     public function nightBackground(): string
     {
-        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->make('laratchi::phases.night', ['color' => $this->color()])->render());
+        return 'data:image/svg+xml;utf8,'.
+            \rawurlencode(
+                resolveViewFactory()
+                    ->make('laratchi::phases.night', ['color' => $this->color()])
+                    ->render(),
+            );
     }
 
     /**
@@ -66,6 +71,14 @@ class ViewService
      */
     public function illustration(int $status): string
     {
-        return 'data:image/svg+xml;utf8,'.\rawurlencode(resolveViewFactory()->first(["laratchi::illustrations.{$status}", 'laratchi::illustrations.'.\mb_substr((string) $status, 0, -2).'xx', 'laratchi::illustrations.1xx'], ['color' => $this->color()])->render());
+        return 'data:image/svg+xml;utf8,'.
+            \rawurlencode(
+                resolveViewFactory()
+                    ->first(
+                        ["laratchi::illustrations.{$status}", 'laratchi::illustrations.'.\mb_substr((string) $status, 0, -2).'xx', 'laratchi::illustrations.1xx'],
+                        ['color' => $this->color()],
+                    )
+                    ->render(),
+            );
     }
 }

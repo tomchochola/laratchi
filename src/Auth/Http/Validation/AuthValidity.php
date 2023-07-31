@@ -58,7 +58,9 @@ class AuthValidity
      */
     public function email(): Validity
     {
-        return Validity::make()->varchar()->email();
+        return Validity::make()
+            ->varchar()
+            ->email();
     }
 
     /**
@@ -66,7 +68,9 @@ class AuthValidity
      */
     public function password(): Validity
     {
-        return Validity::make()->string(1024)->password();
+        return Validity::make()
+            ->string(1024)
+            ->password();
     }
 
     /**

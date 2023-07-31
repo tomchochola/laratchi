@@ -59,7 +59,13 @@ class EmailConfirmationController extends TransactionController
     {
         [$hit] = $this->throttle($this->limit('token'), $this->onThrottle($request, ['token']));
 
-        if (! EmailBrokerService::inject()->validate(resolveAuthManager()->getDefaultDriver(), $request->validatedInput()->mustString('email'), $request->validatedInput()->mustString('token'))) {
+        if (
+            ! EmailBrokerService::inject()->validate(
+                resolveAuthManager()->getDefaultDriver(),
+                $request->validatedInput()->mustString('email'),
+                $request->validatedInput()->mustString('token'),
+            )
+        ) {
             $hit();
             $request->throwExistsValidationException(['token']);
         }

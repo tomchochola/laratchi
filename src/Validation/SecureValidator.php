@@ -214,10 +214,7 @@ class SecureValidator extends Validator
             return false;
         }
 
-        $extraAttributes = \array_diff_key(
-            Arr::dot($this->data),
-            $this->rules,
-        );
+        $extraAttributes = \array_diff_key(Arr::dot($this->data), $this->rules);
 
         foreach ($extraAttributes as $attribute => $value) {
             if (\count($this->getExplicitKeys((string) $attribute)) === 0) {
@@ -296,9 +293,9 @@ class SecureValidator extends Validator
         if (\in_array($rule, $this->sizeRules, true)) {
             $type = $this->getAttributeType($attribute);
 
-            $message = static::$customMsgs[$snake][$type] ?? static::MSGS[$snake][$type] ?? 'fallback';
+            $message = static::$customMsgs[$snake][$type] ?? (static::MSGS[$snake][$type] ?? 'fallback');
         } else {
-            $message = static::$customMsgs[$snake] ?? static::MSGS[$snake] ?? 'fallback';
+            $message = static::$customMsgs[$snake] ?? (static::MSGS[$snake] ?? 'fallback');
         }
 
         \assert(\is_string($message));
@@ -314,7 +311,7 @@ class SecureValidator extends Validator
      */
     protected function getFromLocalArray(mixed $attribute, mixed $lowerRule, mixed $source = null): ?string
     {
-        $message = static::$customMsgs[$lowerRule] ?? static::MSGS[$lowerRule] ?? 'fallback';
+        $message = static::$customMsgs[$lowerRule] ?? (static::MSGS[$lowerRule] ?? 'fallback');
 
         \assert(\is_string($message));
         \assert($message !== 'fallback', "Json api validation message not defined for rule class: [{$lowerRule}]");

@@ -397,7 +397,10 @@ class Validity implements ArrayableContract
 
         $this->collection = true;
 
-        \assert($this->array === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert(
+            $this->array === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false,
+            'validation type cross',
+        );
 
         if ($maxItems !== null && $maxItems === $minItems) {
             \assert($maxItems >= 0);
@@ -438,7 +441,10 @@ class Validity implements ArrayableContract
 
         $this->array = true;
 
-        \assert($this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert(
+            $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false,
+            'validation type cross',
+        );
 
         if ($structure !== null) {
             $this->addRule('array', $structure);
@@ -480,7 +486,10 @@ class Validity implements ArrayableContract
 
         $this->array = true;
 
-        \assert($this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert(
+            $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false,
+            'validation type cross',
+        );
 
         return $this->requiredArrayKeys($keys);
     }
@@ -568,7 +577,10 @@ class Validity implements ArrayableContract
 
         $this->boolean = true;
 
-        \assert($this->array === false && $this->collection === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert(
+            $this->array === false && $this->collection === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false,
+            'validation type cross',
+        );
 
         return $this;
     }
@@ -824,8 +836,15 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function dimensionsRule(?int $width = null, ?int $height = null, ?int $minWidth = null, ?int $maxWidth = null, ?int $minHeight = null, ?int $maxHeight = null, ?float $ratio = null): static
-    {
+    public function dimensionsRule(
+        ?int $width = null,
+        ?int $height = null,
+        ?int $minWidth = null,
+        ?int $maxWidth = null,
+        ?int $minHeight = null,
+        ?int $maxHeight = null,
+        ?float $ratio = null,
+    ): static {
         if ($this->skipNext) {
             $this->skipNext = false;
 
@@ -1151,7 +1170,10 @@ class Validity implements ArrayableContract
 
         $this->file = true;
 
-        \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->integer === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert(
+            $this->array === false && $this->collection === false && $this->boolean === false && $this->integer === false && $this->numeric === false && $this->string === false,
+            'validation type cross',
+        );
 
         if ($mimetypes !== null) {
             $this->mimetypes($mimetypes);
@@ -1265,7 +1287,22 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->file($max ?? 10240, $mimeTypes ?? ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/svg', 'image/webp', 'image/bmp', 'image/x-bmp', 'image/x-ms-bmp', 'image/heif', 'image/heic']);
+        return $this->file(
+            $max ?? 10240,
+            $mimeTypes ?? [
+                'image/gif',
+                'image/jpeg',
+                'image/png',
+                'image/svg+xml',
+                'image/svg',
+                'image/webp',
+                'image/bmp',
+                'image/x-bmp',
+                'image/x-ms-bmp',
+                'image/heif',
+                'image/heic',
+            ],
+        );
     }
 
     /**
@@ -1371,7 +1408,10 @@ class Validity implements ArrayableContract
 
         $this->integer = true;
 
-        \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->numeric === false && $this->string === false, 'validation type cross');
+        \assert(
+            $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->numeric === false && $this->string === false,
+            'validation type cross',
+        );
 
         if ($min !== null && $min === $max) {
             $this->size($min);
@@ -1741,7 +1781,10 @@ class Validity implements ArrayableContract
 
         $this->numeric = true;
 
-        \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->string === false, 'validation type cross');
+        \assert(
+            $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->string === false,
+            'validation type cross',
+        );
 
         if ($max !== null && $max === $min) {
             $this->size($max);
@@ -2107,7 +2150,10 @@ class Validity implements ArrayableContract
 
         $this->string = true;
 
-        \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false, 'validation type cross');
+        \assert(
+            $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false,
+            'validation type cross',
+        );
 
         if ($max !== null && $max === $min) {
             \assert($min >= 0);
@@ -2147,7 +2193,10 @@ class Validity implements ArrayableContract
 
         $this->string = true;
 
-        \assert($this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false, 'validation type cross');
+        \assert(
+            $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false,
+            'validation type cross',
+        );
 
         if ($max !== null && $max === $min) {
             \assert($min >= 0);
@@ -2956,34 +3005,39 @@ class Validity implements ArrayableContract
 
         $keys = null;
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool|int {
-            if ($keys === null) {
-                $builder = $callback();
-                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($column));
-            }
-
-            $exists = $keys->contains($value);
-
-            if (! $exists) {
-                return false;
-            }
-
-            if ($each === null) {
-                return true;
-            }
-
-            foreach ($keys as $found) {
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool|int {
+                if ($keys === null) {
+                    $builder = $callback();
+                    $keys = $builder
+                        ->getQuery()
+                        ->distinct()
+                        ->pluck($builder->qualifyColumn($column));
                 }
 
-                return $ok;
-            }
+                $exists = $keys->contains($value);
 
-            return true;
-        }, $message));
+                if (! $exists) {
+                    return false;
+                }
+
+                if ($each === null) {
+                    return true;
+                }
+
+                foreach ($keys as $found) {
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return true;
+            }, $message),
+        );
     }
 
     /**
@@ -3006,34 +3060,39 @@ class Validity implements ArrayableContract
 
         $keys = null;
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool|int {
-            if ($keys === null) {
-                $builder = $callback();
-                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($column));
-            }
-
-            $exists = $keys->contains($value);
-
-            if (! $exists) {
-                return true;
-            }
-
-            if ($each === null) {
-                return false;
-            }
-
-            foreach ($keys as $found) {
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool|int {
+                if ($keys === null) {
+                    $builder = $callback();
+                    $keys = $builder
+                        ->getQuery()
+                        ->distinct()
+                        ->pluck($builder->qualifyColumn($column));
                 }
 
-                return $ok;
-            }
+                $exists = $keys->contains($value);
 
-            return false;
-        }, $message));
+                if (! $exists) {
+                    return true;
+                }
+
+                if ($each === null) {
+                    return false;
+                }
+
+                foreach ($keys as $found) {
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return false;
+            }, $message),
+        );
     }
 
     /**
@@ -3056,39 +3115,44 @@ class Validity implements ArrayableContract
 
         $keys = null;
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
-            if ($keys === null) {
-                $builder = $callback();
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
+                if ($keys === null) {
+                    $builder = $callback();
 
-                $model = $builder->getModel();
+                    $model = $builder->getModel();
 
-                \assert($model instanceof Model);
+                    \assert($model instanceof Model);
 
-                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getKeyName()));
-            }
-
-            $exists = $keys->contains($value);
-
-            if (! $exists) {
-                return false;
-            }
-
-            if ($each === null) {
-                return true;
-            }
-
-            foreach ($keys as $found) {
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                    $keys = $builder
+                        ->getQuery()
+                        ->distinct()
+                        ->pluck($builder->qualifyColumn($model->getKeyName()));
                 }
 
-                return $ok;
-            }
+                $exists = $keys->contains($value);
 
-            return true;
-        }, $message));
+                if (! $exists) {
+                    return false;
+                }
+
+                if ($each === null) {
+                    return true;
+                }
+
+                foreach ($keys as $found) {
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return true;
+            }, $message),
+        );
     }
 
     /**
@@ -3111,39 +3175,44 @@ class Validity implements ArrayableContract
 
         $keys = null;
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
-            if ($keys === null) {
-                $builder = $callback();
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
+                if ($keys === null) {
+                    $builder = $callback();
 
-                $model = $builder->getModel();
+                    $model = $builder->getModel();
 
-                \assert($model instanceof Model);
+                    \assert($model instanceof Model);
 
-                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getKeyName()));
-            }
-
-            $exists = $keys->contains($value);
-
-            if (! $exists) {
-                return true;
-            }
-
-            if ($each === null) {
-                return false;
-            }
-
-            foreach ($keys as $found) {
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                    $keys = $builder
+                        ->getQuery()
+                        ->distinct()
+                        ->pluck($builder->qualifyColumn($model->getKeyName()));
                 }
 
-                return $ok;
-            }
+                $exists = $keys->contains($value);
 
-            return false;
-        }, $message));
+                if (! $exists) {
+                    return true;
+                }
+
+                if ($each === null) {
+                    return false;
+                }
+
+                foreach ($keys as $found) {
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return false;
+            }, $message),
+        );
     }
 
     /**
@@ -3166,39 +3235,44 @@ class Validity implements ArrayableContract
 
         $keys = null;
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
-            if ($keys === null) {
-                $builder = $callback();
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
+                if ($keys === null) {
+                    $builder = $callback();
 
-                $model = $builder->getModel();
+                    $model = $builder->getModel();
 
-                \assert($model instanceof Model);
+                    \assert($model instanceof Model);
 
-                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getRouteKeyName()));
-            }
-
-            $exists = $keys->contains($value);
-
-            if (! $exists) {
-                return false;
-            }
-
-            if ($each === null) {
-                return true;
-            }
-
-            foreach ($keys as $found) {
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                    $keys = $builder
+                        ->getQuery()
+                        ->distinct()
+                        ->pluck($builder->qualifyColumn($model->getRouteKeyName()));
                 }
 
-                return $ok;
-            }
+                $exists = $keys->contains($value);
 
-            return true;
-        }, $message));
+                if (! $exists) {
+                    return false;
+                }
+
+                if ($each === null) {
+                    return true;
+                }
+
+                foreach ($keys as $found) {
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return true;
+            }, $message),
+        );
     }
 
     /**
@@ -3221,39 +3295,44 @@ class Validity implements ArrayableContract
 
         $keys = null;
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
-            if ($keys === null) {
-                $builder = $callback();
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, &$keys): bool|int {
+                if ($keys === null) {
+                    $builder = $callback();
 
-                $model = $builder->getModel();
+                    $model = $builder->getModel();
 
-                \assert($model instanceof Model);
+                    \assert($model instanceof Model);
 
-                $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getRouteKeyName()));
-            }
-
-            $exists = $keys->contains($value);
-
-            if (! $exists) {
-                return true;
-            }
-
-            if ($each === null) {
-                return false;
-            }
-
-            foreach ($keys as $found) {
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                    $keys = $builder
+                        ->getQuery()
+                        ->distinct()
+                        ->pluck($builder->qualifyColumn($model->getRouteKeyName()));
                 }
 
-                return $ok;
-            }
+                $exists = $keys->contains($value);
 
-            return false;
-        }, $message));
+                if (! $exists) {
+                    return true;
+                }
+
+                if ($each === null) {
+                    return false;
+                }
+
+                foreach ($keys as $found) {
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return false;
+            }, $message),
+        );
     }
 
     /**
@@ -3274,33 +3353,35 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
-            $builder = $callback($value, $attribute);
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
+                $builder = $callback($value, $attribute);
 
-            $exists = $builder->toBase()->exists();
+                $exists = $builder->toBase()->exists();
 
-            if (! $exists) {
-                return false;
-            }
-
-            if ($each === null) {
-                return true;
-            }
-
-            foreach ($builder->cursor() as $found) {
-                \assert($found instanceof Model);
-
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                if (! $exists) {
+                    return false;
                 }
 
-                return $ok;
-            }
+                if ($each === null) {
+                    return true;
+                }
 
-            return true;
-        }, $message));
+                foreach ($builder->cursor() as $found) {
+                    \assert($found instanceof Model);
+
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return true;
+            }, $message),
+        );
     }
 
     /**
@@ -3321,33 +3402,35 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
-            $builder = $callback($value, $attribute);
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
+                $builder = $callback($value, $attribute);
 
-            $exists = $builder->toBase()->exists();
+                $exists = $builder->toBase()->exists();
 
-            if (! $exists) {
-                return true;
-            }
-
-            if ($each === null) {
-                return false;
-            }
-
-            foreach ($builder->cursor() as $found) {
-                \assert($found instanceof Model);
-
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                if (! $exists) {
+                    return true;
                 }
 
-                return $ok;
-            }
+                if ($each === null) {
+                    return false;
+                }
 
-            return false;
-        }, $message));
+                foreach ($builder->cursor() as $found) {
+                    \assert($found instanceof Model);
+
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return false;
+            }, $message),
+        );
     }
 
     /**
@@ -3368,35 +3451,37 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
-            $builder = $callback($value, $attribute);
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
+                $builder = $callback($value, $attribute);
 
-            $builder->whereKey($value);
+                $builder->whereKey($value);
 
-            $exists = $builder->toBase()->exists();
+                $exists = $builder->toBase()->exists();
 
-            if (! $exists) {
-                return false;
-            }
-
-            if ($each === null) {
-                return true;
-            }
-
-            foreach ($builder->cursor() as $found) {
-                \assert($found instanceof Model);
-
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                if (! $exists) {
+                    return false;
                 }
 
-                return $ok;
-            }
+                if ($each === null) {
+                    return true;
+                }
 
-            return true;
-        }, $message));
+                foreach ($builder->cursor() as $found) {
+                    \assert($found instanceof Model);
+
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return true;
+            }, $message),
+        );
     }
 
     /**
@@ -3417,35 +3502,37 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
-            $builder = $callback($value, $attribute);
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
+                $builder = $callback($value, $attribute);
 
-            $builder->whereKey($value);
+                $builder->whereKey($value);
 
-            $exists = $builder->toBase()->exists();
+                $exists = $builder->toBase()->exists();
 
-            if (! $exists) {
-                return true;
-            }
-
-            if ($each === null) {
-                return false;
-            }
-
-            foreach ($builder->cursor() as $found) {
-                \assert($found instanceof Model);
-
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                if (! $exists) {
+                    return true;
                 }
 
-                return $ok;
-            }
+                if ($each === null) {
+                    return false;
+                }
 
-            return false;
-        }, $message));
+                foreach ($builder->cursor() as $found) {
+                    \assert($found instanceof Model);
+
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return false;
+            }, $message),
+        );
     }
 
     /**
@@ -3466,39 +3553,41 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
-            $builder = $callback($value, $attribute);
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
+                $builder = $callback($value, $attribute);
 
-            $model = $builder->getModel();
+                $model = $builder->getModel();
 
-            \assert($model instanceof Model);
+                \assert($model instanceof Model);
 
-            $builder->where($model->getRouteKeyName(), $value);
+                $builder->where($model->getRouteKeyName(), $value);
 
-            $exists = $builder->toBase()->exists();
+                $exists = $builder->toBase()->exists();
 
-            if (! $exists) {
-                return false;
-            }
-
-            if ($each === null) {
-                return true;
-            }
-
-            foreach ($builder->cursor() as $found) {
-                \assert($found instanceof Model);
-
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                if (! $exists) {
+                    return false;
                 }
 
-                return $ok;
-            }
+                if ($each === null) {
+                    return true;
+                }
 
-            return true;
-        }, $message));
+                foreach ($builder->cursor() as $found) {
+                    \assert($found instanceof Model);
+
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return true;
+            }, $message),
+        );
     }
 
     /**
@@ -3519,39 +3608,41 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
-            $builder = $callback($value, $attribute);
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
+                $builder = $callback($value, $attribute);
 
-            $model = $builder->getModel();
+                $model = $builder->getModel();
 
-            \assert($model instanceof Model);
+                \assert($model instanceof Model);
 
-            $builder->where($model->getRouteKeyName(), $value);
+                $builder->where($model->getRouteKeyName(), $value);
 
-            $exists = $builder->toBase()->exists();
+                $exists = $builder->toBase()->exists();
 
-            if (! $exists) {
-                return true;
-            }
-
-            if ($each === null) {
-                return false;
-            }
-
-            foreach ($builder->cursor() as $found) {
-                \assert($found instanceof Model);
-
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                if (! $exists) {
+                    return true;
                 }
 
-                return $ok;
-            }
+                if ($each === null) {
+                    return false;
+                }
 
-            return false;
-        }, $message));
+                foreach ($builder->cursor() as $found) {
+                    \assert($found instanceof Model);
+
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return false;
+            }, $message),
+        );
     }
 
     /**
@@ -3692,41 +3783,43 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
-            $builder = $callback($value, $attribute);
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
+                $builder = $callback($value, $attribute);
 
-            $model = $builder->getModel();
+                $model = $builder->getModel();
 
-            \assert($model instanceof Model);
+                \assert($model instanceof Model);
 
-            $builder->where(static function (Builder $builder) use ($value, $model): void {
-                $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
-            });
+                $builder->where(static function (Builder $builder) use ($value, $model): void {
+                    $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
+                });
 
-            $exists = $builder->toBase()->exists();
+                $exists = $builder->toBase()->exists();
 
-            if (! $exists) {
-                return false;
-            }
-
-            if ($each === null) {
-                return true;
-            }
-
-            foreach ($builder->cursor() as $found) {
-                \assert($found instanceof Model);
-
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                if (! $exists) {
+                    return false;
                 }
 
-                return $ok;
-            }
+                if ($each === null) {
+                    return true;
+                }
 
-            return true;
-        }, $message));
+                foreach ($builder->cursor() as $found) {
+                    \assert($found instanceof Model);
+
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return true;
+            }, $message),
+        );
     }
 
     /**
@@ -3747,41 +3840,43 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        return $this->addRule(new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
-            $builder = $callback($value, $attribute);
+        return $this->addRule(
+            new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
+                $builder = $callback($value, $attribute);
 
-            $model = $builder->getModel();
+                $model = $builder->getModel();
 
-            \assert($model instanceof Model);
+                \assert($model instanceof Model);
 
-            $builder->where(static function (Builder $builder) use ($value, $model): void {
-                $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
-            });
+                $builder->where(static function (Builder $builder) use ($value, $model): void {
+                    $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
+                });
 
-            $exists = $builder->toBase()->exists();
+                $exists = $builder->toBase()->exists();
 
-            if (! $exists) {
-                return true;
-            }
-
-            if ($each === null) {
-                return false;
-            }
-
-            foreach ($builder->cursor() as $found) {
-                \assert($found instanceof Model);
-
-                $ok = $each($found, $value, $attribute);
-
-                if ($ok === null) {
-                    continue;
+                if (! $exists) {
+                    return true;
                 }
 
-                return $ok;
-            }
+                if ($each === null) {
+                    return false;
+                }
 
-            return false;
-        }, $message));
+                foreach ($builder->cursor() as $found) {
+                    \assert($found instanceof Model);
+
+                    $ok = $each($found, $value, $attribute);
+
+                    if ($ok === null) {
+                        continue;
+                    }
+
+                    return $ok;
+                }
+
+                return false;
+            }, $message),
+        );
     }
 
     /**
@@ -3899,7 +3994,19 @@ class Validity implements ArrayableContract
      */
     public function toArray(): array
     {
-        \assert($this->unsafe || $this->array || $this->collection || $this->boolean || $this->file || $this->integer || $this->numeric || $this->string || $this->prohibited || $this->missing, 'attribute must be validated against base type (array|object|collection|boolean|file|integer|numeric|string)');
+        \assert(
+            $this->unsafe
+                || $this->array
+                || $this->collection
+                || $this->boolean
+                || $this->file
+                || $this->integer
+                || $this->numeric
+                || $this->string
+                || $this->prohibited
+                || $this->missing,
+            'attribute must be validated against base type (array|object|collection|boolean|file|integer|numeric|string)',
+        );
         \assert($this->unsafe || $this->required || $this->nullable || $this->missing || $this->prohibited, 'attribute must be validated against nullable or required');
 
         $rules = [];
