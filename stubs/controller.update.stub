@@ -4,43 +4,98 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use {{ namespacedUpdateRequest }};
+use {{ namespacedValidity }};
+use {{ namespacedUserModel }};
 use {{ namespacedModel }};
+use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Routing\TransactionController;
+use Tomchochola\Laratchi\Http\ApiFormRequest;
+use Tomchochola\Laratchi\Support\Parser;
+use Tomchochola\Laratchi\Validation\BaseValidity;
+use Tomchochola\Laratchi\Support\Resolver;
 
 class {{ class }} extends TransactionController
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke({{ updateRequest }} $request): SymfonyResponse
+    public function __invoke(ApiFormRequest $request): SymfonyResponse
     {
-        $me = $request->me();
+        $auth = $this->authorize($request);
+        $validated = $this->validate($request, $auth);
 
-        $this->validateUnique($request);
+        $this->validateUnique($request, $validated);
 
-        foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
-            {{ model }}::mustFindById($item->mustInt('id'))->update($item->only(['title']));
+        foreach ($validated->parsers('data') as $parser) {
+            {{ model }}::mustFindByKey($parser->mustParseInt('id'))->update($parser->only(['title']));
         }
 
-        return resolveResponseFactory()->noContent();
+        return Resolver::resolveResponseFactory()->noContent();
     }
 
     /**
      * Validate given data is unique.
      */
-    protected function validateUnique({{ updateRequest }} $request): void
+    protected function validateUnique(ApiFormRequest $request, Parser $validated): void
     {
-        foreach ($request->validatedInput()->validatedInputs('items', []) as $index => $item) {
-            $title = $item->mustString('title');
+        foreach ($validated->parsers('data') as $index => $parser) {
+            $throttler = $request
+                ->throttler('title', 1, 15, static function (int $seconds) use ($request, $index): never {
+                    $request
+                        ->thrower()
+                        ->throttled(["data.{$index}.title"], $seconds)
+                        ->throw();
+                })
+                ->throttle();
 
-            [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ["items.{$index}.title"]));
-
-            if ({{ model }}::query()->whereKeyNot($item->mustInt('id'))->getQuery()->where('title', $title)->exists()) {
-                $hit();
-                $request->throwUniqueValidationException(["items.{$index}.title"]);
+            if (
+                {{ model }}::query()
+                    ->whereKeyNot($parser->mustParseInt('id'))
+                    ->getQuery()
+                    ->where('title', $parser->mustParseString('title'))
+                    ->exists()
+            ) {
+                $throttler->hit();
+                $request
+                    ->thrower()
+                    ->unique(["data.{$index}.title"])
+                    ->throw();
             }
         }
+    }
+
+    /**
+     * Authorize the incoming request.
+     */
+    protected function authorize(ApiFormRequest $request): {{ userModel }}
+    {
+        return {{ userModel }}::mustAuth();
+    }
+
+    /**
+     * Validate the incoming request.
+     */
+    protected function validate(ApiFormRequest $request, {{ userModel }} $auth): Parser
+    {
+        $baseValidity = new BaseValidity();
+        $validity = new {{ validity }}();
+
+        return $request->validate(
+            \array_replace(
+                $baseValidity->predefined(
+                    data: true,
+                    dataId: static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($auth): void {
+                        {{ model }}::scopeUserId($builder, [$auth->getKey()]);
+                    }),
+                ),
+                [
+                    'data.*.title' => $validity
+                        ->title()
+                        ->required()
+                        ->distinct(),
+                ],
+            ),
+        );
     }
 }

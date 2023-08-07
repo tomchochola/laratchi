@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use {{ namespacedIndexRequest }};
+use {{ namespacedUserModel }};
 use {{ namespacedModel }};
 use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -12,45 +12,80 @@ use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResourceCollection;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Routing\Controller;
+use Tomchochola\Laratchi\Http\ApiFormRequest;
+use Tomchochola\Laratchi\Support\Parser;
+use Tomchochola\Laratchi\Enums\RequestModeEnum;
+use Tomchochola\Laratchi\Validation\BaseValidity;
+use Tomchochola\Laratchi\Support\Resolver;
 
 class {{ class }} extends Controller
 {
     /**
+     * Take.
+     */
+    public const TAKE = \PHP_INT_MAX;
+
+    /**
+     * Sort.
+     */
+    public const SORT = ['id', '-id', 'created_at', '-created_at', 'updated_at', '-updated_at', 'title', '-title'];
+
+    /**
      * Handle the incoming request.
      */
-    public function __invoke({{ indexRequest }} $request): SymfonyResponse
+    public function __invoke(ApiFormRequest $request): SymfonyResponse
     {
+        $auth = $this->authorize($request);
+        $validated = $this->validate($request, $auth);
+
         $builder = {{ model }}::query();
 
-        $this->select($builder, $request);
-        $this->filterSearch($builder, $request);
-        $this->filterIdSlug($builder, $request);
-        $this->filterNotIdSlug($builder, $request);
-        $this->filterUserId($builder, $request);
-        $this->sort($builder, $request);
+        $mode = $validated->mustParseNullableEnum('mode', RequestModeEnum::class) ?? RequestModeEnum::DEFAULT;
 
-        if ($request->validatedInput()->mustBool('count', false)) {
-            return resolveResponseFactory()->json(['data' => $builder->getQuery()->count()]);
+        $this->select($builder, $mode);
+
+        $this->filterSearch($builder, $validated);
+        $this->filterId($builder, $validated);
+        $this->filterNotId($builder, $validated);
+        $this->filterSlug($builder, $validated);
+        $this->filterNotSlug($builder, $validated);
+        $this->filterUserId($builder, $auth);
+
+        $this->sort($builder, $validated);
+
+        if ($mode === RequestModeEnum::COUNT) {
+            return Resolver::resolveResponseFactory()->json(['data' => $builder->getQuery()->count()]);
         }
 
-        $data = $builder->paginate($request->validatedInput()->mustInt('take', {{ indexRequest }}::TAKE_MAX));
+        $data = $builder->paginate($validated->mustParseNullableInt('take') ?? static::TAKE);
 
-        return (new JsonApiResourceCollection($data, $request->validatedInput()->mustBool('select', false) ? fn ({{ model }} $model): JsonApiResource => $this->selectResource($model) : fn ({{ model }} $model): JsonApiResource => $this->indexResource($model)))->response();
+        return (new JsonApiResourceCollection(
+            $data,
+            $mode === RequestModeEnum::SELECT ? fn ({{ model }} $model): JsonApiResource => $this->selectResource($model) : fn ({{ model }} $model): JsonApiResource => $this->indexResource($model),
+        ))->response();
+    }
+
+    /**
+     * Modify select query.
+     */
+    protected function select(Builder $builder, RequestModeEnum $mode): void
+    {
+        $builder->getQuery()->select($builder->qualifyColumn('*'));
     }
 
     /**
      * Sort query.
      */
-    protected function sort(Builder $builder, {{ indexRequest }} $request): void
+    protected function sort(Builder $builder, Parser $validated): void
     {
-        $sorts = $request->validatedInput()->mustArray('sort', []);
+        $sorts = $validated->mustParseNullableArray('sort') ?? [];
 
         if (! \in_array('id', $sorts, true) && ! \in_array('-id', $sorts, true)) {
             $sorts[] = '-id';
         }
 
-        foreach ($sorts as $sort) {
-            \assert(\is_string($sort));
+        foreach ($sorts as $mixed) {
+            $sort = assertString($mixed);
 
             if (\str_starts_with($sort, '-')) {
                 $builder->getQuery()->orderByDesc($builder->qualifyColumn(\mb_substr($sort, 1)));
@@ -63,53 +98,69 @@ class {{ class }} extends Controller
     /**
      * Filter by search.
      */
-    protected function filterSearch(Builder $builder, {{ indexRequest }} $request): void
+    protected function filterSearch(Builder $builder, Parser $validated): void
     {
-        if ($request->validatedInput()->missing('filter.search')) {
+        if ($validated->missing('filter.search')) {
             return;
         }
 
-        {{ model }}::scopeSearch($builder, $request->validatedInput()->mustString('filter.search'));
+        {{ model }}::scopeSearch($builder, $validated->mustParseString('filter.search'));
     }
 
     /**
-     * Filter by id/slug.
+     * Filter by id.
      */
-    protected function filterIdSlug(Builder $builder, {{ indexRequest }} $request): void
+    protected function filterId(Builder $builder, Parser $validated): void
     {
-        if ($request->validatedInput()->missing('filter.id_slug')) {
+        if ($validated->missing('filter.id')) {
             return;
         }
 
-        {{ model }}::scopeIdSlug($builder, $request->validatedInput()->mustArray('filter.id_slug', []));
+        {{ model }}::scopeKey($builder, $validated->mustParseArray('filter.id'));
     }
 
     /**
-     * Filter by not id/slug.
+     * Filter by not id.
      */
-    protected function filterNotIdSlug(Builder $builder, {{ indexRequest }} $request): void
+    protected function filterNotId(Builder $builder, Parser $validated): void
     {
-        if ($request->validatedInput()->missing('filter.not_id_slug')) {
+        if ($validated->missing('filter.not_id')) {
             return;
         }
 
-        {{ model }}::scopeNotIdSlug($builder, $request->validatedInput()->mustArray('filter.not_id_slug', []));
+        {{ model }}::scopeNotKey($builder, $validated->mustParseArray('filter.not_id'));
+    }
+
+    /**
+     * Filter by slug.
+     */
+    protected function filterSlug(Builder $builder, Parser $validated): void
+    {
+        if ($validated->missing('filter.slug')) {
+            return;
+        }
+
+        {{ model }}::scopeRouteKey($builder, $validated->mustParseArray('filter.slug'));
+    }
+
+    /**
+     * Filter by not slug.
+     */
+    protected function filterNotSlug(Builder $builder, Parser $validated): void
+    {
+        if ($validated->missing('filter.not_slug')) {
+            return;
+        }
+
+        {{ model }}::scopeNotRouteKey($builder, $validated->mustParseArray('filter.not_slug'));
     }
 
     /**
      * Filter by user id.
      */
-    protected function filterUserId(Builder $builder, {{ indexRequest }} $request): void
+    protected function filterUserId(Builder $builder, User $auth): void
     {
-        {{ model }}::scopeUserId($builder, [$request->me()->getKey()]);
-    }
-
-    /**
-     * Modify select query.
-     */
-    protected function select(Builder $builder, {{ indexRequest }} $request): void
-    {
-        $builder->getQuery()->select($builder->qualifyColumns(['*']));
+        {{ model }}::scopeUserId($builder, [$auth->getKey()]);
     }
 
     /**
@@ -117,9 +168,11 @@ class {{ class }} extends Controller
      */
     protected function selectResource({{ model }} $model): JsonApiResource
     {
-        return new ModelResource($model, static fn ({{ model }} $resource): array => [
-            'title' => $resource->getTitle(),
-        ]);
+        return new ModelResource($model, static function ({{ model }} $resource): array {
+            return [
+                'title' => $resource->getTitle(),
+            ];
+        });
     }
 
     /**
@@ -127,10 +180,41 @@ class {{ class }} extends Controller
      */
     protected function indexResource({{ model }} $model): JsonApiResource
     {
-        return new ModelResource($model, static fn ({{ model }} $resource): array => [
-            'title' => $resource->getTitle(),
-            'created_at' => $resource->getCreatedAt(),
-            'updated_at' => $resource->getUpdatedAt(),
-        ]);
+        return new ModelResource($model, static function ({{ model }} $resource): array {
+            return [
+                'title' => $resource->getTitle(),
+            ];
+        });
+    }
+
+    /**
+     * Authorize the incoming request.
+     */
+    protected function authorize(ApiFormRequest $request): {{ userModel }}
+    {
+        return {{ userModel }}::mustAuth();
+    }
+
+    /**
+     * Validate the incoming request.
+     */
+    protected function validate(ApiFormRequest $request, {{ userModel }} $auth): Parser
+    {
+        $baseValidity = new BaseValidity();
+
+        return $request->validate(
+            $baseValidity->predefined(
+                filter: true,
+                filterId: true,
+                filterNotId: true,
+                filterSlug: true,
+                filterNotSlug: true,
+                filterSearch: true,
+                take: static::TAKE,
+                mode: true,
+                sort: static::SORT,
+                page: true,
+            ),
+        );
     }
 }

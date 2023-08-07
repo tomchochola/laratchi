@@ -4,18 +4,40 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
+use App\Models\User;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Routing\Controller;
 use Tomchochola\Laratchi\Routing\TransactionController;
-use Tomchochola\Laratchi\Http\Requests\SecureFormRequest;
+use Tomchochola\Laratchi\Http\ApiFormRequest;
+use Tomchochola\Laratchi\Support\Parser;
+use Tomchochola\Laratchi\Support\Resolver;
 
 class {{ class }} extends Controller|TransactionController
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(SecureFormRequest $request): SymfonyResponse
+    public function __invoke(ApiFormRequest $request): SymfonyResponse
     {
-        return resolveResponseFactory()->noContent();
+        $auth = $this->authorize($request);
+        $validated = $this->validate($request);
+
+        return Resolver::resolveResponseFactory()->noContent();
+    }
+
+    /**
+     * Authorize the incoming request.
+     */
+    protected function authorize(ApiFormRequest $request): {{ userModel }}
+    {
+        return {{ userModel }}::mustAuth();
+    }
+
+    /**
+     * Validate the incoming request.
+     */
+    protected function validate(ApiFormRequest $request): Parser
+    {
+        return $request->validate([]);
     }
 }

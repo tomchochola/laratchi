@@ -4,24 +4,55 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use {{ namespacedDestroyRequest }};
+use {{ namespacedUserModel }};
 use {{ namespacedModel }};
+use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Routing\TransactionController;
+use Tomchochola\Laratchi\Http\ApiFormRequest;
+use Tomchochola\Laratchi\Support\Parser;
+use Tomchochola\Laratchi\Validation\BaseValidity;
+use Tomchochola\Laratchi\Support\Resolver;
 
 class {{ class }} extends TransactionController
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke({{ destroyRequest }} $request): SymfonyResponse
+    public function __invoke(ApiFormRequest $request): SymfonyResponse
     {
-        $me = $request->me();
+        $auth = $this->authorize($request);
+        $validated = $this->validate($request, $auth);
 
-        foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
-            {{ model }}::mustFindById($item->mustInt('id'))->delete();
+        foreach ($validated->parsers('data') as $parser) {
+            {{ model }}::mustFindByKey($parser->mustParseInt('id'))->delete();
         }
 
-        return resolveResponseFactory()->noContent();
+        return Resolver::resolveResponseFactory()->noContent();
+    }
+
+    /**
+     * Authorize the incoming request.
+     */
+    protected function authorize(ApiFormRequest $request): {{ userModel }}
+    {
+        return {{ userModel }}::mustAuth();
+    }
+
+    /**
+     * Validate the incoming request.
+     */
+    protected function validate(ApiFormRequest $request, {{ userModel }} $auth): Parser
+    {
+        $baseValidity = new BaseValidity();
+
+        return $request->validate(
+            $baseValidity->predefined(
+                data: true,
+                dataId: static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($auth): void {
+                    {{ model }}::scopeUserId($builder, [$auth->getKey()]);
+                }),
+            ),
+        );
     }
 }

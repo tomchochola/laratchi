@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-// use App\Support\ScoutSupport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Tomchochola\Laratchi\Database\Model;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
-// use Laravel\Scout\Searchable;
+use Tomchochola\Laratchi\Config\Config;
 
 class {{ class }} extends Model
 {
-    // use Searchable;
-
     /**
      * @inheritDoc
      *
@@ -30,7 +27,7 @@ class {{ class }} extends Model
      */
     public static function queryEmbed(Builder $builder): void
     {
-        $builder->getQuery()->select($builder->qualifyColumns(['*']));
+        $builder->getQuery()->select($builder->qualifyColumn('*'));
     }
 
     /**
@@ -38,13 +35,11 @@ class {{ class }} extends Model
      */
     public static function scopeSearch(Builder $builder, string $search): void
     {
-        assertNever();
-
-        if (resolveApp()->runningUnitTests()) {
-            return;
+        if ((new Config())->appEnvIs(['testing'])) {
+            $builder->getQuery()->where($builder->qualifyColumn('title'), $search);
+        } else {
+            $builder->getQuery()->whereFullText($builder->qualifyColumn('title'), $search);
         }
-
-        // ScoutSupport::exactPartial($builder, static::search($search));
     }
 
     /**
@@ -54,7 +49,7 @@ class {{ class }} extends Model
      */
     public static function scopeUserId(Builder $builder, array $ids): void
     {
-        $builder->getQuery()->whereIn($builder->qualifyColumn('user_id'), $ids);
+        static::scopeIn($builder, 'user_id', $ids);
     }
 
     /**
@@ -62,7 +57,7 @@ class {{ class }} extends Model
      */
     public function getTitle(): string
     {
-        return $this->mustString('title');
+        return $this->assertString('title');
     }
 
     /**
@@ -78,7 +73,7 @@ class {{ class }} extends Model
      */
     public function getUser(): User
     {
-        return $this->mustRelation('user', User::class);
+        return $this->assertRelationship('user', User::class);
     }
 
     /**
@@ -86,7 +81,7 @@ class {{ class }} extends Model
      */
     public function getUserId(): int
     {
-        return $this->mustInt('user_id');
+        return $this->assertInt('user_id');
     }
 
     /**
@@ -94,22 +89,10 @@ class {{ class }} extends Model
      */
     public function embedResource(): JsonApiResource
     {
-        return new ModelResource($this, static fn (self $resource): array => [
-            'title' => $resource->getTitle(),
-            'created_at' => $resource->getCreatedAt(),
-            'updated_at' => $resource->getUpdatedAt(),
-        ]);
-    }
-
-    /**
-     * @inheritDoc
-     *
-     * @return array<string, ?string>
-     */
-    public function toSearchableArray(): array
-    {
-        return [
-            'title' => $this->getTitle(),
-        ];
+        return new ModelResource($this, static function (self $resource): array {
+            return [
+                'title' => $resource->getTitle(),
+            ];
+        });
     }
 }

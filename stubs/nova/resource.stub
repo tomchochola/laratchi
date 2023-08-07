@@ -39,7 +39,7 @@ class {{ class }} extends Resource
      */
     public static function indexQuery(NovaRequest $request, mixed $query): Builder
     {
-        $query->getQuery()->select($query->qualifyColumns(['*']));
+        $query->getQuery()->select($query->qualifyColumn('*'));
 
         return $query;
     }
@@ -49,7 +49,7 @@ class {{ class }} extends Resource
      */
     public static function detailQuery(NovaRequest $request, mixed $query): Builder
     {
-        $query->getQuery()->select($query->qualifyColumns(['*']));
+        $query->getQuery()->select($query->qualifyColumn('*'));
 
         return $query;
     }
@@ -59,7 +59,7 @@ class {{ class }} extends Resource
      */
     public static function editQuery(NovaRequest $request, mixed $query): Builder
     {
-        $query->getQuery()->select($query->qualifyColumns(['*']));
+        $query->getQuery()->select($query->qualifyColumn('*'));
 
         return $query;
     }
@@ -69,7 +69,7 @@ class {{ class }} extends Resource
      */
     public static function relatableQuery(NovaRequest $request, mixed $query): Builder
     {
-        $query->getQuery()->select($query->qualifyColumns(['*']));
+        $query->getQuery()->select($query->qualifyColumn('*'));
 
         return $query;
     }

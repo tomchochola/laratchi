@@ -28,13 +28,13 @@ class {{ class }} extends SecureFormRequest
     {
         $validity = new {{ validity }}();
 
-        $me = $this->me();
+        $auth = $this->me();
 
         return [
             'items' => Validity::make()->collection(null)->required(),
             'items.*' => Validity::make()->object(['id', 'title'])->required(),
-            'items.*.id' => Validity::make()->id()->existingId(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
-                {{ model }}::scopeUserId($builder, [$me->getKey()]);
+            'items.*.id' => Validity::make()->id()->existingId(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($auth): void {
+                {{ model }}::scopeUserId($builder, [$auth->getKey()]);
             }))->distinct()->required(),
             'items.*.title' => $validity->title()->distinct()->required(),
         ];

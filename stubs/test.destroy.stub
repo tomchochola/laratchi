@@ -11,6 +11,7 @@ use {{ namespacedFactory }};
 use {{ namespacedUserModelFactory }};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tomchochola\Laratchi\Support\Resolver;
 
 class {{ class }} extends TestCase
 {
@@ -23,23 +24,23 @@ class {{ class }} extends TestCase
     {
         $this->locale($locale);
 
-        $me = {{ userModelFactory }}::new()->createOne();
-
-        \assert($me instanceof {{ userModel }});
-
-        $model = {{ factory }}::new()->for($me)->createOne();
-
-        \assert($model instanceof {{ model }});
+        $auth = assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
+        $model = assertInstance(
+            {{ factory }}::new()
+                ->for($auth)
+                ->createOne(),
+            {{ model }}::class,
+        );
 
         $data = [
-            'items' => [
+            'data' => [
                 [
                     'id' => $model->getKey(),
                 ],
             ],
         ];
 
-        $response = $this->be($me)->post(resolveUrlFactory()->action({{ destroyController }}::class), $data);
+        $response = $this->be($auth)->post(Resolver::resolveUrlGenerator()->action({{ destroyController }}::class), $data);
 
         $response->assertNoContent();
     }

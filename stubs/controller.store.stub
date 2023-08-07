@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use {{ namespacedStoreRequest }};
+use {{ namespacedValidity }};
+use {{ namespacedUserModel }};
 use {{ namespacedModel }};
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -12,22 +13,30 @@ use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResourceCollection;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Routing\TransactionController;
+use Tomchochola\Laratchi\Http\ApiFormRequest;
+use Tomchochola\Laratchi\Support\Parser;
+use Tomchochola\Laratchi\Validation\BaseValidity;
 
 class {{ class }} extends TransactionController
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke({{ storeRequest }} $request): SymfonyResponse
+    public function __invoke(ApiFormRequest $request): SymfonyResponse
     {
-        $me = $request->me();
+        $auth = $this->authorize($request);
+        $validated = $this->validate($request, $auth);
 
-        $this->validateUnique($request);
+        $this->validateUnique($request, $validated);
 
         $collection = new Collection();
 
-        foreach ($request->validatedInput()->validatedInputs('items', []) as $item) {
-            $collection->push({{ model }}::create($item->merge(['user_id' => $me->getKey()])->only(['title', 'user_id'])));
+        foreach ($validated->parsers('data') as $parser) {
+            $model = new {{ model }}($parser->merge(['user_id' => $auth->getKey()])->only(['user_id', 'title']));
+
+            $model->save();
+
+            $collection->push($model);
         }
 
         return (new JsonApiResourceCollection($collection, static fn ({{ model }} $model): JsonApiResource => new ModelResource($model)))->response();
@@ -36,17 +45,56 @@ class {{ class }} extends TransactionController
     /**
      * Validate given data is unique.
      */
-    protected function validateUnique({{ storeRequest }} $request): void
+    protected function validateUnique(ApiFormRequest $request, Parser $validated): void
     {
-        foreach ($request->validatedInput()->validatedInputs('items', []) as $index => $item) {
-            $title = $item->mustString('title');
+        foreach ($validated->parsers('data') as $index => $parser) {
+            $throttler = $request
+                ->throttler('title', 1, 15, static function (int $seconds) use ($request, $index): never {
+                    $request
+                        ->thrower()
+                        ->throttled(["data.{$index}.title"], $seconds)
+                        ->throw();
+                })
+                ->throttle();
 
-            [$hit] = $this->throttle($this->limit('title'), $this->onThrottle($request, ["items.{$index}.title"]));
-
-            if ({{ model }}::query()->getQuery()->where('title', $title)->exists()) {
-                $hit();
-                $request->throwUniqueValidationException(["items.{$index}.title"]);
+            if (
+                {{ model }}::query()
+                    ->getQuery()
+                    ->where('title', $parser->mustParseString('title'))
+                    ->exists()
+            ) {
+                $throttler->hit();
+                $request
+                    ->thrower()
+                    ->unique(["data.{$index}.title"])
+                    ->throw();
             }
         }
+    }
+
+    /**
+     * Authorize the incoming request.
+     */
+    protected function authorize(ApiFormRequest $request): {{ userModel }}
+    {
+        return {{ userModel }}::mustAuth();
+    }
+
+    /**
+     * Validate the incoming request.
+     */
+    protected function validate(ApiFormRequest $request, {{ userModel }} $auth): Parser
+    {
+        $baseValidity = new BaseValidity();
+        $validity = new {{ validity }}();
+
+        return $request->validate(
+            \array_replace($baseValidity->predefined(data: true), [
+                'data.*.title' => $validity
+                    ->title()
+                    ->required()
+                    ->distinct(),
+            ]),
+        );
     }
 }

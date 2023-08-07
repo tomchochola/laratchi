@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use {{ namespacedIndexController }};
-use {{ namespacedIndexRequest }};
 use {{ namespacedValidity }};
 use {{ namespacedModel }};
 use {{ namespacedUserModel }};
@@ -14,7 +13,8 @@ use {{ namespacedUserModelFactory }};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tomchochola\Laratchi\Testing\JsonApiValidator;
-use Tomchochola\Laratchi\Validation\Validity;
+use Tomchochola\Laratchi\Enums\RequestModeEnum;
+use Tomchochola\Laratchi\Support\Resolver;
 
 class {{ class }} extends TestCase
 {
@@ -23,30 +23,31 @@ class {{ class }} extends TestCase
     /**
      * @dataProvider localeDataProvider
      */
-    public function test_fetch_{{ table }}_index(string $locale): void
+    public function test_index_{{ table }}_default_mode(string $locale): void
     {
         $this->locale($locale);
 
-        $me = {{ userModelFactory }}::new()->createOne();
-
-        \assert($me instanceof {{ userModel }});
-
-        $model = {{ factory }}::new()->for($me)->createOne();
-
-        \assert($model instanceof {{ model }});
+        $auth = assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
+        $model = assertInstance(
+            {{ factory }}::new()
+                ->for($auth)
+                ->createOne(),
+            {{ model }}::class,
+        );
 
         $query = [
             'filter' => [
-                'id_slug' => [fake()->randomElement([$model->getKey(), $model->getRouteKey()])],
-                'not_id_slug' => [0],
+                'id' => [$model->getKey()],
+                'slug' => [$model->getRouteKey()],
                 'search' => $model->getTitle(),
             ],
-            'take' => {{ indexRequest }}::TAKE_MAX,
-            'sort' => {{ indexRequest }}::SORTS,
+            'take' => {{ indexController }}::TAKE,
+            'sort' => {{ indexController }}::SORT,
             'page' => 1,
+            'mode' => RequestModeEnum::DEFAULT,
         ];
 
-        $response = $this->be($me)->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
+        $response = $this->be($auth)->get(Resolver::resolveUrlGenerator()->action({{ indexController }}::class, $query));
 
         $response->assertOk();
 
@@ -56,31 +57,31 @@ class {{ class }} extends TestCase
     /**
      * @dataProvider localeDataProvider
      */
-    public function test_fetch_{{ table }}_select(string $locale): void
+    public function test_index_{{ table }}_select_mode(string $locale): void
     {
         $this->locale($locale);
 
-        $me = {{ userModelFactory }}::new()->createOne();
-
-        \assert($me instanceof {{ userModel }});
-
-        $model = {{ factory }}::new()->for($me)->createOne();
-
-        \assert($model instanceof {{ model }});
+        $auth = assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
+        $model = assertInstance(
+            {{ factory }}::new()
+                ->for($auth)
+                ->createOne(),
+            {{ model }}::class,
+        );
 
         $query = [
             'filter' => [
-                'id_slug' => [fake()->randomElement([$model->getKey(), $model->getRouteKey()])],
-                'not_id_slug' => [0],
+                'id' => [$model->getKey()],
+                'slug' => [$model->getRouteKey()],
                 'search' => $model->getTitle(),
             ],
-            'take' => {{ indexRequest }}::TAKE_MAX,
-            'select' => true,
-            'sort' => {{ indexRequest }}::SORTS,
+            'take' => {{ indexController }}::TAKE,
+            'sort' => {{ indexController }}::SORT,
             'page' => 1,
+            'mode' => RequestModeEnum::SELECT,
         ];
 
-        $response = $this->be($me)->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
+        $response = $this->be($auth)->get(Resolver::resolveUrlGenerator()->action({{ indexController }}::class, $query));
 
         $response->assertOk();
 
@@ -90,28 +91,28 @@ class {{ class }} extends TestCase
     /**
      * @dataProvider localeDataProvider
      */
-    public function test_fetch_{{ table }}_count(string $locale): void
+    public function test_index_{{ table }}_count_mode(string $locale): void
     {
         $this->locale($locale);
 
-        $me = {{ userModelFactory }}::new()->createOne();
-
-        \assert($me instanceof {{ userModel }});
-
-        $model = {{ factory }}::new()->for($me)->createOne();
-
-        \assert($model instanceof {{ model }});
+        $auth = assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
+        $model = assertInstance(
+            {{ factory }}::new()
+                ->for($auth)
+                ->createOne(),
+            {{ model }}::class,
+        );
 
         $query = [
             'filter' => [
-                'id_slug' => [fake()->randomElement([$model->getKey(), $model->getRouteKey()])],
-                'not_id_slug' => [0],
+                'id' => [$model->getKey()],
+                'slug' => [$model->getRouteKey()],
                 'search' => $model->getTitle(),
             ],
-            'count' => true,
+            'mode' => RequestModeEnum::COUNT,
         ];
 
-        $response = $this->be($me)->get(resolveUrlFactory()->action({{ indexController }}::class, $query));
+        $response = $this->be($auth)->get(Resolver::resolveUrlGenerator()->action({{ indexController }}::class, $query));
 
         $response->assertOk();
 
@@ -129,8 +130,6 @@ class {{ class }} extends TestCase
 
         return $this->structure('{{ table }}', [
             'title' => $validity->title()->required(),
-            'created_at' => Validity::make()->dateTime()->required(),
-            'updated_at' => Validity::make()->dateTime()->required(),
         ]);
     }
 

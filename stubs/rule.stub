@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use Illuminate\Contracts\Validation\{{ ruleType }} as {{ ruleType }}Contract;
+use Tomchochola\Laratchi\Translation\Trans;
 
 class {{ class }} implements {{ ruleType }}Contract
 {
@@ -30,6 +31,6 @@ class {{ class }} implements {{ ruleType }}Contract
      */
     public function message(): string|array
     {
-        return mustTransString('validation.invalid');
+        return (new Trans())->assertString('validation.invalid');
     }
 }

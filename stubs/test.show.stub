@@ -13,7 +13,7 @@ use {{ namespacedUserModelFactory }};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tomchochola\Laratchi\Testing\JsonApiValidator;
-use Tomchochola\Laratchi\Validation\Validity;
+use Tomchochola\Laratchi\Support\Resolver;
 
 class {{ class }} extends TestCase
 {
@@ -22,23 +22,21 @@ class {{ class }} extends TestCase
     /**
      * @dataProvider localeDataProvider
      */
-    public function test_fetch_{{ table }}_show(string $locale): void
+    public function test_show_{{ table }}(string $locale): void
     {
         $this->locale($locale);
 
-        $me = {{ userModelFactory }}::new()->createOne();
+        $auth = assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
+        $model = assertInstance(
+            {{ factory }}::new()
+                ->for($auth)
+                ->createOne(),
+            {{ model }}::class,
+        );
 
-        \assert($me instanceof {{ userModel }});
+        $query = fake()->randomElement([['id' => $model->getKey()], ['slug' => $model->getRouteKey()]]);
 
-        $model = {{ factory }}::new()->for($me)->createOne();
-
-        \assert($model instanceof {{ model }});
-
-        $query = [
-            'id_slug' => fake()->randomElement([$model->getKey(), $model->getRouteKey()]),
-        ];
-
-        $response = $this->be($me)->get(resolveUrlFactory()->action({{ showController }}::class, $query));
+        $response = $this->be($auth)->get(Resolver::resolveUrlGenerator()->action({{ showController }}::class, $query));
 
         $response->assertOk();
 
@@ -54,8 +52,6 @@ class {{ class }} extends TestCase
 
         return $this->structure('{{ table }}', [
             'title' => $validity->title()->required(),
-            'created_at' => Validity::make()->dateTime()->required(),
-            'updated_at' => Validity::make()->dateTime()->required(),
         ]);
     }
 }

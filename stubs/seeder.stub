@@ -19,10 +19,16 @@ class {{ class }} extends Seeder
             return;
         }
 
-        if ({{ model }}::query()->getQuery()->exists()) {
+        if (
+            {{ model }}::query()
+                ->getQuery()
+                ->exists()
+        ) {
             return;
         }
 
-        {{ factory }}::new()->count(10)->create();
+        {{ factory }}::new()
+            ->count(10)
+            ->create();
     }
 }

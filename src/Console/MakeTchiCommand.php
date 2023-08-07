@@ -43,11 +43,11 @@ class MakeTchiCommand extends GeneratorCommand
 
         $this->make("Database\\Seeders\\{$modelName}Seeder", "database/seeders/{$modelName}Seeder.php", 'seeder.stub');
 
-        $this->make("App\\Http\\Requests\\Api\\{$modelName}\\{$modelName}IndexRequest", null, 'request.index.stub');
-        $this->make("App\\Http\\Requests\\Api\\{$modelName}\\{$modelName}ShowRequest", null, 'request.show.stub');
-        $this->make("App\\Http\\Requests\\Api\\{$modelName}\\{$modelName}UpdateRequest", null, 'request.update.stub');
-        $this->make("App\\Http\\Requests\\Api\\{$modelName}\\{$modelName}StoreRequest", null, 'request.store.stub');
-        $this->make("App\\Http\\Requests\\Api\\{$modelName}\\{$modelName}DestroyRequest", null, 'request.destroy.stub');
+        // $this->make("App\\Http\\Requests\\Api\\{$modelName}\\{$modelName}IndexRequest", null, 'request.index.stub');
+        // $this->make("App\\Http\\Requests\\Api\\{$modelName}\\{$modelName}ShowRequest", null, 'request.show.stub');
+        // $this->make("App\\Http\\Requests\\Api\\{$modelName}\\{$modelName}UpdateRequest", null, 'request.update.stub');
+        // $this->make("App\\Http\\Requests\\Api\\{$modelName}\\{$modelName}StoreRequest", null, 'request.store.stub');
+        // $this->make("App\\Http\\Requests\\Api\\{$modelName}\\{$modelName}DestroyRequest", null, 'request.destroy.stub');
 
         $this->make("App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexController", null, 'controller.index.stub');
         $this->make("App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowController", null, 'controller.show.stub');
@@ -238,8 +238,8 @@ class MakeTchiCommand extends GeneratorCommand
         $json['paths']["/{$table}/index"] = [
             'get' => [
                 'tags' => [$table],
-                'summary' => "Fetch {$modelName}",
-                'description' => "Fetch {$modelName}\n\nUser must be authenticated",
+                'summary' => "Index {$table}",
+                'description' => "Index {$table}\n\nUser must be authenticated",
                 'operationId' => "get_{$table}_index",
                 'parameters' => [
                     [
@@ -252,15 +252,21 @@ class MakeTchiCommand extends GeneratorCommand
                             'items' => [
                                 'description' => 'sort',
                                 'type' => 'string',
-                                'enum' => ['-id', 'id'],
+                                'enum' => ['-id', 'id', '-created_at', 'created_at', '-updated_at', 'updated_at', '-title', 'title'],
                             ],
                         ],
                     ],
                     [
-                        '$ref' => '#/components/parameters/filterIdSlug',
+                        '$ref' => '#/components/parameters/filterId',
                     ],
                     [
-                        '$ref' => '#/components/parameters/filterNotIdSlug',
+                        '$ref' => '#/components/parameters/filterNotId',
+                    ],
+                    [
+                        '$ref' => '#/components/parameters/filterSlug',
+                    ],
+                    [
+                        '$ref' => '#/components/parameters/filterNotSlug',
                     ],
                     [
                         '$ref' => '#/components/parameters/filterSearch',
@@ -269,10 +275,7 @@ class MakeTchiCommand extends GeneratorCommand
                         '$ref' => '#/components/parameters/take',
                     ],
                     [
-                        '$ref' => '#/components/parameters/select',
-                    ],
-                    [
-                        '$ref' => '#/components/parameters/count',
+                        '$ref' => '#/components/parameters/mode',
                     ],
                 ],
                 'responses' => [
@@ -308,16 +311,10 @@ class MakeTchiCommand extends GeneratorCommand
                                                                             'attributes' => [
                                                                                 'description' => 'attributes',
                                                                                 'type' => 'object',
-                                                                                'required' => ['title', 'created_at', 'updated_at'],
+                                                                                'required' => ['title'],
                                                                                 'properties' => [
                                                                                     'title' => [
                                                                                         '$ref' => '#/components/schemas/string',
-                                                                                    ],
-                                                                                    'created_at' => [
-                                                                                        '$ref' => '#/components/schemas/timestamp',
-                                                                                    ],
-                                                                                    'updated_at' => [
-                                                                                        '$ref' => '#/components/schemas/timestamp',
                                                                                     ],
                                                                                 ],
                                                                             ],
@@ -378,12 +375,15 @@ class MakeTchiCommand extends GeneratorCommand
         $json['paths']["/{$table}/show"] = [
             'get' => [
                 'tags' => [$table],
-                'summary' => "Show {$modelName}",
-                'description' => "Show {$modelName}\n\nUser must be authenticated",
+                'summary' => "Show {$table}",
+                'description' => "Show {$table}\n\nUser must be authenticated",
                 'operationId' => "get_{$table}_show",
                 'parameters' => [
                     [
-                        '$ref' => '#/components/parameters/idSlug',
+                        '$ref' => '#/components/parameters/id',
+                    ],
+                    [
+                        '$ref' => '#/components/parameters/slug',
                     ],
                 ],
                 'responses' => [
@@ -412,16 +412,10 @@ class MakeTchiCommand extends GeneratorCommand
                                                         'attributes' => [
                                                             'description' => 'attributes',
                                                             'type' => 'object',
-                                                            'required' => ['title', 'created_at', 'updated_at'],
+                                                            'required' => ['title'],
                                                             'properties' => [
                                                                 'title' => [
                                                                     '$ref' => '#/components/schemas/string',
-                                                                ],
-                                                                'created_at' => [
-                                                                    '$ref' => '#/components/schemas/timestamp',
-                                                                ],
-                                                                'updated_at' => [
-                                                                    '$ref' => '#/components/schemas/timestamp',
                                                                 ],
                                                             ],
                                                         ],
@@ -447,8 +441,8 @@ class MakeTchiCommand extends GeneratorCommand
         $json['paths']["/{$table}/store"] = [
             'post' => [
                 'tags' => [$table],
-                'summary' => "Store {$modelName}",
-                'description' => "Store {$modelName}\n\nUser must be authenticated",
+                'summary' => "Store {$table}",
+                'description' => "Store {$table}\n\nUser must be authenticated",
                 'operationId' => "post_{$table}_store",
                 'requestBody' => [
                     'required' => true,
@@ -457,10 +451,10 @@ class MakeTchiCommand extends GeneratorCommand
                             'schema' => [
                                 'description' => 'request data',
                                 'type' => 'object',
-                                'required' => ['items'],
+                                'required' => ['data'],
                                 'properties' => [
-                                    'items' => [
-                                        'description' => 'items',
+                                    'data' => [
+                                        'description' => 'data',
                                         'type' => 'array',
                                         'items' => [
                                             'description' => 'item',
@@ -495,8 +489,8 @@ class MakeTchiCommand extends GeneratorCommand
         $json['paths']["/{$table}/update"] = [
             'post' => [
                 'tags' => [$table],
-                'summary' => "Update {$modelName}",
-                'description' => "Update {$modelName}\n\nUser must be authenticated",
+                'summary' => "Update {$table}",
+                'description' => "Update {$table}\n\nUser must be authenticated",
                 'operationId' => "post_{$table}_update",
                 'requestBody' => [
                     'required' => true,
@@ -505,10 +499,10 @@ class MakeTchiCommand extends GeneratorCommand
                             'schema' => [
                                 'description' => 'request data',
                                 'type' => 'object',
-                                'required' => ['items'],
+                                'required' => ['data'],
                                 'properties' => [
-                                    'items' => [
-                                        'description' => 'items',
+                                    'data' => [
+                                        'description' => 'data',
                                         'type' => 'array',
                                         'items' => [
                                             'description' => 'item',
@@ -546,8 +540,8 @@ class MakeTchiCommand extends GeneratorCommand
         $json['paths']["/{$table}/destroy"] = [
             'post' => [
                 'tags' => [$table],
-                'summary' => "Destroy {$modelName}",
-                'description' => "Destroy {$modelName}\n\nUser must be authenticated",
+                'summary' => "Destroy {$table}",
+                'description' => "Destroy {$table}\n\nUser must be authenticated",
                 'operationId' => "post_{$table}_destroy",
                 'requestBody' => [
                     'required' => true,
@@ -556,10 +550,10 @@ class MakeTchiCommand extends GeneratorCommand
                             'schema' => [
                                 'description' => 'request data',
                                 'type' => 'object',
-                                'required' => ['items'],
+                                'required' => ['data'],
                                 'properties' => [
-                                    'items' => [
-                                        'description' => 'items',
+                                    'data' => [
+                                        'description' => 'data',
                                         'type' => 'array',
                                         'items' => [
                                             'description' => 'item',
@@ -607,16 +601,10 @@ class MakeTchiCommand extends GeneratorCommand
                         'attributes' => [
                             'description' => 'attributes',
                             'type' => 'object',
-                            'required' => ['title', 'created_at', 'updated_at'],
+                            'required' => ['title'],
                             'properties' => [
                                 'title' => [
                                     '$ref' => '#/components/schemas/string',
-                                ],
-                                'created_at' => [
-                                    '$ref' => '#/components/schemas/timestamp',
-                                ],
-                                'updated_at' => [
-                                    '$ref' => '#/components/schemas/timestamp',
                                 ],
                             ],
                         ],
@@ -625,53 +613,75 @@ class MakeTchiCommand extends GeneratorCommand
             ],
         ];
 
-        if (! isset($json['components']['parameters']['filterIdSlug'])) {
-            $json['components']['parameters']['filterIdSlug'] = [
-                'description' => 'id/slug filter',
+        if (! isset($json['components']['parameters']['filterId'])) {
+            $json['components']['parameters']['filterId'] = [
+                'description' => 'id filter',
                 'in' => 'query',
-                'name' => 'filter[id_slug][]',
+                'name' => 'filter[id][]',
                 'schema' => [
-                    'description' => 'id/slug',
+                    'description' => 'id',
                     'type' => 'array',
                     'items' => [
-                        '$ref' => '#/components/schemas/idSlug',
+                        '$ref' => '#/components/schemas/id',
                     ],
                 ],
             ];
         }
 
-        if (! isset($json['components']['parameters']['filterNotIdSlug'])) {
-            $json['components']['parameters']['filterNotIdSlug'] = [
-                'description' => 'not id/slug filter',
+        if (! isset($json['components']['parameters']['filterNotId'])) {
+            $json['components']['parameters']['filterNotId'] = [
+                'description' => 'not id filter',
                 'in' => 'query',
-                'name' => 'filter[not_id_slug][]',
+                'name' => 'filter[not_id][]',
                 'schema' => [
-                    'description' => 'not id/slug',
+                    'description' => 'not id',
                     'type' => 'array',
                     'items' => [
-                        '$ref' => '#/components/schemas/idSlug',
+                        '$ref' => '#/components/schemas/id',
                     ],
                 ],
             ];
         }
 
-        if (! isset($json['components']['schemas']['idSlug'])) {
-            $json['components']['schemas']['idSlug'] = [
-                'description' => 'id/slug',
-                'type' => 'string',
-                'format' => 'identifier',
-                'minLength' => 1,
-                'maxLength' => 255,
+        if (! isset($json['components']['parameters']['filterSlug'])) {
+            $json['components']['parameters']['filterSlug'] = [
+                'description' => 'slug filter',
+                'in' => 'query',
+                'name' => 'filter[slug][]',
+                'schema' => [
+                    'description' => 'slug',
+                    'type' => 'array',
+                    'items' => [
+                        '$ref' => '#/components/schemas/slug',
+                    ],
+                ],
             ];
         }
 
-        if (! isset($json['components']['parameters']['idSlug'])) {
-            $json['components']['parameters']['idSlug'] = [
-                'description' => 'id/slug',
+        if (! isset($json['components']['parameters']['filterNotSlug'])) {
+            $json['components']['parameters']['filterNotSlug'] = [
+                'description' => 'not slug filter',
                 'in' => 'query',
-                'name' => 'id_slug',
+                'name' => 'filter[not_slug][]',
                 'schema' => [
-                    '$ref' => '#/components/schemas/idSlug',
+                    'description' => 'not slug',
+                    'type' => 'array',
+                    'items' => [
+                        '$ref' => '#/components/schemas/slug',
+                    ],
+                ],
+            ];
+        }
+
+        if (! isset($json['components']['parameters']['mode'])) {
+            $json['components']['parameters']['mode'] = [
+                'description' => 'mode',
+                'in' => 'query',
+                'name' => 'mode',
+                'schema' => [
+                    'description' => '0 = default, 1 = select, 2 = count',
+                    'type' => 'integer',
+                    'enum' => [0, 1, 2],
                 ],
             ];
         }
@@ -733,8 +743,8 @@ class MakeTchiCommand extends GeneratorCommand
         $databaseSchema = $this->files->get($path);
 
         $databaseSchema = \str_replace(
-            "erDiagram\n",
-            "erDiagram\n\n{$table} {\n  id id PK\n  id user_id FK \"users.id cascadeOnUpdate cascadeOnDelete\"\n  string title\n  timestamp created_at\n  timestamp updated_at\n}\n",
+            'erDiagram',
+            "erDiagram\n\n{$table} {\n  id id PK\n  id user_id FK \"users.id cascadeOnUpdate cascadeOnDelete\"\n  string title \"fulltext\"\n  timestamp created_at\n  timestamp updated_at\n}",
             $databaseSchema,
         );
 
@@ -753,8 +763,8 @@ class MakeTchiCommand extends GeneratorCommand
         $routes = $this->files->get($path);
 
         $routes = \str_replace(
-            'resolveRouter()->any(',
-            "resolveRouteRegistrar()->prefix('v1/{$table}')->group(static function (): void {\n    resolveRouteRegistrar()->post('store', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreController::class);\n    resolveRouteRegistrar()->get('index', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexController::class);\n    resolveRouteRegistrar()->get('show', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowController::class);\n    resolveRouteRegistrar()->post('update', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateController::class);\n    resolveRouteRegistrar()->post('destroy', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyController::class);\n});\n\nresolveRouter()->any(",
+            'declare(strict_types=1);',
+            "declare(strict_types=1);\n\nresolveRouteRegistrar()\n    ->prefix('v1/{$table}')\n    ->group(static function (): void {\n        resolveRouteRegistrar()->post('store', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreController::class);\n        resolveRouteRegistrar()->get('index', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexController::class);\n        resolveRouteRegistrar()->get('show', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowController::class);\n        resolveRouteRegistrar()->post('update', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateController::class);\n        resolveRouteRegistrar()->post('destroy', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyController::class);\n    });",
             $routes,
         );
 
@@ -777,7 +787,7 @@ class MakeTchiCommand extends GeneratorCommand
 
         $testCase = \str_replace(
             "\n}\n",
-            "\n\n    /**\n     * {$modelName} embed structure.\n     */\n    protected function structure{$modelName}Embed(): JsonApiValidator\n    {\n        \$validity = new \\{$qualifiedValidityName}();\n\n        return \$this->structure('{$table}', [\n            'title' => \$validity->title()->required(),\n            'created_at' => \\Tomchochola\\Laratchi\\Validation\\Validity::make()->dateTime()->required(),\n            'updated_at' => \\Tomchochola\\Laratchi\\Validation\\Validity::make()->dateTime()->required(),\n        ]);\n    }\n}\n",
+            "\n\n    /**\n     * {$modelName} embed structure.\n     */\n    protected function structure{$modelName}Embed(): JsonApiValidator\n    {\n        \$validity = new \\{$qualifiedValidityName}();\n\n        return \$this->structure('{$table}', [\n            'title' => \$validity->title()->required(),\n        ]);\n    }\n}\n",
             $testCase,
         );
 

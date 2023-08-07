@@ -23,7 +23,7 @@ class {{ class }} extends Pivot
      */
     public function first(): BelongsTo
     {
-        return $this->belongsTo(First::class);
+        return $this->belongsTo(First::class, 'first_id');
     }
 
     /**
@@ -31,7 +31,7 @@ class {{ class }} extends Pivot
      */
     public function getFirstId(): int
     {
-        return $this->mustInt('first_id');
+        return $this->assertInt('first_id');
     }
 
     /**
@@ -39,7 +39,7 @@ class {{ class }} extends Pivot
      */
     public function getFirst(): ?First
     {
-        return $this->relation('first', First::class);
+        return $this->assertNullableRelationship('first', First::class);
     }
 
     /**
@@ -47,7 +47,7 @@ class {{ class }} extends Pivot
      */
     public function second(): BelongsTo
     {
-        return $this->belongsTo(Second::class);
+        return $this->belongsTo(Second::class, 'second_id');
     }
 
     /**
@@ -55,7 +55,7 @@ class {{ class }} extends Pivot
      */
     public function getSecondId(): int
     {
-        return $this->mustInt('second_id');
+        return $this->assertInt('second_id');
     }
 
     /**
@@ -63,26 +63,26 @@ class {{ class }} extends Pivot
      */
     public function getSecond(): ?Second
     {
-        return $this->relation('second', Second::class);
+        return $this->assertNullableRelationship('second', Second::class);
     }
 
     /**
      * First scope.
      *
-     * @param array<int, int> $ids
+     * @param array<mixed> $ids
      */
     public static function scopeFirstId(Builder $builder, array $ids): void
     {
-        $builder->getQuery()->whereIn($builder->qualifyColumn('first_id'), $ids);
+        static::scopeIn($builder, 'first_id', $ids);
     }
 
     /**
      * Second scope.
      *
-     * @param array<int, int> $ids
+     * @param array<mixed> $ids
      */
     public static function scopeSecondId(Builder $builder, array $ids): void
     {
-        $builder->getQuery()->whereIn($builder->qualifyColumn('second_id'), $ids);
+        static::scopeIn($builder, 'second_id', $ids);
     }
 }

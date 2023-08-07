@@ -4,30 +4,57 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use {{ namespacedShowRequest }};
+use {{ namespacedUserModel }};
 use {{ namespacedModel }};
 use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Routing\Controller;
+use Tomchochola\Laratchi\Http\ApiFormRequest;
+use Tomchochola\Laratchi\Support\Parser;
+use Tomchochola\Laratchi\Validation\BaseValidity;
 
 class {{ class }} extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke({{ showRequest }} $request): SymfonyResponse
+    public function __invoke(ApiFormRequest $request): SymfonyResponse
     {
-        $me = $request->me();
+        $auth = $this->authorize($request);
+        $validated = $this->validate($request, $auth);
 
-        $model = {{ model }}::mustFindByIdSlug($request->validatedInput()->mustIntOrString('id_slug'), static function (Builder $builder): void {
-            $builder->getQuery()->select($builder->qualifyColumns(['*']));
+        $model = {{ model }}::mustFindByKeyXorRouteKey($validated->mustParseNullableInt('id'), $validated->mustParseNullableString('slug'), static function (Builder $builder) use (
+            $auth,
+        ): void {
+            $builder
+                ->getQuery()
+                ->where($builder->qualifyColumn('user_id'), $auth->getKey())
+                ->select($builder->qualifyColumn('*'));
         });
 
-        return (new ModelResource($model, static fn ({{ model }} $resource): array => [
-            'title' => $resource->getTitle(),
-            'created_at' => $resource->getCreatedAt(),
-            'updated_at' => $resource->getUpdatedAt(),
-        ]))->response();
+        return (new ModelResource($model, static function ({{ model }} $resource): array {
+            return [
+                'title' => $resource->getTitle(),
+            ];
+        }))->response();
+    }
+
+    /**
+     * Authorize the incoming request.
+     */
+    protected function authorize(ApiFormRequest $request): {{ userModel }}
+    {
+        return {{ userModel }}::mustAuth();
+    }
+
+    /**
+     * Validate the incoming request.
+     */
+    protected function validate(ApiFormRequest $request, {{ userModel }} $auth): Parser
+    {
+        $baseValidity = new BaseValidity();
+
+        return $request->validate($baseValidity->predefined(idXorSlug: true));
     }
 }

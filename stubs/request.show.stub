@@ -28,11 +28,11 @@ class {{ class }} extends SecureFormRequest
     {
         $validity = new {{ validity }}();
 
-        $me = $this->me();
+        $auth = $this->me();
 
         return [
-            'id_slug' => Validity::make()->idSlug()->existingIdSlug(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($me): void {
-                {{ model }}::scopeUserId($builder, [$me->getKey()]);
+            'id_slug' => Validity::make()->idSlug()->existingIdSlug(static fn (): Builder => {{ model }}::query()->tap(static function (Builder $builder) use ($auth): void {
+                {{ model }}::scopeUserId($builder, [$auth->getKey()]);
             }))->required(),
         ];
     }

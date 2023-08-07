@@ -23,7 +23,7 @@ class {{ class }} extends SecureFormRequest
      */
     public function rules(): array
     {
-        $me = $this->me();
+        $auth = $this->me();
 
         return [];
     }

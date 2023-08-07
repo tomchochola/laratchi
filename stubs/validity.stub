@@ -5,9 +5,47 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use Tomchochola\Laratchi\Validation\Validity;
+use Tomchochola\Laratchi\Validation\BaseValidity;
 
 class {{ class }}
 {
+    /**
+     * Base validity.
+     */
+    public BaseValidity $baseValidity;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->baseValidity = new BaseValidity();
+    }
+
+    /**
+     * Id validation rules.
+     */
+    public function id(): Validity
+    {
+        return $this->baseValidity->id();
+    }
+
+    /**
+     * Created at validation rules.
+     */
+    public function createdAt(): Validity
+    {
+        return $this->baseValidity->datetime();
+    }
+
+    /**
+     * Updated at validation rules.
+     */
+    public function updatedAt(): Validity
+    {
+        return $this->baseValidity->datetime();
+    }
+
     /**
      * Title validation rules.
      */

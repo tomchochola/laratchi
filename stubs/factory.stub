@@ -34,6 +34,14 @@ class {{ factory }}Factory extends Factory
      */
     public function withRandomUser(): static
     {
-        return $this->set('user_id', static fn (): mixed => User::query()->getQuery()->inRandomOrder()->value('id'));
+        return $this->set(
+            'user_id',
+            static fn (): int => assertInt(
+                User::query()
+                    ->getQuery()
+                    ->inRandomOrder()
+                    ->value('id'),
+            ),
+        );
     }
 }
