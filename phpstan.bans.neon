@@ -184,6 +184,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Artisan'
@@ -191,6 +192,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Auth'
@@ -198,6 +200,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Blade'
@@ -205,6 +208,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Broadcast'
@@ -212,6 +216,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Bus'
@@ -219,6 +224,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Cache'
@@ -226,6 +232,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Config'
@@ -233,6 +240,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Cookie'
@@ -240,6 +248,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Crypt'
@@ -247,6 +256,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Date'
@@ -254,6 +264,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\DB'
@@ -261,6 +272,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Event'
@@ -268,6 +280,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\File'
@@ -275,6 +288,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Gate'
@@ -282,6 +296,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Hash'
@@ -289,6 +304,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Http'
@@ -296,6 +312,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Lang'
@@ -303,6 +320,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Log'
@@ -310,6 +328,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Mail'
@@ -317,6 +336,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Notification'
@@ -324,6 +344,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\ParallelTesting'
@@ -331,6 +352,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Password'
@@ -338,6 +360,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Queue'
@@ -345,6 +368,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\RateLimiter'
@@ -352,6 +376,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Redirect'
@@ -359,6 +384,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Redis'
@@ -366,6 +392,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Request'
@@ -373,6 +400,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Response'
@@ -380,6 +408,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Route'
@@ -387,6 +416,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Session'
@@ -394,6 +424,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Schema'
@@ -401,6 +432,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Storage'
@@ -408,6 +440,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\URL'
@@ -415,6 +448,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Validator'
@@ -422,6 +456,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\View'
@@ -429,6 +464,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Facades\Vite'
@@ -436,6 +472,7 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Support/Resolver.php
         - src/Testing/*
     -
       namespace: 'Illuminate\Support\Env'
@@ -443,4 +480,5 @@ parameters:
       allowIn:
         - tests/*
         - src/Helpers/functions.php
+        - src/Config/Env.php
         - src/Testing/*
