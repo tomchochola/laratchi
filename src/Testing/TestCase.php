@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Testing;
 
+use BackedEnum;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -145,6 +146,8 @@ abstract class TestCase extends BaseTestCase
                 $parameters[$key] = '';
             } elseif (\is_scalar($value)) {
                 $parameters[$key] = (string) $value;
+            } elseif ($value instanceof BackedEnum) {
+                $parameters[$key] = $value->value;
             } else {
                 \assert($value instanceof Stringable, "Can not convert [{$key}] to multipart/form-data.");
 
