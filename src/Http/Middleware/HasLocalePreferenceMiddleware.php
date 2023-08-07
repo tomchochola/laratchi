@@ -32,6 +32,10 @@ class HasLocalePreferenceMiddleware
             $app->setLocale($locale);
         }
 
+        if ($request->getLocale() !== $locale) {
+            $request->setLocale($locale);
+        }
+
         return $next($request);
     }
 }
