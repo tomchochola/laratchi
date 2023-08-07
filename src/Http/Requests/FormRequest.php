@@ -14,12 +14,19 @@ use Illuminate\Support\Stringable;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Tomchochola\Laratchi\Auth\User;
+use Tomchochola\Laratchi\Support\AssertTrait;
+use Tomchochola\Laratchi\Support\ParserTrait;
+use Tomchochola\Laratchi\Support\ParseTrait;
 use Tomchochola\Laratchi\Validation\AllInput;
 use Tomchochola\Laratchi\Validation\ValidatedInput;
 use Tomchochola\Laratchi\Validation\Validity;
 
 class FormRequest extends IlluminateFormRequest
 {
+    use AssertTrait;
+    use ParserTrait;
+    use ParseTrait;
+
     /**
      * Validated input cache.
      */
@@ -402,6 +409,18 @@ class FormRequest extends IlluminateFormRequest
         }
 
         return true;
+    }
+
+    /**
+     * Mixed getter.
+     */
+    public function mixed(?string $key = null): mixed
+    {
+        if ($key === null) {
+            return $this->all();
+        }
+
+        return $this->input($key);
     }
 
     /**

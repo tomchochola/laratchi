@@ -8,9 +8,15 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
+use Tomchochola\Laratchi\Support\AssertTrait;
+use Tomchochola\Laratchi\Support\ParserTrait;
 
 class AllInput extends IlluminateValidatedInput
 {
+    use AssertTrait;
+    use ParserTrait;
+    use ParserTrait;
+
     /**
      * @inheritDoc
      *
@@ -146,7 +152,7 @@ class AllInput extends IlluminateValidatedInput
      */
     public function mustFile(string $key, ?UploadedFile $default = null): UploadedFile
     {
-        return $this->file($key, $default) ?? UploadedFile::createFromBase(UploadedFile::fake()->create($key));
+        return $this->file($key, $default) ?? UploadedFile::createFromBase(UploadedFile::fake()->create(assertString(\tempnam(\sys_get_temp_dir(), 'php'))));
     }
 
     /**
@@ -283,5 +289,17 @@ class AllInput extends IlluminateValidatedInput
     public function isNotNull(string $key): bool
     {
         return $this->get($key) !== null;
+    }
+
+    /**
+     * Mixed getter.
+     */
+    public function mixed(?string $key = null): mixed
+    {
+        if ($key === null) {
+            return $this->input;
+        }
+
+        return Arr::get($this->input, $key);
     }
 }

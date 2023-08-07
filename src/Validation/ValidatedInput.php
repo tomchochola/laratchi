@@ -9,9 +9,15 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
 use LogicException;
+use Tomchochola\Laratchi\Support\AssertTrait;
+use Tomchochola\Laratchi\Support\ParserTrait;
 
 class ValidatedInput extends IlluminateValidatedInput
 {
+    use AssertTrait;
+    use ParserTrait;
+    use ParserTrait;
+
     /**
      * @inheritDoc
      *
@@ -388,5 +394,17 @@ class ValidatedInput extends IlluminateValidatedInput
     public function mustIntOrString(string $key, string|int|null $default = null): string|int
     {
         return $this->mustStringOrInt($key, $default);
+    }
+
+    /**
+     * Mixed getter.
+     */
+    public function mixed(?string $key = null): mixed
+    {
+        if ($key === null) {
+            return $this->input;
+        }
+
+        return Arr::get($this->input, $key);
     }
 }

@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
+
 if (! \function_exists('mustTransString')) {
     /**
      * Mandatory string translation resolver.
@@ -1267,45 +1270,369 @@ if (! \function_exists('locales')) {
     }
 }
 
-if (! \function_exists('asString')) {
+if (! \function_exists('assertString')) {
     /**
-     * As string.
+     * Assert string.
      */
-    function asString(mixed $value): string
+    function assertString(mixed $value): string
     {
-        \assert(\is_string($value));
+        \assert(\is_string($value), \sprintf('value:[%s] is not string', \get_debug_type($value)));
 
         return $value;
     }
 }
 
-if (! \function_exists('asNullableString')) {
+if (! \function_exists('assertNullableString')) {
     /**
-     * As nullable string.
+     * Assert nullable string.
      */
-    function asNullableString(mixed $value): ?string
+    function assertNullableString(mixed $value): ?string
     {
-        \assert($value === null || \is_string($value));
+        \assert($value === null || \is_string($value), \sprintf('value:[%s] is not string or null', \get_debug_type($value)));
 
         return $value;
     }
 }
 
-if (! \function_exists('toString')) {
+if (! \function_exists('assertBool')) {
     /**
-     * To string.
+     * Assert bool.
      */
-    function toString(mixed $value): string
+    function assertBool(mixed $value): bool
     {
-        return toNullableString($value) ?? '';
+        \assert(\is_bool($value), \sprintf('value:[%s] is not bool', \get_debug_type($value)));
+
+        return $value;
     }
 }
 
-if (! \function_exists('toNullableString')) {
+if (! \function_exists('assertNullableBool')) {
     /**
-     * To nullable string.
+     * Assert nullable bool.
      */
-    function toNullableString(mixed $value): ?string
+    function assertNullableBool(mixed $value): ?bool
+    {
+        \assert($value === null || \is_bool($value), \sprintf('value:[%s] is not bool or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertInt')) {
+    /**
+     * Assert int.
+     */
+    function assertInt(mixed $value): int
+    {
+        \assert(\is_int($value), \sprintf('value:[%s] is not int', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertNullableInt')) {
+    /**
+     * Assert nullable int.
+     */
+    function assertNullableInt(mixed $value): ?int
+    {
+        \assert($value === null || \is_int($value), \sprintf('value:[%s] is not int or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertFloat')) {
+    /**
+     * Assert float.
+     */
+    function assertFloat(mixed $value): float
+    {
+        \assert(\is_float($value), \sprintf('value:[%s] is not float', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertNullableFloat')) {
+    /**
+     * Assert nullable float.
+     */
+    function assertNullableFloat(mixed $value): ?float
+    {
+        \assert($value === null || \is_float($value), \sprintf('value:[%s] is not float or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertArray')) {
+    /**
+     * Assert array.
+     *
+     * @return array<mixed>
+     */
+    function assertArray(mixed $value): array
+    {
+        \assert(\is_array($value), \sprintf('value:[%s] is not array', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertNullableArray')) {
+    /**
+     * Assert nullable array.
+     *
+     * @return array<mixed>|null
+     */
+    function assertNullableArray(mixed $value): ?array
+    {
+        \assert($value === null || \is_array($value), \sprintf('value:[%s] is not array or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertFile')) {
+    /**
+     * Assert file.
+     */
+    function assertFile(mixed $value): UploadedFile
+    {
+        \assert($value instanceof UploadedFile, \sprintf('value:[%s] is not file', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertNullableFile')) {
+    /**
+     * Assert nullable file.
+     */
+    function assertNullableFile(mixed $value): ?UploadedFile
+    {
+        \assert($value === null || $value instanceof UploadedFile, \sprintf('value:[%s] is not file or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertCarbon')) {
+    /**
+     * Assert carbon.
+     */
+    function assertCarbon(mixed $value): Carbon
+    {
+        \assert($value instanceof Carbon, \sprintf('value:[%s] is not carbon', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertNullableCarbon')) {
+    /**
+     * Assert nullable carbon.
+     */
+    function assertNullableCarbon(mixed $value): ?Carbon
+    {
+        \assert($value === null || $value instanceof Carbon, \sprintf('value:[%s] is not carbon or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertObject')) {
+    /**
+     * Assert object.
+     */
+    function assertObject(mixed $value): object
+    {
+        \assert(\is_object($value), \sprintf('value:[%s] is not object', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertNullableObject')) {
+    /**
+     * Assert nullable object.
+     */
+    function assertNullableObject(mixed $value): ?object
+    {
+        \assert($value === null || \is_object($value), \sprintf('value:[%s] is not object or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertScalar')) {
+    /**
+     * Assert scalar.
+     *
+     * @return scalar
+     */
+    function assertScalar(mixed $value): int|float|string|bool
+    {
+        \assert(\is_scalar($value), \sprintf('value:[%s] is not scalar', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertNullableScalar')) {
+    /**
+     * Assert nullable scalar.
+     *
+     * @return scalar|null
+     */
+    function assertNullableScalar(mixed $value): int|float|string|bool|null
+    {
+        \assert($value === null || \is_scalar($value), \sprintf('value:[%s] is not scalar or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('assertEnum')) {
+    /**
+     * Assert enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
+     */
+    function assertEnum(mixed $value, string $enum): BackedEnum
+    {
+        if ($value instanceof $enum) {
+            return $value;
+        }
+
+        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] enum', \get_debug_type($value), $enum));
+    }
+}
+
+if (! \function_exists('assertNullableEnum')) {
+    /**
+     * Assert nullable enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    function assertNullableEnum(mixed $value, string $enum): ?BackedEnum
+    {
+        if ($value === null || $value instanceof $enum) {
+            return $value;
+        }
+
+        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] enum or null', \get_debug_type($value), $enum));
+    }
+}
+
+if (! \function_exists('assertInstance')) {
+    /**
+     * Assert instance.
+     *
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     *
+     * @return T
+     */
+    function assertInstance(mixed $value, string $class): object
+    {
+        if ($value instanceof $class) {
+            return $value;
+        }
+
+        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] instance', \get_debug_type($value), $class));
+    }
+}
+
+if (! \function_exists('assertNullableInstance')) {
+    /**
+     * Assert nullable instance.
+     *
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     *
+     * @return T|null
+     */
+    function assertNullableInstance(mixed $value, string $class): ?object
+    {
+        if ($value === null || $value instanceof $class) {
+            return $value;
+        }
+
+        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] instance or null', \get_debug_type($value), $class));
+    }
+}
+
+if (! \function_exists('assertA')) {
+    /**
+     * Assert a.
+     *
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     *
+     * @return class-string<T>
+     */
+    function assertA(mixed $value, string $class): string
+    {
+        if (\is_string($value) && \is_a($value, $class, true)) {
+            return $value;
+        }
+
+        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] class-string', \get_debug_type($value), $class));
+    }
+}
+
+if (! \function_exists('assertNullableA')) {
+    /**
+     * Assert nullable a.
+     *
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     *
+     * @return class-string<T>|null
+     */
+    function assertNullableA(mixed $value, string $class): ?string
+    {
+        if ($value === null) {
+            return $value;
+        }
+
+        if (\is_string($value) && \is_a($value, $class, true)) {
+            return $value;
+        }
+
+        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] class-string or null', \get_debug_type($value), $class));
+    }
+}
+
+if (! \function_exists('parseString')) {
+    /**
+     * Parse string.
+     */
+    function parseString(mixed $value): string
+    {
+        return parseNullableString($value) ?? '';
+    }
+}
+
+if (! \function_exists('parseNullableString')) {
+    /**
+     * Parse nullable string.
+     */
+    function parseNullableString(mixed $value): ?string
     {
         if ($value === null || \is_string($value)) {
             return $value;
@@ -1321,27 +1648,25 @@ if (! \function_exists('toNullableString')) {
     }
 }
 
-if (! \function_exists('mustString')) {
+if (! \function_exists('mustParseString')) {
     /**
-     * Must string.
+     * Must parse string.
      */
-    function mustString(mixed $value): string
+    function mustParseString(mixed $value): string
     {
-        $value = mustNullableString($value);
+        $value = mustParseNullableString($value);
 
-        if ($value === null) {
-            throw new LogicException(\sprintf('[%s] is not string', \print_r($value, true)));
-        }
+        \assert($value !== null, \sprintf('value:[%s] is not string', \get_debug_type($value)));
 
         return $value;
     }
 }
 
-if (! \function_exists('mustNullableString')) {
+if (! \function_exists('mustParseNullableString')) {
     /**
-     * Must nullable string.
+     * Must parse nullable string.
      */
-    function mustNullableString(mixed $value): ?string
+    function mustParseNullableString(mixed $value): ?string
     {
         if ($value === null || \is_string($value)) {
             return $value;
@@ -1349,53 +1674,27 @@ if (! \function_exists('mustNullableString')) {
 
         $value = \filter_var($value);
 
-        if ($value === false) {
-            throw new LogicException(\sprintf('[%s] is not string or null', \print_r($value, true)));
-        }
+        \assert($value !== false, \sprintf('value:[%s] is not string or null', \get_debug_type($value)));
 
         return $value;
     }
 }
 
-if (! \function_exists('asBool')) {
+if (! \function_exists('parseBool')) {
     /**
-     * As bool.
+     * Parse bool.
      */
-    function asBool(mixed $value): bool
+    function parseBool(mixed $value): bool
     {
-        \assert(\is_bool($value));
-
-        return $value;
+        return parseNullableBool($value) ?? false;
     }
 }
 
-if (! \function_exists('asNullableBool')) {
+if (! \function_exists('parseNullableBool')) {
     /**
-     * As nullable bool.
+     * Parse nullable bool.
      */
-    function asNullableBool(mixed $value): ?bool
-    {
-        \assert($value === null || \is_bool($value));
-
-        return $value;
-    }
-}
-
-if (! \function_exists('toBool')) {
-    /**
-     * To bool.
-     */
-    function toBool(mixed $value): bool
-    {
-        return toNullableBool($value) ?? false;
-    }
-}
-
-if (! \function_exists('toNullableBool')) {
-    /**
-     * To nullable bool.
-     */
-    function toNullableBool(mixed $value): ?bool
+    function parseNullableBool(mixed $value): ?bool
     {
         if ($value === null || \is_bool($value)) {
             return $value;
@@ -1405,27 +1704,25 @@ if (! \function_exists('toNullableBool')) {
     }
 }
 
-if (! \function_exists('mustBool')) {
+if (! \function_exists('mustParseBool')) {
     /**
-     * Must bool.
+     * Must parse bool.
      */
-    function mustBool(mixed $value): bool
+    function mustParseBool(mixed $value): bool
     {
-        $value = mustNullableBool($value);
+        $value = mustParseNullableBool($value);
 
-        if ($value === null) {
-            throw new LogicException(\sprintf('[%s] is not bool', \print_r($value, true)));
-        }
+        \assert($value !== null, \sprintf('value:[%s] is not bool', \get_debug_type($value)));
 
         return $value;
     }
 }
 
-if (! \function_exists('mustNullableBool')) {
+if (! \function_exists('mustParseNullableBool')) {
     /**
-     * Must nullable bool.
+     * Must parse nullable bool.
      */
-    function mustNullableBool(mixed $value): ?bool
+    function mustParseNullableBool(mixed $value): ?bool
     {
         if ($value === null || \is_bool($value)) {
             return $value;
@@ -1433,53 +1730,27 @@ if (! \function_exists('mustNullableBool')) {
 
         $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
 
-        if ($value === null) {
-            throw new LogicException(\sprintf('[%s] is not bool or null', \print_r($value, true)));
-        }
+        \assert($value !== null, \sprintf('value:[%s] is not bool or null', \get_debug_type($value)));
 
         return $value;
     }
 }
 
-if (! \function_exists('asInt')) {
+if (! \function_exists('parseInt')) {
     /**
-     * As int.
+     * Parse int.
      */
-    function asInt(mixed $value): int
+    function parseInt(mixed $value): int
     {
-        \assert(\is_int($value));
-
-        return $value;
+        return parseNullableInt($value) ?? 0;
     }
 }
 
-if (! \function_exists('asNullableInt')) {
+if (! \function_exists('parseNullableInt')) {
     /**
-     * As nullable int.
+     * Parse nullable int.
      */
-    function asNullableInt(mixed $value): ?int
-    {
-        \assert($value === null || \is_int($value));
-
-        return $value;
-    }
-}
-
-if (! \function_exists('toInt')) {
-    /**
-     * To int.
-     */
-    function toInt(mixed $value): int
-    {
-        return toNullableInt($value) ?? 0;
-    }
-}
-
-if (! \function_exists('toNullableInt')) {
-    /**
-     * To nullable int.
-     */
-    function toNullableInt(mixed $value): ?int
+    function parseNullableInt(mixed $value): ?int
     {
         if ($value === null || \is_int($value)) {
             return $value;
@@ -1495,27 +1766,25 @@ if (! \function_exists('toNullableInt')) {
     }
 }
 
-if (! \function_exists('mustInt')) {
+if (! \function_exists('mustParseInt')) {
     /**
-     * Must int.
+     * Must parse int.
      */
-    function mustInt(mixed $value): int
+    function mustParseInt(mixed $value): int
     {
-        $value = mustNullableInt($value);
+        $value = mustParseNullableInt($value);
 
-        if ($value === null) {
-            throw new LogicException(\sprintf('[%s] is not int', \print_r($value, true)));
-        }
+        \assert($value !== null, \sprintf('value:[%s] is not int', \get_debug_type($value)));
 
         return $value;
     }
 }
 
-if (! \function_exists('mustNullableInt')) {
+if (! \function_exists('mustParseNullableInt')) {
     /**
-     * Must nullable int.
+     * Must parse nullable int.
      */
-    function mustNullableInt(mixed $value): ?int
+    function mustParseNullableInt(mixed $value): ?int
     {
         if ($value === null || \is_int($value)) {
             return $value;
@@ -1523,53 +1792,27 @@ if (! \function_exists('mustNullableInt')) {
 
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
-        if ($value === false) {
-            throw new LogicException(\sprintf('[%s] is not int or null', \print_r($value, true)));
-        }
+        \assert($value !== false, \sprintf('value:[%s] is not int or null', \get_debug_type($value)));
 
         return $value;
     }
 }
 
-if (! \function_exists('asFloat')) {
+if (! \function_exists('parseFloat')) {
     /**
-     * As float.
+     * Parse float.
      */
-    function asFloat(mixed $value): float
+    function parseFloat(mixed $value): float
     {
-        \assert(\is_float($value));
-
-        return $value;
+        return parseNullableFloat($value) ?? 0.0;
     }
 }
 
-if (! \function_exists('asNullableFloat')) {
+if (! \function_exists('parseNullableFloat')) {
     /**
-     * As nullable float.
+     * Parse nullable float.
      */
-    function asNullableFloat(mixed $value): ?float
-    {
-        \assert($value === null || \is_float($value));
-
-        return $value;
-    }
-}
-
-if (! \function_exists('toFloat')) {
-    /**
-     * To float.
-     */
-    function toFloat(mixed $value): float
-    {
-        return toNullableFloat($value) ?? 0.0;
-    }
-}
-
-if (! \function_exists('toNullableFloat')) {
-    /**
-     * To nullable float.
-     */
-    function toNullableFloat(mixed $value): ?float
+    function parseNullableFloat(mixed $value): ?float
     {
         if ($value === null || \is_float($value)) {
             return $value;
@@ -1585,27 +1828,25 @@ if (! \function_exists('toNullableFloat')) {
     }
 }
 
-if (! \function_exists('mustFloat')) {
+if (! \function_exists('mustParseFloat')) {
     /**
-     * Must float.
+     * Must parse float.
      */
-    function mustFloat(mixed $value): float
+    function mustParseFloat(mixed $value): float
     {
-        $value = mustNullableFloat($value);
+        $value = mustParseNullableFloat($value);
 
-        if ($value === null) {
-            throw new LogicException(\sprintf('[%s] is not float', \print_r($value, true)));
-        }
+        \assert($value !== null, \sprintf('value:[%s] is not float', \get_debug_type($value)));
 
         return $value;
     }
 }
 
-if (! \function_exists('mustNullableFloat')) {
+if (! \function_exists('mustParseNullableFloat')) {
     /**
-     * Must nullable float.
+     * Must parse nullable float.
      */
-    function mustNullableFloat(mixed $value): ?float
+    function mustParseNullableFloat(mixed $value): ?float
     {
         if ($value === null || \is_int($value)) {
             return $value;
@@ -1613,63 +1854,95 @@ if (! \function_exists('mustNullableFloat')) {
 
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
-        if ($value === false) {
-            throw new LogicException(\sprintf('[%s] is not float or null', \print_r($value, true)));
-        }
+        \assert($value !== false, \sprintf('value:[%s] is not float or null', \get_debug_type($value)));
 
         return $value;
     }
 }
 
-if (! \function_exists('asArray')) {
+if (! \function_exists('parseArray')) {
     /**
-     * As array.
+     * Parse array.
      *
      * @return array<mixed>
      */
-    function asArray(mixed $value): array
+    function parseArray(mixed $value): array
     {
-        \assert(\is_array($value));
-
-        return $value;
+        return parseNullableArray($value) ?? [];
     }
 }
 
-if (! \function_exists('asNullableArray')) {
+if (! \function_exists('parseNullableArray')) {
     /**
-     * As nullable array.
+     * Parse nullable array.
      *
-     * @return ?array<mixed>
+     * @return array<mixed>|null
      */
-    function asNullableArray(mixed $value): ?array
-    {
-        \assert($value === null || \is_array($value));
-
-        return $value;
-    }
-}
-
-if (! \function_exists('toArray')) {
-    /**
-     * To array.
-     *
-     * @return array<mixed>
-     */
-    function toArray(mixed $value): array
-    {
-        return toNullableArray($value) ?? [];
-    }
-}
-
-if (! \function_exists('toNullableArray')) {
-    /**
-     * To nullable array.
-     *
-     * @return ?array<mixed>
-     */
-    function toNullableArray(mixed $value): ?array
+    function parseNullableArray(mixed $value): ?array
     {
         if ($value === null || \is_array($value)) {
+            return $value;
+        }
+
+        if (\is_object($value)) {
+            return \get_object_vars($value);
+        }
+
+        return null;
+    }
+}
+
+if (! \function_exists('mustParseArray')) {
+    /**
+     * Must parse array.
+     *
+     * @return array<mixed>
+     */
+    function mustParseArray(mixed $value): array
+    {
+        $value = mustParseNullableArray($value);
+
+        \assert($value !== null, \sprintf('value:[%s] is not array', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustParseNullableArray')) {
+    /**
+     * Must parse nullable array.
+     *
+     * @return array<mixed>|null
+     */
+    function mustParseNullableArray(mixed $value): ?array
+    {
+        if (\is_object($value)) {
+            return \get_object_vars($value);
+        }
+
+        \assert($value === null || \is_array($value), \sprintf('value:[%s] is not array or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('parseFile')) {
+    /**
+     * Parse file.
+     */
+    function parseFile(mixed $value): UploadedFile
+    {
+        return parseNullableFile($value) ?? UploadedFile::createFromBase(UploadedFile::fake()->create(assertString(\tempnam(\sys_get_temp_dir(), 'php'))));
+    }
+}
+
+if (! \function_exists('parseNullableFile')) {
+    /**
+     * Parse nullable file.
+     */
+    function parseNullableFile(mixed $value): ?UploadedFile
+    {
+        if ($value === null || $value instanceof UploadedFile) {
             return $value;
         }
 
@@ -1677,36 +1950,315 @@ if (! \function_exists('toNullableArray')) {
     }
 }
 
-if (! \function_exists('mustArray')) {
+if (! \function_exists('mustParseFile')) {
     /**
-     * Must array.
-     *
-     * @return array<mixed>
+     * Must parse file.
      */
-    function mustArray(mixed $value): array
+    function mustParseFile(mixed $value): UploadedFile
     {
-        $value = mustNullableArray($value);
+        return assertFile($value);
+    }
+}
 
-        if ($value === null) {
-            throw new LogicException(\sprintf('[%s] is not array', \print_r($value, true)));
+if (! \function_exists('mustParseNullableFile')) {
+    /**
+     * Must parse nullable file.
+     */
+    function mustParseNullableFile(mixed $value): ?UploadedFile
+    {
+        return assertNullableFile($value);
+    }
+}
+
+if (! \function_exists('parseCarbon')) {
+    /**
+     * Parse carbon.
+     */
+    function parseCarbon(mixed $value, ?string $format = null, ?string $tz = null): Carbon
+    {
+        return parseNullableCarbon($value, $format, $tz) ?? resolveNow();
+    }
+}
+
+if (! \function_exists('parseNullableCarbon')) {
+    /**
+     * Parse nullable carbon.
+     */
+    function parseNullableCarbon(mixed $value, ?string $format = null, ?string $tz = null): ?Carbon
+    {
+        if ($value === null || $value instanceof Carbon) {
+            return $value;
+        }
+
+        $value = \filter_var($value);
+
+        if ($value === false || $value === '') {
+            return null;
+        }
+
+        if ($format === null) {
+            return resolveDate()->parse($value, $tz);
+        }
+
+        $value = resolveDate()->createFromFormat($format, $value, $tz);
+
+        if ($value === false) {
+            return null;
         }
 
         return $value;
     }
 }
 
-if (! \function_exists('mustNullableArray')) {
+if (! \function_exists('mustParseCarbon')) {
     /**
-     * Must nullable array.
-     *
-     * @return ?array<mixed>
+     * Must parse carbon.
      */
-    function mustNullableArray(mixed $value): ?array
+    function mustParseCarbon(mixed $value, ?string $format = null, ?string $tz = null): Carbon
     {
-        if ($value === null || \is_array($value)) {
+        $value = mustParseNullableCarbon($value, $format, $tz);
+
+        \assert($value !== null, \sprintf('value:[%s] is not carbon', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustParseNullableCarbon')) {
+    /**
+     * Must parse nullable carbon.
+     */
+    function mustParseNullableCarbon(mixed $value, ?string $format = null, ?string $tz = null): ?Carbon
+    {
+        if ($value === null || $value instanceof Carbon) {
             return $value;
         }
 
-        throw new LogicException(\sprintf('[%s] is not array or null', \print_r($value, true)));
+        $value = \filter_var($value);
+
+        \assert($value !== false && $value !== '', \sprintf('value:[%s] is not carbon or null', \get_debug_type($value)));
+
+        if ($format === null) {
+            return resolveDate()->parse($value, $tz);
+        }
+
+        $value = resolveDate()->createFromFormat($format, $value, $tz);
+
+        \assert($value !== false, \sprintf('value:[%s] is not carbon or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('parseObject')) {
+    /**
+     * Parse object.
+     */
+    function parseObject(mixed $value): object
+    {
+        return parseNullableObject($value) ?? new stdClass();
+    }
+}
+
+if (! \function_exists('parseNullableObject')) {
+    /**
+     * Parse nullable object.
+     */
+    function parseNullableObject(mixed $value): ?object
+    {
+        if ($value === null || \is_object($value)) {
+            return $value;
+        }
+
+        if (\is_array($value)) {
+            return (object) $value;
+        }
+
+        return null;
+    }
+}
+
+if (! \function_exists('mustParseObject')) {
+    /**
+     * Must parse object.
+     */
+    function mustParseObject(mixed $value): object
+    {
+        $value = mustParseNullableObject($value);
+
+        \assert($value !== null, \sprintf('value:[%s] is not object', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustParseNullableObject')) {
+    /**
+     * Must parse nullable object.
+     */
+    function mustParseNullableObject(mixed $value): ?object
+    {
+        if (\is_array($value)) {
+            return (object) $value;
+        }
+
+        \assert($value === null || \is_object($value), \sprintf('value:[%s] is not object or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('parseScalar')) {
+    /**
+     * Parse scalar.
+     */
+    function parseScalar(mixed $value): string|int|float|bool
+    {
+        return parseNullableScalar($value) ?? '';
+    }
+}
+
+if (! \function_exists('parseNullableScalar')) {
+    /**
+     * Parse nullable scalar.
+     */
+    function parseNullableScalar(mixed $value): string|int|float|bool|null
+    {
+        if ($value === null || \is_scalar($value)) {
+            return $value;
+        }
+
+        return null;
+    }
+}
+
+if (! \function_exists('mustParseScalar')) {
+    /**
+     * Must parse scalar.
+     */
+    function mustParseScalar(mixed $value): string|int|float|bool
+    {
+        $value = mustParseNullableScalar($value);
+
+        \assert($value !== null, \sprintf('value:[%s] is not scalar', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustParseNullableScalar')) {
+    /**
+     * Must parse nullable scalar.
+     */
+    function mustParseNullableScalar(mixed $value): string|int|float|bool|null
+    {
+        \assert($value === null || \is_scalar($value), \sprintf('value:[%s] is not scalar or null', \get_debug_type($value)));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('parseEnum')) {
+    /**
+     * Parse enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
+     */
+    function parseEnum(mixed $value, string $enum): BackedEnum
+    {
+        return parseNullableEnum($value, $enum) ?? $enum::cases()[0];
+    }
+}
+
+if (! \function_exists('parseNullableEnum')) {
+    /**
+     * Parse nullable enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    function parseNullableEnum(mixed $value, string $enum): ?BackedEnum
+    {
+        if ((string) (new ReflectionEnum($enum))->getBackingType() === 'int') {
+            $value = parseNullableInt($value);
+        } else {
+            $value = parseNullableString($value);
+        }
+
+        if ($value === null) {
+            return $value;
+        }
+
+        return $enum::tryFrom($value);
+    }
+}
+
+if (! \function_exists('mustParseEnum')) {
+    /**
+     * Must parse enum.
+     *
+     * @param class-string<BackedEnum> $enum
+     */
+    function mustParseEnum(mixed $value, string $enum): BackedEnum
+    {
+        $value = mustParseNullableEnum($value, $enum);
+
+        \assert($value !== null, \sprintf('value:[%s] is not class:[%s] enum', \get_debug_type($value), $enum));
+
+        return $value;
+    }
+}
+
+if (! \function_exists('mustParseNullableEnum')) {
+    /**
+     * Must parse nullable enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    function mustParseNullableEnum(mixed $value, string $enum): ?BackedEnum
+    {
+        if ((string) (new ReflectionEnum($enum))->getBackingType() === 'int') {
+            $value = mustParseNullableInt($value);
+        } else {
+            $value = mustParseNullableString($value);
+        }
+
+        if ($value === null) {
+            return $value;
+        }
+
+        return $enum::from($value);
+    }
+}
+
+if (! \function_exists('assertIn')) {
+    /**
+     * Assert in.
+     *
+     * @template T
+     *
+     * @param T $value
+     * @param array<mixed> $enum
+     *
+     * @return T
+     */
+    function assertIn(mixed $value, array $enum): mixed
+    {
+        if (\in_array($value, $enum, true)) {
+            return $value;
+        }
+
+        throw new RuntimeException(\sprintf('value:[%s] is not in array', \get_debug_type($value)));
     }
 }

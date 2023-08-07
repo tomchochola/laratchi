@@ -13,12 +13,17 @@ use RuntimeException;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Http\Requests\FormRequest;
+use Tomchochola\Laratchi\Support\AssertTrait;
+use Tomchochola\Laratchi\Support\ParserTrait;
 
 /**
  * @mixin Model
  */
 trait ModelTrait
 {
+    use AssertTrait;
+    use ParserTrait;
+
     /**
      * ModelTrait constructor.
      *
@@ -1135,5 +1140,87 @@ trait ModelTrait
     public function embedResource(): JsonApiResource
     {
         return new ModelResource($this);
+    }
+
+    /**
+     * Mixed getter.
+     */
+    public function mixed(?string $key = null): mixed
+    {
+        if ($key === null) {
+            return $this->getAttributes();
+        }
+
+        return $this->loadedAttribute($key);
+    }
+
+    /**
+     * Loaded attribute getter.
+     */
+    public function loadedAttribute(string $key): mixed
+    {
+        if ($this->attributeLoaded($key)) {
+            return $this->getAttributeValue($key);
+        }
+
+        throw new RuntimeException(
+            \sprintf('key:[%s] attribute is not loaded on model:[%s] id:[%s]', $key, static::class, assertNullableScalar($this->getAttributeValue($this->getKeyName()))),
+        );
+    }
+
+    /**
+     * Loaded relationship getter.
+     */
+    public function loadedRelationship(string $key): mixed
+    {
+        if ($this->relationLoaded($key)) {
+            return $this->getRelationValue($key);
+        }
+
+        throw new RuntimeException(
+            \sprintf('key:[%s] relationship is not loaded on model:[%s] id:[%s]', $key, static::class, assertNullableScalar($this->getAttributeValue($this->getKeyName()))),
+        );
+    }
+
+    /**
+     * Assert nullable relationship.
+     *
+     * @template T of Model
+     *
+     * @param class-string<T> $class
+     *
+     * @return T|null
+     */
+    public function assertNullableRelation(string $key, string $class): ?Model
+    {
+        return assertNullableInstance($this->loadedRelationship($key), $class);
+    }
+
+    /**
+     * Assert relationship.
+     *
+     * @template T of Model
+     *
+     * @param class-string<T> $class
+     *
+     * @return T
+     */
+    public function assertRelationship(string $key, string $class): Model
+    {
+        return assertInstance($this->loadedRelationship($key), $class);
+    }
+
+    /**
+     * Assert relationship collection.
+     *
+     * @template T of Model
+     *
+     * @param class-string<T> $class
+     *
+     * @return Collection<array-key, T>
+     */
+    public function assertRelationshipCollection(string $key, string $class): Collection
+    {
+        return assertInstance($this->loadedRelationship($key), Collection::class);
     }
 }
