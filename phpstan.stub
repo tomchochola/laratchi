@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Illuminate\Http\Client {
   /**
-   * @method PendingRequest acceptJson()
+   * @method PendingRequest accept(string $contentType)
    */
   class Factory {}
 }

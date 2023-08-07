@@ -25,7 +25,7 @@ class RecaptchaRule implements RuleContract
         }
 
         $response = resolveHttp()
-            ->acceptJson()
+            ->accept('application/json')
             ->asForm()
             ->post('https://www.google.com/recaptcha/api/siteverify', [
                 'secret' => $this->secret,
