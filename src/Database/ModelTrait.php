@@ -706,6 +706,89 @@ trait ModelTrait
     }
 
     /**
+     * Scope by key.
+     *
+     * @param array<mixed> $keys
+     */
+    public static function scopeKey(Builder $builder, array $keys): void
+    {
+        $builder->whereKey($keys);
+    }
+
+    /**
+     * Scope by not key.
+     *
+     * @param array<mixed> $keys
+     */
+    public static function scopeNotKey(Builder $builder, array $keys): void
+    {
+        $builder->whereKeyNot($keys);
+    }
+
+    /**
+     * Scope by route key.
+     *
+     * @param array<mixed> $routeKeys
+     */
+    public static function scopeRouteKey(Builder $builder, array $routeKeys): void
+    {
+        $qualifier = new static();
+
+        $builder->getQuery()->whereIn($qualifier->getQualifiedRouteKeyName(), $routeKeys);
+    }
+
+    /**
+     * Scope by not route key.
+     *
+     * @param array<mixed> $routeKeys
+     */
+    public static function scopeNotRouteKey(Builder $builder, array $routeKeys): void
+    {
+        $qualifier = new static();
+
+        $builder->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $routeKeys);
+    }
+
+    /**
+     * Find by key xor route key.
+     *
+     * @param Closure(Builder): void|null $closure
+     */
+    public static function findByKeyXorRouteKey(?int $key = null, ?string $routeKey = null, ?Closure $closure = null): ?static
+    {
+        if ($key !== null) {
+            return static::findByKey($key, $closure);
+        }
+
+        if ($routeKey !== null) {
+            return static::findByRouteKey($routeKey, $closure);
+        }
+
+        return null;
+    }
+
+    /**
+     * Must find by key xor route key.
+     *
+     * @param Closure(Builder): void|null $closure
+     * @param Closure(): never|null $onError
+     */
+    public static function mustFindByKeyXorRouteKey(?int $key = null, ?string $routeKey = null, ?Closure $closure = null, ?Closure $onError = null): static
+    {
+        $instance = static::findByIdXorSlug($key, $routeKey, $closure);
+
+        if ($instance !== null) {
+            return $instance;
+        }
+
+        if ($onError !== null) {
+            $onError();
+        }
+
+        throw new RuntimeException(\sprintf('model:[%s] not found by key:[%s] xor routeKey:[%s]', static::class, $key, $routeKey));
+    }
+
+    /**
      * Get clean instance.
      *
      * @param Closure(Builder): void $closure
@@ -1222,88 +1305,5 @@ trait ModelTrait
     public function assertRelationshipCollection(string $key, string $class): Collection
     {
         return assertInstance($this->loadedRelationship($key), Collection::class);
-    }
-
-    /**
-     * Scope by key.
-     *
-     * @param array<mixed> $keys
-     */
-    public static function scopeKey(Builder $builder, array $keys): void
-    {
-        $builder->whereKey($keys);
-    }
-
-    /**
-     * Scope by not key.
-     *
-     * @param array<mixed> $keys
-     */
-    public static function scopeNotKey(Builder $builder, array $keys): void
-    {
-        $builder->whereKeyNot($keys);
-    }
-
-    /**
-     * Scope by route key.
-     *
-     * @param array<mixed> $routeKeys
-     */
-    public static function scopeRouteKey(Builder $builder, array $routeKeys): void
-    {
-        $qualifier = new static();
-
-        $builder->getQuery()->whereIn($qualifier->getQualifiedRouteKeyName(), $routeKeys);
-    }
-
-    /**
-     * Scope by not route key.
-     *
-     * @param array<mixed> $routeKeys
-     */
-    public static function scopeNotRouteKey(Builder $builder, array $routeKeys): void
-    {
-        $qualifier = new static();
-
-        $builder->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $routeKeys);
-    }
-
-    /**
-     * Find by key xor route key.
-     *
-     * @param Closure(Builder): void|null $closure
-     */
-    public static function findByKeyXorRouteKey(?int $key = null, ?string $routeKey = null, ?Closure $closure = null): ?static
-    {
-        if ($key !== null) {
-            return static::findByKey($key, $closure);
-        }
-
-        if ($routeKey !== null) {
-            return static::findByRouteKey($routeKey, $closure);
-        }
-
-        return null;
-    }
-
-    /**
-     * Must find by key xor route key.
-     *
-     * @param Closure(Builder): void|null $closure
-     * @param Closure(): never|null $onError
-     */
-    public static function mustFindByKeyXorRouteKey(?int $key = null, ?string $routeKey = null, ?Closure $closure = null, ?Closure $onError = null): static
-    {
-        $instance = static::findByIdXorSlug($key, $routeKey, $closure);
-
-        if ($instance !== null) {
-            return $instance;
-        }
-
-        if ($onError !== null) {
-            $onError();
-        }
-
-        throw new RuntimeException(\sprintf('model:[%s] not found by key:[%s] xor routeKey:[%s]', static::class, $key, $routeKey));
     }
 }
