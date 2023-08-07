@@ -1,15 +1,21 @@
+@php
+  $config = new Tomchochola\Laratchi\Config\Config();
+
+  $appName = $config->appName();
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
 
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <meta name="robots" content="noindex, nofollow" />
 
     <meta name="author" content="Tomáš Chochola <chocholatom1997@gmail.com>" />
 
-    <title>{{ mustConfigString('app.name') }}</title>
+    <title>{{ $appName }}</title>
 
     <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/favicon-32x32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/favicon-16x16.png" sizes="16x16" />
