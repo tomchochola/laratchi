@@ -14,7 +14,7 @@ use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException as SymfonyHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
@@ -43,7 +43,7 @@ class Handler extends IlluminateHandler
 
         $code = $exception->getCode();
 
-        return new HttpException($status, $exception->getMessage(), $exception, [], \is_int($code) ? $code : 0);
+        return new SymfonyHttpException($status, $exception->getMessage(), $exception, [], \is_int($code) ? $code : 0);
     }
 
     /**
@@ -144,6 +144,10 @@ class Handler extends IlluminateHandler
         }
 
         $json['code'] = $httpException->getCode();
+
+        if ($httpException instanceof HttpException) {
+            $json = \array_replace($json, $httpException->data);
+        }
 
         return new JsonResponse(\array_replace($json, $data), $httpException->getStatusCode(), $httpException->getHeaders());
     }
