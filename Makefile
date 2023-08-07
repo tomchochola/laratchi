@@ -5,31 +5,42 @@ SHELL := /bin/bash
 MAKE_PHP_8_1_BIN ?= php8.1
 MAKE_COMPOSER_2_BIN ?= /usr/local/bin/composer2
 
-MAKE_PHP ?= ${MAKE_PHP_8_1_BIN}
-MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_2_BIN} -n
+MAKE_PHP ?= ${MAKE_PHP_8_1_BIN} -d zend.assertions=1
+MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_2_BIN}
 
 # Default goal
 .DEFAULT_GOAL := assert-never
 
 # Goals
 .PHONY: check
-check: audit lint
+check: stan lint audit
 
 .PHONY: audit
 audit: vendor tools
-	${MAKE_COMPOSER} audit
+	${MAKE_COMPOSER} audit --no-interaction
+
+.PHONY: stan
+stan: vendor tools
+	${MAKE_PHP} tools/phpstan/vendor/bin/phpstan analyse --no-progress --no-interaction
 
 .PHONY: lint
 lint: vendor tools
-	tools/prettier-lint/node_modules/.bin/prettier -c .
-	${MAKE_COMPOSER} validate --strict
-	${MAKE_PHP} tools/phpstan/vendor/bin/phpstan analyse --no-progress -n
-	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff -n
+	${MAKE_COMPOSER} validate --strict --no-interaction
+	"tools/prettier-lint/node_modules/.bin/prettier" -c .
+	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff --no-interaction
 
 .PHONY: fix
 fix: vendor tools
-	tools/prettier-fix/node_modules/.bin/prettier -w .
-	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix -n
+	"tools/prettier-fix/node_modules/.bin/prettier" -w .
+	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --no-interaction
+
+.PHONY: composer
+composer:
+	${MAKE_COMPOSER} install -o --no-progress --no-interaction
+
+.PHONY: composer-no-dev
+composer-no-dev:
+	${MAKE_COMPOSER} install --no-dev -a --no-progress --no-interaction
 
 .PHONY: clean-composer
 clean-composer:
@@ -37,7 +48,7 @@ clean-composer:
 
 .PHONY: update-composer
 update-composer: clean-composer
-	${MAKE_COMPOSER} update -o --no-progress
+	${MAKE_COMPOSER} update -o --no-progress --no-interaction
 
 .PHONY: clean-tools
 clean-tools:
@@ -46,15 +57,18 @@ clean-tools:
 .PHONY: update-tools
 update-tools: clean-tools tools
 
-.PHONY: clean-npm
-clean-npm:
-	git clean -xfd package-lock.json node_modules
-
-.PHONY: update-full
-update-full: update-tools update-composer
+.PHONY: update
+update: update-tools update-composer
 
 .PHONY: clean
-clean: clean-tools clean-composer clean-npm
+clean: clean-tools clean-composer
+
+# Aliases
+.PHONY: ci
+ci: check
+
+.PHONY: update-full
+update-full: update
 
 # Dependencies
 tools: tools/prettier-lint/node_modules/.bin/prettier tools/prettier-fix/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer
@@ -66,10 +80,10 @@ tools/prettier-fix/node_modules/.bin/prettier:
 	npm --prefix=tools/prettier-fix update --no-progress
 
 vendor:
-	${MAKE_COMPOSER} update -o --no-progress
+	${MAKE_COMPOSER} update -o --no-progress --no-interaction
 
 tools/phpstan/vendor/bin/phpstan:
-	${MAKE_COMPOSER} --working-dir=tools/phpstan update -o --no-progress
+	${MAKE_COMPOSER} --working-dir=tools/phpstan update -o --no-progress --no-interaction
 
 tools/php-cs-fixer/vendor/bin/php-cs-fixer:
-	${MAKE_COMPOSER} --working-dir=tools/php-cs-fixer update -o --no-progress
+	${MAKE_COMPOSER} --working-dir=tools/php-cs-fixer update -o --no-progress --no-interaction
