@@ -9,6 +9,7 @@ use Illuminate\Cache\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Symfony\Component\HttpFoundation\Response;
 use Tomchochola\Laratchi\Support\Resolver;
 
 class Throttler
@@ -37,7 +38,7 @@ class Throttler
     /**
      * Throttle.
      *
-     * @param Closure(int): never|null $callback
+     * @param Closure(int): never|Closure(int): Response|null $callback
      *
      * @return $this
      */
@@ -53,12 +54,12 @@ class Throttler
     /**
      * Throw exception.
      *
-     * @param Closure(int): never|null $callback
+     * @param Closure(int): never|Closure(int): Response|null $callback
      */
     public function throw(?Closure $callback = null): never
     {
         if ($callback !== null) {
-            $callback($this->availableIn());
+            throw new HttpResponseException($callback($this->availableIn()));
         }
 
         if (isset($this->limit->responseCallback)) {
