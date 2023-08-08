@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Support;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
+use Tomchochola\Laratchi\Console\MakeEnumCommand;
 use Tomchochola\Laratchi\Console\MakeTchiCommand;
 use Tomchochola\Laratchi\Testing\TestMailCommand;
 use Tomchochola\Laratchi\Validation\ValidityGeneratorCommand;
@@ -25,9 +26,7 @@ class ServiceProvider extends IlluminateServiceProvider
             return;
         }
 
-        $app = $this->app;
-
-        \assert($app instanceof Application);
+        $app = assertInstance($this->app, Application::class);
 
         $this->publishes(
             [
@@ -45,6 +44,6 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
 
-        $this->commands([ValidityGeneratorCommand::class, TestMailCommand::class, MakeTchiCommand::class]);
+        $this->commands([ValidityGeneratorCommand::class, TestMailCommand::class, MakeTchiCommand::class, MakeEnumCommand::class]);
     }
 }

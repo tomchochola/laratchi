@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+enum {{ class }}: int
+{
+    case CASE = 0;
+
+    /**
+     * Get possible values.
+     *
+     * @return array<int, int>
+     */
+    public static function values(): array
+    {
+        return \array_column(static::cases(), 'value');
+    }
+}
