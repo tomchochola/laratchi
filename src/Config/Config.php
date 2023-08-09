@@ -7,12 +7,14 @@ namespace Tomchochola\Laratchi\Config;
 use Illuminate\Config\Repository;
 use RuntimeException;
 use Tomchochola\Laratchi\Support\AssertTrait;
+use Tomchochola\Laratchi\Support\AssignTrait;
 use Tomchochola\Laratchi\Support\ParserTrait;
 use Tomchochola\Laratchi\Support\Resolver;
 
 class Config
 {
     use AssertTrait;
+    use AssignTrait;
     use ParserTrait;
 
     /**
@@ -42,6 +44,22 @@ class Config
         }
 
         return $this->repository->get($key);
+    }
+
+    /**
+     * Mixed setter.
+     *
+     * @return $this
+     */
+    public function assign(string $key, mixed $value): static
+    {
+        if (! Resolver::resolveApp()->bound('env')) {
+            throw new RuntimeException('env is not bound to the container');
+        }
+
+        $this->repository->set($key, $value);
+
+        return $this;
     }
 
     /**
