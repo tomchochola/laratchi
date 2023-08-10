@@ -1,3 +1,8 @@
+All Rights Reserved License
+---------------------------
+
+Copyright © 2022+ Tomáš Chochola <chocholatom1997@gmail.com>
+
 # Terms of Service
 This license is a legal agreement between you and Tomáš Chochola for the use of the Work (the “Software”). By accessing, downloading, or using any files, add-ons, or resources related to the Software, you agree to be bound by the terms and conditions of this license. Tomáš Chochola reserves the right to alter this agreement at any time, for any reason, without notice.
 
