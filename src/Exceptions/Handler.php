@@ -85,6 +85,52 @@ class Handler extends IlluminateHandler
     }
 
     /**
+     * Bleeding invalid json implementation.
+     */
+    protected function bleedingInvalidJson(Request $request, ValidationException $exception): JsonResponse
+    {
+        $httpException = $this->httpException($exception->status, $exception);
+
+        $completed = [];
+
+        foreach ($exception->errors() as $attribute => $messages) {
+            $completed[$attribute] = [
+                'attribute' => $attribute,
+                'messages' => $messages,
+                'rules' => [],
+            ];
+        }
+
+        foreach ($exception->validator->failed() as $attribute => $errors) {
+            $completed[$attribute] ??= [
+                'attribute' => $attribute,
+                'messages' => [],
+                'rules' => [],
+            ];
+
+            foreach (assertArray($errors) as $error => $params) {
+                $parameters = [];
+
+                foreach (assertArray($params) as $key => $value) {
+                    $parameters[] = [
+                        'key' => (string) $key,
+                        'value' => $value,
+                    ];
+                }
+
+                $completed[$attribute]['rules'][] = [
+                    'rule' => $error,
+                    'parameters' => $parameters,
+                ];
+            }
+        }
+
+        return $this->jsonResponse($request, $exception, $httpException, [
+            'errors' => \array_values($completed),
+        ]);
+    }
+
+    /**
      * @inheritDoc
      */
     protected function invalid(mixed $request, ValidationException $exception): Response
