@@ -8,6 +8,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Tomchochola\Laratchi\Translation\Trans;
 
 class EmailConfirmationNotification extends Notification implements ShouldQueueContract
 {
@@ -21,6 +22,11 @@ class EmailConfirmationNotification extends Notification implements ShouldQueueC
     public static string $template = self::class;
 
     /**
+     * Trans.
+     */
+    public Trans $trans;
+
+    /**
      * Create a new notification instance.
      */
     protected function __construct(
@@ -31,6 +37,8 @@ class EmailConfirmationNotification extends Notification implements ShouldQueueC
         protected ?string $url = null,
     ) {
         $this->afterCommit();
+
+        $this->trans = new Trans();
     }
 
     /**
@@ -57,10 +65,10 @@ class EmailConfirmationNotification extends Notification implements ShouldQueueC
     public function toMail(mixed $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject(mustTransJsonString('Verify Email Address'))
-            ->line(mustTransJsonString('Please click the button below to verify your email address.'))
-            ->action(mustTransJsonString('Verify Email Address'), $this->getUrl($notifiable))
-            ->line(mustTransJsonString('If you did not create an account, no further action is required.'));
+            ->subject($this->trans->assertString('Verify Email Address'))
+            ->line($this->trans->assertString('Please click the button below to verify your email address.'))
+            ->action($this->trans->assertString('Verify Email Address'), $this->getUrl($notifiable))
+            ->line($this->trans->assertString('If you did not create an account, no further action is required.'));
     }
 
     /**
@@ -81,6 +89,6 @@ class EmailConfirmationNotification extends Notification implements ShouldQueueC
             'locale' => $this->locale,
         ]);
 
-        return ($this->spa ?? mustTransString('spa.email_confirmation_url')).'?'.$query;
+        return ($this->spa ?? $this->trans->assertString('spa.email_confirmation_url')).'?'.$query;
     }
 }
