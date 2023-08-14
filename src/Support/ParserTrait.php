@@ -29,13 +29,7 @@ trait ParserTrait
     {
         $parsers = [];
 
-        $values = $this->mixed($key);
-
-        if (! \is_array($values)) {
-            return [new Parser(['scalar' => $values])];
-        }
-
-        foreach ($values as $value) {
+        foreach (assertNullableArray($this->mixed($key)) ?? [] as $value) {
             if (\is_array($value)) {
                 $parsers[] = new Parser($value);
             } else {
