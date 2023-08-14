@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use RuntimeException;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Http\Requests\FormRequest;
@@ -1305,5 +1306,13 @@ trait ModelTrait
     public function assertRelationshipCollection(string $key, string $class): Collection
     {
         return assertInstance($this->loadedRelationship($key), Collection::class);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function asDateTime(mixed $value): Carbon
+    {
+        return parent::asDateTime($value)->setTimezone((new Config())->appTimezone());
     }
 }
