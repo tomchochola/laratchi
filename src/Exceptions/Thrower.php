@@ -267,6 +267,6 @@ class Thrower
      */
     public function invalid(array $attributes): static
     {
-        return $this->errors($attributes, 'invalid');
+        return $this->errors($attributes, 'Invalid');
     }
 }
