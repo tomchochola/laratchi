@@ -85,6 +85,7 @@ use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\Testing\ParallelTesting;
 use Illuminate\Translation\Translator;
 use Illuminate\Validation\Factory as ValidationFactory;
+use Illuminate\Validation\PresenceVerifierInterface;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Factory as ViewFactory;
 use Tomchochola\Laratchi\Auth\DatabaseTokenGuard;
@@ -400,7 +401,22 @@ class Resolver
      */
     public static function resolveExceptionHandler(): ExceptionHandler
     {
-        return assertInstance(static::resolve(ExceptionHandlerContract::class), ExceptionHandler::class);
+        return static::make(ExceptionHandlerContract::class, ExceptionHandler::class);
+    }
+
+    /**
+     * Make new service from the container.
+     *
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     * @param array<mixed> $parameters
+     *
+     * @return T
+     */
+    public static function make(string $abstract, string $class, array $parameters = []): object
+    {
+        return assertInstance(static::resolveApp()->make($abstract, $parameters), $class);
     }
 
     /**
@@ -423,7 +439,7 @@ class Resolver
      */
     public static function resolveHttpKernel(): HttpKernel
     {
-        return assertInstance(static::resolve(HttpKernelContract::class), HttpKernel::class);
+        return static::make(HttpKernelContract::class, HttpKernel::class);
     }
 
     /**
@@ -480,5 +496,13 @@ class Resolver
     public static function resolveDatabaseTokenRepository(?string $name = null): DatabaseTokenRepository
     {
         return assertInstance(static::resolvePasswordBroker($name)->getRepository(), DatabaseTokenRepository::class);
+    }
+
+    /**
+     * Resolve database presence verifier.
+     */
+    public static function resolvePresenceVerifier(): PresenceVerifierInterface
+    {
+        return static::make('validation.presence', PresenceVerifierInterface::class);
     }
 }
