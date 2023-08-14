@@ -52,9 +52,11 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
             ->guard()
             ->user();
 
-        \assert($me === null || $me instanceof static);
+        if ($me instanceof static) {
+            return $me;
+        }
 
-        return $me;
+        return null;
     }
 
     /**
