@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use ReflectionEnum;
 use stdClass;
+use Tomchochola\Laratchi\Config\Config;
 
 trait ParseTrait
 {
@@ -47,7 +48,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableString($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not string", \get_debug_type($value)));
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not string on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -65,7 +66,7 @@ trait ParseTrait
 
         $value = \filter_var($value);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not string or null", \get_debug_type($value)));
+        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not string or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -99,7 +100,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableBool($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not bool", \get_debug_type($value)));
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not bool on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -117,7 +118,7 @@ trait ParseTrait
 
         $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not bool or null", \get_debug_type($value)));
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not bool or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -157,7 +158,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableInt($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not int", \get_debug_type($value)));
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not int on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -175,7 +176,7 @@ trait ParseTrait
 
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not int or null", \get_debug_type($value)));
+        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not int or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -215,7 +216,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableFloat($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not float", \get_debug_type($value)));
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not float on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -233,7 +234,7 @@ trait ParseTrait
 
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not float or null", \get_debug_type($value)));
+        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not float or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -277,7 +278,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableArray($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not array", \get_debug_type($value)));
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not array on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -295,7 +296,7 @@ trait ParseTrait
             return \get_object_vars($value);
         }
 
-        \assert($value === null || \is_array($value), \sprintf("key:[{$key}] value:[%s] is not array or null", \get_debug_type($value)));
+        \assert($value === null || \is_array($value), \sprintf("key:[{$key}] value:[%s] is not array or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -327,7 +328,11 @@ trait ParseTrait
      */
     public function mustParseFile(string $key): UploadedFile
     {
-        return $this->assertFile($key);
+        $value = $this->mustParseNullableFile($key);
+
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not file on:[%s]", \get_debug_type($value), static::class));
+
+        return $value;
     }
 
     /**
@@ -335,7 +340,11 @@ trait ParseTrait
      */
     public function mustParseNullableFile(string $key): ?UploadedFile
     {
-        return $this->assertNullableFile($key);
+        $value = $this->mixed($key);
+
+        \assert($value === null || $value instanceof UploadedFile, \sprintf("key:[{$key}] value:[%s] is not file or null on:[%s]", \get_debug_type($value), static::class));
+
+        return $value;
     }
 
     /**
@@ -364,7 +373,9 @@ trait ParseTrait
         }
 
         if ($format === null) {
-            return resolveDate()->parse($value, $tz);
+            return resolveDate()
+                ->parse($value, $tz)
+                ->setTimezone((new Config())->appTimezone());
         }
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
@@ -373,7 +384,7 @@ trait ParseTrait
             return null;
         }
 
-        return $value;
+        return $value->setTimezone((new Config())->appTimezone());
     }
 
     /**
@@ -383,7 +394,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableCarbon($key, $format, $tz);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not carbon", \get_debug_type($value)));
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not carbon on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -401,17 +412,19 @@ trait ParseTrait
 
         $value = \filter_var($value);
 
-        \assert($value !== false && $value !== '', \sprintf("key:[{$key}] value:[%s] is not carbon", \get_debug_type($value)));
+        \assert($value !== false && $value !== '', \sprintf("key:[{$key}] value:[%s] is not carbon on:[%s]", \get_debug_type($value), static::class));
 
         if ($format === null) {
-            return resolveDate()->parse($value, $tz);
+            return resolveDate()
+                ->parse($value, $tz)
+                ->setTimezone((new Config())->appTimezone());
         }
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not carbon", \get_debug_type($value)));
+        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not carbon on:[%s]", \get_debug_type($value), static::class));
 
-        return $value;
+        return $value->setTimezone((new Config())->appTimezone());
     }
 
     /**
@@ -447,7 +460,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableObject($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not object", \get_debug_type($value)));
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not object on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -463,7 +476,7 @@ trait ParseTrait
             return (object) $value;
         }
 
-        \assert($value === null || \is_object($value), \sprintf("key:[{$key}] value:[%s] is not object or null", \get_debug_type($value)));
+        \assert($value === null || \is_object($value), \sprintf("key:[{$key}] value:[%s] is not object or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -497,7 +510,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableScalar($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not scalar", \get_debug_type($value)));
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not scalar on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -509,7 +522,7 @@ trait ParseTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_scalar($value), \sprintf("key:[{$key}] value:[%s] is not scalar or null", \get_debug_type($value)));
+        \assert($value === null || \is_scalar($value), \sprintf("key:[{$key}] value:[%s] is not scalar or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -565,7 +578,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableEnum($key, $enum);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not class:[{$enum}] enum", \get_debug_type($value)));
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not class:[{$enum}] enum on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -586,6 +599,150 @@ trait ParseTrait
         } else {
             $value = $this->mustParseNullableString($key);
         }
+
+        if ($value === null) {
+            return $value;
+        }
+
+        return $enum::from($value);
+    }
+
+    /**
+     * Parse int enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
+     */
+    public function parseIntEnum(string $key, string $enum): BackedEnum
+    {
+        return $this->parseNullableIntEnum($key, $enum) ?? $enum::cases()[0];
+    }
+
+    /**
+     * Parse nullable int enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    public function parseNullableIntEnum(string $key, string $enum): ?BackedEnum
+    {
+        $value = $this->parseNullableInt($key);
+
+        if ($value === null) {
+            return $value;
+        }
+
+        return $enum::tryFrom($value);
+    }
+
+    /**
+     * Must parse int enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
+     */
+    public function mustParseIntEnum(string $key, string $enum): BackedEnum
+    {
+        $value = $this->mustParseNullableIntEnum($key, $enum);
+
+        \assert($value !== null, \sprintf('value:[%s] is not class:[%s] int enum on:[%s]', \get_debug_type($value), $enum, static::class));
+
+        return $value;
+    }
+
+    /**
+     * Must parse nullable int enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    public function mustParseNullableIntEnum(string $key, string $enum): ?BackedEnum
+    {
+        $value = $this->mustParseNullableInt($key);
+
+        if ($value === null) {
+            return $value;
+        }
+
+        return $enum::from($value);
+    }
+
+    /**
+     * Parse string enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
+     */
+    public function parseStringEnum(string $key, string $enum): BackedEnum
+    {
+        return $this->parseNullableStringEnum($key, $enum) ?? $enum::cases()[0];
+    }
+
+    /**
+     * Parse nullable string enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    public function parseNullableStringEnum(string $key, string $enum): ?BackedEnum
+    {
+        $value = $this->parseNullableString($key);
+
+        if ($value === null) {
+            return $value;
+        }
+
+        return $enum::tryFrom($value);
+    }
+
+    /**
+     * Must parse string enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
+     */
+    public function mustParseStringEnum(string $key, string $enum): BackedEnum
+    {
+        $value = $this->mustParseNullableStringEnum($key, $enum);
+
+        \assert($value !== null, \sprintf('value:[%s] is not class:[%s] string enum on [%s]', \get_debug_type($value), $enum, static::class));
+
+        return $value;
+    }
+
+    /**
+     * Must parse nullable string enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    public function mustParseNullableStringEnum(string $key, string $enum): ?BackedEnum
+    {
+        $value = $this->mustParseNullableString($key);
 
         if ($value === null) {
             return $value;

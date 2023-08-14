@@ -7,8 +7,7 @@ namespace Tomchochola\Laratchi\Support;
 use BackedEnum;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
-use InvalidArgumentException;
-use RuntimeException;
+use UnexpectedValueException;
 
 trait AssertTrait
 {
@@ -19,7 +18,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_string($value), \sprintf("key:[{$key}] value:[%s] is not string", \get_debug_type($value)));
+        \assert(\is_string($value), \sprintf("key:[{$key}] value:[%s] is not string on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -31,7 +30,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_string($value), \sprintf("key:[{$key}] value:[%s] is not string or null", \get_debug_type($value)));
+        \assert($value === null || \is_string($value), \sprintf("key:[{$key}] value:[%s] is not string or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -43,7 +42,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_bool($value), \sprintf("key:[{$key}] value:[%s] is not bool", \get_debug_type($value)));
+        \assert(\is_bool($value), \sprintf("key:[{$key}] value:[%s] is not bool on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -55,7 +54,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_bool($value), \sprintf("key:[{$key}] value:[%s] is not bool or null", \get_debug_type($value)));
+        \assert($value === null || \is_bool($value), \sprintf("key:[{$key}] value:[%s] is not bool or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -67,7 +66,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_int($value), \sprintf("key:[{$key}] value:[%s] is not int", \get_debug_type($value)));
+        \assert(\is_int($value), \sprintf("key:[{$key}] value:[%s] is not int on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -79,7 +78,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_int($value), \sprintf("key:[{$key}] value:[%s] is not int or null", \get_debug_type($value)));
+        \assert($value === null || \is_int($value), \sprintf("key:[{$key}] value:[%s] is not int or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -91,7 +90,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_float($value), \sprintf("key:[{$key}] value:[%s] is not float", \get_debug_type($value)));
+        \assert(\is_float($value), \sprintf("key:[{$key}] value:[%s] is not float on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -103,7 +102,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_float($value), \sprintf("key:[{$key}] value:[%s] is not float or null", \get_debug_type($value)));
+        \assert($value === null || \is_float($value), \sprintf("key:[{$key}] value:[%s] is not float or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -117,7 +116,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_array($value), \sprintf("key:[{$key}] value:[%s] is not array", \get_debug_type($value)));
+        \assert(\is_array($value), \sprintf("key:[{$key}] value:[%s] is not array on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -131,7 +130,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_array($value), \sprintf("key:[{$key}] value:[%s] is not array or null", \get_debug_type($value)));
+        \assert($value === null || \is_array($value), \sprintf("key:[{$key}] value:[%s] is not array or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -143,7 +142,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value instanceof UploadedFile, \sprintf("key:[{$key}] value:[%s] is not file", \get_debug_type($value)));
+        \assert($value instanceof UploadedFile, \sprintf("key:[{$key}] value:[%s] is not file on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -155,7 +154,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || $value instanceof UploadedFile, \sprintf("key:[{$key}] value:[%s] is not file or null", \get_debug_type($value)));
+        \assert($value === null || $value instanceof UploadedFile, \sprintf("key:[{$key}] value:[%s] is not file or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -167,7 +166,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value instanceof Carbon, \sprintf("key:[{$key}] value:[%s] is not carbon", \get_debug_type($value)));
+        \assert($value instanceof Carbon, \sprintf("key:[{$key}] value:[%s] is not carbon on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -179,7 +178,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || $value instanceof Carbon, \sprintf("key:[{$key}] value:[%s] is not carbon or null", \get_debug_type($value)));
+        \assert($value === null || $value instanceof Carbon, \sprintf("key:[{$key}] value:[%s] is not carbon or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -191,7 +190,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_object($value), \sprintf("key:[{$key}] value:[%s] is not object", \get_debug_type($value)));
+        \assert(\is_object($value), \sprintf("key:[{$key}] value:[%s] is not object on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -203,7 +202,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_object($value), \sprintf("key:[{$key}] value:[%s] is not object or null", \get_debug_type($value)));
+        \assert($value === null || \is_object($value), \sprintf("key:[{$key}] value:[%s] is not object or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -215,7 +214,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_scalar($value), \sprintf("key:[{$key}] value:[%s] is not scalar", \get_debug_type($value)));
+        \assert(\is_scalar($value), \sprintf("key:[{$key}] value:[%s] is not scalar on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -227,7 +226,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_scalar($value), \sprintf("key:[{$key}] value:[%s] is not scalar or null", \get_debug_type($value)));
+        \assert($value === null || \is_scalar($value), \sprintf("key:[{$key}] value:[%s] is not scalar or null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -245,7 +244,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value instanceof $enum, \sprintf("key:[{$key}] value:[%s] is not class:[{$enum}] enum", \get_debug_type($value)));
+        \assert($value instanceof $enum, \sprintf("key:[{$key}] value:[%s] is not class:[{$enum}] instance on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
@@ -263,7 +262,10 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || $value instanceof $enum, \sprintf("key:[{$key}] value:[%s] is not class:[{$enum}] enum or null", \get_debug_type($value)));
+        \assert(
+            $value === null || $value instanceof $enum,
+            \sprintf("key:[{$key}] value:[%s] is not class:[{$enum}] instance or null on:[%s]", \get_debug_type($value), static::class),
+        );
 
         return $value;
     }
@@ -285,7 +287,7 @@ trait AssertTrait
             return $value;
         }
 
-        throw new InvalidArgumentException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] instance", \get_debug_type($value)));
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] instance on:[%s]", \get_debug_type($value), static::class));
     }
 
     /**
@@ -305,7 +307,7 @@ trait AssertTrait
             return $value;
         }
 
-        throw new InvalidArgumentException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] instance or null", \get_debug_type($value)));
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] instance or null on:[%s]", \get_debug_type($value), static::class));
     }
 
     /**
@@ -325,7 +327,7 @@ trait AssertTrait
             return $value;
         }
 
-        throw new InvalidArgumentException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] class-string", \get_debug_type($value)));
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] class-string on:[%s]", \get_debug_type($value), static::class));
     }
 
     /**
@@ -349,7 +351,7 @@ trait AssertTrait
             return $value;
         }
 
-        throw new InvalidArgumentException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] class-string", \get_debug_type($value)));
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] class-string on:[%s]", \get_debug_type($value), static::class));
     }
 
     /**
@@ -369,6 +371,36 @@ trait AssertTrait
             return $value;
         }
 
-        throw new RuntimeException(\sprintf('key:[%s] value:[%s] is not in array', $key, \get_debug_type($value)));
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not in array on:[%s]", \get_debug_type($value), static::class));
+    }
+
+    /**
+     * Assert not null.
+     */
+    public function assertNotNull(string $key): string|int|float|bool|object|array
+    {
+        $value = $this->mixed($key);
+
+        if ($value === null) {
+            throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is null on:[%s]", \get_debug_type($value), static::class));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Assert null.
+     *
+     * @return null
+     */
+    public function assertNull(string $key): mixed
+    {
+        $value = $this->mixed($key);
+
+        if ($value !== null) {
+            throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not null on:[%s]", \get_debug_type($value), static::class));
+        }
+
+        return $value;
     }
 }
