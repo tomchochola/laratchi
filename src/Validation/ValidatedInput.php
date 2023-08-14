@@ -9,14 +9,16 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
 use LogicException;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Support\AssertTrait;
 use Tomchochola\Laratchi\Support\ParserTrait;
+use Tomchochola\Laratchi\Support\ParseTrait;
 
 class ValidatedInput extends IlluminateValidatedInput
 {
     use AssertTrait;
     use ParserTrait;
-    use ParserTrait;
+    use ParseTrait;
 
     /**
      * @inheritDoc
@@ -246,7 +248,9 @@ class ValidatedInput extends IlluminateValidatedInput
         }
 
         if ($format === null) {
-            return resolveDate()->parse($value, $tz);
+            return resolveDate()
+                ->parse($value, $tz)
+                ->setTimezone((new Config())->appTimezone());
         }
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
@@ -255,7 +259,7 @@ class ValidatedInput extends IlluminateValidatedInput
             throw new LogicException("[{$key}] is not date or null");
         }
 
-        return $value;
+        return $value->setTimezone((new Config())->appTimezone());
     }
 
     /**

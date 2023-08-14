@@ -8,14 +8,16 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Support\AssertTrait;
 use Tomchochola\Laratchi\Support\ParserTrait;
+use Tomchochola\Laratchi\Support\ParseTrait;
 
 class AllInput extends IlluminateValidatedInput
 {
     use AssertTrait;
     use ParserTrait;
-    use ParserTrait;
+    use ParseTrait;
 
     /**
      * @inheritDoc
@@ -203,7 +205,9 @@ class AllInput extends IlluminateValidatedInput
         }
 
         if ($format === null) {
-            return resolveDate()->parse($value, $tz);
+            return resolveDate()
+                ->parse($value, $tz)
+                ->setTimezone((new Config())->appTimezone());
         }
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
@@ -212,7 +216,7 @@ class AllInput extends IlluminateValidatedInput
             return null;
         }
 
-        return $value;
+        return $value->setTimezone((new Config())->appTimezone());
     }
 
     /**
