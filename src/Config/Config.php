@@ -149,4 +149,12 @@ class Config
     {
         return $mapping[$this->appEnv()];
     }
+
+    /**
+     * App timezone getter.
+     */
+    public function appTimezone(): string
+    {
+        return $this->assertString('app.timezone');
+    }
 }
