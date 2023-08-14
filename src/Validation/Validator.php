@@ -233,4 +233,39 @@ class Validator extends IlluminateValidator
     {
         return $message;
     }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $values
+     *
+     * @return array<mixed>
+     */
+    protected function convertValuesToBoolean(mixed $values): array
+    {
+        return \array_map(static function (mixed $value): mixed {
+            return match ($value) {
+                'true', '1', 1 => true,
+                'false', '0', 0 => false,
+                default => $value,
+            };
+        }, $values);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param array<mixed> $values
+     *
+     * @return array<mixed>
+     */
+    protected function convertValuesToNull(mixed $values): array
+    {
+        return \array_map(static function (mixed $value): mixed {
+            return match ($value) {
+                'null', '' => null,
+                default => $value,
+            };
+        }, $values);
+    }
 }
