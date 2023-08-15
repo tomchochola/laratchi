@@ -376,22 +376,20 @@ trait AssertTrait
 
     /**
      * Assert not null.
+     *
+     * @return string|int|float|bool|object|array<mixed>
      */
     public function assertNotNull(string $key): string|int|float|bool|object|array
     {
         $value = $this->mixed($key);
 
-        if ($value === null) {
-            throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is null on:[%s]", \get_debug_type($value), static::class));
-        }
+        assert(\is_string($value) || \is_int($value) || \is_float($value) || \is_bool($value) || \is_object($value) || \is_array($value), \sprintf("key:[{$key}] value:[%s] is null on:[%s]", \get_debug_type($value), static::class));
 
         return $value;
     }
 
     /**
      * Assert null.
-     *
-     * @return null
      */
     public function assertNull(string $key): mixed
     {
