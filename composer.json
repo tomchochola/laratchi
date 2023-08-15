@@ -22,7 +22,8 @@
   },
   "require-dev": {
     "composer/composer": "^2.0",
-    "orchestra/testbench": "^7.17"
+    "fakerphp/faker": "^1.9.1",
+    "phpunit/phpunit": "^9.5.10"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
