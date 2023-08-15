@@ -123,7 +123,7 @@ class Config
      */
     public function appEnv(): string
     {
-        return $this->assertString('app.env');
+        return assertString(Resolver::resolveApp()->make('env'));
     }
 
     /**
