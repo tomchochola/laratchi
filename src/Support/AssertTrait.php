@@ -383,7 +383,10 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        assert(\is_string($value) || \is_int($value) || \is_float($value) || \is_bool($value) || \is_object($value) || \is_array($value), \sprintf("key:[{$key}] value:[%s] is null on:[%s]", \get_debug_type($value), static::class));
+        \assert(
+            \is_string($value) || \is_int($value) || \is_float($value) || \is_bool($value) || \is_object($value) || \is_array($value),
+            \sprintf("key:[{$key}] value:[%s] is null on:[%s]", \get_debug_type($value), static::class),
+        );
 
         return $value;
     }
