@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Tomchochola\Laratchi\Config\Config;
+use Tomchochola\Laratchi\Encoding\Csv;
+use Tomchochola\Laratchi\Support\Resolver;
+use Tomchochola\Laratchi\Support\Typer;
+use Tomchochola\Laratchi\Translation\Trans;
 
 if (! \function_exists('mustTransString')) {
     /**
@@ -13,12 +18,7 @@ if (! \function_exists('mustTransString')) {
      */
     function mustTransString(string $key, array $replace = [], ?string $locale = null, bool $fallback = true): string
     {
-        $resolved = resolveTranslator()->get($key, $replace, $locale, $fallback);
-
-        \assert(\is_string($resolved) && $resolved !== $key, "[{$key}] translation is missing");
-        \assert(\trim($resolved) !== '', "[{$key}] translation is empty");
-
-        return $resolved;
+        return (new Trans())->assertString($key, $replace, $locale, $fallback);
     }
 }
 
@@ -30,12 +30,7 @@ if (! \function_exists('mustTransJsonString')) {
      */
     function mustTransJsonString(string $message, array $replace = [], ?string $locale = null, bool $fallback = true): string
     {
-        $resolved = resolveTranslator()->get($message, $replace, $locale, $fallback);
-
-        \assert(\is_string($resolved), "[{$message}] translation is missing");
-        \assert(\trim($resolved) !== '', "[{$message}] translation is empty");
-
-        return $resolved;
+        return (new Trans())->assertString($message, $replace, $locale, $fallback);
     }
 }
 
@@ -49,11 +44,7 @@ if (! \function_exists('mustTransArray')) {
      */
     function mustTransArray(string $key, array $replace = [], ?string $locale = null, bool $fallback = true): array
     {
-        $resolved = resolveTranslator()->get($key, $replace, $locale, $fallback);
-
-        \assert(\is_array($resolved), "[{$key}] translation is not array");
-
-        return $resolved;
+        return (new Trans())->assertArray($key, $replace, $locale, $fallback);
     }
 }
 
@@ -61,16 +52,19 @@ if (! \function_exists('configBool')) {
     /**
      * Config boolean resolver.
      *
-     * @param array<mixed> $in
+     * @param array<bool|null> $in
      */
     function configBool(string $key, ?bool $default = null, array $in = []): ?bool
     {
         $value = resolveConfig()->get($key, $default) ?? $default;
 
-        \assert($value === null || \is_bool($value), "[{$key}] config is not bool or null");
-        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
+        \assert($value === null || \is_bool($value), \sprintf("key:[{$key}] value:[%s] config is not bool or null", \get_debug_type($value)));
 
-        return $value;
+        if (\count($in) === 0 || \in_array($value, $in, true)) {
+            return $value;
+        }
+
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] config is not in available options", \get_debug_type($value)));
     }
 }
 
@@ -78,13 +72,13 @@ if (! \function_exists('mustConfigBool')) {
     /**
      * Mandatory config boolean resolver.
      *
-     * @param array<mixed> $in
+     * @param array<bool> $in
      */
     function mustConfigBool(string $key, ?bool $default = null, array $in = []): bool
     {
         $value = configBool($key, $default, $in);
 
-        \assert($value !== null, "[{$key}] config is not bool");
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] config is not bool", \get_debug_type($value)));
 
         return $value;
     }
@@ -94,16 +88,19 @@ if (! \function_exists('configInt')) {
     /**
      * Config int resolver.
      *
-     * @param array<mixed> $in
+     * @param array<int|null> $in
      */
     function configInt(string $key, ?int $default = null, array $in = []): ?int
     {
         $value = resolveConfig()->get($key, $default) ?? $default;
 
-        \assert($value === null || \is_int($value), "[{$key}] config is not int or null");
-        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
+        \assert($value === null || \is_int($value), \sprintf("key:[{$key}] value:[%s] config is not int or null", \get_debug_type($value)));
 
-        return $value;
+        if (\count($in) === 0 || \in_array($value, $in, true)) {
+            return $value;
+        }
+
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] config is not in available options", \get_debug_type($value)));
     }
 }
 
@@ -111,13 +108,13 @@ if (! \function_exists('mustConfigInt')) {
     /**
      * Mandatory config int resolver.
      *
-     * @param array<mixed> $in
+     * @param array<int> $in
      */
     function mustConfigInt(string $key, ?int $default = null, array $in = []): int
     {
         $value = configInt($key, $default, $in);
 
-        \assert($value !== null, "[{$key}] config is not int");
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] config is not int", \get_debug_type($value)));
 
         return $value;
     }
@@ -127,16 +124,19 @@ if (! \function_exists('configFloat')) {
     /**
      * Config float resolver.
      *
-     * @param array<mixed> $in
+     * @param array<float|null> $in
      */
     function configFloat(string $key, ?float $default = null, array $in = []): ?float
     {
         $value = resolveConfig()->get($key, $default) ?? $default;
 
-        \assert($value === null || \is_float($value), "[{$key}] config is not float or null");
-        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
+        \assert($value === null || \is_float($value), \sprintf("key:[{$key}] value:[%s] config is not float or null", \get_debug_type($value)));
 
-        return $value;
+        if (\count($in) === 0 || \in_array($value, $in, true)) {
+            return $value;
+        }
+
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] config is not in available options", \get_debug_type($value)));
     }
 }
 
@@ -144,13 +144,13 @@ if (! \function_exists('mustConfigFloat')) {
     /**
      * Mandatory config float resolver.
      *
-     * @param array<mixed> $in
+     * @param array<float> $in
      */
     function mustConfigFloat(string $key, ?float $default = null, array $in = []): float
     {
         $value = configFloat($key, $default, $in);
 
-        \assert($value !== null, "[{$key}] config is not float");
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] config is not float", \get_debug_type($value)));
 
         return $value;
     }
@@ -160,15 +160,15 @@ if (! \function_exists('configArray')) {
     /**
      * Config array resolver.
      *
-     * @param array<mixed> $default
+     * @param array<array<mixed>|null> $default
      *
-     * @return ?array<mixed>
+     * @return array<mixed>|null
      */
     function configArray(string $key, ?array $default = null): ?array
     {
         $value = resolveConfig()->get($key, $default) ?? $default;
 
-        \assert($value === null || \is_array($value), "[{$key}] config is not array or null");
+        \assert($value === null || \is_array($value), \sprintf("key:[{$key}] value:[%s] config is not array or null", \get_debug_type($value)));
 
         return $value;
     }
@@ -178,7 +178,7 @@ if (! \function_exists('mustConfigArray')) {
     /**
      * Mandatory config array resolver.
      *
-     * @param array<mixed> $default
+     * @param array<array<mixed>> $default
      *
      * @return array<mixed>
      */
@@ -186,7 +186,7 @@ if (! \function_exists('mustConfigArray')) {
     {
         $value = configArray($key, $default);
 
-        \assert($value !== null, "[{$key}] config is not array");
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] config is not array", \get_debug_type($value)));
 
         return $value;
     }
@@ -196,16 +196,19 @@ if (! \function_exists('configString')) {
     /**
      * Config string resolver.
      *
-     * @param array<mixed> $in
+     * @param array<string|null> $in
      */
     function configString(string $key, ?string $default = null, array $in = []): ?string
     {
         $value = resolveConfig()->get($key, $default) ?? $default;
 
-        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] config is not in available options");
-        \assert($value === null || \is_string($value), "[{$key}] config is not string or null");
+        \assert($value === null || \is_string($value), \sprintf("key:[{$key}] value:[%s] config is not string or null", \get_debug_type($value)));
 
-        return $value;
+        if (\count($in) === 0 || \in_array($value, $in, true)) {
+            return $value;
+        }
+
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] config is not in available options", \get_debug_type($value)));
     }
 }
 
@@ -213,13 +216,13 @@ if (! \function_exists('mustConfigString')) {
     /**
      * Mandatory config string resolver.
      *
-     * @param array<mixed> $in
+     * @param array<string> $in
      */
     function mustConfigString(string $key, ?string $default = null, array $in = []): string
     {
         $value = configString($key, $default, $in);
 
-        \assert($value !== null, "[{$key}] config is not string");
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] config is not string", \get_debug_type($value)));
 
         return $value;
     }
@@ -229,20 +232,16 @@ if (! \function_exists('inject')) {
     /**
      * Resolve a service from the container.
      *
-     * @template T
+     * @template T of object
      *
      * @param class-string<T> $class
      * @param array<mixed> $parameters
      *
      * @return T
      */
-    function inject(string $class, array $parameters = []): mixed
+    function inject(string $class, array $parameters = []): object
     {
-        $resolved = resolveApp()->make($class, $parameters);
-
-        \assert($resolved instanceof $class);
-
-        return $resolved;
+        return Resolver::resolve($class, $parameters);
     }
 }
 
@@ -252,7 +251,7 @@ if (! \function_exists('resolveApp')) {
      */
     function resolveApp(): Illuminate\Foundation\Application
     {
-        return Illuminate\Foundation\Application::getInstance();
+        return Resolver::resolveApp();
     }
 }
 
@@ -262,11 +261,7 @@ if (! \function_exists('resolveArtisan')) {
      */
     function resolveArtisan(): Illuminate\Foundation\Console\Kernel
     {
-        $resolved = Illuminate\Support\Facades\Artisan::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Foundation\Console\Kernel);
-
-        return $resolved;
+        return Resolver::resolveConsoleKernel();
     }
 }
 
@@ -276,11 +271,7 @@ if (! \function_exists('resolveKernel')) {
      */
     function resolveKernel(): Illuminate\Foundation\Http\Kernel
     {
-        $resolved = resolveApp()->make(Illuminate\Contracts\Http\Kernel::class);
-
-        \assert($resolved instanceof Illuminate\Foundation\Http\Kernel);
-
-        return $resolved;
+        return Resolver::resolveHttpKernel();
     }
 }
 
@@ -290,7 +281,7 @@ if (! \function_exists('resolveConsoleKernel')) {
      */
     function resolveConsoleKernel(): Illuminate\Foundation\Console\Kernel
     {
-        return resolveArtisan();
+        return Resolver::resolveConsoleKernel();
     }
 }
 
@@ -300,7 +291,7 @@ if (! \function_exists('resolveHttpKernel')) {
      */
     function resolveHttpKernel(): Illuminate\Foundation\Http\Kernel
     {
-        return resolveKernel();
+        return Resolver::resolveHttpKernel();
     }
 }
 
@@ -310,11 +301,7 @@ if (! \function_exists('resolveAuthManager')) {
      */
     function resolveAuthManager(): Illuminate\Auth\AuthManager
     {
-        $resolved = Illuminate\Support\Facades\Auth::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Auth\AuthManager);
-
-        return $resolved;
+        return Resolver::resolveAuthManager();
     }
 }
 
@@ -324,11 +311,7 @@ if (! \function_exists('resolveGuard')) {
      */
     function resolveGuard(?string $name = null): Tomchochola\Laratchi\Auth\DatabaseTokenGuard
     {
-        $resolved = resolveAuthManager()->guard($name);
-
-        \assert($resolved instanceof Tomchochola\Laratchi\Auth\DatabaseTokenGuard);
-
-        return $resolved;
+        return Resolver::resolveDatabaseTokenGuard($name);
     }
 }
 
@@ -338,11 +321,7 @@ if (! \function_exists('resolveUserProvider')) {
      */
     function resolveUserProvider(?string $name = null): Illuminate\Auth\EloquentUserProvider
     {
-        $resolved = resolveAuthManager()->createUserProvider($name);
-
-        \assert($resolved instanceof Illuminate\Auth\EloquentUserProvider);
-
-        return $resolved;
+        return Resolver::resolveEloquentUserProvider($name);
     }
 }
 
@@ -352,11 +331,7 @@ if (! \function_exists('resolveBlade')) {
      */
     function resolveBlade(): Illuminate\View\Compilers\BladeCompiler
     {
-        $resolved = Illuminate\Support\Facades\Blade::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\View\Compilers\BladeCompiler);
-
-        return $resolved;
+        return Resolver::resolveBladeCompiler();
     }
 }
 
@@ -366,11 +341,7 @@ if (! \function_exists('resolveBroadcastManager')) {
      */
     function resolveBroadcastManager(): Illuminate\Broadcasting\BroadcastManager
     {
-        $resolved = Illuminate\Support\Facades\Broadcast::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Broadcasting\BroadcastManager);
-
-        return $resolved;
+        return Resolver::resolveBroadcastManager();
     }
 }
 
@@ -380,11 +351,7 @@ if (! \function_exists('resolveBus')) {
      */
     function resolveBus(): Illuminate\Contracts\Bus\QueueingDispatcher
     {
-        $resolved = Illuminate\Support\Facades\Bus::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Contracts\Bus\QueueingDispatcher);
-
-        return $resolved;
+        return Resolver::resolveQueueingDispatcher();
     }
 }
 
@@ -394,11 +361,7 @@ if (! \function_exists('resolveCacheManager')) {
      */
     function resolveCacheManager(): Illuminate\Cache\CacheManager
     {
-        $resolved = Illuminate\Support\Facades\Cache::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Cache\CacheManager);
-
-        return $resolved;
+        return Resolver::resolveCacheManager();
     }
 }
 
@@ -408,7 +371,7 @@ if (! \function_exists('resolveCache')) {
      */
     function resolveCache(?string $name = null): Illuminate\Contracts\Cache\Repository
     {
-        return resolveCacheManager()->store($name);
+        return Resolver::resolveCacheManager()->store($name);
     }
 }
 
@@ -418,11 +381,7 @@ if (! \function_exists('resolveConfig')) {
      */
     function resolveConfig(): Illuminate\Config\Repository
     {
-        $resolved = Illuminate\Support\Facades\Config::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Config\Repository);
-
-        return $resolved;
+        return Resolver::resolveConfigRepository();
     }
 }
 
@@ -432,11 +391,7 @@ if (! \function_exists('resolveCookieJar')) {
      */
     function resolveCookieJar(): Illuminate\Cookie\CookieJar
     {
-        $resolved = Illuminate\Support\Facades\Cookie::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Cookie\CookieJar);
-
-        return $resolved;
+        return Resolver::resolveCookieJar();
     }
 }
 
@@ -446,11 +401,7 @@ if (! \function_exists('resolveEncrypter')) {
      */
     function resolveEncrypter(): Illuminate\Encryption\Encrypter
     {
-        $resolved = Illuminate\Support\Facades\Crypt::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Encryption\Encrypter);
-
-        return $resolved;
+        return Resolver::resolveEncrypter();
     }
 }
 
@@ -460,11 +411,7 @@ if (! \function_exists('resolveDatabaseManager')) {
      */
     function resolveDatabaseManager(): Illuminate\Database\DatabaseManager
     {
-        $resolved = Illuminate\Support\Facades\DB::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Database\DatabaseManager);
-
-        return $resolved;
+        return Resolver::resolveDatabaseManager();
     }
 }
 
@@ -474,7 +421,7 @@ if (! \function_exists('resolveDatabase')) {
      */
     function resolveDatabase(?string $name = null): Illuminate\Database\Connection
     {
-        return resolveDatabaseManager()->connection($name);
+        return Resolver::resolveDatabaseManager()->connection($name);
     }
 }
 
@@ -484,11 +431,7 @@ if (! \function_exists('resolveEventDispatcher')) {
      */
     function resolveEventDispatcher(): Illuminate\Contracts\Events\Dispatcher
     {
-        $resolved = Illuminate\Support\Facades\Event::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Contracts\Events\Dispatcher);
-
-        return $resolved;
+        return Resolver::resolveEventDispatcher();
     }
 }
 
@@ -498,11 +441,7 @@ if (! \function_exists('resolveFilesystem')) {
      */
     function resolveFilesystem(): Illuminate\Filesystem\Filesystem
     {
-        $resolved = Illuminate\Support\Facades\File::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Filesystem\Filesystem);
-
-        return $resolved;
+        return Resolver::resolveFilesystem();
     }
 }
 
@@ -512,11 +451,7 @@ if (! \function_exists('resolveGate')) {
      */
     function resolveGate(): Illuminate\Auth\Access\Gate
     {
-        $resolved = Illuminate\Support\Facades\Gate::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Auth\Access\Gate);
-
-        return $resolved;
+        return Resolver::resolveGate();
     }
 }
 
@@ -526,11 +461,7 @@ if (! \function_exists('resolveHashManager')) {
      */
     function resolveHashManager(): Illuminate\Hashing\HashManager
     {
-        $resolved = Illuminate\Support\Facades\Hash::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Hashing\HashManager);
-
-        return $resolved;
+        return Resolver::resolveHashManager();
     }
 }
 
@@ -540,11 +471,7 @@ if (! \function_exists('resolveHasher')) {
      */
     function resolveHasher(?string $driver = null): Illuminate\Contracts\Hashing\Hasher
     {
-        $hasher = resolveHashManager()->driver($driver);
-
-        \assert($hasher instanceof Illuminate\Contracts\Hashing\Hasher);
-
-        return $hasher;
+        return Resolver::resolveHasher($driver);
     }
 }
 
@@ -554,11 +481,7 @@ if (! \function_exists('resolveHttp')) {
      */
     function resolveHttp(): Illuminate\Http\Client\Factory
     {
-        $resolved = Illuminate\Support\Facades\Http::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Http\Client\Factory);
-
-        return $resolved;
+        return Resolver::resolveHttpClientFactory();
     }
 }
 
@@ -568,11 +491,7 @@ if (! \function_exists('resolveTranslator')) {
      */
     function resolveTranslator(): Illuminate\Translation\Translator
     {
-        $resolved = Illuminate\Support\Facades\Lang::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Translation\Translator);
-
-        return $resolved;
+        return Resolver::resolveTranslator();
     }
 }
 
@@ -582,11 +501,7 @@ if (! \function_exists('resolveLogger')) {
      */
     function resolveLogger(): Illuminate\Log\LogManager
     {
-        $resolved = Illuminate\Support\Facades\Log::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Log\LogManager);
-
-        return $resolved;
+        return Resolver::resolveLogManager();
     }
 }
 
@@ -596,11 +511,7 @@ if (! \function_exists('resolveMailManager')) {
      */
     function resolveMailManager(): Illuminate\Contracts\Mail\Factory
     {
-        $resolved = Illuminate\Support\Facades\Mail::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Contracts\Mail\Factory);
-
-        return $resolved;
+        return Resolver::resolveMailFactory();
     }
 }
 
@@ -610,11 +521,7 @@ if (! \function_exists('resolveNotificator')) {
      */
     function resolveNotificator(): Illuminate\Contracts\Notifications\Factory
     {
-        $resolved = Illuminate\Support\Facades\Notification::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Contracts\Notifications\Factory);
-
-        return $resolved;
+        return Resolver::resolveNotificationFactory();
     }
 }
 
@@ -624,11 +531,7 @@ if (! \function_exists('resolveParallelTesting')) {
      */
     function resolveParallelTesting(): Illuminate\Testing\ParallelTesting
     {
-        $resolved = Illuminate\Support\Facades\ParallelTesting::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Testing\ParallelTesting);
-
-        return $resolved;
+        return Resolver::resolveParallelTesting();
     }
 }
 
@@ -638,11 +541,7 @@ if (! \function_exists('resolvePasswordBrokerManager')) {
      */
     function resolvePasswordBrokerManager(): Illuminate\Auth\Passwords\PasswordBrokerManager
     {
-        $resolved = Illuminate\Support\Facades\Password::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Auth\Passwords\PasswordBrokerManager);
-
-        return $resolved;
+        return Resolver::resolvePasswordBrokerManager();
     }
 }
 
@@ -652,11 +551,7 @@ if (! \function_exists('resolvePasswordBroker')) {
      */
     function resolvePasswordBroker(?string $name = null): Illuminate\Auth\Passwords\PasswordBroker
     {
-        $resolved = resolvePasswordBrokerManager()->broker($name);
-
-        \assert($resolved instanceof Illuminate\Auth\Passwords\PasswordBroker);
-
-        return $resolved;
+        return Resolver::resolvePasswordBroker($name);
     }
 }
 
@@ -666,11 +561,7 @@ if (! \function_exists('resolvePasswordTokenRepository')) {
      */
     function resolvePasswordTokenRepository(?string $name = null): Illuminate\Auth\Passwords\DatabaseTokenRepository
     {
-        $resolved = resolvePasswordBroker($name)->getRepository();
-
-        \assert($resolved instanceof Illuminate\Auth\Passwords\DatabaseTokenRepository);
-
-        return $resolved;
+        return Resolver::resolveDatabaseTokenRepository($name);
     }
 }
 
@@ -680,11 +571,7 @@ if (! \function_exists('resolveQueueManager')) {
      */
     function resolveQueueManager(): Illuminate\Queue\QueueManager
     {
-        $resolved = Illuminate\Support\Facades\Queue::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Queue\QueueManager);
-
-        return $resolved;
+        return Resolver::resolveQueueManager();
     }
 }
 
@@ -694,11 +581,7 @@ if (! \function_exists('resolveRateLimiter')) {
      */
     function resolveRateLimiter(): Illuminate\Cache\RateLimiter
     {
-        $resolved = Illuminate\Support\Facades\RateLimiter::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Cache\RateLimiter);
-
-        return $resolved;
+        return Resolver::resolveRateLimiter();
     }
 }
 
@@ -708,11 +591,7 @@ if (! \function_exists('resolveRedirector')) {
      */
     function resolveRedirector(): Illuminate\Routing\Redirector
     {
-        $resolved = Illuminate\Support\Facades\Redirect::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Routing\Redirector);
-
-        return $resolved;
+        return Resolver::resolveRedirector();
     }
 }
 
@@ -722,11 +601,7 @@ if (! \function_exists('resolveRedisManager')) {
      */
     function resolveRedisManager(): Illuminate\Redis\RedisManager
     {
-        $resolved = Illuminate\Support\Facades\Redis::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Redis\RedisManager);
-
-        return $resolved;
+        return Resolver::resolveRedisManager();
     }
 }
 
@@ -736,11 +611,7 @@ if (! \function_exists('resolveRequest')) {
      */
     function resolveRequest(): Illuminate\Http\Request
     {
-        $resolved = Illuminate\Support\Facades\Request::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Http\Request);
-
-        return $resolved;
+        return Resolver::resolveRequest();
     }
 }
 
@@ -750,11 +621,7 @@ if (! \function_exists('resolveResponseFactory')) {
      */
     function resolveResponseFactory(): Illuminate\Routing\ResponseFactory
     {
-        $resolved = Illuminate\Support\Facades\Response::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Routing\ResponseFactory);
-
-        return $resolved;
+        return Resolver::resolveResponseFactory();
     }
 }
 
@@ -764,11 +631,7 @@ if (! \function_exists('resolveRouter')) {
      */
     function resolveRouter(): Illuminate\Routing\Router
     {
-        $resolved = Illuminate\Support\Facades\Route::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Routing\Router);
-
-        return $resolved;
+        return Resolver::resolveRouter();
     }
 }
 
@@ -778,7 +641,7 @@ if (! \function_exists('resolveRouteRegistrar')) {
      */
     function resolveRouteRegistrar(): Illuminate\Routing\RouteRegistrar
     {
-        return new Illuminate\Routing\RouteRegistrar(resolveRouter());
+        return Resolver::resolveRouteRegistrar();
     }
 }
 
@@ -788,11 +651,7 @@ if (! \function_exists('resolveSchema')) {
      */
     function resolveSchema(): Illuminate\Database\Schema\Builder
     {
-        $resolved = Illuminate\Support\Facades\Schema::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Database\Schema\Builder);
-
-        return $resolved;
+        return Resolver::resolveSchemaBuilder();
     }
 }
 
@@ -802,11 +661,7 @@ if (! \function_exists('resolveSessionManager')) {
      */
     function resolveSessionManager(): Illuminate\Session\SessionManager
     {
-        $resolved = Illuminate\Support\Facades\Session::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Session\SessionManager);
-
-        return $resolved;
+        return Resolver::resolveSessionManager();
     }
 }
 
@@ -816,11 +671,7 @@ if (! \function_exists('resolveSession')) {
      */
     function resolveSession(?string $driver = null): Illuminate\Session\Store
     {
-        $resolved = resolveSessionManager()->driver($driver);
-
-        \assert($resolved instanceof Illuminate\Session\Store);
-
-        return $resolved;
+        return Resolver::resolveSessionStore($driver);
     }
 }
 
@@ -830,11 +681,7 @@ if (! \function_exists('resolveFilesystemManager')) {
      */
     function resolveFilesystemManager(): Illuminate\Filesystem\FilesystemManager
     {
-        $resolved = Illuminate\Support\Facades\Storage::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Filesystem\FilesystemManager);
-
-        return $resolved;
+        return Resolver::resolveFilesystemManager();
     }
 }
 
@@ -844,11 +691,7 @@ if (! \function_exists('resolveUrlFactory')) {
      */
     function resolveUrlFactory(): Illuminate\Routing\UrlGenerator
     {
-        $resolved = Illuminate\Support\Facades\URL::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Routing\UrlGenerator);
-
-        return $resolved;
+        return Resolver::resolveUrlGenerator();
     }
 }
 
@@ -858,11 +701,7 @@ if (! \function_exists('resolveValidatorFactory')) {
      */
     function resolveValidatorFactory(): Illuminate\Validation\Factory
     {
-        $resolved = Illuminate\Support\Facades\Validator::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Validation\Factory);
-
-        return $resolved;
+        return Resolver::resolveValidatorFactory();
     }
 }
 
@@ -872,11 +711,7 @@ if (! \function_exists('resolveViewFactory')) {
      */
     function resolveViewFactory(): Illuminate\View\Factory
     {
-        $resolved = Illuminate\Support\Facades\View::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\View\Factory);
-
-        return $resolved;
+        return Resolver::resolveViewFactory();
     }
 }
 
@@ -886,11 +721,7 @@ if (! \function_exists('resolveExceptionHandler')) {
      */
     function resolveExceptionHandler(): Illuminate\Foundation\Exceptions\Handler
     {
-        $resolved = resolveApp()->make(Illuminate\Contracts\Debug\ExceptionHandler::class);
-
-        \assert($resolved instanceof Illuminate\Foundation\Exceptions\Handler);
-
-        return $resolved;
+        return Resolver::resolveExceptionHandler();
     }
 }
 
@@ -900,11 +731,7 @@ if (! \function_exists('resolveDate')) {
      */
     function resolveDate(): Illuminate\Support\DateFactory
     {
-        $resolved = Illuminate\Support\Facades\Date::getFacadeRoot();
-
-        \assert($resolved instanceof Illuminate\Support\DateFactory);
-
-        return $resolved;
+        return Resolver::resolveDateFactory();
     }
 }
 
@@ -914,7 +741,7 @@ if (! \function_exists('resolveNow')) {
      */
     function resolveNow(): Illuminate\Support\Carbon
     {
-        return resolveDate()->now();
+        return Resolver::resolveDateFactory()->now();
     }
 }
 
@@ -924,7 +751,7 @@ if (! \function_exists('resolveMix')) {
      */
     function resolveMix(): Illuminate\Foundation\Mix
     {
-        return inject(Illuminate\Foundation\Mix::class);
+        return Resolver::resolveMix();
     }
 }
 
@@ -934,7 +761,7 @@ if (! \function_exists('resolveVite')) {
      */
     function resolveVite(): Illuminate\Foundation\Vite
     {
-        return inject(Illuminate\Foundation\Vite::class);
+        return Resolver::resolveVite();
     }
 }
 
@@ -944,7 +771,9 @@ if (! \function_exists('unsafeEnv')) {
      */
     function unsafeEnv(string $key, mixed $default = null): mixed
     {
-        \assert(! resolveApp()->bound('env'), 'read ENV only in config files');
+        if (Resolver::resolveApp()->bound('env')) {
+            throw new RuntimeException('env is already bound to the container');
+        }
 
         return Illuminate\Support\Env::get($key, $default);
     }
@@ -954,7 +783,7 @@ if (! \function_exists('envString')) {
     /**
      * Env string resolver.
      *
-     * @param array<mixed> $in
+     * @param array<string|null> $in
      */
     function envString(string $key, ?string $default = null, bool $trim = true, array $in = []): ?string
     {
@@ -966,7 +795,7 @@ if (! \function_exists('envString')) {
 
         $value = \filter_var($value);
 
-        \assert($value !== false, "[{$key}] env is not string or null");
+        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] env is not string or null", \get_debug_type($value)));
 
         if ($trim) {
             $value = \trim($value);
@@ -980,9 +809,11 @@ if (! \function_exists('envString')) {
             return null;
         }
 
-        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] env is not in available options");
+        if (\count($in) === 0 || \in_array($value, $in, true)) {
+            return $value;
+        }
 
-        return $value;
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] env is not in available options", \get_debug_type($value)));
     }
 }
 
@@ -990,13 +821,13 @@ if (! \function_exists('mustEnvString')) {
     /**
      * Mandatory env string resolver.
      *
-     * @param array<mixed> $in
+     * @param array<string> $in
      */
     function mustEnvString(string $key, ?string $default = null, bool $trim = true, array $in = []): string
     {
         $value = envString($key, $default, $trim, $in);
 
-        \assert($value !== null, "[{$key}] env is not string");
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] env is not string", \get_debug_type($value)));
 
         return $value;
     }
@@ -1006,7 +837,7 @@ if (! \function_exists('envBool')) {
     /**
      * Env bool resolver.
      *
-     * @param array<mixed> $in
+     * @param array<bool|null> $in
      */
     function envBool(string $key, ?bool $default = null, array $in = []): ?bool
     {
@@ -1018,10 +849,13 @@ if (! \function_exists('envBool')) {
 
         $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
 
-        \assert($value !== null, "[{$key}] env is not bool or null");
-        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] env is not in available options");
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] env is not bool or null", \get_debug_type($value)));
 
-        return $value;
+        if (\count($in) === 0 || \in_array($value, $in, true)) {
+            return $value;
+        }
+
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] env is not in available options", \get_debug_type($value)));
     }
 }
 
@@ -1029,13 +863,13 @@ if (! \function_exists('mustEnvBool')) {
     /**
      * Mandatory env bool resolver.
      *
-     * @param array<mixed> $in
+     * @param array<bool> $in
      */
     function mustEnvBool(string $key, ?bool $default = null, array $in = []): bool
     {
         $value = envBool($key, $default, $in);
 
-        \assert($value !== null, "[{$key}] env is not bool");
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] env is not bool", \get_debug_type($value)));
 
         return $value;
     }
@@ -1045,7 +879,7 @@ if (! \function_exists('envInt')) {
     /**
      * Env int resolver.
      *
-     * @param array<mixed> $in
+     * @param array<int|null> $in
      */
     function envInt(string $key, ?int $default = null, array $in = []): ?int
     {
@@ -1057,10 +891,13 @@ if (! \function_exists('envInt')) {
 
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
-        \assert($value !== false, "[{$key}] env is not int or null");
-        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] env is not in available options");
+        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] env is not int or null", \get_debug_type($value)));
 
-        return $value;
+        if (\count($in) === 0 || \in_array($value, $in, true)) {
+            return $value;
+        }
+
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] env is not in available options", \get_debug_type($value)));
     }
 }
 
@@ -1068,13 +905,13 @@ if (! \function_exists('mustEnvInt')) {
     /**
      * Mandatory env int resolver.
      *
-     * @param array<mixed> $in
+     * @param array<int> $in
      */
     function mustEnvInt(string $key, ?int $default = null, array $in = []): int
     {
         $value = envInt($key, $default, $in);
 
-        \assert($value !== null, "[{$key}] env is not int");
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] env is not int", \get_debug_type($value)));
 
         return $value;
     }
@@ -1084,7 +921,7 @@ if (! \function_exists('envFloat')) {
     /**
      * Env float resolver.
      *
-     * @param array<mixed> $in
+     * @param array<float|null> $in
      */
     function envFloat(string $key, ?float $default = null, array $in = []): ?float
     {
@@ -1096,10 +933,13 @@ if (! \function_exists('envFloat')) {
 
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
-        \assert($value !== false, "[{$key}] env is not float or null");
-        \assert(\count($in) <= 0 || \in_array($value, $in, true), "[{$key}] env is not in available options");
+        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] env is not float or null", \get_debug_type($value)));
 
-        return $value;
+        if (\count($in) === 0 || \in_array($value, $in, true)) {
+            return $value;
+        }
+
+        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] env is not in available options", \get_debug_type($value)));
     }
 }
 
@@ -1107,13 +947,13 @@ if (! \function_exists('mustEnvFloat')) {
     /**
      * Mandatory env float resolver.
      *
-     * @param array<mixed> $in
+     * @param array<float> $in
      */
     function mustEnvFloat(string $key, ?float $default = null, array $in = []): float
     {
         $value = envFloat($key, $default, $in);
 
-        \assert($value !== null, "[{$key}] env is not float");
+        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] env is not float", \get_debug_type($value)));
 
         return $value;
     }
@@ -1131,9 +971,11 @@ if (! \function_exists('currentEnv')) {
 
         $value = $app->bound('env') ? $app->make('env') : mustEnvString('APP_ENV');
 
-        \assert(\in_array($value, ['local', 'testing', 'development', 'staging', 'production'], true));
+        if (\in_array($value, ['local', 'testing', 'development', 'staging', 'production'], true)) {
+            return $value;
+        }
 
-        return $value;
+        throw new UnexpectedValueException(\sprintf('key:[APP_ENV] value:[%s] env is not in available options', \get_debug_type($value)));
     }
 }
 
@@ -1153,7 +995,15 @@ if (! \function_exists('mapEnv')) {
     /**
      * Map env.
      *
-     * @param array{local: mixed, testing: mixed, development: mixed, staging: mixed, production: mixed} $mapping
+     * @template A
+     * @template B
+     * @template C
+     * @template D
+     * @template E
+     *
+     * @param array{local: A, testing: B, development: C, staging: D, production: E} $mapping
+     *
+     * @return A|B|C|D|E
      */
     function mapEnv(array $mapping): mixed
     {
@@ -1217,26 +1067,7 @@ if (! \function_exists('strPutCsv')) {
      */
     function strPutCsv(array $data): string
     {
-        return \implode(
-            ',',
-            \array_map(static function (mixed $value): string {
-                if (\is_string($value)) {
-                    return '"'.\str_replace('"', '""', $value).'"';
-                }
-
-                if (\is_bool($value)) {
-                    return $value ? '1' : '0';
-                }
-
-                if ($value === null) {
-                    return '';
-                }
-
-                \assert(\is_scalar($value));
-
-                return (string) $value;
-            }, $data),
-        );
+        return Csv::line($data);
     }
 }
 
@@ -1246,7 +1077,7 @@ if (! \function_exists('locale')) {
      */
     function locale(): string
     {
-        return resolveApp()->getLocale();
+        return (new Config())->appLocale();
     }
 }
 
@@ -1258,15 +1089,7 @@ if (! \function_exists('locales')) {
      */
     function locales(): array
     {
-        $locales = [];
-
-        foreach (mustConfigArray('app.locales') as $locale) {
-            \assert(\is_string($locale));
-
-            $locales[] = $locale;
-        }
-
-        return $locales;
+        return (new Config())->appLocales();
     }
 }
 
@@ -1276,9 +1099,7 @@ if (! \function_exists('assertString')) {
      */
     function assertString(mixed $value): string
     {
-        \assert(\is_string($value), \sprintf('value:[%s] is not string', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertString($value);
     }
 }
 
@@ -1288,9 +1109,7 @@ if (! \function_exists('assertNullableString')) {
      */
     function assertNullableString(mixed $value): ?string
     {
-        \assert($value === null || \is_string($value), \sprintf('value:[%s] is not string or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertNullableString($value);
     }
 }
 
@@ -1300,9 +1119,7 @@ if (! \function_exists('assertBool')) {
      */
     function assertBool(mixed $value): bool
     {
-        \assert(\is_bool($value), \sprintf('value:[%s] is not bool', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertBool($value);
     }
 }
 
@@ -1312,9 +1129,7 @@ if (! \function_exists('assertNullableBool')) {
      */
     function assertNullableBool(mixed $value): ?bool
     {
-        \assert($value === null || \is_bool($value), \sprintf('value:[%s] is not bool or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertNullableBool($value);
     }
 }
 
@@ -1324,9 +1139,7 @@ if (! \function_exists('assertInt')) {
      */
     function assertInt(mixed $value): int
     {
-        \assert(\is_int($value), \sprintf('value:[%s] is not int', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertInt($value);
     }
 }
 
@@ -1336,9 +1149,7 @@ if (! \function_exists('assertNullableInt')) {
      */
     function assertNullableInt(mixed $value): ?int
     {
-        \assert($value === null || \is_int($value), \sprintf('value:[%s] is not int or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertNullableInt($value);
     }
 }
 
@@ -1348,9 +1159,7 @@ if (! \function_exists('assertFloat')) {
      */
     function assertFloat(mixed $value): float
     {
-        \assert(\is_float($value), \sprintf('value:[%s] is not float', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertFloat($value);
     }
 }
 
@@ -1360,9 +1169,7 @@ if (! \function_exists('assertNullableFloat')) {
      */
     function assertNullableFloat(mixed $value): ?float
     {
-        \assert($value === null || \is_float($value), \sprintf('value:[%s] is not float or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertNullableFloat($value);
     }
 }
 
@@ -1374,9 +1181,7 @@ if (! \function_exists('assertArray')) {
      */
     function assertArray(mixed $value): array
     {
-        \assert(\is_array($value), \sprintf('value:[%s] is not array', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertArray($value);
     }
 }
 
@@ -1388,9 +1193,7 @@ if (! \function_exists('assertNullableArray')) {
      */
     function assertNullableArray(mixed $value): ?array
     {
-        \assert($value === null || \is_array($value), \sprintf('value:[%s] is not array or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertNullableArray($value);
     }
 }
 
@@ -1400,9 +1203,7 @@ if (! \function_exists('assertFile')) {
      */
     function assertFile(mixed $value): UploadedFile
     {
-        \assert($value instanceof UploadedFile, \sprintf('value:[%s] is not file', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertFile($value);
     }
 }
 
@@ -1412,9 +1213,7 @@ if (! \function_exists('assertNullableFile')) {
      */
     function assertNullableFile(mixed $value): ?UploadedFile
     {
-        \assert($value === null || $value instanceof UploadedFile, \sprintf('value:[%s] is not file or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertNullableFile($value);
     }
 }
 
@@ -1424,9 +1223,7 @@ if (! \function_exists('assertCarbon')) {
      */
     function assertCarbon(mixed $value): Carbon
     {
-        \assert($value instanceof Carbon, \sprintf('value:[%s] is not carbon', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertCarbon($value);
     }
 }
 
@@ -1436,9 +1233,7 @@ if (! \function_exists('assertNullableCarbon')) {
      */
     function assertNullableCarbon(mixed $value): ?Carbon
     {
-        \assert($value === null || $value instanceof Carbon, \sprintf('value:[%s] is not carbon or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertNullableCarbon($value);
     }
 }
 
@@ -1448,9 +1243,7 @@ if (! \function_exists('assertObject')) {
      */
     function assertObject(mixed $value): object
     {
-        \assert(\is_object($value), \sprintf('value:[%s] is not object', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertObject($value);
     }
 }
 
@@ -1460,9 +1253,7 @@ if (! \function_exists('assertNullableObject')) {
      */
     function assertNullableObject(mixed $value): ?object
     {
-        \assert($value === null || \is_object($value), \sprintf('value:[%s] is not object or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertNullableObject($value);
     }
 }
 
@@ -1474,9 +1265,7 @@ if (! \function_exists('assertScalar')) {
      */
     function assertScalar(mixed $value): int|float|string|bool
     {
-        \assert(\is_scalar($value), \sprintf('value:[%s] is not scalar', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertScalar($value);
     }
 }
 
@@ -1488,9 +1277,7 @@ if (! \function_exists('assertNullableScalar')) {
      */
     function assertNullableScalar(mixed $value): int|float|string|bool|null
     {
-        \assert($value === null || \is_scalar($value), \sprintf('value:[%s] is not scalar or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::assertNullableScalar($value);
     }
 }
 
@@ -1506,11 +1293,7 @@ if (! \function_exists('assertEnum')) {
      */
     function assertEnum(mixed $value, string $enum): BackedEnum
     {
-        if ($value instanceof $enum) {
-            return $value;
-        }
-
-        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] enum', \get_debug_type($value), $enum));
+        return Typer::assertEnum($value, $enum);
     }
 }
 
@@ -1526,11 +1309,7 @@ if (! \function_exists('assertNullableEnum')) {
      */
     function assertNullableEnum(mixed $value, string $enum): ?BackedEnum
     {
-        if ($value === null || $value instanceof $enum) {
-            return $value;
-        }
-
-        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] enum or null', \get_debug_type($value), $enum));
+        return Typer::assertNullableEnum($value, $enum);
     }
 }
 
@@ -1546,11 +1325,7 @@ if (! \function_exists('assertInstance')) {
      */
     function assertInstance(mixed $value, string $class): object
     {
-        if ($value instanceof $class) {
-            return $value;
-        }
-
-        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] instance', \get_debug_type($value), $class));
+        return Typer::assertInstance($value, $class);
     }
 }
 
@@ -1566,11 +1341,7 @@ if (! \function_exists('assertNullableInstance')) {
      */
     function assertNullableInstance(mixed $value, string $class): ?object
     {
-        if ($value === null || $value instanceof $class) {
-            return $value;
-        }
-
-        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] instance or null', \get_debug_type($value), $class));
+        return Typer::assertNullableInstance($value, $class);
     }
 }
 
@@ -1586,11 +1357,7 @@ if (! \function_exists('assertA')) {
      */
     function assertA(mixed $value, string $class): string
     {
-        if (\is_string($value) && \is_a($value, $class, true)) {
-            return $value;
-        }
-
-        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] class-string', \get_debug_type($value), $class));
+        return Typer::assertA($value, $class);
     }
 }
 
@@ -1606,15 +1373,7 @@ if (! \function_exists('assertNullableA')) {
      */
     function assertNullableA(mixed $value, string $class): ?string
     {
-        if ($value === null) {
-            return $value;
-        }
-
-        if (\is_string($value) && \is_a($value, $class, true)) {
-            return $value;
-        }
-
-        throw new InvalidArgumentException(\sprintf('value:[%s] is not class:[%s] class-string or null', \get_debug_type($value), $class));
+        return Typer::assertNullableA($value, $class);
     }
 }
 
@@ -1624,7 +1383,7 @@ if (! \function_exists('parseString')) {
      */
     function parseString(mixed $value): string
     {
-        return parseNullableString($value) ?? '';
+        return Typer::parseString($value);
     }
 }
 
@@ -1634,17 +1393,7 @@ if (! \function_exists('parseNullableString')) {
      */
     function parseNullableString(mixed $value): ?string
     {
-        if ($value === null || \is_string($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
+        return Typer::parseNullableString($value);
     }
 }
 
@@ -1654,11 +1403,7 @@ if (! \function_exists('mustParseString')) {
      */
     function mustParseString(mixed $value): string
     {
-        $value = mustParseNullableString($value);
-
-        \assert($value !== null, \sprintf('value:[%s] is not string', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseString($value);
     }
 }
 
@@ -1668,15 +1413,7 @@ if (! \function_exists('mustParseNullableString')) {
      */
     function mustParseNullableString(mixed $value): ?string
     {
-        if ($value === null || \is_string($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value);
-
-        \assert($value !== false, \sprintf('value:[%s] is not string or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseNullableString($value);
     }
 }
 
@@ -1686,7 +1423,7 @@ if (! \function_exists('parseBool')) {
      */
     function parseBool(mixed $value): bool
     {
-        return parseNullableBool($value) ?? false;
+        return Typer::parseBool($value);
     }
 }
 
@@ -1696,11 +1433,7 @@ if (! \function_exists('parseNullableBool')) {
      */
     function parseNullableBool(mixed $value): ?bool
     {
-        if ($value === null || \is_bool($value)) {
-            return $value;
-        }
-
-        return \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
+        return Typer::parseNullableBool($value);
     }
 }
 
@@ -1710,11 +1443,7 @@ if (! \function_exists('mustParseBool')) {
      */
     function mustParseBool(mixed $value): bool
     {
-        $value = mustParseNullableBool($value);
-
-        \assert($value !== null, \sprintf('value:[%s] is not bool', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseBool($value);
     }
 }
 
@@ -1724,15 +1453,7 @@ if (! \function_exists('mustParseNullableBool')) {
      */
     function mustParseNullableBool(mixed $value): ?bool
     {
-        if ($value === null || \is_bool($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
-
-        \assert($value !== null, \sprintf('value:[%s] is not bool or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseNullableBool($value);
     }
 }
 
@@ -1742,7 +1463,7 @@ if (! \function_exists('parseInt')) {
      */
     function parseInt(mixed $value): int
     {
-        return parseNullableInt($value) ?? 0;
+        return Typer::parseInt($value);
     }
 }
 
@@ -1752,17 +1473,7 @@ if (! \function_exists('parseNullableInt')) {
      */
     function parseNullableInt(mixed $value): ?int
     {
-        if ($value === null || \is_int($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value, \FILTER_VALIDATE_INT);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
+        return Typer::parseNullableInt($value);
     }
 }
 
@@ -1772,11 +1483,7 @@ if (! \function_exists('mustParseInt')) {
      */
     function mustParseInt(mixed $value): int
     {
-        $value = mustParseNullableInt($value);
-
-        \assert($value !== null, \sprintf('value:[%s] is not int', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseInt($value);
     }
 }
 
@@ -1786,15 +1493,7 @@ if (! \function_exists('mustParseNullableInt')) {
      */
     function mustParseNullableInt(mixed $value): ?int
     {
-        if ($value === null || \is_int($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value, \FILTER_VALIDATE_INT);
-
-        \assert($value !== false, \sprintf('value:[%s] is not int or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseNullableInt($value);
     }
 }
 
@@ -1804,7 +1503,7 @@ if (! \function_exists('parseFloat')) {
      */
     function parseFloat(mixed $value): float
     {
-        return parseNullableFloat($value) ?? 0.0;
+        return Typer::parseFloat($value);
     }
 }
 
@@ -1814,17 +1513,7 @@ if (! \function_exists('parseNullableFloat')) {
      */
     function parseNullableFloat(mixed $value): ?float
     {
-        if ($value === null || \is_float($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
+        return Typer::parseNullableFloat($value);
     }
 }
 
@@ -1834,11 +1523,7 @@ if (! \function_exists('mustParseFloat')) {
      */
     function mustParseFloat(mixed $value): float
     {
-        $value = mustParseNullableFloat($value);
-
-        \assert($value !== null, \sprintf('value:[%s] is not float', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseFloat($value);
     }
 }
 
@@ -1848,15 +1533,7 @@ if (! \function_exists('mustParseNullableFloat')) {
      */
     function mustParseNullableFloat(mixed $value): ?float
     {
-        if ($value === null || \is_int($value)) {
-            return $value;
-        }
-
-        $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
-
-        \assert($value !== false, \sprintf('value:[%s] is not float or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseNullableFloat($value);
     }
 }
 
@@ -1868,7 +1545,7 @@ if (! \function_exists('parseArray')) {
      */
     function parseArray(mixed $value): array
     {
-        return parseNullableArray($value) ?? [];
+        return Typer::parseArray($value);
     }
 }
 
@@ -1880,15 +1557,7 @@ if (! \function_exists('parseNullableArray')) {
      */
     function parseNullableArray(mixed $value): ?array
     {
-        if ($value === null || \is_array($value)) {
-            return $value;
-        }
-
-        if (\is_object($value)) {
-            return \get_object_vars($value);
-        }
-
-        return null;
+        return Typer::parseNullableArray($value);
     }
 }
 
@@ -1900,11 +1569,7 @@ if (! \function_exists('mustParseArray')) {
      */
     function mustParseArray(mixed $value): array
     {
-        $value = mustParseNullableArray($value);
-
-        \assert($value !== null, \sprintf('value:[%s] is not array', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseArray($value);
     }
 }
 
@@ -1916,13 +1581,7 @@ if (! \function_exists('mustParseNullableArray')) {
      */
     function mustParseNullableArray(mixed $value): ?array
     {
-        if (\is_object($value)) {
-            return \get_object_vars($value);
-        }
-
-        \assert($value === null || \is_array($value), \sprintf('value:[%s] is not array or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseNullableArray($value);
     }
 }
 
@@ -1932,7 +1591,7 @@ if (! \function_exists('parseFile')) {
      */
     function parseFile(mixed $value): UploadedFile
     {
-        return parseNullableFile($value) ?? UploadedFile::createFromBase(UploadedFile::fake()->create(assertString(\tempnam(\sys_get_temp_dir(), 'php'))));
+        return Typer::parseFile($value);
     }
 }
 
@@ -1942,11 +1601,7 @@ if (! \function_exists('parseNullableFile')) {
      */
     function parseNullableFile(mixed $value): ?UploadedFile
     {
-        if ($value === null || $value instanceof UploadedFile) {
-            return $value;
-        }
-
-        return null;
+        return Typer::parseNullableFile($value);
     }
 }
 
@@ -1956,7 +1611,7 @@ if (! \function_exists('mustParseFile')) {
      */
     function mustParseFile(mixed $value): UploadedFile
     {
-        return assertFile($value);
+        return Typer::mustParseFile($value);
     }
 }
 
@@ -1966,7 +1621,7 @@ if (! \function_exists('mustParseNullableFile')) {
      */
     function mustParseNullableFile(mixed $value): ?UploadedFile
     {
-        return assertNullableFile($value);
+        return Typer::mustParseNullableFile($value);
     }
 }
 
@@ -1976,7 +1631,7 @@ if (! \function_exists('parseCarbon')) {
      */
     function parseCarbon(mixed $value, ?string $format = null, ?string $tz = null): Carbon
     {
-        return parseNullableCarbon($value, $format, $tz) ?? resolveNow();
+        return Typer::parseCarbon($value, $format, $tz);
     }
 }
 
@@ -1986,27 +1641,7 @@ if (! \function_exists('parseNullableCarbon')) {
      */
     function parseNullableCarbon(mixed $value, ?string $format = null, ?string $tz = null): ?Carbon
     {
-        if ($value === null || $value instanceof Carbon) {
-            return $value;
-        }
-
-        $value = \filter_var($value);
-
-        if ($value === false || $value === '') {
-            return null;
-        }
-
-        if ($format === null) {
-            return resolveDate()->parse($value, $tz);
-        }
-
-        $value = resolveDate()->createFromFormat($format, $value, $tz);
-
-        if ($value === false) {
-            return null;
-        }
-
-        return $value;
+        return Typer::parseNullableCarbon($value, $format, $tz);
     }
 }
 
@@ -2016,11 +1651,7 @@ if (! \function_exists('mustParseCarbon')) {
      */
     function mustParseCarbon(mixed $value, ?string $format = null, ?string $tz = null): Carbon
     {
-        $value = mustParseNullableCarbon($value, $format, $tz);
-
-        \assert($value !== null, \sprintf('value:[%s] is not carbon', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseCarbon($value, $format, $tz);
     }
 }
 
@@ -2030,23 +1661,7 @@ if (! \function_exists('mustParseNullableCarbon')) {
      */
     function mustParseNullableCarbon(mixed $value, ?string $format = null, ?string $tz = null): ?Carbon
     {
-        if ($value === null || $value instanceof Carbon) {
-            return $value;
-        }
-
-        $value = \filter_var($value);
-
-        \assert($value !== false && $value !== '', \sprintf('value:[%s] is not carbon or null', \get_debug_type($value)));
-
-        if ($format === null) {
-            return resolveDate()->parse($value, $tz);
-        }
-
-        $value = resolveDate()->createFromFormat($format, $value, $tz);
-
-        \assert($value !== false, \sprintf('value:[%s] is not carbon or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseNullableCarbon($value, $format, $tz);
     }
 }
 
@@ -2056,7 +1671,7 @@ if (! \function_exists('parseObject')) {
      */
     function parseObject(mixed $value): object
     {
-        return parseNullableObject($value) ?? new stdClass();
+        return Typer::parseObject($value);
     }
 }
 
@@ -2066,15 +1681,7 @@ if (! \function_exists('parseNullableObject')) {
      */
     function parseNullableObject(mixed $value): ?object
     {
-        if ($value === null || \is_object($value)) {
-            return $value;
-        }
-
-        if (\is_array($value)) {
-            return (object) $value;
-        }
-
-        return null;
+        return Typer::parseNullableObject($value);
     }
 }
 
@@ -2084,11 +1691,7 @@ if (! \function_exists('mustParseObject')) {
      */
     function mustParseObject(mixed $value): object
     {
-        $value = mustParseNullableObject($value);
-
-        \assert($value !== null, \sprintf('value:[%s] is not object', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseObject($value);
     }
 }
 
@@ -2098,13 +1701,7 @@ if (! \function_exists('mustParseNullableObject')) {
      */
     function mustParseNullableObject(mixed $value): ?object
     {
-        if (\is_array($value)) {
-            return (object) $value;
-        }
-
-        \assert($value === null || \is_object($value), \sprintf('value:[%s] is not object or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseNullableObject($value);
     }
 }
 
@@ -2114,7 +1711,7 @@ if (! \function_exists('parseScalar')) {
      */
     function parseScalar(mixed $value): string|int|float|bool
     {
-        return parseNullableScalar($value) ?? '';
+        return Typer::parseScalar($value);
     }
 }
 
@@ -2124,11 +1721,7 @@ if (! \function_exists('parseNullableScalar')) {
      */
     function parseNullableScalar(mixed $value): string|int|float|bool|null
     {
-        if ($value === null || \is_scalar($value)) {
-            return $value;
-        }
-
-        return null;
+        return Typer::parseNullableScalar($value);
     }
 }
 
@@ -2138,11 +1731,7 @@ if (! \function_exists('mustParseScalar')) {
      */
     function mustParseScalar(mixed $value): string|int|float|bool
     {
-        $value = mustParseNullableScalar($value);
-
-        \assert($value !== null, \sprintf('value:[%s] is not scalar', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseScalar($value);
     }
 }
 
@@ -2152,9 +1741,7 @@ if (! \function_exists('mustParseNullableScalar')) {
      */
     function mustParseNullableScalar(mixed $value): string|int|float|bool|null
     {
-        \assert($value === null || \is_scalar($value), \sprintf('value:[%s] is not scalar or null', \get_debug_type($value)));
-
-        return $value;
+        return Typer::mustParseNullableScalar($value);
     }
 }
 
@@ -2170,7 +1757,7 @@ if (! \function_exists('parseEnum')) {
      */
     function parseEnum(mixed $value, string $enum): BackedEnum
     {
-        return parseNullableEnum($value, $enum) ?? $enum::cases()[0];
+        return Typer::parseEnum($value, $enum);
     }
 }
 
@@ -2186,17 +1773,7 @@ if (! \function_exists('parseNullableEnum')) {
      */
     function parseNullableEnum(mixed $value, string $enum): ?BackedEnum
     {
-        if ((string) (new ReflectionEnum($enum))->getBackingType() === 'int') {
-            $value = parseNullableInt($value);
-        } else {
-            $value = parseNullableString($value);
-        }
-
-        if ($value === null) {
-            return $value;
-        }
-
-        return $enum::tryFrom($value);
+        return Typer::parseNullableEnum($value, $enum);
     }
 }
 
@@ -2204,15 +1781,15 @@ if (! \function_exists('mustParseEnum')) {
     /**
      * Must parse enum.
      *
-     * @param class-string<BackedEnum> $enum
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
      */
     function mustParseEnum(mixed $value, string $enum): BackedEnum
     {
-        $value = mustParseNullableEnum($value, $enum);
-
-        \assert($value !== null, \sprintf('value:[%s] is not class:[%s] enum', \get_debug_type($value), $enum));
-
-        return $value;
+        return Typer::mustParseEnum($value, $enum);
     }
 }
 
@@ -2228,17 +1805,7 @@ if (! \function_exists('mustParseNullableEnum')) {
      */
     function mustParseNullableEnum(mixed $value, string $enum): ?BackedEnum
     {
-        if ((string) (new ReflectionEnum($enum))->getBackingType() === 'int') {
-            $value = mustParseNullableInt($value);
-        } else {
-            $value = mustParseNullableString($value);
-        }
-
-        if ($value === null) {
-            return $value;
-        }
-
-        return $enum::from($value);
+        return Typer::mustParseNullableEnum($value, $enum);
     }
 }
 
@@ -2255,10 +1822,160 @@ if (! \function_exists('assertIn')) {
      */
     function assertIn(mixed $value, array $enum): mixed
     {
-        if (\in_array($value, $enum, true)) {
-            return $value;
-        }
+        return Typer::assertIn($value, $enum);
+    }
+}
 
-        throw new RuntimeException(\sprintf('value:[%s] is not in array', \get_debug_type($value)));
+if (! \function_exists('assertNotNull')) {
+    /**
+     * Assert not null.
+     *
+     * @template T of string|int|float|bool|object|array
+     *
+     * @param T|null $value
+     *
+     * @return T
+     */
+    function assertNotNull(mixed $value): string|int|float|bool|object|array
+    {
+        return Typer::assertNotNull($value);
+    }
+}
+
+if (! \function_exists('assertNull')) {
+    /**
+     * Assert null.
+     */
+    function assertNull(mixed $value): mixed
+    {
+        return Typer::assertNull($value);
+    }
+}
+
+if (! \function_exists('parseIntEnum')) {
+    /**
+     * Parse int enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
+     */
+    function parseIntEnum(mixed $value, string $enum): BackedEnum
+    {
+        return Typer::parseIntEnum($value, $enum);
+    }
+}
+
+if (! \function_exists('parseNullableIntEnum')) {
+    /**
+     * Parse nullable int enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    function parseNullableIntEnum(mixed $value, string $enum): ?BackedEnum
+    {
+        return Typer::parseNullableIntEnum($value, $enum);
+    }
+}
+
+if (! \function_exists('mustParseIntEnum')) {
+    /**
+     * Must parse int enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
+     */
+    function mustParseIntEnum(mixed $value, string $enum): BackedEnum
+    {
+        return Typer::mustParseIntEnum($value, $enum);
+    }
+}
+
+if (! \function_exists('mustParseNullableIntEnum')) {
+    /**
+     * Must parse nullable int enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    function mustParseNullableIntEnum(mixed $value, string $enum): ?BackedEnum
+    {
+        return Typer::mustParseNullableIntEnum($value, $enum);
+    }
+}
+
+if (! \function_exists('parseStringEnum')) {
+    /**
+     * Parse string enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
+     */
+    function parseStringEnum(mixed $value, string $enum): BackedEnum
+    {
+        return Typer::parseStringEnum($value, $enum);
+    }
+}
+
+if (! \function_exists('parseNullableStringEnum')) {
+    /**
+     * Parse nullable string enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    function parseNullableStringEnum(mixed $value, string $enum): ?BackedEnum
+    {
+        return Typer::parseNullableStringEnum($value, $enum);
+    }
+}
+
+if (! \function_exists('mustParseStringEnum')) {
+    /**
+     * Must parse string enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T
+     */
+    function mustParseStringEnum(mixed $value, string $enum): BackedEnum
+    {
+        return Typer::mustParseStringEnum($value, $enum);
+    }
+}
+
+if (! \function_exists('mustParseNullableStringEnum')) {
+    /**
+     * Must parse nullable string enum.
+     *
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enum
+     *
+     * @return T|null
+     */
+    function mustParseNullableStringEnum(mixed $value, string $enum): ?BackedEnum
+    {
+        return Typer::mustParseNullableStringEnum($value, $enum);
     }
 }
