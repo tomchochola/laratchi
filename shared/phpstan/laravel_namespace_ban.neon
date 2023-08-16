@@ -1,0 +1,9 @@
+parameters:
+  disallowedNamespaces:
+    -
+      namespace: 'Illuminate\Support\Facades\*'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::*()'
+      allowIn:
+        - tests/*
+        - src/Support/Resolver.php
+        - src/Testing/*

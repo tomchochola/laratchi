@@ -1,0 +1,178 @@
+parameters:
+  disallowedFunctionCalls:
+    -
+      function: 'abort()'
+      message: 'use throw new Tomchochola\Laratchi\Exceptions\HttpException() or throw new Tomchochola\Laratchi\Exceptions\ValidationException()'
+    -
+      function: 'abort_if()'
+      message: 'use throw new Tomchochola\Laratchi\Exceptions\HttpException() or throw new Tomchochola\Laratchi\Exceptions\ValidationException()'
+    -
+      function: 'abort_unless()'
+      message: 'use throw new Tomchochola\Laratchi\Exceptions\HttpException() or throw new Tomchochola\Laratchi\Exceptions\ValidationException()'
+    -
+      function: 'action()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveUrlGenerator()->action()'
+    -
+      function: 'app()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()'
+    -
+      function: 'app_path()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()->path()'
+    -
+      function: 'asset()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveUrlGenerator()->asset()'
+    -
+      function: 'auth()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveAuthManager()'
+    -
+      function: 'back()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRedirector()->back()'
+    -
+      function: 'base_path()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()->basePath()'
+    -
+      function: 'bcrypt()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveHasher()'
+    -
+      function: 'broadcast()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveBroadcastManager()->broadcast()'
+    -
+      function: 'cache()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveCacheManager()->get()'
+    -
+      function: 'config()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->*()'
+    -
+      function: 'config_path()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()->configPath()'
+    -
+      function: 'cookie()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveCookieJar()->make()'
+    -
+      function: 'csrf_field()'
+      message: 'use @csrf'
+    -
+      function: 'csrf_token()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveSessionStore()->token()'
+    -
+      function: 'database_path()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()->databasePath()'
+    -
+      function: 'decrypt()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveEncrypter()->decrypt()'
+    -
+      function: 'dispatch()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveQueueingDispatcher->dispatch()'
+    -
+      function: 'dispatch_sync()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveQueueingDispatcher->dispatchSync()'
+    -
+      function: 'dispatch_now()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveQueueingDispatcher->dispatchNow()'
+    -
+      function: 'encrypt()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveEncrypter()->encrypt()'
+    -
+      function: 'event()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveEventDispatcher()->dispatch()'
+    -
+      function: 'info()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveLogManager()->info()'
+    -
+      function: 'logger()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveLogManager()'
+    -
+      function: 'lang_path()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()->langPath()'
+    -
+      function: 'logs()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveLogManager()'
+    -
+      function: 'method_field()'
+      message: 'use @method'
+    -
+      function: 'mix()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveMix()'
+    -
+      function: 'now()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveDateFactory()'
+    -
+      function: 'old()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRequest()->old()'
+    -
+      function: 'policy()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveGate()->getPolicyFor()'
+    -
+      function: 'precognitive()'
+    -
+      function: 'public_path()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()->publicPath()'
+    -
+      function: 'redirect()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRedirector()->to()'
+    -
+      function: 'report()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveExceptionHandler()->report()'
+    -
+      function: 'report_if()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveExceptionHandler()->report()'
+    -
+      function: 'report_unless()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveExceptionHandler()->report()'
+    -
+      function: 'request()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRequest()'
+    -
+      function: 'rescue()'
+      message: 'use try {} catch {}'
+    -
+      function: 'resolve()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolve() or Tomchochola\Laratchi\Support\Resolver::make()'
+    -
+      function: 'resource_path()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()->resourcePath()'
+    -
+      function: 'response()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveResponseFactory()->make()'
+    -
+      function: 'route()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveUrlGenerator()->route()'
+    -
+      function: 'secure_asset()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveUrlGenerator()->secureAsset()'
+    -
+      function: 'secure_url()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveUrlGenerator()->secure()'
+    -
+      function: 'session()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveSessionStore()->get()'
+    -
+      function: 'storage_path()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()->storagePath()'
+    -
+      function: 'to_route()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRedirector()->route()'
+    -
+      function: 'today()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveDateFactory()->today()'
+    -
+      function: 'trans()'
+      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->*()'
+    -
+      function: 'trans_choice()'
+      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->*()'
+    -
+      function: '__()'
+      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->*()'
+    -
+      function: 'url()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveUrlGenerator()->to()'
+    -
+      function: 'validator()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveValidator()'
+    -
+      function: 'view()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveViewFactory()->make()'
+    -
+      function: 'env()'
+      message: 'use (new Tomchochola\Laratchi\Config\Env())->*()'

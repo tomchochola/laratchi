@@ -1,0 +1,55 @@
+parameters:
+  disallowedMethodCalls:
+    -
+      method: 'Illuminate\Contracts\Config\Repository::*()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->*()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
+    -
+      method: 'Illuminate\Support\Env::*()'
+      message: 'use (new Tomchochola\Laratchi\Config\Env())->*()'
+      allowIn:
+        - src/Config/Env.php
+        - src/Helpers/functions.php
+    -
+      method: 'Illuminate\Contracts\Translation\Translator::*()'
+      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->*()'
+      allowIn:
+        - src/Translation/Trans.php
+    -
+      method: 'Illuminate\Validation\ValidationException::withMessages()'
+      message: 'use (new Tomchochola\Laratchi\Exceptions\Thrower())->*()'
+    -
+      method: 'Illuminate\Foundation\Application::environment()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv*()'
+    -
+      method: 'Illuminate\Foundation\Application::isLocal()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv*()'
+    -
+      method: 'Illuminate\Foundation\Application::isProduction()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv*()'
+    -
+      method: 'Illuminate\Foundation\Application::runningUnitTests()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv*()'
+    -
+      method: 'Illuminate\Foundation\Application::hasDebugModeEnabled()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv*()'
+    -
+      method: 'Illuminate\Foundation\Application::getLocale()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appLocale()'
+    -
+      method: 'Illuminate\Foundation\Application::currentLocale()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appLocale()'
+    -
+      method: 'Illuminate\Foundation\Application::getFallbackLocale()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appFallbackLocale()'
+    -
+      method: 'Illuminate\Foundation\Application::isLocale()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appLocale()'
+    -
+      method: 'Illuminate\Foundation\Application::setLocale()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->setAppLocale()'
+    -
+      method: 'Illuminate\Foundation\Application::setFallbackLocale()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->setAppFallbackLocale()'

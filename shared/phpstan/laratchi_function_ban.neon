@@ -1,0 +1,482 @@
+parameters:
+  disallowedFunctionCalls:
+    -
+      function: 'mustTransString()'
+      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->assertString()'
+    -
+      function: 'mustTransJsonString()'
+      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->assertString()'
+    -
+      function: 'mustTransArray()'
+      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->assertArray()'
+    -
+      function: 'configBool()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertNullableBool()'
+    -
+      function: 'mustConfigBool()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertBool()'
+    -
+      function: 'configInt()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertNullableInt()'
+    -
+      function: 'mustConfigInt()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertInt()'
+    -
+      function: 'configFloat()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertNullableFloat()'
+    -
+      function: 'mustConfigFloat()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertFloat()'
+    -
+      function: 'configArray()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertNullableArray()'
+    -
+      function: 'mustConfigArray()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertArray()'
+    -
+      function: 'configString()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertNullableString()'
+    -
+      function: 'mustConfigString()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertString()'
+    -
+      function: 'inject()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolve() or Tomchochola\Laratchi\Support\Resolver::make()'
+    -
+      function: 'resolveApp()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()'
+    -
+      function: 'resolveArtisan()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveConsoleKernel()'
+    -
+      function: 'resolveKernel()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveHttpKernel()'
+    -
+      function: 'resolveConsoleKernel()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveConsoleKernel()'
+    -
+      function: 'resolveHttpKernel()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveHttpKernel()'
+    -
+      function: 'resolveAuthManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveAuthManager()'
+    -
+      function: 'resolveGuard()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveAuthManager()->guard()'
+    -
+      function: 'resolveUserProvider()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveAuthManager()->createUserProvider()'
+    -
+      function: 'resolveBlade()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveBladeCompiler()'
+    -
+      function: 'resolveBroadcastManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveBroadcastManager()'
+    -
+      function: 'resolveBus()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveQueueingDispatcher()'
+    -
+      function: 'resolveCacheManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveCacheManager()'
+    -
+      function: 'resolveCache()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveCacheManager()->store()'
+    -
+      function: 'resolveConfig()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveConfigRepository()'
+    -
+      function: 'resolveCookieJar()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveCookieJar()'
+    -
+      function: 'resolveEncrypter()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveEncrypter()'
+    -
+      function: 'resolveDatabaseManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveDatabaseManager()'
+    -
+      function: 'resolveDatabase()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveDatabaseManager()->connection()'
+    -
+      function: 'resolveEventDispatcher()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveEventDispatcher()'
+    -
+      function: 'resolveFilesystem()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveFilesystem()'
+    -
+      function: 'resolveGate()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveGate()'
+    -
+      function: 'resolveHashManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveHashManager()'
+    -
+      function: 'resolveHasher()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveHasher()'
+    -
+      function: 'resolveHttp()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveHttpClientFactory()'
+    -
+      function: 'resolveTranslator()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveTranslator()'
+    -
+      function: 'resolveLogger()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveLogManager()'
+    -
+      function: 'resolveMailManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveMailFactory()'
+    -
+      function: 'resolveNotificator()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveNotificationFactory()'
+    -
+      function: 'resolveParallelTesting()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveParallelTesting()'
+    -
+      function: 'resolvePasswordBrokerManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolvePasswordBrokerManager()'
+    -
+      function: 'resolvePasswordBroker()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolvePasswordBroker()'
+    -
+      function: 'resolvePasswordTokenRepository()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveDatabaseTokenRepository()'
+    -
+      function: 'resolveQueueManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveQueueManager()'
+    -
+      function: 'resolveRateLimiter()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRateLimiter()'
+    -
+      function: 'resolveRedirector()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRedirector()'
+    -
+      function: 'resolveRedisManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRedisManager()'
+    -
+      function: 'resolveRequest()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRequest()'
+    -
+      function: 'resolveResponseFactory()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveResponseFactory()'
+    -
+      function: 'resolveRouter()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRouter()'
+    -
+      function: 'resolveRouteRegistrar()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveRouteRegistrar()'
+    -
+      function: 'resolveSchema()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveSchemaBuilder()'
+    -
+      function: 'resolveSessionManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveSessionManager()'
+    -
+      function: 'resolveSession()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveSessionStore()'
+    -
+      function: 'resolveFilesystemManager()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveFilesystemManager()'
+    -
+      function: 'resolveUrlFactory()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveUrlGenerator()'
+    -
+      function: 'resolveValidatorFactory()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveValidatorFactory()'
+    -
+      function: 'resolveViewFactory()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveViewFactory()'
+    -
+      function: 'resolveExceptionHandler()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveExceptionHandler()'
+    -
+      function: 'resolveDate()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveDateFactory()'
+    -
+      function: 'resolveNow()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveDateFactory()->now()'
+    -
+      function: 'resolveMix()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveMix()'
+    -
+      function: 'resolveVite()'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveVite()'
+    -
+      function: 'unsafeEnv()'
+      message: 'use (new Tomchochola\Laratchi\Config\Env())->mixed()'
+    -
+      function: 'envString()'
+      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseNullableString()'
+    -
+      function: 'mustEnvString()'
+      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseString()'
+    -
+      function: 'envBool()'
+      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseNullableBool()'
+    -
+      function: 'mustEnvBool()'
+      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseBool()'
+    -
+      function: 'envInt()'
+      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseNullableInt()'
+    -
+      function: 'mustEnvInt()'
+      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseInt()'
+    -
+      function: 'envFloat()'
+      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseNullableFloat()'
+    -
+      function: 'mustEnvFloat()'
+      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseFloat()'
+    -
+      function: 'currentEnv()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv() or (new Tomchochola\Laratchi\Config\Env())->appEnv()'
+    -
+      function: 'isEnv()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnvIn() or (new Tomchochola\Laratchi\Config\Env())->appEnvIn()'
+    -
+      function: 'mapEnv()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnvMap() or (new Tomchochola\Laratchi\Config\Env())->appEnvMap()'
+    -
+      function: 'assertNever()'
+      message: 'use throw new LogicException()'
+    -
+      function: 'assertNeverIf()'
+      message: 'use if (true) {throw new LogicException();}'
+    -
+      function: 'assertNeverIfNot()'
+      message: 'use if (false) {throw new LogicException();}'
+    -
+      function: 'assertNeverClosure()'
+      message: 'use static function (): never {throw new LogicException();}'
+    -
+      function: 'strPutCsv()'
+      message: 'use Tomchochola\Laratchi\Encoding::*()'
+    -
+      function: 'locale()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appLocale()'
+    -
+      function: 'locales()'
+      message: 'use (new Tomchochola\Laratchi\Config\Config())->appLocales()'
+    -
+      function: 'assertString()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertString()'
+    -
+      function: 'assertNullableString()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableString()'
+    -
+      function: 'assertBool()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertBool()'
+    -
+      function: 'assertNullableBool()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableBool()'
+    -
+      function: 'assertInt()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertInt()'
+    -
+      function: 'assertNullableInt()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableInt()'
+    -
+      function: 'assertFloat()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertFloat()'
+    -
+      function: 'assertNullableFloat()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableFloat()'
+    -
+      function: 'assertArray()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertArray()'
+    -
+      function: 'assertNullableArray()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableArray()'
+    -
+      function: 'assertFile()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertFile()'
+    -
+      function: 'assertNullableFile()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableFile()'
+    -
+      function: 'assertCarbon()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertCarbon()'
+    -
+      function: 'assertNullableCarbon()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableCarbon()'
+    -
+      function: 'assertObject()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertObject()'
+    -
+      function: 'assertNullableObject()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableObject()'
+    -
+      function: 'assertScalar()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertScalar()'
+    -
+      function: 'assertNullableScalar()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableScalar()'
+    -
+      function: 'assertEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertEnum()'
+    -
+      function: 'assertNullableEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableEnum()'
+    -
+      function: 'assertInstance()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertInstance()'
+    -
+      function: 'assertNullableInstance()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableInstance()'
+    -
+      function: 'assertA()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertA()'
+    -
+      function: 'assertNullableA()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNullableA()'
+    -
+      function: 'parseString()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseString()'
+    -
+      function: 'parseNullableString()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableString()'
+    -
+      function: 'mustParseString()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseString()'
+    -
+      function: 'mustParseNullableString()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableString()'
+    -
+      function: 'parseBool()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseBool()'
+    -
+      function: 'parseNullableBool()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableBool()'
+    -
+      function: 'mustParseBool()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseBool()'
+    -
+      function: 'mustParseNullableBool()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableBool()'
+    -
+      function: 'parseInt()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseInt()'
+    -
+      function: 'parseNullableInt()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableInt()'
+    -
+      function: 'mustParseInt()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseInt()'
+    -
+      function: 'mustParseNullableInt()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableInt()'
+    -
+      function: 'parseFloat()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseFloat()'
+    -
+      function: 'parseNullableFloat()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableFloat()'
+    -
+      function: 'mustParseFloat()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseFloat()'
+    -
+      function: 'mustParseNullableFloat()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableFloat()'
+    -
+      function: 'parseArray()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseArray()'
+    -
+      function: 'parseNullableArray()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableArray()'
+    -
+      function: 'mustParseArray()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseArray()'
+    -
+      function: 'mustParseNullableArray()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableArray()'
+    -
+      function: 'parseFile()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseFile()'
+    -
+      function: 'parseNullableFile()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableFile()'
+    -
+      function: 'mustParseFile()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseFile()'
+    -
+      function: 'mustParseNullableFile()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableFile()'
+    -
+      function: 'parseCarbon()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseCarbon()'
+    -
+      function: 'parseNullableCarbon()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableCarbon()'
+    -
+      function: 'mustParseCarbon()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseCarbon()'
+    -
+      function: 'mustParseNullableCarbon()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableCarbon()'
+    -
+      function: 'parseObject()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseObject()'
+    -
+      function: 'parseNullableObject()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableObject()'
+    -
+      function: 'mustParseObject()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseObject()'
+    -
+      function: 'mustParseNullableObject()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableObject()'
+    -
+      function: 'parseScalar()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseScalar()'
+    -
+      function: 'parseNullableScalar()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableScalar()'
+    -
+      function: 'mustParseScalar()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseScalar()'
+    -
+      function: 'mustParseNullableScalar()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableScalar()'
+    -
+      function: 'parseEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseEnum()'
+    -
+      function: 'parseNullableEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableEnum()'
+    -
+      function: 'mustParseEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseEnum()'
+    -
+      function: 'mustParseNullableEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableEnum()'
+    -
+      function: 'assertIn()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertIn()'
+    -
+      function: 'assertNotNull()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNotNull()'
+    -
+      function: 'assertNull()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::assertNull()'
+    -
+      function: 'parseIntEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseIntEnum()'
+    -
+      function: 'parseNullableIntEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableIntEnum()'
+    -
+      function: 'mustParseIntEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseIntEnum()'
+    -
+      function: 'mustParseNullableIntEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableIntEnum()'
+    -
+      function: 'parseStringEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseStringEnum()'
+    -
+      function: 'parseNullableStringEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::parseNullableStringEnum()'
+    -
+      function: 'mustParseStringEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseStringEnum()'
+    -
+      function: 'mustParseNullableStringEnum()'
+      message: 'use Tomchochola\Laratchi\Support\Typer::mustParseNullableStringEnum()'

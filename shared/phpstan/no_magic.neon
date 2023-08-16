@@ -1,0 +1,8 @@
+parameters:
+  disallowedNamespaces:
+    -
+      namespace: 'Illuminate\Foundation\Bus\Dispatchable'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveQueueingDispatcher()->*()'
+    -
+      namespace: 'Illuminate\Foundation\Bus\DispatchesJobs'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveQueueingDispatcher()->*()'

@@ -1,0 +1,6 @@
+includes:
+    - laravel_function_ban.neon
+    - laravel_namespace_ban.neon
+    - no_magic.neon
+    - only_one_way.neon
+    - laratchi_function_ban.neon

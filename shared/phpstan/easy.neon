@@ -1,0 +1,3 @@
+includes:
+    - laravel_function_ban.neon
+    - laravel_namespace_ban.neon
