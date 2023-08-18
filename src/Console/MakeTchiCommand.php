@@ -218,10 +218,14 @@ class MakeTchiCommand extends GeneratorCommand
      */
     protected function modifyOpenApi(): void
     {
+        $path = $this->laravel->basePath('public/docs/openapi_v1.json');
+
+        if (! $this->files->exists($path)) {
+            return;
+        }
+
         $modelName = $this->modelName();
         $table = $this->tableName();
-
-        $path = $this->laravel->basePath('public/docs/openapi_v1.json');
 
         $openApi = $this->files->get($path);
 
@@ -714,8 +718,13 @@ class MakeTchiCommand extends GeneratorCommand
      */
     protected function modifyDatabaseSeeder(): void
     {
-        $modelName = $this->modelName();
         $path = $this->laravel->databasePath('seeders/DatabaseSeeder.php');
+
+        if (! $this->files->exists($path)) {
+            return;
+        }
+
+        $modelName = $this->modelName();
 
         $databaseSeeder = $this->files->get($path);
 
@@ -738,6 +747,11 @@ class MakeTchiCommand extends GeneratorCommand
     protected function modifyDatabaseSchema(): void
     {
         $path = $this->laravel->basePath('docs/database_schema.md');
+
+        if (! $this->files->exists($path)) {
+            return;
+        }
+
         $table = $this->tableName();
 
         $databaseSchema = $this->files->get($path);
@@ -756,9 +770,14 @@ class MakeTchiCommand extends GeneratorCommand
      */
     protected function modifyRoutes(): void
     {
+        $path = $this->laravel->basePath('routes/api.php');
+
+        if (! $this->files->exists($path)) {
+            return;
+        }
+
         $modelName = $this->modelName();
         $table = $this->tableName();
-        $path = $this->laravel->basePath('routes/api.php');
 
         $routes = $this->files->get($path);
 
@@ -776,9 +795,14 @@ class MakeTchiCommand extends GeneratorCommand
      */
     protected function modifyTestCase(): void
     {
+        $path = $this->laravel->basePath('tests/TestCase.php');
+
+        if (! $this->files->exists($path)) {
+            return;
+        }
+
         $modelName = $this->modelName();
         $table = $this->tableName();
-        $path = $this->laravel->basePath('tests/TestCase.php');
 
         $validityName = "{$modelName}Validity";
         $qualifiedValidityName = "App\\Http\\Validation\\{$validityName}";
