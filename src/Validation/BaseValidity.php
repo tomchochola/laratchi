@@ -121,7 +121,23 @@ class BaseValidity
     {
         return Validity::make()
             ->string(null)
-            ->date();
+            ->dateFormat('Y-m-d\\TH:i:s.u\\Z');
+    }
+
+    /**
+     * Collection validation rules.
+     */
+    public function collection(): Validity
+    {
+        return Validity::make()->collection(null);
+    }
+
+    /**
+     * Array validation rules.
+     */
+    public function array(): Validity
+    {
+        return Validity::make()->array(null);
     }
 
     /**
@@ -245,8 +261,7 @@ class BaseValidity
 
         if ($filterId) {
             $rules = \array_replace($rules, [
-                'filter.id' => Validity::make()
-                    ->collection(null)
+                'filter.id' => $this->collection()
                     ->nullable()
                     ->filled(),
                 'filter.id.*' => $this->id()
@@ -257,8 +272,7 @@ class BaseValidity
 
         if ($filterNotId) {
             $rules = \array_replace($rules, [
-                'filter.not_id' => Validity::make()
-                    ->collection(null)
+                'filter.not_id' => $this->collection()
                     ->nullable()
                     ->filled(),
                 'filter.not_id.*' => $this->id()
@@ -269,8 +283,7 @@ class BaseValidity
 
         if ($filterSlug) {
             $rules = \array_replace($rules, [
-                'filter.slug' => Validity::make()
-                    ->collection(null)
+                'filter.slug' => $this->collection()
                     ->nullable()
                     ->filled(),
                 'filter.slug.*' => $this->slug()
@@ -281,8 +294,7 @@ class BaseValidity
 
         if ($filterNotSlug) {
             $rules = \array_replace($rules, [
-                'filter.not_slug' => Validity::make()
-                    ->collection(null)
+                'filter.not_slug' => $this->collection()
                     ->nullable()
                     ->filled(),
                 'filter.not_slug.*' => $this->slug()
@@ -301,8 +313,7 @@ class BaseValidity
 
         if ($sort !== null) {
             $rules = \array_replace($rules, [
-                'sort' => Validity::make()
-                    ->collection(null)
+                'sort' => $this->collection()
                     ->nullable()
                     ->filled(),
                 'sort.*' => $this->sort($sort)
@@ -321,13 +332,10 @@ class BaseValidity
 
         if ($data || $dataId !== null) {
             $rules = \array_replace($rules, [
-                'data' => Validity::make()
-                    ->collection(null)
+                'data' => $this->collection()
                     ->nullable()
                     ->filled(),
-                'data.*' => Validity::make()
-                    ->array(null)
-                    ->required(),
+                'data.*' => $this->array()->required(),
             ]);
         }
 
