@@ -5,17 +5,21 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Testing;
 
 use BackedEnum;
+use Carbon\Carbon;
+use DateTimeInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
+use JsonSerializable;
 use Stringable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Validation\SecureValidator;
 use Tomchochola\Laratchi\Validation\Validity;
+use UnexpectedValueException;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -148,10 +152,18 @@ abstract class TestCase extends BaseTestCase
                 $parameters[$key] = (string) $value;
             } elseif ($value instanceof BackedEnum) {
                 $parameters[$key] = $value->value;
+            } elseif ($value instanceof Carbon) {
+                $parameters[$key] = $value->toJSON();
+            } elseif ($value instanceof DateTimeInterface) {
+                $parameters[$key] = $value->format('Y-m-d\\TH:i:s.up');
+            } elseif ($value instanceof JsonSerializable) {
+                $parameters[$key] = $value->jsonSerialize();
+            } elseif ($value instanceof Stringable) {
+                $parameters[$key] = $value->__toString();
+            } elseif (\is_object($value)) {
+                $parameters[$key] = \count(\get_object_vars($value)) === 0 ? '' : $this->transformParameters(\get_object_vars($value));
             } else {
-                \assert($value instanceof Stringable, "Can not convert [{$key}] to multipart/form-data.");
-
-                $parameters[$key] = (string) $value;
+                throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not multipart/form-data encodable", \get_debug_type($value)));
             }
         }
 
