@@ -13,7 +13,7 @@ class Limit extends IlluminateLimit
     /**
      * @inheritDoc
      *
-     * @param Closure(int): Response|Closure(int): never|null $responseCallback
+     * @param Closure(int): Response|Closure(int): never|Closure(): Response|Closure(): never|null $responseCallback
      */
     public function __construct(string $key, int $maxAttempts, int $decayMinutes, ?Closure $responseCallback = null)
     {

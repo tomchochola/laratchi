@@ -39,7 +39,7 @@ class Throttler
     /**
      * Throttle.
      *
-     * @param Closure(int): never|Closure(int): Response|null $callback
+     * @param Closure(int): never|Closure(int): Response|Closure(): never|Closure(): Response|null $callback
      *
      * @return $this
      */
@@ -56,7 +56,7 @@ class Throttler
      * Throttle given callback.
      *
      * @param Closure($this): void|Closure(): void $closure
-     * @param Closure(int): never|Closure(int): Response|null $onError
+     * @param Closure(int): never|Closure(int): Response|Closure(): never|Closure(): Response|null $onError
      *
      * @return $this
      */
@@ -78,7 +78,7 @@ class Throttler
     /**
      * Throw exception.
      *
-     * @param Closure(int): never|Closure(int): Response|null $callback
+     * @param Closure(int): never|Closure(int): Response|Closure(): never|Closure(): Response|null $callback
      */
     public function throw(?Closure $callback = null): never
     {
