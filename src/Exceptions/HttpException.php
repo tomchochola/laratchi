@@ -6,8 +6,9 @@ namespace Tomchochola\Laratchi\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\HttpException as SymfonyHttpException;
 use Throwable;
+use Tomchochola\Laratchi\Interfaces\GetDataInterface;
 
-class HttpException extends SymfonyHttpException
+class HttpException extends SymfonyHttpException implements GetDataInterface
 {
     /**
      * @inheritDoc
@@ -18,5 +19,13 @@ class HttpException extends SymfonyHttpException
     public function __construct(int $statusCode, string $message = '', ?Throwable $previous = null, array $headers = [], int $code = 0, public array $data = [])
     {
         parent::__construct($statusCode, $message, $previous, $headers, $code);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getData(): array
+    {
+        return $this->data;
     }
 }

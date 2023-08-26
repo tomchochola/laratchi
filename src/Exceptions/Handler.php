@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException as SymfonyHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
+use Tomchochola\Laratchi\Interfaces\GetDataInterface;
 
 class Handler extends IlluminateHandler
 {
@@ -191,8 +192,8 @@ class Handler extends IlluminateHandler
 
         $json['code'] = $httpException->getCode();
 
-        if ($httpException instanceof HttpException) {
-            $json = \array_replace($json, $httpException->data);
+        if ($httpException instanceof GetDataInterface) {
+            $json['data'] = $httpException->getData();
         }
 
         return new JsonResponse(\array_replace($json, $data), $httpException->getStatusCode(), $httpException->getHeaders());
