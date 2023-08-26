@@ -7,11 +7,13 @@ namespace Tomchochola\Laratchi\Config;
 use Illuminate\Support\Env as IlluminateEnv;
 use RuntimeException;
 use Tomchochola\Laratchi\Support\AssertTrait;
+use Tomchochola\Laratchi\Support\ParseTrait;
 use Tomchochola\Laratchi\Support\Resolver;
 
 class Env
 {
     use AssertTrait;
+    use ParseTrait;
 
     /**
      * Mixed getter.

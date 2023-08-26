@@ -9,6 +9,7 @@ use RuntimeException;
 use Tomchochola\Laratchi\Support\AssertTrait;
 use Tomchochola\Laratchi\Support\AssignTrait;
 use Tomchochola\Laratchi\Support\ParserTrait;
+use Tomchochola\Laratchi\Support\ParseTrait;
 use Tomchochola\Laratchi\Support\Resolver;
 
 class Config
@@ -16,6 +17,7 @@ class Config
     use AssertTrait;
     use AssignTrait;
     use ParserTrait;
+    use ParseTrait;
 
     /**
      * Config repository.
