@@ -85,7 +85,7 @@ class EmailBrokerService
      */
     protected function cacheKey(string $guard, string $email): string
     {
-        return "email_verification:{$guard}:{$email}";
+        return \sprintf("%s:{$guard}:{$email}", static::class);
     }
 
     /**

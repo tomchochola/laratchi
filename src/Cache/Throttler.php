@@ -33,7 +33,7 @@ class Throttler
      */
     public function hash(): string
     {
-        return \sprintf('%s:%s', self::class, assertString($this->limit->key));
+        return \sprintf('%s:%s', static::class, assertString($this->limit->key));
     }
 
     /**
