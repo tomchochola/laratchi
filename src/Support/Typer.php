@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 use ReflectionEnum;
 use stdClass;
 use Tomchochola\Laratchi\Config\Config;
-use UnexpectedValueException;
+use Tomchochola\Laratchi\Exceptions\Panicker;
 
 class Typer
 {
@@ -217,7 +217,7 @@ class Typer
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf('value:[%s] is not class:[%s] enum', \get_debug_type($value), $enum));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('value', 'enum'));
     }
 
     /**
@@ -235,7 +235,7 @@ class Typer
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf('value:[%s] is not class:[%s] enum or null', \get_debug_type($value), $enum));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('value', 'enum'));
     }
 
     /**
@@ -253,7 +253,7 @@ class Typer
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf('value:[%s] is not class:[%s] instance', \get_debug_type($value), $class));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('value', 'class'));
     }
 
     /**
@@ -271,7 +271,7 @@ class Typer
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf('value:[%s] is not class:[%s] instance or null', \get_debug_type($value), $class));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('value', 'class'));
     }
 
     /**
@@ -289,7 +289,7 @@ class Typer
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf('value:[%s] is not class:[%s] class-string', \get_debug_type($value), $class));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('value', 'class'));
     }
 
     /**
@@ -311,7 +311,7 @@ class Typer
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf('value:[%s] is not class:[%s] class-string or null', \get_debug_type($value), $class));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('value', 'class'));
     }
 
     /**
@@ -882,7 +882,7 @@ class Typer
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf('value:[%s] is not in array', \get_debug_type($value)));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('value', 'enum'));
     }
 
     /**
@@ -907,7 +907,7 @@ class Typer
     public static function assertNull(mixed $value): mixed
     {
         if ($value !== null) {
-            throw new UnexpectedValueException(\sprintf('value:[%s] is not null', \get_debug_type($value)));
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('value'));
         }
 
         return $value;

@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Console;
 
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
+use Tomchochola\Laratchi\Exceptions\Panicker;
 
 class MakeTchiCommand extends GeneratorCommand
 {
@@ -32,7 +33,7 @@ class MakeTchiCommand extends GeneratorCommand
         $modelName = $this->modelName();
 
         if ($this->isReservedName($modelName)) {
-            $this->error("The name \"{$modelName}\" is reserved by PHP.");
+            $this->error(Panicker::message(__METHOD__, 'name is reserved by PHP', ['name' => $modelName]));
 
             return false;
         }

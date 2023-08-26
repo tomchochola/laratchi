@@ -236,16 +236,16 @@ parameters:
       message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnvMap() or (new Tomchochola\Laratchi\Config\Env())->appEnvMap()'
     -
       function: 'assertNever()'
-      message: 'use throw new LogicException()'
+      message: 'use Tomchochola\Laratchi\Exceptions\Panicker::panic()'
     -
       function: 'assertNeverIf()'
-      message: 'use if (true) {throw new LogicException();}'
+      message: 'use if (true) {Tomchochola\Laratchi\Exceptions\Panicker::panic();}'
     -
       function: 'assertNeverIfNot()'
-      message: 'use if (false) {throw new LogicException();}'
+      message: 'use if (false) {Tomchochola\Laratchi\Exceptions\Panicker::panic();}'
     -
       function: 'assertNeverClosure()'
-      message: 'use static function (): never {throw new LogicException();}'
+      message: 'use static function (): never {Tomchochola\Laratchi\Exceptions\Panicker::panic();}'
     -
       function: 'strPutCsv()'
       message: 'use Tomchochola\Laratchi\Encoding::*()'

@@ -7,7 +7,7 @@ namespace Tomchochola\Laratchi\Support;
 use BackedEnum;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
-use UnexpectedValueException;
+use Tomchochola\Laratchi\Exceptions\Panicker;
 
 trait AssertTrait
 {
@@ -287,7 +287,7 @@ trait AssertTrait
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] instance on:[%s]", \get_debug_type($value), static::class));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'class'));
     }
 
     /**
@@ -307,7 +307,7 @@ trait AssertTrait
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] instance or null on:[%s]", \get_debug_type($value), static::class));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'class'));
     }
 
     /**
@@ -327,7 +327,7 @@ trait AssertTrait
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] class-string on:[%s]", \get_debug_type($value), static::class));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'class'));
     }
 
     /**
@@ -351,7 +351,7 @@ trait AssertTrait
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not class:[{$class}] class-string on:[%s]", \get_debug_type($value), static::class));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'class'));
     }
 
     /**
@@ -371,7 +371,7 @@ trait AssertTrait
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not in array on:[%s]", \get_debug_type($value), static::class));
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'enum'));
     }
 
     /**
@@ -399,9 +399,9 @@ trait AssertTrait
         $value = $this->mixed($key);
 
         if ($value !== null) {
-            throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not null on:[%s]", \get_debug_type($value), static::class));
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value'));
         }
 
-        return $value;
+        return null;
     }
 }

@@ -17,9 +17,9 @@ use JsonSerializable;
 use Stringable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tomchochola\Laratchi\Auth\User;
+use Tomchochola\Laratchi\Exceptions\Panicker;
 use Tomchochola\Laratchi\Validation\SecureValidator;
 use Tomchochola\Laratchi\Validation\Validity;
-use UnexpectedValueException;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -163,7 +163,7 @@ abstract class TestCase extends BaseTestCase
             } elseif (\is_object($value)) {
                 $parameters[$key] = \count(\get_object_vars($value)) === 0 ? '' : $this->transformParameters(\get_object_vars($value));
             } else {
-                throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] is not multipart/form-data encodable", \get_debug_type($value)));
+                Panicker::panic(__METHOD__, 'not multipart/form-data encodable', \compact('key', 'value'));
             }
         }
 

@@ -6,6 +6,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Encoding\Csv;
+use Tomchochola\Laratchi\Exceptions\Panicker;
 use Tomchochola\Laratchi\Support\Resolver;
 use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Translation\Trans;
@@ -64,7 +65,7 @@ if (! \function_exists('configBool')) {
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] config is not in available options", \get_debug_type($value)));
+        Panicker::panic(__FUNCTION__, 'is not in available options', \compact('key', 'value', 'in'));
     }
 }
 
@@ -100,7 +101,7 @@ if (! \function_exists('configInt')) {
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] config is not in available options", \get_debug_type($value)));
+        Panicker::panic(__FUNCTION__, 'is not in available options', \compact('key', 'value', 'in'));
     }
 }
 
@@ -136,7 +137,7 @@ if (! \function_exists('configFloat')) {
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] config is not in available options", \get_debug_type($value)));
+        Panicker::panic(__FUNCTION__, 'is not in available options', \compact('key', 'value', 'in'));
     }
 }
 
@@ -208,7 +209,7 @@ if (! \function_exists('configString')) {
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] config is not in available options", \get_debug_type($value)));
+        Panicker::panic(__FUNCTION__, 'is not in available options', \compact('key', 'value', 'in'));
     }
 }
 
@@ -772,7 +773,7 @@ if (! \function_exists('unsafeEnv')) {
     function unsafeEnv(string $key, mixed $default = null): mixed
     {
         if (Resolver::resolveApp()->bound('env')) {
-            throw new RuntimeException('env is already bound to the container');
+            Panicker::panic(__FUNCTION__, 'env is already bound');
         }
 
         return Illuminate\Support\Env::get($key, $default);
@@ -813,7 +814,7 @@ if (! \function_exists('envString')) {
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] env is not in available options", \get_debug_type($value)));
+        Panicker::panic(__FUNCTION__, 'is not in available options', \compact('key', 'value', 'in'));
     }
 }
 
@@ -855,7 +856,7 @@ if (! \function_exists('envBool')) {
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] env is not in available options", \get_debug_type($value)));
+        Panicker::panic(__FUNCTION__, 'is not in available options', \compact('key', 'value', 'in'));
     }
 }
 
@@ -897,7 +898,7 @@ if (! \function_exists('envInt')) {
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] env is not in available options", \get_debug_type($value)));
+        Panicker::panic(__FUNCTION__, 'is not in available options', \compact('key', 'value', 'in'));
     }
 }
 
@@ -939,7 +940,7 @@ if (! \function_exists('envFloat')) {
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf("key:[{$key}] value:[%s] env is not in available options", \get_debug_type($value)));
+        Panicker::panic(__FUNCTION__, 'is not in available options', \compact('key', 'value', 'in'));
     }
 }
 
@@ -975,7 +976,7 @@ if (! \function_exists('currentEnv')) {
             return $value;
         }
 
-        throw new UnexpectedValueException(\sprintf('key:[APP_ENV] value:[%s] env is not in available options', \get_debug_type($value)));
+        Panicker::panic(__FUNCTION__, 'is not in available options', ['key' => 'APP_ENV', 'value' => $value]);
     }
 }
 
@@ -1017,7 +1018,7 @@ if (! \function_exists('assertNever')) {
      */
     function assertNever(string $message = 'assert never'): never
     {
-        throw new LogicException($message);
+        Panicker::panic(__FUNCTION__, $message);
     }
 }
 
@@ -1028,7 +1029,7 @@ if (! \function_exists('assertNeverIf')) {
     function assertNeverIf(bool $pass, string $message = 'assert never if'): void
     {
         if ($pass) {
-            throw new LogicException($message);
+            Panicker::panic(__FUNCTION__, $message);
         }
     }
 }
@@ -1040,7 +1041,7 @@ if (! \function_exists('assertNeverIfNot')) {
     function assertNeverIfNot(bool $pass, string $message = 'assert never if not'): void
     {
         if (! $pass) {
-            throw new LogicException($message);
+            Panicker::panic(__FUNCTION__, $message);
         }
     }
 }
@@ -1054,7 +1055,7 @@ if (! \function_exists('assertNeverClosure')) {
     function assertNeverClosure(string $message = 'assert never closure'): Closure
     {
         return static function () use ($message): never {
-            throw new LogicException($message);
+            Panicker::panic(__FUNCTION__, $message);
         };
     }
 }

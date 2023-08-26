@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Config;
 
 use Illuminate\Config\Repository;
-use RuntimeException;
+use Tomchochola\Laratchi\Exceptions\Panicker;
 use Tomchochola\Laratchi\Support\AssertTrait;
 use Tomchochola\Laratchi\Support\AssignTrait;
 use Tomchochola\Laratchi\Support\ParserTrait;
@@ -38,7 +38,7 @@ class Config
     public function mixed(?string $key = null): mixed
     {
         if (! Resolver::resolveApp()->bound('env')) {
-            throw new RuntimeException('env is not bound to the container');
+            Panicker::panic(__METHOD__, 'env is not bound to the container');
         }
 
         if ($key === null) {
@@ -56,7 +56,7 @@ class Config
     public function assign(string $key, mixed $value): static
     {
         if (! Resolver::resolveApp()->bound('env')) {
-            throw new RuntimeException('env is not bound to the container');
+            Panicker::panic(__METHOD__, 'env is not bound to the container');
         }
 
         $this->repository->set($key, $value);

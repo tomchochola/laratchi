@@ -8,8 +8,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
-use LogicException;
 use Tomchochola\Laratchi\Config\Config;
+use Tomchochola\Laratchi\Exceptions\Panicker;
 use Tomchochola\Laratchi\Support\AssertTrait;
 use Tomchochola\Laratchi\Support\ParserTrait;
 use Tomchochola\Laratchi\Support\ParseTrait;
@@ -44,7 +44,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value);
 
         if ($value === false) {
-            throw new LogicException("[{$key}] is not string or null");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -58,7 +58,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->string($key, $default);
 
         if ($value === null) {
-            throw new LogicException("[{$key}] is not string");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -78,7 +78,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
 
         if ($value === null) {
-            throw new LogicException("[{$key}] is not bool or null");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -92,7 +92,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->bool($key, $default);
 
         if ($value === null) {
-            throw new LogicException("[{$key}] is not bool");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -112,7 +112,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
         if ($value === false) {
-            throw new LogicException("[{$key}] is not int or null");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -126,7 +126,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->int($key, $default);
 
         if ($value === null) {
-            throw new LogicException("[{$key}] is not int");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -146,7 +146,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
         if ($value === false) {
-            throw new LogicException("[{$key}] is not float or null");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -160,7 +160,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->float($key, $default);
 
         if ($value === null) {
-            throw new LogicException("[{$key}] is not float");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -177,7 +177,7 @@ class ValidatedInput extends IlluminateValidatedInput
             return $value;
         }
 
-        throw new LogicException("[{$key}] is not file or null");
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
     }
 
     /**
@@ -188,7 +188,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->file($key, $default);
 
         if ($value === null) {
-            throw new LogicException("[{$key}] is not file");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -209,7 +209,7 @@ class ValidatedInput extends IlluminateValidatedInput
             return $value;
         }
 
-        throw new LogicException("[{$key}] is not array or null");
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
     }
 
     /**
@@ -224,7 +224,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->array($key, $default);
 
         if ($value === null) {
-            throw new LogicException("[{$key}] is not array");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -244,7 +244,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = \filter_var($value);
 
         if ($value === false || $value === '') {
-            throw new LogicException("[{$key}] is not date or null");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         if ($format === null) {
@@ -256,7 +256,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = resolveDate()->createFromFormat($format, $value, $tz);
 
         if ($value === false) {
-            throw new LogicException("[{$key}] is not date or null");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value->setTimezone((new Config())->appTimezone());
@@ -270,7 +270,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->date($key, $default, $format, $tz);
 
         if ($value === null) {
-            throw new LogicException("[{$key}] is not date");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;
@@ -364,7 +364,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $filtered = \filter_var($value);
 
         if ($filtered === false) {
-            throw new LogicException("[{$key}] is not string or int or null");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $filtered;
@@ -378,7 +378,7 @@ class ValidatedInput extends IlluminateValidatedInput
         $value = $this->stringOrInt($key, $default);
 
         if ($value === null) {
-            throw new LogicException("[{$key}] is not string or int");
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
         return $value;

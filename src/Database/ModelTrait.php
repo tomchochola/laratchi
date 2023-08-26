@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use RuntimeException;
 use Tomchochola\Laratchi\Config\Config;
+use Tomchochola\Laratchi\Exceptions\Panicker;
 use Tomchochola\Laratchi\Http\JsonApi\JsonApiResource;
 use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Http\Requests\FormRequest;
@@ -74,7 +74,7 @@ trait ModelTrait
                 $onError();
             }
 
-            throw new RuntimeException('Instance not found.');
+            Panicker::panic(__METHOD__, 'model not found', \compact('key'));
         }
 
         return $instance;
@@ -119,7 +119,7 @@ trait ModelTrait
                 $onError();
             }
 
-            throw new RuntimeException('Instance not found.');
+            Panicker::panic(__METHOD__, 'model not found', \compact('key'));
         }
 
         return $instance;
@@ -175,7 +175,7 @@ trait ModelTrait
             $onError();
         }
 
-        throw new RuntimeException('Instance not found.');
+        Panicker::panic(__METHOD__, 'model not found', \compact('id', 'slug'));
     }
 
     /**
@@ -420,7 +420,7 @@ trait ModelTrait
                 $onError();
             }
 
-            throw new RuntimeException('Instance not found.');
+            Panicker::panic(__METHOD__, 'model not found', \compact('value'));
         }
 
         return $instance;
@@ -541,7 +541,7 @@ trait ModelTrait
             $onError();
         }
 
-        throw new RuntimeException('Instance not found.');
+        Panicker::panic(__METHOD__, 'model not found', \compact('id', 'slug'));
     }
 
     /**
@@ -580,7 +580,7 @@ trait ModelTrait
             $onError();
         }
 
-        throw new RuntimeException('Instance not found.');
+        Panicker::panic(__METHOD__, 'model not found', \compact('id', 'slug'));
     }
 
     /**
@@ -786,7 +786,7 @@ trait ModelTrait
             $onError();
         }
 
-        throw new RuntimeException(\sprintf('model:[%s] not found by key:[%s] xor routeKey:[%s]', static::class, $key, $routeKey));
+        Panicker::panic(__METHOD__, 'model not found', \compact('key', 'routeKey'));
     }
 
     /**
@@ -1247,9 +1247,7 @@ trait ModelTrait
             return $this->getAttributeValue($key);
         }
 
-        throw new RuntimeException(
-            \sprintf('key:[%s] attribute is not loaded on model:[%s] id:[%s]', $key, static::class, assertNullableScalar($this->getAttributeValue($this->getKeyName()))),
-        );
+        Panicker::panic(__METHOD__, 'attribute not loaded', \compact('key'));
     }
 
     /**
@@ -1261,9 +1259,7 @@ trait ModelTrait
             return $this->getRelationValue($key);
         }
 
-        throw new RuntimeException(
-            \sprintf('key:[%s] relationship is not loaded on model:[%s] id:[%s]', $key, static::class, assertNullableScalar($this->getAttributeValue($this->getKeyName()))),
-        );
+        Panicker::panic(__METHOD__, 'relationship not loaded', \compact('key'));
     }
 
     /**
