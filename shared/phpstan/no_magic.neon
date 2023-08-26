@@ -6,3 +6,6 @@ parameters:
     -
       namespace: 'Illuminate\Foundation\Bus\DispatchesJobs'
       message: 'use Tomchochola\Laratchi\Support\Resolver::resolveQueueingDispatcher()->*()'
+    -
+      namespace: 'Illuminate\Foundation\Events\Dispatchable'
+      message: 'use Tomchochola\Laratchi\Support\Resolver::resolveEventDispatcher()->*()'
