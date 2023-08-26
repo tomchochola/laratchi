@@ -41,6 +41,7 @@ use Illuminate\Queue\QueueManager;
 use Illuminate\Redis\RedisManager;
 use Illuminate\Routing\Redirector;
 use Illuminate\Routing\ResponseFactory;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\RouteRegistrar;
 use Illuminate\Routing\UrlGenerator;
@@ -86,9 +87,11 @@ use Illuminate\Testing\ParallelTesting;
 use Illuminate\Translation\Translator;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\PresenceVerifierInterface;
+use Illuminate\Validation\Validator;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Factory as ViewFactory;
 use Tomchochola\Laratchi\Auth\DatabaseTokenGuard;
+use Tomchochola\Laratchi\Validation\SecureValidationFactory;
 
 class Resolver
 {
@@ -504,5 +507,33 @@ class Resolver
     public static function resolvePresenceVerifier(): PresenceVerifierInterface
     {
         return static::make('validation.presence', PresenceVerifierInterface::class);
+    }
+
+    /**
+     * Resolve current route.
+     */
+    public static function resolveRoute(): Route
+    {
+        return assertInstance(static::resolveRouter()->current(), Route::class);
+    }
+
+    /**
+     * Resolve validator.
+     *
+     * @param array<mixed> $data
+     * @param array<mixed> $rules
+     * @param array<mixed> $messages
+     * @param array<mixed> $attributes
+     */
+    public static function resolveValidator(array $data = [], array $rules = [], array $messages = [], array $attributes = []): Validator
+    {
+        $request = static::resolveRequest();
+        $factory = static::resolveValidatorFactory();
+
+        if ($request->expectsJson() || $request->getRequestFormat() === 'json') {
+            $factory = new SecureValidationFactory($factory);
+        }
+
+        return $factory->make($data, $rules, $messages, $attributes);
     }
 }
