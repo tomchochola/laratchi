@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Http\JsonApi;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Tomchochola\Laratchi\Support\Typer;
 
 /**
  * @template T of Model
@@ -27,18 +28,10 @@ class ModelResource extends ClosureResource
         parent::__construct(
             $model,
             static function (Model $model): string {
-                $id = $model->getKey();
-
-                \assert(\is_scalar($id));
-
-                return (string) $id;
+                return (string) Typer::assertScalar($model->getKey());
             },
             static function (Model $model): string {
-                $id = $model->getRouteKey();
-
-                \assert(\is_scalar($id));
-
-                return (string) $id;
+                return (string) Typer::assertScalar($model->getRouteKey());
             },
             static function (Model $model): string {
                 return $model->getTable();

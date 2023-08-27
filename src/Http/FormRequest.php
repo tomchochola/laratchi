@@ -7,7 +7,6 @@ namespace Tomchochola\Laratchi\Http;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest as IlluminateFormRequest;
 use Illuminate\Validation\Factory as ValidatorFactory;
-use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Tomchochola\Laratchi\Cache\Limit;
 use Tomchochola\Laratchi\Cache\Throttler;

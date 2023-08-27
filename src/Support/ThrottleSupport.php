@@ -19,9 +19,7 @@ class ThrottleSupport
      */
     public static function throttle(Limit $limit, ?Closure $onError = null): array
     {
-        $hash = $limit->key;
-
-        \assert(\is_string($hash));
+        $hash = Typer::assertString($limit->key);
 
         $key = "throttle:{$hash}";
 

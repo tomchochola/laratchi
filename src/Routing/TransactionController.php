@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Routing;
 
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Support\Typer;
 
 class TransactionController extends Controller
 {
@@ -13,12 +14,11 @@ class TransactionController extends Controller
      */
     public function callAction(mixed $method, mixed $parameters): SymfonyResponse
     {
-        $response = resolveDatabaseManager()
-            ->connection()
-            ->transaction(fn (): SymfonyResponse => parent::callAction($method, $parameters));
-
-        \assert($response instanceof SymfonyResponse);
-
-        return $response;
+        return Typer::assertInstance(
+            resolveDatabaseManager()
+                ->connection()
+                ->transaction(fn (): SymfonyResponse => parent::callAction($method, $parameters)),
+            SymfonyResponse::class,
+        );
     }
 }

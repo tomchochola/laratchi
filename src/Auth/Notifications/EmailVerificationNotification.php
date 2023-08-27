@@ -8,6 +8,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Translation\Trans;
 
 class EmailVerificationNotification extends Notification implements ShouldQueueContract
@@ -22,11 +23,6 @@ class EmailVerificationNotification extends Notification implements ShouldQueueC
     public static string $template = self::class;
 
     /**
-     * Trans.
-     */
-    public Trans $trans;
-
-    /**
      * Create a new notification instance.
      */
     protected function __construct(
@@ -37,8 +33,6 @@ class EmailVerificationNotification extends Notification implements ShouldQueueC
         protected ?string $url = null,
     ) {
         $this->afterCommit();
-
-        $this->trans = new Trans();
     }
 
     /**
@@ -64,11 +58,13 @@ class EmailVerificationNotification extends Notification implements ShouldQueueC
      */
     public function toMail(mixed $notifiable): MailMessage
     {
+        $trans = Trans::inject();
+
         return (new MailMessage())
-            ->subject($this->trans->assertString('Verify Email Address'))
-            ->line($this->trans->assertString('Please click the button below to verify your email address.'))
-            ->action($this->trans->assertString('Verify Email Address'), $this->getUrl($notifiable))
-            ->line($this->trans->assertString('If you did not create an account, no further action is required.'));
+            ->subject($trans->assertString('Verify Email Address'))
+            ->line($trans->assertString('Please click the button below to verify your email address.'))
+            ->action($trans->assertString('Verify Email Address'), $this->getUrl($notifiable))
+            ->line($trans->assertString('If you did not create an account, no further action is required.'));
     }
 
     /**
@@ -80,7 +76,7 @@ class EmailVerificationNotification extends Notification implements ShouldQueueC
             return $this->url;
         }
 
-        \assert($this->token !== null && $this->email !== null && $this->locale !== null);
+        Typer::assertTrue($this->token !== null && $this->email !== null && $this->locale !== null);
 
         $query = \http_build_query([
             'guard' => $this->guardName,
@@ -89,6 +85,6 @@ class EmailVerificationNotification extends Notification implements ShouldQueueC
             'locale' => $this->locale,
         ]);
 
-        return ($this->spa ?? $this->trans->assertString('spa.email_verification_url')).'?'.$query;
+        return ($this->spa ?? Trans::inject()->assertString('spa.email_verification_url')).'?'.$query;
     }
 }

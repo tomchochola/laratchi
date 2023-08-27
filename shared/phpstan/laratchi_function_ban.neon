@@ -2,43 +2,43 @@ parameters:
   disallowedFunctionCalls:
     -
       function: 'mustTransString()'
-      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->assertString()'
+      message: 'use Tomchochola\Laratchi\Translation\Trans::inject()->assertString()'
     -
       function: 'mustTransJsonString()'
-      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->assertString()'
+      message: 'use Tomchochola\Laratchi\Translation\Trans::inject()->assertString()'
     -
       function: 'mustTransArray()'
-      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->assertArray()'
+      message: 'use Tomchochola\Laratchi\Translation\Trans::inject()->assertArray()'
     -
       function: 'configBool()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertNullableBool()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->assertNullableBool()'
     -
       function: 'mustConfigBool()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertBool()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->assertBool()'
     -
       function: 'configInt()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertNullableInt()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->assertNullableInt()'
     -
       function: 'mustConfigInt()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertInt()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->assertInt()'
     -
       function: 'configFloat()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertNullableFloat()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->assertNullableFloat()'
     -
       function: 'mustConfigFloat()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertFloat()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->assertFloat()'
     -
       function: 'configArray()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertNullableArray()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->assertNullableArray()'
     -
       function: 'mustConfigArray()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertArray()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->assertArray()'
     -
       function: 'configString()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertNullableString()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->assertNullableString()'
     -
       function: 'mustConfigString()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->assertString()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->assertString()'
     -
       function: 'inject()'
       message: 'use Tomchochola\Laratchi\Support\Resolver::resolve() or Tomchochola\Laratchi\Support\Resolver::make()'
@@ -200,61 +200,61 @@ parameters:
       message: 'use Tomchochola\Laratchi\Support\Resolver::resolveVite()'
     -
       function: 'unsafeEnv()'
-      message: 'use (new Tomchochola\Laratchi\Config\Env())->mixed()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->mixed()'
     -
       function: 'envString()'
-      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseNullableString()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->mustParseNullableString()'
     -
       function: 'mustEnvString()'
-      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseString()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->mustParseString()'
     -
       function: 'envBool()'
-      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseNullableBool()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->mustParseNullableBool()'
     -
       function: 'mustEnvBool()'
-      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseBool()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->mustParseBool()'
     -
       function: 'envInt()'
-      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseNullableInt()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->mustParseNullableInt()'
     -
       function: 'mustEnvInt()'
-      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseInt()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->mustParseInt()'
     -
       function: 'envFloat()'
-      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseNullableFloat()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->mustParseNullableFloat()'
     -
       function: 'mustEnvFloat()'
-      message: '(new Tomchochola\Laratchi\Config\Env())->mustParseFloat()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->mustParseFloat()'
     -
       function: 'currentEnv()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv() or (new Tomchochola\Laratchi\Config\Env())->appEnv()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appEnv() or Tomchochola\Laratchi\Config\Env::inject()->appEnv()'
     -
       function: 'isEnv()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnvIn() or (new Tomchochola\Laratchi\Config\Env())->appEnvIn()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appEnvIn() or Tomchochola\Laratchi\Config\Env::inject()->appEnvIn()'
     -
       function: 'mapEnv()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnvMap() or (new Tomchochola\Laratchi\Config\Env())->appEnvMap()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appEnvMap() or Tomchochola\Laratchi\Config\Env::inject()->appEnvMap()'
     -
       function: 'assertNever()'
       message: 'use Tomchochola\Laratchi\Exceptions\Panicker::panic()'
     -
       function: 'assertNeverIf()'
-      message: 'use if (true) {Tomchochola\Laratchi\Exceptions\Panicker::panic();}'
+      message: 'use Tomchochola\Laratchi\Exceptions\Panicker::panic()'
     -
       function: 'assertNeverIfNot()'
-      message: 'use if (false) {Tomchochola\Laratchi\Exceptions\Panicker::panic();}'
+      message: 'use Tomchochola\Laratchi\Exceptions\Panicker::panic()'
     -
       function: 'assertNeverClosure()'
-      message: 'use static function (): never {Tomchochola\Laratchi\Exceptions\Panicker::panic();}'
+      message: 'use Tomchochola\Laratchi\Exceptions\Panicker::panic()'
     -
       function: 'strPutCsv()'
-      message: 'use Tomchochola\Laratchi\Encoding::*()'
+      message: 'use Tomchochola\Laratchi\Encoding\Csv::*()'
     -
       function: 'locale()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appLocale()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appLocale()'
     -
       function: 'locales()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appLocales()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appLocales()'
     -
       function: 'assertString()'
       message: 'use Tomchochola\Laratchi\Support\Typer::assertString()'

@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Http\Requests;
 
 use Stringable;
 use Tomchochola\Laratchi\Auth\User;
+use Tomchochola\Laratchi\Support\Resolver;
 
 class RequestSignature implements Stringable
 {
@@ -90,11 +91,7 @@ class RequestSignature implements Stringable
      */
     public function action(): static
     {
-        $route = resolveRouter()->current();
-
-        \assert($route !== null);
-
-        $this->internal['action'] = $route->getActionName();
+        $this->internal['action'] = Resolver::resolveRoute()->getActionName();
 
         return $this;
     }

@@ -41,7 +41,7 @@ parameters:
       message: 'use Tomchochola\Laratchi\Support\Resolver::resolveCacheManager()->get()'
     -
       function: 'config()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->*()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->*()'
     -
       function: 'config_path()'
       message: 'use Tomchochola\Laratchi\Support\Resolver::resolveApp()->configPath()'
@@ -157,13 +157,13 @@ parameters:
       message: 'use Tomchochola\Laratchi\Support\Resolver::resolveDateFactory()->today()'
     -
       function: 'trans()'
-      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->*()'
+      message: 'use Tomchochola\Laratchi\Translation\Trans::inject()->*()'
     -
       function: 'trans_choice()'
-      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->*()'
+      message: 'use Tomchochola\Laratchi\Translation\Trans::inject()->*()'
     -
       function: '__()'
-      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->*()'
+      message: 'use Tomchochola\Laratchi\Translation\Trans::inject()->*()'
     -
       function: 'url()'
       message: 'use Tomchochola\Laratchi\Support\Resolver::resolveUrlGenerator()->to()'
@@ -175,4 +175,4 @@ parameters:
       message: 'use Tomchochola\Laratchi\Support\Resolver::resolveViewFactory()->make()'
     -
       function: 'env()'
-      message: 'use (new Tomchochola\Laratchi\Config\Env())->*()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->*()'

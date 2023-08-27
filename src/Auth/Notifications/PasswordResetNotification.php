@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Tomchochola\Laratchi\Config\Config;
+use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Translation\Trans;
 
 class PasswordResetNotification extends Notification implements ShouldQueueContract
@@ -23,16 +24,6 @@ class PasswordResetNotification extends Notification implements ShouldQueueContr
     public static string $template = self::class;
 
     /**
-     * Trans.
-     */
-    public Trans $trans;
-
-    /**
-     * Config.
-     */
-    public Config $config;
-
-    /**
      * Create a new notification instance.
      */
     protected function __construct(
@@ -43,9 +34,6 @@ class PasswordResetNotification extends Notification implements ShouldQueueContr
         protected ?string $url = null,
     ) {
         $this->afterCommit();
-
-        $this->trans = new Trans();
-        $this->config = new Config();
     }
 
     /**
@@ -71,16 +59,19 @@ class PasswordResetNotification extends Notification implements ShouldQueueContr
      */
     public function toMail(mixed $notifiable): MailMessage
     {
+        $trans = Trans::inject();
+        $config = Config::inject();
+
         return (new MailMessage())
-            ->subject($this->trans->assertString('Reset Password Notification'))
-            ->line($this->trans->assertString('You are receiving this email because we received a password reset request for your account.'))
-            ->action($this->trans->assertString('Reset Password'), $this->getUrl($notifiable))
+            ->subject($trans->assertString('Reset Password Notification'))
+            ->line($trans->assertString('You are receiving this email because we received a password reset request for your account.'))
+            ->action($trans->assertString('Reset Password'), $this->getUrl($notifiable))
             ->line(
-                $this->trans->assertString('This password reset link will expire in :count minutes.', [
-                    'count' => (string) $this->config->assertInt("auth.passwords.{$this->guardName}.expire"),
+                $trans->assertString('This password reset link will expire in :count minutes.', [
+                    'count' => (string) $config->assertInt("auth.passwords.{$this->guardName}.expire"),
                 ]),
             )
-            ->line($this->trans->assertString('If you did not request a password reset, no further action is required.'));
+            ->line($trans->assertString('If you did not request a password reset, no further action is required.'));
     }
 
     /**
@@ -92,7 +83,7 @@ class PasswordResetNotification extends Notification implements ShouldQueueContr
             return $this->url;
         }
 
-        \assert($this->token !== null && $this->email !== null && $this->locale !== null);
+        Typer::assertTrue($this->token !== null && $this->email !== null && $this->locale !== null);
 
         $query = \http_build_query([
             'guard' => $this->guardName,
@@ -101,6 +92,6 @@ class PasswordResetNotification extends Notification implements ShouldQueueContr
             'locale' => $this->locale,
         ]);
 
-        return ($this->spa ?? $this->trans->assertString('spa.password_reset_url')).'?'.$query;
+        return ($this->spa ?? Trans::inject()->assertString('spa.password_reset_url')).'?'.$query;
     }
 }

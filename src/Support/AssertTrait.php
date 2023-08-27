@@ -18,7 +18,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_string($value), \sprintf("key:[{$key}] value:[%s] is not string on:[%s]", \get_debug_type($value), static::class));
+        \assert(\is_string($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -30,7 +30,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_string($value), \sprintf("key:[{$key}] value:[%s] is not string or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || \is_string($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -42,7 +42,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_bool($value), \sprintf("key:[{$key}] value:[%s] is not bool on:[%s]", \get_debug_type($value), static::class));
+        \assert(\is_bool($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -54,7 +54,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_bool($value), \sprintf("key:[{$key}] value:[%s] is not bool or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || \is_bool($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -66,7 +66,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_int($value), \sprintf("key:[{$key}] value:[%s] is not int on:[%s]", \get_debug_type($value), static::class));
+        \assert(\is_int($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -78,7 +78,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_int($value), \sprintf("key:[{$key}] value:[%s] is not int or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || \is_int($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -90,7 +90,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_float($value), \sprintf("key:[{$key}] value:[%s] is not float on:[%s]", \get_debug_type($value), static::class));
+        \assert(\is_float($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -102,7 +102,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_float($value), \sprintf("key:[{$key}] value:[%s] is not float or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || \is_float($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -116,7 +116,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_array($value), \sprintf("key:[{$key}] value:[%s] is not array on:[%s]", \get_debug_type($value), static::class));
+        \assert(\is_array($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -130,7 +130,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_array($value), \sprintf("key:[{$key}] value:[%s] is not array or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || \is_array($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -142,7 +142,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value instanceof UploadedFile, \sprintf("key:[{$key}] value:[%s] is not file on:[%s]", \get_debug_type($value), static::class));
+        \assert($value instanceof UploadedFile, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -154,7 +154,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || $value instanceof UploadedFile, \sprintf("key:[{$key}] value:[%s] is not file or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || $value instanceof UploadedFile, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -166,7 +166,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value instanceof Carbon, \sprintf("key:[{$key}] value:[%s] is not carbon on:[%s]", \get_debug_type($value), static::class));
+        \assert($value instanceof Carbon, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -178,7 +178,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || $value instanceof Carbon, \sprintf("key:[{$key}] value:[%s] is not carbon or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || $value instanceof Carbon, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -190,7 +190,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_object($value), \sprintf("key:[{$key}] value:[%s] is not object on:[%s]", \get_debug_type($value), static::class));
+        \assert(\is_object($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -202,7 +202,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_object($value), \sprintf("key:[{$key}] value:[%s] is not object or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || \is_object($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -214,7 +214,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(\is_scalar($value), \sprintf("key:[{$key}] value:[%s] is not scalar on:[%s]", \get_debug_type($value), static::class));
+        \assert(\is_scalar($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -226,7 +226,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_scalar($value), \sprintf("key:[{$key}] value:[%s] is not scalar or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || \is_scalar($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -244,7 +244,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value instanceof $enum, \sprintf("key:[{$key}] value:[%s] is not class:[{$enum}] instance on:[%s]", \get_debug_type($value), static::class));
+        \assert($value instanceof $enum, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value', 'enum')));
 
         return $value;
     }
@@ -262,10 +262,7 @@ trait AssertTrait
     {
         $value = $this->mixed($key);
 
-        \assert(
-            $value === null || $value instanceof $enum,
-            \sprintf("key:[{$key}] value:[%s] is not class:[{$enum}] instance or null on:[%s]", \get_debug_type($value), static::class),
-        );
+        \assert($value === null || $value instanceof $enum, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value', 'enum')));
 
         return $value;
     }
@@ -385,7 +382,7 @@ trait AssertTrait
 
         \assert(
             \is_string($value) || \is_int($value) || \is_float($value) || \is_bool($value) || \is_object($value) || \is_array($value),
-            \sprintf("key:[{$key}] value:[%s] is null on:[%s]", \get_debug_type($value), static::class),
+            Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')),
         );
 
         return $value;

@@ -2,54 +2,129 @@ parameters:
   disallowedMethodCalls:
     -
       method: 'Illuminate\Contracts\Config\Repository::*()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->*()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->*()'
       allowIn:
         - src/Config/Config.php
         - src/Helpers/functions.php
     -
       method: 'Illuminate\Support\Env::*()'
-      message: 'use (new Tomchochola\Laratchi\Config\Env())->*()'
+      message: 'use Tomchochola\Laratchi\Config\Env::inject()->*()'
       allowIn:
         - src/Config/Env.php
         - src/Helpers/functions.php
     -
       method: 'Illuminate\Contracts\Translation\Translator::*()'
-      message: 'use (new Tomchochola\Laratchi\Translation\Trans())->*()'
+      message: 'use Tomchochola\Laratchi\Translation\Trans::inject()->*()'
       allowIn:
         - src/Translation/Trans.php
     -
       method: 'Illuminate\Validation\ValidationException::withMessages()'
-      message: 'use (new Tomchochola\Laratchi\Exceptions\Thrower())->*()'
+      message: 'use Tomchochola\Laratchi\Exceptions\Thrower::default()->*()'
     -
       method: 'Illuminate\Foundation\Application::environment()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv*()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appEnv*()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
     -
       method: 'Illuminate\Foundation\Application::isLocal()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv*()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appEnv*()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
     -
       method: 'Illuminate\Foundation\Application::isProduction()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv*()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appEnv*()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
     -
       method: 'Illuminate\Foundation\Application::runningUnitTests()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv*()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appEnv*()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
     -
       method: 'Illuminate\Foundation\Application::hasDebugModeEnabled()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appEnv*()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appEnv*()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
     -
       method: 'Illuminate\Foundation\Application::getLocale()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appLocale()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appLocale()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
     -
       method: 'Illuminate\Foundation\Application::currentLocale()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appLocale()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appLocale()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
     -
       method: 'Illuminate\Foundation\Application::getFallbackLocale()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appFallbackLocale()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appFallbackLocale()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
     -
       method: 'Illuminate\Foundation\Application::isLocale()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->appLocale()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->appLocale()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
     -
       method: 'Illuminate\Foundation\Application::setLocale()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->setAppLocale()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->setAppLocale()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
     -
       method: 'Illuminate\Foundation\Application::setFallbackLocale()'
-      message: 'use (new Tomchochola\Laratchi\Config\Config())->setAppFallbackLocale()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->setAppFallbackLocale()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
+    -
+      method: 'Illuminate\Auth\AuthManager::getConfig()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->*()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
+    -
+      method: 'Illuminate\Auth\AuthManager::getDefaultDriver()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->authDefaultsGuard()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
+    -
+      method: 'Illuminate\Auth\AuthManager::shouldUse()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->setAuthDefaultsGuard()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
+    -
+      method: 'Illuminate\Auth\AuthManager::setDefaultDriver()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->setAuthDefaultsGuard()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
+    -
+      method: 'Illuminate\Auth\Passwords\PasswordBrokerManager::getConfig()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->*()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
+    -
+      method: 'Illuminate\Auth\Passwords\PasswordBrokerManager::getDefaultDriver()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->authDefaultsPasswords()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php
+    -
+      method: 'Illuminate\Auth\Passwords\PasswordBrokerManager::setDefaultDriver()'
+      message: 'use Tomchochola\Laratchi\Config\Config::inject()->setAuthDefaultsPasswords()'
+      allowIn:
+        - src/Config/Config.php
+        - src/Helpers/functions.php

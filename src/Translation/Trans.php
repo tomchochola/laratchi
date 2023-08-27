@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Translation;
 
 use Illuminate\Translation\Translator;
 use Tomchochola\Laratchi\Container\InjectTrait;
+use Tomchochola\Laratchi\Exceptions\Panicker;
 use Tomchochola\Laratchi\Support\Resolver;
 
 class Trans
@@ -32,11 +33,11 @@ class Trans
      */
     public function assertString(string $key, array $replace = [], ?string $locale = null, bool $fallback = false): string
     {
-        \assert($this->translator->has($key, $locale, $fallback), "key:[{$key}] translation must exist");
+        \assert($this->translator->has($key, $locale, $fallback), Panicker::message(__METHOD__, 'translation must exists', \compact('key', 'locale', 'fallback')));
 
         $value = $this->translator->get($key, $replace, $locale, $fallback);
 
-        \assert(\is_string($value), \sprintf("key:[{$key}] value:[%s] translation is not string", \get_debug_type($value)));
+        \assert(\is_string($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value', 'locale', 'fallback')));
 
         return $value;
     }
@@ -50,11 +51,11 @@ class Trans
      */
     public function assertArray(string $key, array $replace = [], ?string $locale = null, bool $fallback = false): array
     {
-        \assert($this->translator->has($key, $locale, $fallback), "key:[{$key}] translation must exist");
+        \assert($this->translator->has($key, $locale, $fallback), Panicker::message(__METHOD__, 'translation must exists', \compact('key', 'locale', 'fallback')));
 
         $value = $this->translator->get($key, $replace, $locale, $fallback);
 
-        \assert(\is_array($value), \sprintf("key:[{$key}] value:[%s] translation is not array", \get_debug_type($value)));
+        \assert(\is_array($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value', 'locale', 'fallback')));
 
         return $value;
     }

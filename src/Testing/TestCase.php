@@ -18,6 +18,7 @@ use Stringable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Exceptions\Panicker;
+use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Validation\SecureValidator;
 use Tomchochola\Laratchi\Validation\Validity;
 
@@ -43,11 +44,6 @@ abstract class TestCase extends BaseTestCase
     protected $withCredentials = true;
 
     /**
-     * Locale method called.
-     */
-    private bool $localeCalled = false;
-
-    /**
      * @inheritDoc
      */
     protected function setUp(): void
@@ -55,18 +51,6 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         Storage::fake('public');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        \assert($this->localeCalled, '$this->locale($locale) must be called in every test!');
-
-        $this->localeCalled = false;
     }
 
     /**
@@ -92,22 +76,9 @@ abstract class TestCase extends BaseTestCase
      */
     public function call(mixed $method, mixed $uri, mixed $parameters = [], mixed $cookies = [], mixed $files = [], mixed $server = [], mixed $content = null): TestResponse
     {
-        \assert(\in_array($method, ['GET', 'POST'], true), 'Only GET and POST method is allowed');
-
         $params = $this->transformParameters($parameters);
 
         return parent::call($method, $uri, $params, $cookies, $files, $server, $content);
-    }
-
-    /**
-     * @inheritDoc
-     *
-     * @param array<mixed> $data
-     * @param array<mixed> $headers
-     */
-    public function json(mixed $method, mixed $uri, array $data = [], array $headers = []): never
-    {
-        assertNever();
     }
 
     /**
@@ -117,13 +88,13 @@ abstract class TestCase extends BaseTestCase
      */
     public function be(Authenticatable $user, mixed $guard = null): static
     {
-        \assert($user instanceof User);
+        $auth = Typer::assertInstance($user, User::class);
 
-        $user->wasRecentlyCreated = false;
+        $auth->wasRecentlyCreated = false;
 
         resolveAuthManager()
-            ->guard($guard ?? $user->getTable())
-            ->setUser($user);
+            ->guard($guard ?? $auth->getTable())
+            ->setUser($auth);
 
         return $this;
     }
@@ -175,9 +146,6 @@ abstract class TestCase extends BaseTestCase
      */
     protected function validateJsonApiError(TestResponse $response, int $status, int $code = 0): void
     {
-        \assert($status >= 400 && $status <= 599);
-        \assert($code >= 0);
-
         $response->assertStatus($status);
 
         $keys = ['code'];
@@ -190,9 +158,7 @@ abstract class TestCase extends BaseTestCase
 
         $response->assertJson($data, true);
 
-        $json = $response->json();
-
-        \assert(\is_array($json));
+        $json = Typer::assertArray($response->json());
 
         $json = Arr::except($json, ['exception', 'file', 'line', 'trace', 'internal']);
 
@@ -220,9 +186,7 @@ abstract class TestCase extends BaseTestCase
 
         $response->assertJsonValidationErrors($errors);
 
-        $json = $response->json();
-
-        \assert(\is_array($json));
+        $json = Typer::assertArray($response->json());
 
         $json = Arr::except($json, ['exception', 'file', 'line', 'trace', 'internal']);
 
@@ -304,9 +268,7 @@ abstract class TestCase extends BaseTestCase
             $response->assertJsonCount($includedCount, 'included');
         }
 
-        $json = $response->json();
-
-        \assert(\is_array($json));
+        $json = Typer::assertArray($response->json());
 
         $this->validate(
             resolveValidatorFactory()->make($json, [
@@ -397,21 +359,15 @@ abstract class TestCase extends BaseTestCase
         );
 
         if ($validator !== null) {
-            $resource = $response->json('data');
-
-            \assert(\is_array($resource));
+            $resource = Typer::assertArray($response->json('data'));
 
             $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, $validator->rules()));
         }
 
-        $included = $response->json('included') ?? [];
-
-        \assert(\is_array($included));
+        $included = Typer::assertNullableArray($response->json('included')) ?? [];
 
         foreach ($includedValidators as $index => $includedValidator) {
-            $resource = $included[$index];
-
-            \assert(\is_array($resource));
+            $resource = Typer::assertArray($included[$index]);
 
             $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, $includedValidator->rules()));
         }
@@ -449,9 +405,7 @@ abstract class TestCase extends BaseTestCase
             $response->assertJsonCount($includedCount, 'included');
         }
 
-        $json = $response->json();
-
-        \assert(\is_array($json));
+        $json = Typer::assertArray($response->json());
 
         $this->validate(
             resolveValidatorFactory()->make($json, [
@@ -541,24 +495,16 @@ abstract class TestCase extends BaseTestCase
             ]),
         );
 
-        $collection = $response->json('data');
-
-        \assert(\is_array($collection));
+        $collection = Typer::assertArray($response->json('data'));
 
         foreach ($collection as $index => $resource) {
-            \assert(\is_array($resource));
-
-            $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, $validators[$index]->rules()));
+            $this->validate(SecureValidator::clone(resolveValidatorFactory())->make(Typer::assertArray($resource), $validators[$index]->rules()));
         }
 
-        $included = $response->json('included') ?? [];
-
-        \assert(\is_array($included));
+        $included = Typer::assertNullableArray($response->json('included')) ?? [];
 
         foreach ($includedValidators as $index => $includedValidator) {
-            $resource = $included[$index];
-
-            \assert(\is_array($resource));
+            $resource = Typer::assertArray($included[$index]);
 
             $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, $includedValidator->rules()));
         }
@@ -569,16 +515,12 @@ abstract class TestCase extends BaseTestCase
      */
     protected function locale(string $locale): void
     {
-        \assert(\in_array($locale, mustConfigArray('app.locales'), true));
-
         $app = resolveApp();
 
         $app->setLocale($locale);
         $app->setFallbackLocale($locale);
 
         $this->defaultHeaders['Accept-Language'] = $locale;
-
-        $this->localeCalled = true;
     }
 
     /**

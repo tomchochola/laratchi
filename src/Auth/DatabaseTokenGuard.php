@@ -127,9 +127,7 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function setUser(AuthenticatableContract $user): void
     {
-        \assert($user instanceof User);
-
-        $this->user = $user;
+        $this->user = assertInstance($user, User::class);
     }
 
     /**
@@ -142,9 +140,7 @@ class DatabaseTokenGuard implements GuardContract
         $this->databaseToken = $databaseToken;
         $this->user = $user;
 
-        $bearer = $databaseToken->bearer;
-
-        \assert($bearer !== null);
+        $bearer = assertNotNull($databaseToken->bearer);
 
         $cookieJar = resolveCookieJar();
         $cookieJar->queue($cookieJar->forever($this->cookieName(), $bearer, '/', null, ! isEnv(['local']), true, false, resolveApp()->isProduction() ? 'Lax' : 'None'));

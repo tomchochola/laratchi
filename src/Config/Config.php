@@ -69,7 +69,7 @@ class Config
         }
 
         if (! $this->repository->has($key)) {
-            Panicker::panic(__METHOD__, 'undefined config key', ['key' => $key]);
+            Panicker::panic(__METHOD__, 'undefined config key', \compact('key'));
         }
 
         $this->repository->set($key, $value);

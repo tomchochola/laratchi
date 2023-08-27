@@ -15,6 +15,7 @@ use Illuminate\Validation\Rules\ExcludeIf;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rules\ProhibitedIf;
 use Illuminate\Validation\Rules\RequiredIf;
+use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Validation\Rules\CallbackRule;
 use Tomchochola\Laratchi\Validation\Rules\CursorRule;
 use Tomchochola\Laratchi\Validation\Rules\NullableVoidRule;
@@ -397,25 +398,25 @@ class Validity implements ArrayableContract
 
         $this->collection = true;
 
-        \assert(
+        Typer::assert(
             $this->array === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false,
             'validation type cross',
         );
 
         if ($maxItems !== null && $maxItems === $minItems) {
-            \assert($maxItems >= 0);
+            Typer::assert($maxItems >= 0);
 
             $this->size($maxItems);
         } else {
             if ($maxItems !== null) {
-                \assert($maxItems >= 0);
+                Typer::assert($maxItems >= 0);
 
                 $this->max($maxItems);
             }
 
             if ($minItems !== null) {
-                \assert($maxItems === null || $minItems <= $maxItems);
-                \assert($minItems >= 0);
+                Typer::assert($maxItems === null || $minItems <= $maxItems);
+                Typer::assert($minItems >= 0);
 
                 $this->min($minItems);
             }
@@ -441,7 +442,7 @@ class Validity implements ArrayableContract
 
         $this->array = true;
 
-        \assert(
+        Typer::assert(
             $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false,
             'validation type cross',
         );
@@ -486,7 +487,7 @@ class Validity implements ArrayableContract
 
         $this->array = true;
 
-        \assert(
+        Typer::assert(
             $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false,
             'validation type cross',
         );
@@ -557,7 +558,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        \assert($max >= $min);
+        Typer::assert($max >= $min);
 
         return $this->addRule('between', [$min, $max]);
     }
@@ -577,7 +578,7 @@ class Validity implements ArrayableContract
 
         $this->boolean = true;
 
-        \assert(
+        Typer::assert(
             $this->array === false && $this->collection === false && $this->file === false && $this->integer === false && $this->numeric === false && $this->string === false,
             'validation type cross',
         );
@@ -710,7 +711,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        \assert($max === null || $max >= $min);
+        Typer::assert($max === null || $max >= $min);
 
         return $this->addRule('decimal', $max === null ? [$min] : [$min, $max]);
     }
@@ -826,7 +827,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        \assert($maxLength >= $minLength);
+        Typer::assert($maxLength >= $minLength);
 
         return $this->addRule('digits_between', [$minLength, $maxLength]);
     }
@@ -959,8 +960,8 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        \assert(! $filterUnicode || ! $filter, 'filter and filter_unicode can not coexist');
-        \assert(! $strict || ! $rfc, 'strict and rfc can not coexist');
+        Typer::assert(! $filterUnicode || ! $filter, 'filter and filter_unicode can not coexist');
+        Typer::assert(! $strict || ! $rfc, 'strict and rfc can not coexist');
 
         if (resolveApp()->runningUnitTests()) {
             return $this->addRule('email');
@@ -1170,7 +1171,7 @@ class Validity implements ArrayableContract
 
         $this->file = true;
 
-        \assert(
+        Typer::assert(
             $this->array === false && $this->collection === false && $this->boolean === false && $this->integer === false && $this->numeric === false && $this->string === false,
             'validation type cross',
         );
@@ -1408,7 +1409,7 @@ class Validity implements ArrayableContract
 
         $this->integer = true;
 
-        \assert(
+        Typer::assert(
             $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->numeric === false && $this->string === false,
             'validation type cross',
         );
@@ -1417,13 +1418,13 @@ class Validity implements ArrayableContract
             $this->size($min);
         } else {
             if ($min !== null) {
-                \assert($max === null || $min <= $max);
+                Typer::assert($max === null || $min <= $max);
 
                 $this->min($min);
             }
 
             if ($max !== null) {
-                \assert($min === null || $min <= $max);
+                Typer::assert($min === null || $min <= $max);
 
                 $this->max($max);
             }
@@ -1781,7 +1782,7 @@ class Validity implements ArrayableContract
 
         $this->numeric = true;
 
-        \assert(
+        Typer::assert(
             $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->string === false,
             'validation type cross',
         );
@@ -1790,13 +1791,13 @@ class Validity implements ArrayableContract
             $this->size($max);
         } else {
             if ($min !== null) {
-                \assert($max === null || $min <= $max);
+                Typer::assert($max === null || $min <= $max);
 
                 $this->min($min);
             }
 
             if ($max !== null) {
-                \assert($min === null || $min <= $max);
+                Typer::assert($min === null || $min <= $max);
 
                 $this->max($max);
             }
@@ -2150,26 +2151,26 @@ class Validity implements ArrayableContract
 
         $this->string = true;
 
-        \assert(
+        Typer::assert(
             $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false,
             'validation type cross',
         );
 
         if ($max !== null && $max === $min) {
-            \assert($min >= 0);
+            Typer::assert($min >= 0);
 
             $this->size($max);
         } else {
             if ($min !== null) {
-                \assert($min >= 0);
-                \assert($max === null || $min <= $max);
+                Typer::assert($min >= 0);
+                Typer::assert($max === null || $min <= $max);
 
                 $this->min($min);
             }
 
             if ($max !== null) {
-                \assert($max >= 0);
-                \assert($min === null || $min <= $max);
+                Typer::assert($max >= 0);
+                Typer::assert($min === null || $min <= $max);
 
                 $this->max($max);
             }
@@ -2193,26 +2194,26 @@ class Validity implements ArrayableContract
 
         $this->string = true;
 
-        \assert(
+        Typer::assert(
             $this->array === false && $this->collection === false && $this->boolean === false && $this->file === false && $this->integer === false && $this->numeric === false,
             'validation type cross',
         );
 
         if ($max !== null && $max === $min) {
-            \assert($min >= 0);
+            Typer::assert($min >= 0);
 
             $this->strlen($max);
         } else {
             if ($min !== null) {
-                \assert($min >= 0);
-                \assert($max === null || $min <= $max);
+                Typer::assert($min >= 0);
+                Typer::assert($max === null || $min <= $max);
 
                 $this->strlenMin($min);
             }
 
             if ($max !== null) {
-                \assert($max >= 0);
-                \assert($min === null || $min <= $max);
+                Typer::assert($max >= 0);
+                Typer::assert($min === null || $min <= $max);
 
                 $this->strlenMax($max);
             }
@@ -2236,7 +2237,7 @@ class Validity implements ArrayableContract
 
         $max ??= SchmeaBuilder::$defaultStringLength;
 
-        \assert($max <= static::VARCHAR_MAX);
+        Typer::assert($max <= static::VARCHAR_MAX);
 
         return $this->string($max, $min);
     }
@@ -2462,7 +2463,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        \assert($length >= 0);
+        Typer::assert($length >= 0);
 
         return $this->addRule('strlen', [$length]);
     }
@@ -2480,7 +2481,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        \assert($max >= 0);
+        Typer::assert($max >= 0);
 
         return $this->addRule('strlen_max', [$max]);
     }
@@ -2498,7 +2499,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        \assert($min >= 0);
+        Typer::assert($min >= 0);
 
         return $this->addRule('strlen_min', [$min]);
     }
@@ -2553,13 +2554,13 @@ class Validity implements ArrayableContract
         if ($bytes) {
             $max ??= static::TINY_TEXT_MAX;
 
-            \assert($max <= static::TINY_TEXT_MAX);
+            Typer::assert($max <= static::TINY_TEXT_MAX);
 
             $this->bytes($max, $min);
         } else {
             $max ??= (int) (static::TINY_TEXT_MAX / 4);
 
-            \assert($max <= (int) (static::TINY_TEXT_MAX / 4), 'text columns are in bytes');
+            Typer::assert($max <= (int) (static::TINY_TEXT_MAX / 4), 'text columns are in bytes');
 
             $this->string($max, $min);
         }
@@ -2583,13 +2584,13 @@ class Validity implements ArrayableContract
         if ($bytes) {
             $max ??= static::TEXT_MAX;
 
-            \assert($max <= static::TEXT_MAX);
+            Typer::assert($max <= static::TEXT_MAX);
 
             $this->bytes($max, $min);
         } else {
             $max ??= (int) (static::TEXT_MAX / 4);
 
-            \assert($max <= (int) (static::TEXT_MAX / 4), 'text columns are in bytes');
+            Typer::assert($max <= (int) (static::TEXT_MAX / 4), 'text columns are in bytes');
 
             $this->string($max, $min);
         }
@@ -2613,13 +2614,13 @@ class Validity implements ArrayableContract
         if ($bytes) {
             $max ??= static::MEDIUM_TEXT_MAX;
 
-            \assert($max <= static::MEDIUM_TEXT_MAX);
+            Typer::assert($max <= static::MEDIUM_TEXT_MAX);
 
             $this->bytes($max, $min);
         } else {
             $max ??= (int) (static::MEDIUM_TEXT_MAX / 4);
 
-            \assert($max <= (int) (static::MEDIUM_TEXT_MAX / 4), 'text columns are in bytes');
+            Typer::assert($max <= (int) (static::MEDIUM_TEXT_MAX / 4), 'text columns are in bytes');
 
             $this->string($max, $min);
         }
@@ -2643,13 +2644,13 @@ class Validity implements ArrayableContract
         if ($bytes) {
             $max ??= static::LONG_TEXT_MAX;
 
-            \assert($max <= static::LONG_TEXT_MAX);
+            Typer::assert($max <= static::LONG_TEXT_MAX);
 
             $this->bytes($max, $min);
         } else {
             $max ??= (int) (static::LONG_TEXT_MAX / 4);
 
-            \assert($max <= (int) (static::LONG_TEXT_MAX / 4), 'text columns are in bytes');
+            Typer::assert($max <= (int) (static::LONG_TEXT_MAX / 4), 'text columns are in bytes');
 
             $this->string($max, $min);
         }
@@ -2673,8 +2674,8 @@ class Validity implements ArrayableContract
         $min ??= static::TINY_INT_MIN;
         $max ??= static::TINY_INT_MAX;
 
-        \assert($min >= static::TINY_INT_MIN);
-        \assert($max <= static::TINY_INT_MAX);
+        Typer::assert($min >= static::TINY_INT_MIN);
+        Typer::assert($max <= static::TINY_INT_MAX);
 
         return $this->integer($max, $min);
     }
@@ -2695,8 +2696,8 @@ class Validity implements ArrayableContract
         $min ??= static::UNSIGNED_TINY_INT_MIN;
         $max ??= static::UNSIGNED_TINY_INT_MAX;
 
-        \assert($min >= static::UNSIGNED_TINY_INT_MIN);
-        \assert($max <= static::UNSIGNED_TINY_INT_MAX);
+        Typer::assert($min >= static::UNSIGNED_TINY_INT_MIN);
+        Typer::assert($max <= static::UNSIGNED_TINY_INT_MAX);
 
         return $this->integer($max, $min);
     }
@@ -2717,8 +2718,8 @@ class Validity implements ArrayableContract
         $min ??= static::SMALL_INT_MIN;
         $max ??= static::SMALL_INT_MAX;
 
-        \assert($min >= static::SMALL_INT_MIN);
-        \assert($max <= static::SMALL_INT_MAX);
+        Typer::assert($min >= static::SMALL_INT_MIN);
+        Typer::assert($max <= static::SMALL_INT_MAX);
 
         return $this->integer($max, $min);
     }
@@ -2739,8 +2740,8 @@ class Validity implements ArrayableContract
         $min ??= static::UNSIGNED_SMALL_INT_MIN;
         $max ??= static::UNSIGNED_SMALL_INT_MAX;
 
-        \assert($min >= static::UNSIGNED_SMALL_INT_MIN);
-        \assert($max <= static::UNSIGNED_SMALL_INT_MAX);
+        Typer::assert($min >= static::UNSIGNED_SMALL_INT_MIN);
+        Typer::assert($max <= static::UNSIGNED_SMALL_INT_MAX);
 
         return $this->integer($max, $min);
     }
@@ -2761,8 +2762,8 @@ class Validity implements ArrayableContract
         $min ??= static::MEDIUM_INT_MIN;
         $max ??= static::MEDIUM_INT_MAX;
 
-        \assert($min >= static::MEDIUM_INT_MIN);
-        \assert($max <= static::MEDIUM_INT_MAX);
+        Typer::assert($min >= static::MEDIUM_INT_MIN);
+        Typer::assert($max <= static::MEDIUM_INT_MAX);
 
         return $this->integer($max, $min);
     }
@@ -2783,8 +2784,8 @@ class Validity implements ArrayableContract
         $min ??= static::UNSIGNED_MEDIUM_INT_MIN;
         $max ??= static::UNSIGNED_MEDIUM_INT_MAX;
 
-        \assert($min >= static::UNSIGNED_MEDIUM_INT_MIN);
-        \assert($max <= static::UNSIGNED_MEDIUM_INT_MAX);
+        Typer::assert($min >= static::UNSIGNED_MEDIUM_INT_MIN);
+        Typer::assert($max <= static::UNSIGNED_MEDIUM_INT_MAX);
 
         return $this->integer($max, $min);
     }
@@ -2805,8 +2806,8 @@ class Validity implements ArrayableContract
         $min ??= static::INT_MIN;
         $max ??= static::INT_MAX;
 
-        \assert($min >= static::INT_MIN);
-        \assert($max <= static::INT_MAX);
+        Typer::assert($min >= static::INT_MIN);
+        Typer::assert($max <= static::INT_MAX);
 
         return $this->integer($max, $min);
     }
@@ -2827,8 +2828,8 @@ class Validity implements ArrayableContract
         $min ??= static::UNSIGNED_INT_MIN;
         $max ??= static::UNSIGNED_INT_MAX;
 
-        \assert($min >= static::UNSIGNED_INT_MIN);
-        \assert($max <= static::UNSIGNED_INT_MAX);
+        Typer::assert($min >= static::UNSIGNED_INT_MIN);
+        Typer::assert($max <= static::UNSIGNED_INT_MAX);
 
         return $this->integer($max, $min);
     }
@@ -2849,7 +2850,7 @@ class Validity implements ArrayableContract
         $min ??= static::BIG_INT_MIN;
         $max ??= static::BIG_INT_MAX;
 
-        \assert($min >= static::BIG_INT_MIN);
+        Typer::assert($min >= static::BIG_INT_MIN);
 
         return $this->integer($max, $min);
     }
@@ -2870,7 +2871,7 @@ class Validity implements ArrayableContract
         $min ??= static::UNSIGNED_BIG_INT_MIN;
         $max ??= static::UNSIGNED_BIG_INT_MAX;
 
-        \assert($min >= static::UNSIGNED_BIG_INT_MIN);
+        Typer::assert($min >= static::UNSIGNED_BIG_INT_MIN);
 
         return $this->integer($max, $min);
     }
@@ -2890,7 +2891,7 @@ class Validity implements ArrayableContract
 
         $min ??= 0;
 
-        \assert($min >= 0);
+        Typer::assert($min >= 0);
 
         return $this->integer($max, $min);
     }
@@ -2926,7 +2927,7 @@ class Validity implements ArrayableContract
 
         $min ??= 1;
 
-        \assert($min >= 1);
+        Typer::assert($min >= 1);
 
         return $this->integer($max, $min);
     }
@@ -3120,9 +3121,7 @@ class Validity implements ArrayableContract
                 if ($keys === null) {
                     $builder = $callback();
 
-                    $model = $builder->getModel();
-
-                    \assert($model instanceof Model);
+                    $model = Typer::assertInstance($builder->getModel(), Model::class);
 
                     $keys = $builder
                         ->getQuery()
@@ -3180,9 +3179,7 @@ class Validity implements ArrayableContract
                 if ($keys === null) {
                     $builder = $callback();
 
-                    $model = $builder->getModel();
-
-                    \assert($model instanceof Model);
+                    $model = Typer::assertInstance($builder->getModel(), Model::class);
 
                     $keys = $builder
                         ->getQuery()
@@ -3240,9 +3237,7 @@ class Validity implements ArrayableContract
                 if ($keys === null) {
                     $builder = $callback();
 
-                    $model = $builder->getModel();
-
-                    \assert($model instanceof Model);
+                    $model = Typer::assertInstance($builder->getModel(), Model::class);
 
                     $keys = $builder
                         ->getQuery()
@@ -3300,9 +3295,7 @@ class Validity implements ArrayableContract
                 if ($keys === null) {
                     $builder = $callback();
 
-                    $model = $builder->getModel();
-
-                    \assert($model instanceof Model);
+                    $model = Typer::assertInstance($builder->getModel(), Model::class);
 
                     $keys = $builder
                         ->getQuery()
@@ -3368,9 +3361,7 @@ class Validity implements ArrayableContract
                 }
 
                 foreach ($builder->cursor() as $found) {
-                    \assert($found instanceof Model);
-
-                    $ok = $each($found, $value, $attribute);
+                    $ok = $each(Typer::assertInstance($found, Model::class), $value, $attribute);
 
                     if ($ok === null) {
                         continue;
@@ -3417,9 +3408,7 @@ class Validity implements ArrayableContract
                 }
 
                 foreach ($builder->cursor() as $found) {
-                    \assert($found instanceof Model);
-
-                    $ok = $each($found, $value, $attribute);
+                    $ok = $each(Typer::assertInstance($found, Model::class), $value, $attribute);
 
                     if ($ok === null) {
                         continue;
@@ -3468,9 +3457,7 @@ class Validity implements ArrayableContract
                 }
 
                 foreach ($builder->cursor() as $found) {
-                    \assert($found instanceof Model);
-
-                    $ok = $each($found, $value, $attribute);
+                    $ok = $each(Typer::assertInstance($found, Model::class), $value, $attribute);
 
                     if ($ok === null) {
                         continue;
@@ -3519,9 +3506,7 @@ class Validity implements ArrayableContract
                 }
 
                 foreach ($builder->cursor() as $found) {
-                    \assert($found instanceof Model);
-
-                    $ok = $each($found, $value, $attribute);
+                    $ok = $each(Typer::assertInstance($found, Model::class), $value, $attribute);
 
                     if ($ok === null) {
                         continue;
@@ -3557,9 +3542,7 @@ class Validity implements ArrayableContract
             new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
                 $builder = $callback($value, $attribute);
 
-                $model = $builder->getModel();
-
-                \assert($model instanceof Model);
+                $model = Typer::assertInstance($builder->getModel(), Model::class);
 
                 $builder->where($model->getRouteKeyName(), $value);
 
@@ -3574,9 +3557,7 @@ class Validity implements ArrayableContract
                 }
 
                 foreach ($builder->cursor() as $found) {
-                    \assert($found instanceof Model);
-
-                    $ok = $each($found, $value, $attribute);
+                    $ok = $each(Typer::assertInstance($found, Model::class), $value, $attribute);
 
                     if ($ok === null) {
                         continue;
@@ -3612,9 +3593,7 @@ class Validity implements ArrayableContract
             new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
                 $builder = $callback($value, $attribute);
 
-                $model = $builder->getModel();
-
-                \assert($model instanceof Model);
+                $model = Typer::assertInstance($builder->getModel(), Model::class);
 
                 $builder->where($model->getRouteKeyName(), $value);
 
@@ -3629,9 +3608,7 @@ class Validity implements ArrayableContract
                 }
 
                 foreach ($builder->cursor() as $found) {
-                    \assert($found instanceof Model);
-
-                    $ok = $each($found, $value, $attribute);
+                    $ok = $each(Typer::assertInstance($found, Model::class), $value, $attribute);
 
                     if ($ok === null) {
                         continue;
@@ -3787,9 +3764,7 @@ class Validity implements ArrayableContract
             new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
                 $builder = $callback($value, $attribute);
 
-                $model = $builder->getModel();
-
-                \assert($model instanceof Model);
+                $model = Typer::assertInstance($builder->getModel(), Model::class);
 
                 $builder->where(static function (Builder $builder) use ($value, $model): void {
                     $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
@@ -3806,9 +3781,7 @@ class Validity implements ArrayableContract
                 }
 
                 foreach ($builder->cursor() as $found) {
-                    \assert($found instanceof Model);
-
-                    $ok = $each($found, $value, $attribute);
+                    $ok = $each(Typer::assertInstance($found, Model::class), $value, $attribute);
 
                     if ($ok === null) {
                         continue;
@@ -3844,9 +3817,7 @@ class Validity implements ArrayableContract
             new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each): bool|int {
                 $builder = $callback($value, $attribute);
 
-                $model = $builder->getModel();
-
-                \assert($model instanceof Model);
+                $model = Typer::assertInstance($builder->getModel(), Model::class);
 
                 $builder->where(static function (Builder $builder) use ($value, $model): void {
                     $builder->whereKey($value)->orWhere($model->getRouteKeyName(), $value);
@@ -3863,9 +3834,7 @@ class Validity implements ArrayableContract
                 }
 
                 foreach ($builder->cursor() as $found) {
-                    \assert($found instanceof Model);
-
-                    $ok = $each($found, $value, $attribute);
+                    $ok = $each(Typer::assertInstance($found, Model::class), $value, $attribute);
 
                     if ($ok === null) {
                         continue;
@@ -3994,7 +3963,7 @@ class Validity implements ArrayableContract
      */
     public function toArray(): array
     {
-        \assert(
+        Typer::assert(
             $this->unsafe
                 || $this->array
                 || $this->collection
@@ -4007,7 +3976,7 @@ class Validity implements ArrayableContract
                 || $this->missing,
             'attribute must be validated against base type (array|object|collection|boolean|file|integer|numeric|string)',
         );
-        \assert($this->unsafe || $this->required || $this->nullable || $this->missing || $this->prohibited, 'attribute must be validated against nullable or required');
+        Typer::assert($this->unsafe || $this->required || $this->nullable || $this->missing || $this->prohibited, 'attribute must be validated against nullable or required');
 
         $rules = [];
 
@@ -4079,7 +4048,7 @@ class Validity implements ArrayableContract
      */
     public function addRule(mixed $rule, ?array $arguments = null): static
     {
-        \assert($this->skipNext === false);
+        Typer::assert($this->skipNext === false);
 
         if (\is_string($rule)) {
             if ($arguments !== null && \count($arguments) > 0) {

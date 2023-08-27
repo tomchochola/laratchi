@@ -6,7 +6,6 @@ namespace Tomchochola\Laratchi\Exceptions;
 
 use RuntimeException;
 use Throwable;
-use Tomchochola\Laratchi\Support\Typer;
 
 class Panicker
 {
@@ -15,7 +14,7 @@ class Panicker
      *
      * @param array<mixed> $args
      */
-    public static function panic(string $source, string $message, array $args = [], int $code = 0, ?Throwable $previous = null): never
+    public static function panic(string $source, string $message = 'panic', array $args = [], int $code = 0, ?Throwable $previous = null): never
     {
         throw new RuntimeException(static::message($source, $message, $args), $code, $previous);
     }
@@ -85,6 +84,10 @@ class Panicker
             return 'resource';
         }
 
-        return (string) Typer::assertScalar($value);
+        if (\is_scalar($value)) {
+            return (string) $value;
+        }
+
+        static::panic(__METHOD__);
     }
 }

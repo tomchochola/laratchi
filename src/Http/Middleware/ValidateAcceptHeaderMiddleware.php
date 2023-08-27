@@ -18,8 +18,6 @@ class ValidateAcceptHeaderMiddleware
      */
     public function handle(Request $request, Closure $next, string ...$accepts): SymfonyResponse
     {
-        \assert(\count($accepts) > 0);
-
         if (! $request->hasHeader('Accept')) {
             return $next($request);
         }

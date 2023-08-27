@@ -7,6 +7,7 @@ namespace Tomchochola\Laratchi\Console;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
 use Tomchochola\Laratchi\Exceptions\Panicker;
+use Tomchochola\Laratchi\Support\Typer;
 
 class MakeTchiCommand extends GeneratorCommand
 {
@@ -230,15 +231,12 @@ class MakeTchiCommand extends GeneratorCommand
 
         $openApi = $this->files->get($path);
 
-        $json = \json_decode($openApi, true);
+        $json = Typer::assertArray(\json_decode($openApi, true));
 
-        \assert(\is_array($json));
-        \assert(\is_array($json['tags']));
-
-        $json['tags'][] = [
+        $json['tags'] = \array_merge(Typer::assertArray($json['tags']), [
             'name' => $table,
             'description' => $modelName,
-        ];
+        ]);
 
         $json['paths']["/{$table}/index"] = [
             'get' => [
@@ -691,9 +689,7 @@ class MakeTchiCommand extends GeneratorCommand
             ];
         }
 
-        $json = \json_encode($json, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE);
-
-        \assert(\is_string($json));
+        $json = Typer::assertString(\json_encode($json, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE));
 
         $this->files->put($path, $json);
     }

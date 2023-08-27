@@ -10,6 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use RedeyeVentures\GeoPattern\GeoPattern;
+use Tomchochola\Laratchi\Support\Typer;
 
 class MediaSeedSupport
 {
@@ -43,15 +44,9 @@ class MediaSeedSupport
                 'itemsperpage_free' => 1,
             ]);
 
-            $response = \file_get_contents("https://www.123rfapis.com?{$query}");
+            $response = Typer::assertNotBool(\file_get_contents("https://www.123rfapis.com?{$query}"));
 
-            \assert($response !== false);
-
-            $json = \json_decode($response, true);
-
-            \assert(\is_array($json));
-
-            return $json;
+            return Typer::assertArray(\json_decode($response, true));
         });
 
         $randomIndex = \random_int(0, 99);
@@ -65,9 +60,7 @@ class MediaSeedSupport
             return static::imageUrl(['random']);
         }
 
-        \assert(\is_string($url));
-
-        return $url;
+        return Typer::assertString($url);
     }
 
     /**

@@ -59,7 +59,7 @@ if (! \function_exists('configBool')) {
     {
         $value = resolveConfig()->get($key, $default) ?? $default;
 
-        \assert($value === null || \is_bool($value), \sprintf("key:[{$key}] value:[%s] config is not bool or null", \get_debug_type($value)));
+        \assert($value === null || \is_bool($value), Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         if (\count($in) === 0 || \in_array($value, $in, true)) {
             return $value;
@@ -79,7 +79,7 @@ if (! \function_exists('mustConfigBool')) {
     {
         $value = configBool($key, $default, $in);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] config is not bool", \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         return $value;
     }
@@ -95,7 +95,7 @@ if (! \function_exists('configInt')) {
     {
         $value = resolveConfig()->get($key, $default) ?? $default;
 
-        \assert($value === null || \is_int($value), \sprintf("key:[{$key}] value:[%s] config is not int or null", \get_debug_type($value)));
+        \assert($value === null || \is_int($value), Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         if (\count($in) === 0 || \in_array($value, $in, true)) {
             return $value;
@@ -115,7 +115,7 @@ if (! \function_exists('mustConfigInt')) {
     {
         $value = configInt($key, $default, $in);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] config is not int", \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         return $value;
     }
@@ -131,7 +131,7 @@ if (! \function_exists('configFloat')) {
     {
         $value = resolveConfig()->get($key, $default) ?? $default;
 
-        \assert($value === null || \is_float($value), \sprintf("key:[{$key}] value:[%s] config is not float or null", \get_debug_type($value)));
+        \assert($value === null || \is_float($value), Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         if (\count($in) === 0 || \in_array($value, $in, true)) {
             return $value;
@@ -151,7 +151,7 @@ if (! \function_exists('mustConfigFloat')) {
     {
         $value = configFloat($key, $default, $in);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] config is not float", \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         return $value;
     }
@@ -169,7 +169,7 @@ if (! \function_exists('configArray')) {
     {
         $value = resolveConfig()->get($key, $default) ?? $default;
 
-        \assert($value === null || \is_array($value), \sprintf("key:[{$key}] value:[%s] config is not array or null", \get_debug_type($value)));
+        \assert($value === null || \is_array($value), Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         return $value;
     }
@@ -187,7 +187,7 @@ if (! \function_exists('mustConfigArray')) {
     {
         $value = configArray($key, $default);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] config is not array", \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         return $value;
     }
@@ -203,7 +203,7 @@ if (! \function_exists('configString')) {
     {
         $value = resolveConfig()->get($key, $default) ?? $default;
 
-        \assert($value === null || \is_string($value), \sprintf("key:[{$key}] value:[%s] config is not string or null", \get_debug_type($value)));
+        \assert($value === null || \is_string($value), Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         if (\count($in) === 0 || \in_array($value, $in, true)) {
             return $value;
@@ -223,7 +223,7 @@ if (! \function_exists('mustConfigString')) {
     {
         $value = configString($key, $default, $in);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] config is not string", \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         return $value;
     }
@@ -796,7 +796,7 @@ if (! \function_exists('envString')) {
 
         $value = \filter_var($value);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] env is not string or null", \get_debug_type($value)));
+        \assert($value !== false, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         if ($trim) {
             $value = \trim($value);
@@ -828,7 +828,7 @@ if (! \function_exists('mustEnvString')) {
     {
         $value = envString($key, $default, $trim, $in);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] env is not string", \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         return $value;
     }
@@ -850,7 +850,7 @@ if (! \function_exists('envBool')) {
 
         $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] env is not bool or null", \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         if (\count($in) === 0 || \in_array($value, $in, true)) {
             return $value;
@@ -870,7 +870,7 @@ if (! \function_exists('mustEnvBool')) {
     {
         $value = envBool($key, $default, $in);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] env is not bool", \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         return $value;
     }
@@ -892,7 +892,7 @@ if (! \function_exists('envInt')) {
 
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] env is not int or null", \get_debug_type($value)));
+        \assert($value !== false, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         if (\count($in) === 0 || \in_array($value, $in, true)) {
             return $value;
@@ -912,7 +912,7 @@ if (! \function_exists('mustEnvInt')) {
     {
         $value = envInt($key, $default, $in);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] env is not int", \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         return $value;
     }
@@ -934,7 +934,7 @@ if (! \function_exists('envFloat')) {
 
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] env is not float or null", \get_debug_type($value)));
+        \assert($value !== false, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         if (\count($in) === 0 || \in_array($value, $in, true)) {
             return $value;
@@ -954,7 +954,7 @@ if (! \function_exists('mustEnvFloat')) {
     {
         $value = envFloat($key, $default, $in);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] env is not float", \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
         return $value;
     }
@@ -976,7 +976,7 @@ if (! \function_exists('currentEnv')) {
             return $value;
         }
 
-        Panicker::panic(__FUNCTION__, 'is not in available options', ['key' => 'APP_ENV', 'value' => $value]);
+        Panicker::panic(__FUNCTION__, 'is not in available options', \compact('value'));
     }
 }
 

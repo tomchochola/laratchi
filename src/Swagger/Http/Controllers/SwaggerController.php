@@ -6,6 +6,8 @@ namespace Tomchochola\Laratchi\Swagger\Http\Controllers;
 
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Routing\Controller;
+use Tomchochola\Laratchi\Support\Resolver;
+use Tomchochola\Laratchi\Support\Typer;
 
 class SwaggerController extends Controller
 {
@@ -14,13 +16,9 @@ class SwaggerController extends Controller
      */
     public function __invoke(): SymfonyResponse
     {
-        $route = resolveRouter()->current();
+        $route = Resolver::resolveRoute();
 
-        \assert($route !== null);
-
-        $url = $route->parameter('url');
-
-        \assert(\is_string($url));
+        $url = Typer::assertString($route->parameter('url'));
 
         return resolveResponseFactory()->view('laratchi::swagger', [
             'url' => $url,

@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue as ShouldQueueContract;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Tomchochola\Laratchi\Config\Config;
+use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Translation\Trans;
 
 class PasswordInitNotification extends Notification implements ShouldQueueContract
@@ -23,16 +24,6 @@ class PasswordInitNotification extends Notification implements ShouldQueueContra
     public static string $template = self::class;
 
     /**
-     * Trans.
-     */
-    public Trans $trans;
-
-    /**
-     * Config.
-     */
-    public Config $config;
-
-    /**
      * Create a new notification instance.
      */
     protected function __construct(
@@ -43,9 +34,6 @@ class PasswordInitNotification extends Notification implements ShouldQueueContra
         protected ?string $url = null,
     ) {
         $this->afterCommit();
-
-        $this->trans = new Trans();
-        $this->config = new Config();
     }
 
     /**
@@ -71,16 +59,19 @@ class PasswordInitNotification extends Notification implements ShouldQueueContra
      */
     public function toMail(mixed $notifiable): MailMessage
     {
+        $trans = Trans::inject();
+        $config = Config::inject();
+
         return (new MailMessage())
-            ->subject($this->trans->assertString('Init Password Notification'))
-            ->line($this->trans->assertString('You are receiving this email because we received a password init request for your account.'))
-            ->action($this->trans->assertString('Init Password'), $this->getUrl($notifiable))
+            ->subject($trans->assertString('Init Password Notification'))
+            ->line($trans->assertString('You are receiving this email because we received a password init request for your account.'))
+            ->action($trans->assertString('Init Password'), $this->getUrl($notifiable))
             ->line(
-                $this->trans->assertString('This password init link will expire in :count minutes.', [
-                    'count' => (string) $this->config->assertInt("auth.passwords.{$this->guardName}.expire"),
+                $trans->assertString('This password init link will expire in :count minutes.', [
+                    'count' => (string) $config->assertInt("auth.passwords.{$this->guardName}.expire"),
                 ]),
             )
-            ->line($this->trans->assertString('If you did not request a password init, no further action is required.'));
+            ->line($trans->assertString('If you did not request a password init, no further action is required.'));
     }
 
     /**
@@ -92,7 +83,7 @@ class PasswordInitNotification extends Notification implements ShouldQueueContra
             return $this->url;
         }
 
-        \assert($this->token !== null && $this->email !== null && $this->locale !== null);
+        Typer::assertTrue($this->token !== null && $this->email !== null && $this->locale !== null);
 
         $query = \http_build_query([
             'guard' => $this->guardName,
@@ -101,6 +92,6 @@ class PasswordInitNotification extends Notification implements ShouldQueueContra
             'locale' => $this->locale,
         ]);
 
-        return ($this->spa ?? $this->trans->assertString('spa.password_init_url')).'?'.$query;
+        return ($this->spa ?? Trans::inject()->assertString('spa.password_init_url')).'?'.$query;
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Contracts\Translation\Translator as TranslatorContract;
 use Illuminate\Contracts\Validation\Factory as ValidationFactoryContract;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator as IlluminateValidator;
+use Tomchochola\Laratchi\Support\Typer;
 
 class Validator extends IlluminateValidator
 {
@@ -33,9 +34,13 @@ class Validator extends IlluminateValidator
      */
     public static function extend(ValidationFactoryContract $factory, string $validator): void
     {
-        \assert($factory instanceof ValidationFactory);
-
-        $factory->resolver(static function (TranslatorContract $translator, array $data, array $rules, array $messages, array $attributes) use ($validator): IlluminateValidator {
+        Typer::assertInstance($factory, ValidationFactory::class)->resolver(static function (
+            TranslatorContract $translator,
+            array $data,
+            array $rules,
+            array $messages,
+            array $attributes,
+        ) use ($validator): IlluminateValidator {
             return new $validator($translator, $data, $rules, $messages, $attributes);
         });
     }
@@ -45,9 +50,7 @@ class Validator extends IlluminateValidator
      */
     public static function clone(ValidationFactoryContract $factory): ValidationFactoryContract
     {
-        \assert($factory instanceof ValidationFactory);
-
-        $clonedFactory = clone $factory;
+        $clonedFactory = clone Typer::assertInstance($factory, ValidationFactory::class);
 
         static::extend($clonedFactory, static::class);
 

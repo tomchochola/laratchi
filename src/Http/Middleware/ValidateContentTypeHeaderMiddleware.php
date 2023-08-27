@@ -18,8 +18,6 @@ class ValidateContentTypeHeaderMiddleware
      */
     public function handle(Request $request, Closure $next, string ...$contentTypes): SymfonyResponse
     {
-        \assert(\count($contentTypes) > 0);
-
         if ($request->isMethodSafe()) {
             return $next($request);
         }

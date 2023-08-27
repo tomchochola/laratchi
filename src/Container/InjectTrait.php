@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Container;
 
+use Tomchochola\Laratchi\Support\Typer;
+
 trait InjectTrait
 {
-    /**
-     * Inject cache.
-     */
-    public static ?self $injectCache = null;
-
     /**
      * Inject.
      */
     public static function inject(): self
     {
-        if (static::$injectCache === null) {
-            static::$injectCache = new self();
+        if (Facade::hasResolved(self::class)) {
+            return Typer::assertInstance(Facade::getResolved(self::class), self::class);
         }
 
-        return static::$injectCache;
+        $instance = new self();
+
+        Facade::setResolved($instance::class, $instance);
+
+        return $instance;
     }
 }

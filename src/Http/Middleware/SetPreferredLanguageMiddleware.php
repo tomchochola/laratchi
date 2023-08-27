@@ -7,6 +7,7 @@ namespace Tomchochola\Laratchi\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tomchochola\Laratchi\Config\Config;
 
 class SetPreferredLanguageMiddleware
 {
@@ -18,11 +19,7 @@ class SetPreferredLanguageMiddleware
     public function handle(Request $request, Closure $next, string ...$locales): SymfonyResponse
     {
         if (\count($locales) === 0) {
-            foreach (mustConfigArray('app.locales') as $locale) {
-                \assert(\is_string($locale));
-
-                $locales[] = $locale;
-            }
+            $locales = Config::inject()->appLocales();
         }
 
         $locale = $request->getPreferredLanguage($locales);

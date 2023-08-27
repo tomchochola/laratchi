@@ -19,7 +19,7 @@ class Typer
      */
     public static function assertString(mixed $value): string
     {
-        \assert(\is_string($value), \sprintf('value:[%s] is not string', \get_debug_type($value)));
+        \assert(\is_string($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -29,7 +29,7 @@ class Typer
      */
     public static function assertNullableString(mixed $value): ?string
     {
-        \assert($value === null || \is_string($value), \sprintf('value:[%s] is not string or null', \get_debug_type($value)));
+        \assert($value === null || \is_string($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -39,7 +39,7 @@ class Typer
      */
     public static function assertBool(mixed $value): bool
     {
-        \assert(\is_bool($value), \sprintf('value:[%s] is not bool', \get_debug_type($value)));
+        \assert(\is_bool($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -49,7 +49,7 @@ class Typer
      */
     public static function assertNullableBool(mixed $value): ?bool
     {
-        \assert($value === null || \is_bool($value), \sprintf('value:[%s] is not bool or null', \get_debug_type($value)));
+        \assert($value === null || \is_bool($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -59,7 +59,7 @@ class Typer
      */
     public static function assertInt(mixed $value): int
     {
-        \assert(\is_int($value), \sprintf('value:[%s] is not int', \get_debug_type($value)));
+        \assert(\is_int($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -69,7 +69,7 @@ class Typer
      */
     public static function assertNullableInt(mixed $value): ?int
     {
-        \assert($value === null || \is_int($value), \sprintf('value:[%s] is not int or null', \get_debug_type($value)));
+        \assert($value === null || \is_int($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -79,7 +79,7 @@ class Typer
      */
     public static function assertFloat(mixed $value): float
     {
-        \assert(\is_float($value), \sprintf('value:[%s] is not float', \get_debug_type($value)));
+        \assert(\is_float($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -89,7 +89,7 @@ class Typer
      */
     public static function assertNullableFloat(mixed $value): ?float
     {
-        \assert($value === null || \is_float($value), \sprintf('value:[%s] is not float or null', \get_debug_type($value)));
+        \assert($value === null || \is_float($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -101,7 +101,7 @@ class Typer
      */
     public static function assertArray(mixed $value): array
     {
-        \assert(\is_array($value), \sprintf('value:[%s] is not array', \get_debug_type($value)));
+        \assert(\is_array($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -113,7 +113,7 @@ class Typer
      */
     public static function assertNullableArray(mixed $value): ?array
     {
-        \assert($value === null || \is_array($value), \sprintf('value:[%s] is not array or null', \get_debug_type($value)));
+        \assert($value === null || \is_array($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -123,7 +123,7 @@ class Typer
      */
     public static function assertFile(mixed $value): UploadedFile
     {
-        \assert($value instanceof UploadedFile, \sprintf('value:[%s] is not file', \get_debug_type($value)));
+        \assert($value instanceof UploadedFile, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -133,7 +133,7 @@ class Typer
      */
     public static function assertNullableFile(mixed $value): ?UploadedFile
     {
-        \assert($value === null || $value instanceof UploadedFile, \sprintf('value:[%s] is not file or null', \get_debug_type($value)));
+        \assert($value === null || $value instanceof UploadedFile, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -143,7 +143,7 @@ class Typer
      */
     public static function assertCarbon(mixed $value): Carbon
     {
-        \assert($value instanceof Carbon, \sprintf('value:[%s] is not carbon', \get_debug_type($value)));
+        \assert($value instanceof Carbon, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -153,7 +153,7 @@ class Typer
      */
     public static function assertNullableCarbon(mixed $value): ?Carbon
     {
-        \assert($value === null || $value instanceof Carbon, \sprintf('value:[%s] is not carbon or null', \get_debug_type($value)));
+        \assert($value === null || $value instanceof Carbon, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -163,7 +163,7 @@ class Typer
      */
     public static function assertObject(mixed $value): object
     {
-        \assert(\is_object($value), \sprintf('value:[%s] is not object', \get_debug_type($value)));
+        \assert(\is_object($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -173,7 +173,7 @@ class Typer
      */
     public static function assertNullableObject(mixed $value): ?object
     {
-        \assert($value === null || \is_object($value), \sprintf('value:[%s] is not object or null', \get_debug_type($value)));
+        \assert($value === null || \is_object($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -185,7 +185,7 @@ class Typer
      */
     public static function assertScalar(mixed $value): int|float|string|bool
     {
-        \assert(\is_scalar($value), \sprintf('value:[%s] is not scalar', \get_debug_type($value)));
+        \assert(\is_scalar($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -197,7 +197,7 @@ class Typer
      */
     public static function assertNullableScalar(mixed $value): int|float|string|bool|null
     {
-        \assert($value === null || \is_scalar($value), \sprintf('value:[%s] is not scalar or null', \get_debug_type($value)));
+        \assert($value === null || \is_scalar($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -347,7 +347,7 @@ class Typer
     {
         $value = mustParseNullableString($value);
 
-        \assert($value !== null, \sprintf('value:[%s] is not string', \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -363,7 +363,7 @@ class Typer
 
         $value = \filter_var($value);
 
-        \assert($value !== false, \sprintf('value:[%s] is not string or null', \get_debug_type($value)));
+        \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -395,7 +395,7 @@ class Typer
     {
         $value = mustParseNullableBool($value);
 
-        \assert($value !== null, \sprintf('value:[%s] is not bool', \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -411,7 +411,7 @@ class Typer
 
         $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
 
-        \assert($value !== null, \sprintf('value:[%s] is not bool or null', \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -449,7 +449,7 @@ class Typer
     {
         $value = mustParseNullableInt($value);
 
-        \assert($value !== null, \sprintf('value:[%s] is not int', \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -465,7 +465,7 @@ class Typer
 
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
-        \assert($value !== false, \sprintf('value:[%s] is not int or null', \get_debug_type($value)));
+        \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -503,7 +503,7 @@ class Typer
     {
         $value = mustParseNullableFloat($value);
 
-        \assert($value !== null, \sprintf('value:[%s] is not float', \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -519,7 +519,7 @@ class Typer
 
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
-        \assert($value !== false, \sprintf('value:[%s] is not float or null', \get_debug_type($value)));
+        \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -561,7 +561,7 @@ class Typer
     {
         $value = mustParseNullableArray($value);
 
-        \assert($value !== null, \sprintf('value:[%s] is not array', \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -577,7 +577,7 @@ class Typer
             return \get_object_vars($value);
         }
 
-        \assert($value === null || \is_array($value), \sprintf('value:[%s] is not array or null', \get_debug_type($value)));
+        \assert($value === null || \is_array($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -663,7 +663,7 @@ class Typer
     {
         $value = mustParseNullableCarbon($value, $format, $tz);
 
-        \assert($value !== null, \sprintf('value:[%s] is not carbon', \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -679,7 +679,7 @@ class Typer
 
         $value = \filter_var($value);
 
-        \assert($value !== false && $value !== '', \sprintf('value:[%s] is not carbon or null', \get_debug_type($value)));
+        \assert($value !== false && $value !== '', Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         if ($format === null) {
             return resolveDate()
@@ -689,7 +689,7 @@ class Typer
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
 
-        \assert($value !== false, \sprintf('value:[%s] is not carbon or null', \get_debug_type($value)));
+        \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value->setTimezone((new Config())->appTimezone());
     }
@@ -725,7 +725,7 @@ class Typer
     {
         $value = mustParseNullableObject($value);
 
-        \assert($value !== null, \sprintf('value:[%s] is not object', \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -739,7 +739,7 @@ class Typer
             return (object) $value;
         }
 
-        \assert($value === null || \is_object($value), \sprintf('value:[%s] is not object or null', \get_debug_type($value)));
+        \assert($value === null || \is_object($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -771,7 +771,7 @@ class Typer
     {
         $value = mustParseNullableScalar($value);
 
-        \assert($value !== null, \sprintf('value:[%s] is not scalar', \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -781,7 +781,7 @@ class Typer
      */
     public static function mustParseNullableScalar(mixed $value): string|int|float|bool|null
     {
-        \assert($value === null || \is_scalar($value), \sprintf('value:[%s] is not scalar or null', \get_debug_type($value)));
+        \assert($value === null || \is_scalar($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -837,7 +837,7 @@ class Typer
     {
         $value = mustParseNullableEnum($value, $enum);
 
-        \assert($value !== null, \sprintf('value:[%s] is not class:[%s] enum', \get_debug_type($value), $enum));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -896,7 +896,7 @@ class Typer
      */
     public static function assertNotNull(mixed $value): string|int|float|bool|object|array
     {
-        \assert($value !== null, \sprintf('value:[%s] is null', \get_debug_type($value)));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }
@@ -960,7 +960,7 @@ class Typer
     {
         $value = mustParseNullableIntEnum($value, $enum);
 
-        \assert($value !== null, \sprintf('value:[%s] is not class:[%s] int enum', \get_debug_type($value), $enum));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value', 'enum')));
 
         return $value;
     }
@@ -1032,7 +1032,7 @@ class Typer
     {
         $value = mustParseNullableStringEnum($value, $enum);
 
-        \assert($value !== null, \sprintf('value:[%s] is not class:[%s] string enum', \get_debug_type($value), $enum));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value', 'enum')));
 
         return $value;
     }
@@ -1055,5 +1055,133 @@ class Typer
         }
 
         return $enum::from($value);
+    }
+
+    /**
+     * Assert.
+     *
+     * @param array<mixed> $args
+     */
+    public static function assert(bool $value, string $message = 'assertion failed', array $args = []): void
+    {
+        if ($value !== true) {
+            Panicker::panic(__METHOD__, $message, $args);
+        }
+    }
+
+    /**
+     * Assert true.
+     *
+     * @return true
+     */
+    public static function assertTrue(mixed $value): bool
+    {
+        if ($value !== true) {
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('value'));
+        }
+
+        return true;
+    }
+
+    /**
+     * Assert false.
+     *
+     * @return false
+     */
+    public static function assertFalse(mixed $value): bool
+    {
+        if ($value !== false) {
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('value'));
+        }
+
+        return false;
+    }
+
+    /**
+     * Assert not true.
+     *
+     * @template T
+     *
+     * @param T $value
+     *
+     * @return T
+     */
+    public static function assertNotTrue(mixed $value): mixed
+    {
+        if ($value === true) {
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('value'));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Assert not false.
+     *
+     * @template T
+     *
+     * @param T $value
+     *
+     * @return T
+     */
+    public static function assertNotFalse(mixed $value): mixed
+    {
+        if ($value === false) {
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('value'));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Assert not empty.
+     *
+     * @template T of array<mixed>
+     *
+     * @param T $value
+     *
+     * @return T
+     */
+    public static function assertNotEmpty(array $value): array
+    {
+        if (\count($value) !== 0) {
+            Panicker::panic(__METHOD__, 'assertion failed', \compact('value'));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Assert empty.
+     *
+     * @template T of array<mixed>
+     *
+     * @param T $value
+     *
+     * @return T
+     */
+    public static function assertEmpty(array $value): array
+    {
+        if (\count($value) === 0) {
+            return $value;
+        }
+
+        Panicker::panic(__METHOD__, 'assertion failed', \compact('value'));
+    }
+
+    /**
+     * Assert not bool.
+     *
+     * @template T of string|int|float|object|array|null
+     *
+     * @param T|bool $value
+     *
+     * @return T
+     */
+    public static function assertNotBool(mixed $value): string|int|float|object|array|null
+    {
+        \assert(! \is_bool($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
+
+        return $value;
     }
 }

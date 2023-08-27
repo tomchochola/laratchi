@@ -17,6 +17,7 @@ use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Support\AssertTrait;
 use Tomchochola\Laratchi\Support\ParserTrait;
 use Tomchochola\Laratchi\Support\ParseTrait;
+use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Validation\AllInput;
 use Tomchochola\Laratchi\Validation\ValidatedInput;
 use Tomchochola\Laratchi\Validation\Validity;
@@ -148,9 +149,7 @@ class FormRequest extends IlluminateFormRequest
             return $this->routeParameters;
         }
 
-        $route = $this->route();
-
-        \assert($route instanceof Route);
+        $route = Typer::assertInstance($this->route(), Route::class);
 
         return $this->routeParameters = new AllInput($route->parameters());
     }
@@ -170,11 +169,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function throwValidationException(array $errors): never
     {
-        $validator = $this->getValidatorInstance();
-
-        \assert($validator instanceof Validator);
-
-        throw static::createValidationException($validator, $errors);
+        throw static::createValidationException(Typer::assertInstance($this->getValidatorInstance(), Validator::class), $errors);
     }
 
     /**
@@ -184,11 +179,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function throwThrottleValidationError(array $keys, int $seconds, string $rule = 'throttled'): never
     {
-        $validator = $this->getValidatorInstance();
-
-        \assert($validator instanceof Validator);
-
-        throw static::createThrottleValidationException($validator, $keys, $seconds, $rule);
+        throw static::createThrottleValidationException(Typer::assertInstance($this->getValidatorInstance(), Validator::class), $keys, $seconds, $rule);
     }
 
     /**
@@ -198,11 +189,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function throwUniqueValidationException(array $keys): never
     {
-        $validator = $this->getValidatorInstance();
-
-        \assert($validator instanceof Validator);
-
-        throw static::createUniqueValidationException($validator, $keys);
+        throw static::createUniqueValidationException(Typer::assertInstance($this->getValidatorInstance(), Validator::class), $keys);
     }
 
     /**
@@ -212,11 +199,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function throwExistsValidationException(array $keys): never
     {
-        $validator = $this->getValidatorInstance();
-
-        \assert($validator instanceof Validator);
-
-        throw static::createExistsValidationException($validator, $keys);
+        throw static::createExistsValidationException(Typer::assertInstance($this->getValidatorInstance(), Validator::class), $keys);
     }
 
     /**
@@ -226,11 +209,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function throwSingleValidationException(array $keys, string $rule): never
     {
-        $validator = $this->getValidatorInstance();
-
-        \assert($validator instanceof Validator);
-
-        throw static::createSingleValidationException($validator, $keys, $rule);
+        throw static::createSingleValidationException(Typer::assertInstance($this->getValidatorInstance(), Validator::class), $keys, $rule);
     }
 
     /**

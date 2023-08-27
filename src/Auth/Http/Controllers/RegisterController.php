@@ -87,9 +87,7 @@ class RegisterController extends TransactionController
      */
     protected function store(RegisterRequest $request): User
     {
-        $me = resolveUserProvider()->createModel();
-
-        \assert($me instanceof User);
+        $me = assertInstance(resolveUserProvider()->createModel(), User::class);
 
         $me->fill($request->data());
 

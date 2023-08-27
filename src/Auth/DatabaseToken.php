@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Auth;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Database\Model;
 
 class DatabaseToken extends Model
@@ -52,13 +53,11 @@ class DatabaseToken extends Model
             return null;
         }
 
-        $instance = $this->newQuery()->find($id);
+        $instance = static::findByKey($key);
 
         if ($instance === null) {
             return null;
         }
-
-        \assert($instance instanceof static);
 
         if (! \hash_equals($instance->mustString('hash'), \hash('sha256', $token))) {
             return null;
@@ -91,11 +90,7 @@ class DatabaseToken extends Model
      */
     public function user(string $guardName): ?User
     {
-        $user = $this->relationship($guardName, null)->getResults();
-
-        \assert($user === null || $user instanceof User);
-
-        return $user;
+        return assertNullableInstance($this->relationship($guardName, null)->getResults(), User::class);
     }
 
     /**
@@ -103,10 +98,8 @@ class DatabaseToken extends Model
      */
     protected function relationship(string $guardName, ?User $user): BelongsTo
     {
-        $instance = new (mustConfigString("auth.providers.{$guardName}.model"))();
+        $instance = new (Config::inject()->assertA("auth.providers.{$guardName}.model", User::class))();
 
-        \assert($instance instanceof User);
-
-        return $this->belongsTo($instance::class, $instance->getForeignKey(), $instance->getKeyName(), 'auth');
+        return $this->belongsTo($instance::class, $instance->getForeignKey(), $instance->getKeyName(), 'relationship');
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
 use ReflectionEnum;
 use stdClass;
 use Tomchochola\Laratchi\Config\Config;
+use Tomchochola\Laratchi\Exceptions\Panicker;
 
 trait ParseTrait
 {
@@ -48,7 +49,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableString($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not string on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -66,7 +67,7 @@ trait ParseTrait
 
         $value = \filter_var($value);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not string or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -100,7 +101,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableBool($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not bool on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -118,7 +119,7 @@ trait ParseTrait
 
         $value = \filter_var($value, \FILTER_VALIDATE_BOOL, \FILTER_NULL_ON_FAILURE);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not bool or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -158,7 +159,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableInt($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not int on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -176,7 +177,7 @@ trait ParseTrait
 
         $value = \filter_var($value, \FILTER_VALIDATE_INT);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not int or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -216,7 +217,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableFloat($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not float on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -234,7 +235,7 @@ trait ParseTrait
 
         $value = \filter_var($value, \FILTER_VALIDATE_FLOAT);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not float or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -278,7 +279,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableArray($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not array on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -296,7 +297,7 @@ trait ParseTrait
             return \get_object_vars($value);
         }
 
-        \assert($value === null || \is_array($value), \sprintf("key:[{$key}] value:[%s] is not array or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || \is_array($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -330,7 +331,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableFile($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not file on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -342,7 +343,7 @@ trait ParseTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || $value instanceof UploadedFile, \sprintf("key:[{$key}] value:[%s] is not file or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || $value instanceof UploadedFile, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -394,7 +395,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableCarbon($key, $format, $tz);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not carbon on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -412,7 +413,7 @@ trait ParseTrait
 
         $value = \filter_var($value);
 
-        \assert($value !== false && $value !== '', \sprintf("key:[{$key}] value:[%s] is not carbon on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== false && $value !== '', Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         if ($format === null) {
             return resolveDate()
@@ -422,7 +423,7 @@ trait ParseTrait
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
 
-        \assert($value !== false, \sprintf("key:[{$key}] value:[%s] is not carbon on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value->setTimezone((new Config())->appTimezone());
     }
@@ -460,7 +461,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableObject($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not object on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -476,7 +477,7 @@ trait ParseTrait
             return (object) $value;
         }
 
-        \assert($value === null || \is_object($value), \sprintf("key:[{$key}] value:[%s] is not object or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || \is_object($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -510,7 +511,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableScalar($key);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not scalar on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -522,7 +523,7 @@ trait ParseTrait
     {
         $value = $this->mixed($key);
 
-        \assert($value === null || \is_scalar($value), \sprintf("key:[{$key}] value:[%s] is not scalar or null on:[%s]", \get_debug_type($value), static::class));
+        \assert($value === null || \is_scalar($value), Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         return $value;
     }
@@ -578,7 +579,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableEnum($key, $enum);
 
-        \assert($value !== null, \sprintf("key:[{$key}] value:[%s] is not class:[{$enum}] enum on:[%s]", \get_debug_type($value), static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value', 'enum')));
 
         return $value;
     }
@@ -654,7 +655,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableIntEnum($key, $enum);
 
-        \assert($value !== null, \sprintf('value:[%s] is not class:[%s] int enum on:[%s]', \get_debug_type($value), $enum, static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value', 'enum')));
 
         return $value;
     }
@@ -726,7 +727,7 @@ trait ParseTrait
     {
         $value = $this->mustParseNullableStringEnum($key, $enum);
 
-        \assert($value !== null, \sprintf('value:[%s] is not class:[%s] string enum on [%s]', \get_debug_type($value), $enum, static::class));
+        \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value', 'enum')));
 
         return $value;
     }

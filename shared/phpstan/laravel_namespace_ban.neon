@@ -7,3 +7,4 @@ parameters:
         - tests/*
         - src/Support/Resolver.php
         - src/Testing/*
+        - src/Container/*

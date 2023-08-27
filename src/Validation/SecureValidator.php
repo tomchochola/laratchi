@@ -12,6 +12,7 @@ use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\Rules\ImageFile;
 use Illuminate\Validation\Rules\Password;
+use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Validation\Rules\CallbackRule;
 use Tomchochola\Laratchi\Validation\Rules\CzBankAccountNumberRule;
 use Tomchochola\Laratchi\Validation\Rules\IcoRule;
@@ -237,9 +238,7 @@ class SecureValidator extends Validator
             return '';
         }
 
-        \assert(\is_scalar($value));
-
-        return (string) $value;
+        return (string) Typer::assertScalar($value);
     }
 
     /**
@@ -293,9 +292,6 @@ class SecureValidator extends Validator
             $message = static::$customMsgs[$snake] ?? (static::MSGS[$snake] ?? 'fallback');
         }
 
-        \assert(\is_string($message));
-        \assert($message !== 'fallback', "Json api validation message not defined for regular rule: [{$snake}]");
-
         return $message;
     }
 
@@ -307,9 +303,6 @@ class SecureValidator extends Validator
     protected function getFromLocalArray(mixed $attribute, mixed $lowerRule, mixed $source = null): ?string
     {
         $message = static::$customMsgs[$lowerRule] ?? (static::MSGS[$lowerRule] ?? 'fallback');
-
-        \assert(\is_string($message));
-        \assert($message !== 'fallback', "Json api validation message not defined for rule class: [{$lowerRule}]");
 
         return $message;
     }

@@ -16,6 +16,7 @@ use Tomchochola\Laratchi\Http\JsonApi\ModelResource;
 use Tomchochola\Laratchi\Http\Requests\FormRequest;
 use Tomchochola\Laratchi\Support\AssertTrait;
 use Tomchochola\Laratchi\Support\ParserTrait;
+use Tomchochola\Laratchi\Support\Typer;
 
 /**
  * @mixin Model
@@ -48,15 +49,7 @@ trait ModelTrait
             $builder = $builder->tap($closure);
         }
 
-        $instance = $builder->first();
-
-        if ($instance === null) {
-            return null;
-        }
-
-        \assert($instance instanceof static);
-
-        return $instance;
+        return Typer::assertNullableInstance($builder->first(), static::class);
     }
 
     /**
@@ -97,11 +90,7 @@ trait ModelTrait
             $builder = $builder->tap($closure);
         }
 
-        $instance = $builder->first();
-
-        \assert($instance === null || $instance instanceof static);
-
-        return $instance;
+        return Typer::assertNullableInstance($builder->first(), static::class);
     }
 
     /**
@@ -185,8 +174,6 @@ trait ModelTrait
      */
     public static function resolveFromRequest(FormRequest $request, ?Closure $closure = null, ?string $idKey = 'id', ?string $routeKey = 'slug'): ?static
     {
-        \assert(! ($idKey === null && $routeKey === null));
-
         return static::resolve($idKey !== null ? $request->allInput()->int($idKey) : null, $routeKey !== null ? $request->allInput()->string($routeKey) : null, $closure);
     }
 
@@ -197,8 +184,6 @@ trait ModelTrait
      */
     public static function mustResolveFromRequest(FormRequest $request, ?Closure $closure = null, ?string $idKey = 'id', ?string $routeKey = 'slug'): static
     {
-        \assert(! ($idKey === null && $routeKey === null));
-
         return static::mustResolve(
             $idKey !== null ? $request->allInput()->int($idKey) : null,
             $routeKey !== null ? $request->allInput()->string($routeKey) : null,
@@ -208,9 +193,7 @@ trait ModelTrait
                     $request->throwSingleValidationException([$idKey, $routeKey], 'invalid');
                 }
 
-                \assert(! ($idKey === null && $routeKey === null));
-
-                $request->throwSingleValidationException([$idKey ?? $routeKey], 'invalid');
+                $request->throwSingleValidationException([$idKey ?? ($routeKey ?? '')], 'invalid');
             },
         );
     }
@@ -398,11 +381,7 @@ trait ModelTrait
             $builder = $builder->tap($closure);
         }
 
-        $instance = $builder->first();
-
-        \assert($instance === null || $instance instanceof static);
-
-        return $instance;
+        return Typer::assertNullableInstance($builder->first(), static::class);
     }
 
     /**
@@ -444,11 +423,7 @@ trait ModelTrait
             $builder = $builder->tap($closure);
         }
 
-        $instances = $builder->get();
-
-        \assert($instances instanceof Collection);
-
-        return $instances;
+        return Typer::assertInstance($builder->get(), Collection::class);
     }
 
     /**
@@ -469,11 +444,7 @@ trait ModelTrait
             $builder = $builder->tap($closure);
         }
 
-        $instances = $builder->get();
-
-        \assert($instances instanceof Collection);
-
-        return $instances;
+        return Typer::assertInstance($builder->get(), Collection::class);
     }
 
     /**
@@ -494,11 +465,7 @@ trait ModelTrait
             $builder = $builder->tap($closure);
         }
 
-        $instances = $builder->get();
-
-        \assert($instances instanceof Collection);
-
-        return $instances;
+        return Typer::assertInstance($builder->get(), Collection::class);
     }
 
     /**
@@ -796,9 +763,7 @@ trait ModelTrait
      */
     public function clean(Closure $closure): static
     {
-        $query = $this->newQueryWithoutScopes();
-
-        \assert($query instanceof Builder);
+        $query = Typer::assertInstance($this->newQueryWithoutScopes(), Builder::class);
 
         $query->whereKey($this->getKey());
 
@@ -806,9 +771,7 @@ trait ModelTrait
 
         $closure($query);
 
-        $instance = $query->first();
-
-        \assert($instance instanceof static);
+        $instance = Typer::assertInstance($query->first(), static::class);
 
         $instance->wasRecentlyCreated = $this->wasRecentlyCreated;
 
@@ -828,13 +791,7 @@ trait ModelTrait
      */
     public function getKey(): int
     {
-        \assert($this->attributeLoaded($this->getKeyName()));
-
-        $value = $this->getAttributeValue($this->getKeyName());
-
-        \assert(\is_int($value), 'model key is not int');
-
-        return $value;
+        return $this->assertInt($this->getKeyName());
     }
 
     /**
@@ -842,13 +799,7 @@ trait ModelTrait
      */
     public function getRouteKey(): string
     {
-        \assert($this->attributeLoaded($this->getRouteKeyName()));
-
-        $value = $this->getAttributeValue($this->getRouteKeyName());
-
-        \assert(\is_scalar($value), 'model route key is string');
-
-        return (string) $value;
+        return (string) $this->assertScalar($this->getRouteKeyName());
     }
 
     /**
@@ -864,13 +815,7 @@ trait ModelTrait
      */
     public function int(string $key): ?int
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert($value === null || \is_int($value), "[{$key}] attribute is not int or null");
-
-        return $value;
+        return $this->assertNullableInt($key);
     }
 
     /**
@@ -878,13 +823,7 @@ trait ModelTrait
      */
     public function mustInt(string $key): int
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert(\is_int($value), "[{$key}] attribute is not int");
-
-        return $value;
+        return $this->assertInt($key);
     }
 
     /**
@@ -892,13 +831,7 @@ trait ModelTrait
      */
     public function float(string $key): ?float
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert($value === null || \is_float($value), "[{$key}] attribute is not float or null");
-
-        return $value;
+        return $this->assertNullableFloat($key);
     }
 
     /**
@@ -906,13 +839,7 @@ trait ModelTrait
      */
     public function mustFloat(string $key): float
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert(\is_float($value), "[{$key}] attribute is not float");
-
-        return $value;
+        return $this->assertFloat($key);
     }
 
     /**
@@ -920,13 +847,7 @@ trait ModelTrait
      */
     public function string(string $key): ?string
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert($value === null || \is_string($value), "[{$key}] attribute is not string or null");
-
-        return $value;
+        return $this->assertNullableString($key);
     }
 
     /**
@@ -934,13 +855,7 @@ trait ModelTrait
      */
     public function mustString(string $key): string
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert(\is_string($value), "[{$key}] attribute is not string");
-
-        return $value;
+        return $this->assertString($key);
     }
 
     /**
@@ -948,13 +863,7 @@ trait ModelTrait
      */
     public function bool(string $key): ?bool
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert($value === null || \is_bool($value), "[{$key}] attribute is not bool or null");
-
-        return $value;
+        return $this->assertNullableBool($key);
     }
 
     /**
@@ -962,13 +871,7 @@ trait ModelTrait
      */
     public function mustBool(string $key): bool
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert(\is_bool($value), "[{$key}] attribute is not bool");
-
-        return $value;
+        return $this->assertBool($key);
     }
 
     /**
@@ -978,13 +881,7 @@ trait ModelTrait
      */
     public function array(string $key): ?array
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert($value === null || \is_array($value), "[{$key}] attribute is not array or null");
-
-        return $value;
+        return $this->assertNullableArray($key);
     }
 
     /**
@@ -994,13 +891,7 @@ trait ModelTrait
      */
     public function mustArray(string $key): array
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert(\is_array($value), "[{$key}] attribute is not array");
-
-        return $value;
+        return $this->assertArray($key);
     }
 
     /**
@@ -1008,13 +899,7 @@ trait ModelTrait
      */
     public function object(string $key): ?object
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert($value === null || \is_object($value), "[{$key}] attribute is not object or null");
-
-        return $value;
+        return $this->assertNullableObject($key);
     }
 
     /**
@@ -1022,13 +907,7 @@ trait ModelTrait
      */
     public function mustObject(string $key): object
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert(\is_object($value), "[{$key}] attribute is not object");
-
-        return $value;
+        return $this->assertObject($key);
     }
 
     /**
@@ -1036,13 +915,7 @@ trait ModelTrait
      */
     public function carbon(string $key): ?Carbon
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert($value === null || $value instanceof Carbon, "[{$key}] attribute is not Carbon or null");
-
-        return $value;
+        return $this->assertNullableCarbon($key);
     }
 
     /**
@@ -1050,13 +923,7 @@ trait ModelTrait
      */
     public function mustCarbon(string $key): Carbon
     {
-        \assert($this->attributeLoaded($key), "[{$key}] attribute is not loaded");
-
-        $value = $this->getAttributeValue($key);
-
-        \assert($value instanceof Carbon, "[{$key}] attribute is not Carbon");
-
-        return $value;
+        return $this->assertCarbon($key);
     }
 
     /**
@@ -1070,13 +937,7 @@ trait ModelTrait
      */
     public function relation(string $key, string $type): ?Model
     {
-        \assert($this->relationLoaded($key), "[{$key}] relationship is not loaded");
-
-        $value = $this->getRelationValue($key);
-
-        \assert($value === null || $value instanceof $type, "[{$key}] relationship is not of type [{$type}]");
-
-        return $value;
+        return $this->assertNullableRelation($key, $type);
     }
 
     /**
@@ -1090,11 +951,7 @@ trait ModelTrait
      */
     public function mustRelation(string $key, string $type): Model
     {
-        $value = $this->relation($key, $type);
-
-        \assert($value !== null, "[{$key}] relationship is null");
-
-        return $value;
+        return $this->assertRelationship($key, $type);
     }
 
     /**
@@ -1108,13 +965,7 @@ trait ModelTrait
      */
     public function mustRelations(string $key, string $type): Collection
     {
-        \assert($this->relationLoaded($key), "[{$key}] relationship is not loaded");
-
-        $value = $this->getRelationValue($key);
-
-        \assert($value instanceof Collection, "[{$key}] relationship is not of type [{$type}] and is not collection");
-
-        return $value;
+        return $this->assertRelationshipCollection($key, $type);
     }
 
     /**
