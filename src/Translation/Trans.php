@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Translation;
 
 use Illuminate\Translation\Translator;
+use Tomchochola\Laratchi\Container\InjectTrait;
 use Tomchochola\Laratchi\Support\Resolver;
 
 class Trans
 {
+    use InjectTrait;
+
     /**
      * Translator.
      */
