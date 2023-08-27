@@ -12,6 +12,7 @@ use {{ namespacedUserModelFactory }};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tomchochola\Laratchi\Support\Resolver;
+use Tomchochola\Laratchi\Support\Typer;
 
 class {{ class }} extends TestCase
 {
@@ -24,14 +25,14 @@ class {{ class }} extends TestCase
     {
         $this->locale($locale);
 
-        $auth = assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
-        $model = assertInstance(
+        $auth = Typer::assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
+        $model = Typer::assertInstance(
             {{ factory }}::new()
                 ->for($auth)
                 ->createOne(),
             {{ model }}::class,
         );
-        $newModel = assertInstance(
+        $newModel = Typer::assertInstance(
             {{ factory }}::new()
                 ->for($auth)
                 ->makeOne(),
@@ -59,8 +60,8 @@ class {{ class }} extends TestCase
     {
         $this->locale($locale);
 
-        $auth = assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
-        $model = assertInstance(
+        $auth = Typer::assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
+        $model = Typer::assertInstance(
             {{ factory }}::new()
                 ->for($auth)
                 ->createOne(),
@@ -88,14 +89,14 @@ class {{ class }} extends TestCase
     {
         $this->locale($locale);
 
-        $auth = assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
-        $model = assertInstance(
+        $auth = Typer::assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
+        $model = Typer::assertInstance(
             {{ factory }}::new()
                 ->for($auth)
                 ->createOne(),
             {{ model }}::class,
         );
-        $newModel = assertInstance(
+        $newModel = Typer::assertInstance(
             {{ factory }}::new()
                 ->for($auth)
                 ->createOne(),

@@ -15,11 +15,6 @@ class {{ class }} extends Notification implements ShouldQueueContract
     use Queueable;
 
     /**
-     * Trans.
-     */
-    public Trans $trans;
-
-    /**
      * Create a new notification instance.
      */
     public function __construct()

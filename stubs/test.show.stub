@@ -14,6 +14,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Tomchochola\Laratchi\Testing\JsonApiValidator;
 use Tomchochola\Laratchi\Support\Resolver;
+use Tomchochola\Laratchi\Support\Typer;
 
 class {{ class }} extends TestCase
 {
@@ -26,8 +27,8 @@ class {{ class }} extends TestCase
     {
         $this->locale($locale);
 
-        $auth = assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
-        $model = assertInstance(
+        $auth = Typer::assertInstance({{ userModelFactory }}::new()->createOne(), {{ userModel }}::class);
+        $model = Typer::assertInstance(
             {{ factory }}::new()
                 ->for($auth)
                 ->createOne(),

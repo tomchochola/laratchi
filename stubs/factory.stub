@@ -7,6 +7,7 @@ namespace {{ factoryNamespace }};
 use {{ namespacedModel }};
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Tomchochola\Laratchi\Support\Typer;
 
 /**
  * @extends Factory<{{ model }}>
@@ -36,7 +37,7 @@ class {{ factory }}Factory extends Factory
     {
         return $this->set(
             'user_id',
-            static fn (): int => assertInt(
+            static fn (): int => Typer::assertInt(
                 User::query()
                     ->getQuery()
                     ->inRandomOrder()

@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use {{ namespacedModel }};
 use {{ namespacedFactory }};
+use Tomchochola\Laratchi\Config\Config;
 
 class {{ class }} extends Seeder
 {
@@ -15,7 +16,7 @@ class {{ class }} extends Seeder
      */
     public function run(): void
     {
-        if (isEnv(['staging', 'production'])) {
+        if (Config::inject()->appEnvIs(['staging', 'production'])) {
             return;
         }
 

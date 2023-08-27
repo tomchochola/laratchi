@@ -17,6 +17,7 @@ use Tomchochola\Laratchi\Support\Parser;
 use Tomchochola\Laratchi\Enums\RequestModeEnum;
 use Tomchochola\Laratchi\Validation\BaseValidity;
 use Tomchochola\Laratchi\Support\Resolver;
+use Tomchochola\Laratchi\Support\Typer;
 
 class {{ class }} extends Controller
 {
@@ -85,7 +86,7 @@ class {{ class }} extends Controller
         }
 
         foreach ($sorts as $mixed) {
-            $sort = assertString($mixed);
+            $sort = Typer::assertString($mixed);
 
             if (\str_starts_with($sort, '-')) {
                 $builder->getQuery()->orderByDesc($builder->qualifyColumn(\mb_substr($sort, 1)));
