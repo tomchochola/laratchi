@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Validation\Rules;
 
 use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Tomchochola\Laratchi\Config\Config;
 
 class PostCodeRule implements RuleContract
 {
@@ -3249,7 +3250,7 @@ class PostCodeRule implements RuleContract
             return false;
         }
 
-        if (resolveApp()->runningUnitTests()) {
+        if (Config::inject()->appEnvIs(['testing'])) {
             return true;
         }
 

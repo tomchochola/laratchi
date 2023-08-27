@@ -14,6 +14,7 @@ use Illuminate\Support\Stringable;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Tomchochola\Laratchi\Auth\User;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Support\AssertTrait;
 use Tomchochola\Laratchi\Support\ParserTrait;
 use Tomchochola\Laratchi\Support\ParseTrait;
@@ -379,7 +380,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function mustHasValidSignature(): bool
     {
-        if (resolveApp()->runningUnitTests()) {
+        if (Config::inject()->appEnvIs(['testing'])) {
             return true;
         }
 

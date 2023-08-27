@@ -7,6 +7,7 @@ namespace Tomchochola\Laratchi\Auth\Services;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Str;
 use Tomchochola\Laratchi\Auth\Notifications\EmailConfirmationNotification;
+use Tomchochola\Laratchi\Config\Config;
 
 class EmailBrokerService
 {
@@ -49,7 +50,7 @@ class EmailBrokerService
      */
     public function validate(string $guard, string $email, string $token): bool
     {
-        if (! resolveApp()->isProduction() && $token === '111111') {
+        if (! Config::inject()->appEnvIs(['production']) && $token === '111111') {
             return true;
         }
 

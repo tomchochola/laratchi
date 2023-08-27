@@ -15,6 +15,7 @@ use Illuminate\Validation\Rules\ExcludeIf;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rules\ProhibitedIf;
 use Illuminate\Validation\Rules\RequiredIf;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Validation\Rules\CallbackRule;
 use Tomchochola\Laratchi\Validation\Rules\CursorRule;
@@ -296,7 +297,7 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        if (resolveApp()->runningUnitTests()) {
+        if (Config::inject()->appEnvIs(['testing'])) {
             return $this->addRule('url');
         }
 
@@ -963,7 +964,7 @@ class Validity implements ArrayableContract
         Typer::assert(! $filterUnicode || ! $filter, 'filter and filter_unicode can not coexist');
         Typer::assert(! $strict || ! $rfc, 'strict and rfc can not coexist');
 
-        if (resolveApp()->runningUnitTests()) {
+        if (Config::inject()->appEnvIs(['testing'])) {
             return $this->addRule('email');
         }
 

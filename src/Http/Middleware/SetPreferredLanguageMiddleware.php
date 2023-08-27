@@ -18,8 +18,10 @@ class SetPreferredLanguageMiddleware
      */
     public function handle(Request $request, Closure $next, string ...$locales): SymfonyResponse
     {
+        $config = Config::inject();
+
         if (\count($locales) === 0) {
-            $locales = Config::inject()->appLocales();
+            $locales = $config->appLocales();
         }
 
         $locale = $request->getPreferredLanguage($locales);
@@ -28,10 +30,8 @@ class SetPreferredLanguageMiddleware
             return $next($request);
         }
 
-        $app = resolveApp();
-
-        if ($app->getLocale() !== $locale) {
-            $app->setLocale($locale);
+        if ($config->appLocale() !== $locale) {
+            $config->setAppLocale($locale);
         }
 
         if ($request->getLocale() !== $locale) {

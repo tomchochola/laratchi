@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Http\Requests;
 
 use Stringable;
 use Tomchochola\Laratchi\Auth\User;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Support\Resolver;
 
 class RequestSignature implements Stringable
@@ -103,7 +104,7 @@ class RequestSignature implements Stringable
      */
     public function locale(): static
     {
-        $this->internal['locale'] = resolveApp()->getLocale();
+        $this->internal['locale'] = Config::inject()->appLocale();
 
         return $this;
     }

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\PasswordResetRequest;
 use Tomchochola\Laratchi\Auth\Services\CanLoginService;
 use Tomchochola\Laratchi\Auth\User;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class PasswordResetController extends TransactionController
@@ -73,7 +74,7 @@ class PasswordResetController extends TransactionController
 
         $token = $request->validatedInput()->mustString('token');
 
-        if (! resolveApp()->isProduction() && $token === '111111') {
+        if (! Config::inject()->appEnvIs(['production']) && $token === '111111') {
             return;
         }
 

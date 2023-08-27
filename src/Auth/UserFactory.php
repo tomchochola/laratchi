@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Auth;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Tomchochola\Laratchi\Config\Config;
 
 /**
  * @template T of User
@@ -34,7 +35,7 @@ class UserFactory extends Factory
             'email_verified_at' => resolveDate()->now(),
             'password' => Str::random(),
             'remember_token' => Str::random(),
-            'locale' => resolveApp()->getLocale(),
+            'locale' => Config::inject()->appLocale(),
         ];
     }
 

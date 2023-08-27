@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Guard as GuardContract;
 use Illuminate\Support\Str;
 use Tomchochola\Laratchi\Auth\Services\CanLoginService;
+use Tomchochola\Laratchi\Config\Config;
 
 class DatabaseTokenGuard implements GuardContract
 {
@@ -143,7 +144,9 @@ class DatabaseTokenGuard implements GuardContract
         $bearer = assertNotNull($databaseToken->bearer);
 
         $cookieJar = resolveCookieJar();
-        $cookieJar->queue($cookieJar->forever($this->cookieName(), $bearer, '/', null, ! isEnv(['local']), true, false, resolveApp()->isProduction() ? 'Lax' : 'None'));
+        $cookieJar->queue(
+            $cookieJar->forever($this->cookieName(), $bearer, '/', null, ! isEnv(['local']), true, false, Config::inject()->appEnvIs(['production']) ? 'Lax' : 'None'),
+        );
 
         return $databaseToken;
     }

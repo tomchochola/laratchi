@@ -17,6 +17,7 @@ use JsonSerializable;
 use Stringable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tomchochola\Laratchi\Auth\User;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Exceptions\Panicker;
 use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Validation\SecureValidator;
@@ -515,10 +516,10 @@ abstract class TestCase extends BaseTestCase
      */
     protected function locale(string $locale): void
     {
-        $app = resolveApp();
+        $config = Config::inject();
 
-        $app->setLocale($locale);
-        $app->setFallbackLocale($locale);
+        $config->setAppLocale($locale);
+        $config->setAppFallbackLocale($locale);
 
         $this->defaultHeaders['Accept-Language'] = $locale;
     }

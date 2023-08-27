@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException as SymfonyHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Interfaces\GetDataInterface;
 
 class Handler extends IlluminateHandler
@@ -66,7 +67,7 @@ class Handler extends IlluminateHandler
             return $this->jsonResponse($request, $exception, $httpException);
         }
 
-        if (resolveApp()->hasDebugModeEnabled()) {
+        if ($this->debug()) {
             return $this->symfony($request, $exception, $httpException);
         }
 
@@ -138,7 +139,7 @@ class Handler extends IlluminateHandler
     {
         $httpException = $this->httpException($exception->status, $exception);
 
-        if (resolveApp()->hasDebugModeEnabled()) {
+        if ($this->debug()) {
             return $this->symfony($request, $exception, $httpException);
         }
 
@@ -152,7 +153,7 @@ class Handler extends IlluminateHandler
     {
         $httpException = $this->httpException(500, $e);
 
-        if (resolveApp()->hasDebugModeEnabled()) {
+        if ($this->debug()) {
             return $this->symfony($request, $e, $httpException);
         }
 
@@ -180,7 +181,7 @@ class Handler extends IlluminateHandler
 
         $status = $httpException->getStatusCode();
 
-        if (resolveApp()->hasDebugModeEnabled()) {
+        if ($this->debug()) {
             if (! $exception instanceof ValidationException) {
                 $json = $this->convertExceptionToArray($exception);
 
@@ -231,5 +232,13 @@ class Handler extends IlluminateHandler
         $response = resolveResponseFactory()->view('laratchi::status', $data, $httpException->getStatusCode(), $httpException->getHeaders());
 
         return $this->toIlluminateResponse($response, $exception)->prepare($request);
+    }
+
+    /**
+     * Debug mode enabled.
+     */
+    protected function debug(): bool
+    {
+        return Config::inject()->appDebug();
     }
 }

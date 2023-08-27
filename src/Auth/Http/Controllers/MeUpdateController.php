@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\MeUpdateRequest;
 use Tomchochola\Laratchi\Auth\Services\EmailBrokerService;
 use Tomchochola\Laratchi\Auth\User;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class MeUpdateController extends TransactionController
@@ -109,7 +110,7 @@ class MeUpdateController extends TransactionController
             return null;
         }
 
-        $guard = resolveAuthManager()->getDefaultDriver();
+        $guard = Config::inject()->authDefaultsGuard();
         $broker = EmailBrokerService::inject();
 
         if ($broker->confirmed($guard, $email)) {
@@ -118,7 +119,7 @@ class MeUpdateController extends TransactionController
 
         $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['email']));
 
-        $broker->anonymous($guard, $email, resolveApp()->getLocale());
+        $broker->anonymous($guard, $email, Config::inject()->appLocale());
 
         return resolveResponseFactory()->noContent(202);
     }

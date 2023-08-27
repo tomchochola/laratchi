@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\User;
+use Tomchochola\Laratchi\Config\Config;
 
 class HasLocalePreferenceMiddleware
 {
@@ -24,12 +25,12 @@ class HasLocalePreferenceMiddleware
             return $next($request);
         }
 
+        $config = Config::inject();
+
         $locale = $me->preferredLocale();
 
-        $app = resolveApp();
-
-        if ($app->getLocale() !== $locale) {
-            $app->setLocale($locale);
+        if ($config->appLocale() !== $locale) {
+            $config->setAppLocale($locale);
         }
 
         if ($request->getLocale() !== $locale) {

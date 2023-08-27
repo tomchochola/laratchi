@@ -9,6 +9,7 @@ use Tomchochola\Laratchi\Auth\Http\Requests\RegisterRequest;
 use Tomchochola\Laratchi\Auth\Services\CanLoginService;
 use Tomchochola\Laratchi\Auth\Services\EmailBrokerService;
 use Tomchochola\Laratchi\Auth\User;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class RegisterController extends TransactionController
@@ -138,7 +139,7 @@ class RegisterController extends TransactionController
             return null;
         }
 
-        $guard = resolveAuthManager()->getDefaultDriver();
+        $guard = Config::inject()->authDefaultsGuard();
         $broker = EmailBrokerService::inject();
 
         if ($broker->confirmed($guard, $email)) {
@@ -147,7 +148,7 @@ class RegisterController extends TransactionController
 
         $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['email']));
 
-        $broker->anonymous($guard, $email, resolveApp()->getLocale());
+        $broker->anonymous($guard, $email, Config::inject()->appLocale());
 
         return resolveResponseFactory()->noContent(202);
     }

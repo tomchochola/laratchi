@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Tomchochola\Laratchi\Auth\Http\Requests\EmailConfirmationRequest;
 use Tomchochola\Laratchi\Auth\Services\EmailBrokerService;
+use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Routing\TransactionController;
 
 class EmailConfirmationController extends TransactionController
@@ -31,7 +32,7 @@ class EmailConfirmationController extends TransactionController
      */
     protected function verify(EmailConfirmationRequest $request): void
     {
-        EmailBrokerService::inject()->confirm(resolveAuthManager()->getDefaultDriver(), $request->validatedInput()->mustString('email'));
+        EmailBrokerService::inject()->confirm(Config::inject()->authDefaultsGuard(), $request->validatedInput()->mustString('email'));
     }
 
     /**
@@ -47,7 +48,7 @@ class EmailConfirmationController extends TransactionController
      */
     protected function hasVerifiedEmail(EmailConfirmationRequest $request): void
     {
-        if (EmailBrokerService::inject()->confirmed(resolveAuthManager()->getDefaultDriver(), $request->validatedInput()->mustString('email'))) {
+        if (EmailBrokerService::inject()->confirmed(Config::inject()->authDefaultsGuard(), $request->validatedInput()->mustString('email'))) {
             throw new ConflictHttpException();
         }
     }
@@ -61,7 +62,7 @@ class EmailConfirmationController extends TransactionController
 
         if (
             ! EmailBrokerService::inject()->validate(
-                resolveAuthManager()->getDefaultDriver(),
+                Config::inject()->authDefaultsGuard(),
                 $request->validatedInput()->mustString('email'),
                 $request->validatedInput()->mustString('token'),
             )
