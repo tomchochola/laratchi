@@ -35,7 +35,7 @@ class {{ class }} extends Model
      */
     public static function scopeSearch(Builder $builder, string $search): void
     {
-        if ((new Config())->appEnvIs(['testing'])) {
+        if (Config::inject()->appEnvIs(['testing'])) {
             $builder->getQuery()->where($builder->qualifyColumn('title'), $search);
         } else {
             $builder->getQuery()->whereFullText($builder->qualifyColumn('title'), $search);

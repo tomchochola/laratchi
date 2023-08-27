@@ -250,7 +250,7 @@ class ValidatedInput extends IlluminateValidatedInput
         if ($format === null) {
             return resolveDate()
                 ->parse($value, $tz)
-                ->setTimezone((new Config())->appTimezone());
+                ->setTimezone(Config::inject()->appTimezone());
         }
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
@@ -259,7 +259,7 @@ class ValidatedInput extends IlluminateValidatedInput
             Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
         }
 
-        return $value->setTimezone((new Config())->appTimezone());
+        return $value->setTimezone(Config::inject()->appTimezone());
     }
 
     /**

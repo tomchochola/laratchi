@@ -42,7 +42,7 @@ class Migrator
      */
     public static function createPasswordResetsTables(): void
     {
-        $config = new Config();
+        $config = Config::inject();
 
         foreach ($config->parsers('auth.passwords') as $parser) {
             static::createPasswordResetsTable($parser->assertString('table'));
@@ -75,7 +75,7 @@ class Migrator
      */
     public static function createDatabaseTokensColumns(): void
     {
-        $config = new Config();
+        $config = Config::inject();
 
         foreach ($config->parsers('auth.providers') as $parser) {
             static::createDatabaseTokensColumn(new ($parser->assertA('model', Model::class))());

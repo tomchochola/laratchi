@@ -9,30 +9,24 @@ use Illuminate\Support\Facades\Facade as IlluminateFacade;
 class Facade extends IlluminateFacade
 {
     /**
-     * Has resolved instance.
-     */
-    public static function hasResolved(string $abstract): bool
-    {
-        if (isset(static::$resolvedInstance[$abstract])) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Get resolved instance.
      */
-    public static function getResolved(string $abstract): object
+    public static function getResolved(string $abstract): ?object
     {
-        return static::$resolvedInstance[$abstract];
+        return static::$resolvedInstance[$abstract] ?? null;
     }
 
     /**
      * Set resolved instance.
+     *
+     * @template T of object
+     *
+     * @param T $instance
+     *
+     * @return T
      */
-    public static function setResolved(string $abstract, object $instance): void
+    public static function setResolved(string $abstract, object $instance): object
     {
-        static::$resolvedInstance[$abstract] = $instance;
+        return static::$resolvedInstance[$abstract] = $instance;
     }
 }

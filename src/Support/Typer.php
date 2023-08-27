@@ -644,7 +644,7 @@ class Typer
         if ($format === null) {
             return resolveDate()
                 ->parse($value, $tz)
-                ->setTimezone((new Config())->appTimezone());
+                ->setTimezone(Config::inject()->appTimezone());
         }
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
@@ -653,7 +653,7 @@ class Typer
             return null;
         }
 
-        return $value->setTimezone((new Config())->appTimezone());
+        return $value->setTimezone(Config::inject()->appTimezone());
     }
 
     /**
@@ -684,14 +684,14 @@ class Typer
         if ($format === null) {
             return resolveDate()
                 ->parse($value, $tz)
-                ->setTimezone((new Config())->appTimezone());
+                ->setTimezone(Config::inject()->appTimezone());
         }
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
 
         \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
-        return $value->setTimezone((new Config())->appTimezone());
+        return $value->setTimezone(Config::inject()->appTimezone());
     }
 
     /**

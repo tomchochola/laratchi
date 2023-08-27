@@ -376,7 +376,7 @@ trait ParseTrait
         if ($format === null) {
             return resolveDate()
                 ->parse($value, $tz)
-                ->setTimezone((new Config())->appTimezone());
+                ->setTimezone(Config::inject()->appTimezone());
         }
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
@@ -385,7 +385,7 @@ trait ParseTrait
             return null;
         }
 
-        return $value->setTimezone((new Config())->appTimezone());
+        return $value->setTimezone(Config::inject()->appTimezone());
     }
 
     /**
@@ -418,14 +418,14 @@ trait ParseTrait
         if ($format === null) {
             return resolveDate()
                 ->parse($value, $tz)
-                ->setTimezone((new Config())->appTimezone());
+                ->setTimezone(Config::inject()->appTimezone());
         }
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
 
         \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
-        return $value->setTimezone((new Config())->appTimezone());
+        return $value->setTimezone(Config::inject()->appTimezone());
     }
 
     /**

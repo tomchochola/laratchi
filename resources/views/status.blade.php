@@ -1,5 +1,5 @@
 @php
-  $config = new Tomchochola\Laratchi\Config\Config();
+  $config = Tomchochola\Laratchi\Config\Config::inject();
   $viewService = Tomchochola\Laratchi\View\Services\ViewService::inject();
 
   $locale = \str_replace('_', '-', $config->appLocale());

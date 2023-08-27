@@ -1160,6 +1160,6 @@ trait ModelTrait
      */
     protected function asDateTime(mixed $value): Carbon
     {
-        return parent::asDateTime($value)->setTimezone((new Config())->appTimezone());
+        return parent::asDateTime($value)->setTimezone(Config::inject()->appTimezone());
     }
 }

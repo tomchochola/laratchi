@@ -31,6 +31,6 @@ class {{ class }} implements {{ ruleType }}Contract
      */
     public function message(): string|array
     {
-        return (new Trans())->assertString('validation.invalid');
+        return Trans::inject()->assertString('validation.invalid');
     }
 }

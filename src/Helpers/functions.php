@@ -19,7 +19,7 @@ if (! \function_exists('mustTransString')) {
      */
     function mustTransString(string $key, array $replace = [], ?string $locale = null, bool $fallback = true): string
     {
-        return (new Trans())->assertString($key, $replace, $locale, $fallback);
+        return Trans::inject()->assertString($key, $replace, $locale, $fallback);
     }
 }
 
@@ -31,7 +31,7 @@ if (! \function_exists('mustTransJsonString')) {
      */
     function mustTransJsonString(string $message, array $replace = [], ?string $locale = null, bool $fallback = true): string
     {
-        return (new Trans())->assertString($message, $replace, $locale, $fallback);
+        return Trans::inject()->assertString($message, $replace, $locale, $fallback);
     }
 }
 
@@ -45,7 +45,7 @@ if (! \function_exists('mustTransArray')) {
      */
     function mustTransArray(string $key, array $replace = [], ?string $locale = null, bool $fallback = true): array
     {
-        return (new Trans())->assertArray($key, $replace, $locale, $fallback);
+        return Trans::inject()->assertArray($key, $replace, $locale, $fallback);
     }
 }
 
@@ -1078,7 +1078,7 @@ if (! \function_exists('locale')) {
      */
     function locale(): string
     {
-        return (new Config())->appLocale();
+        return Config::inject()->appLocale();
     }
 }
 
@@ -1090,7 +1090,7 @@ if (! \function_exists('locales')) {
      */
     function locales(): array
     {
-        return (new Config())->appLocales();
+        return Config::inject()->appLocales();
     }
 }
 

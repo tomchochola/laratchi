@@ -1,5 +1,5 @@
 @php
-  $config = new Tomchochola\Laratchi\Config\Config();
+  $config = Tomchochola\Laratchi\Config\Config::inject();
 
   $appName = $config->appName();
 @endphp

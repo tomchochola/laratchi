@@ -13,14 +13,12 @@ trait InjectTrait
      */
     public static function inject(): self
     {
-        if (Facade::hasResolved(self::class)) {
-            return Typer::assertInstance(Facade::getResolved(self::class), self::class);
+        $instance = Facade::getResolved(self::class);
+
+        if ($instance !== null) {
+            return Typer::assertInstance($instance, self::class);
         }
 
-        $instance = new self();
-
-        Facade::setResolved($instance::class, $instance);
-
-        return $instance;
+        return Facade::setResolved(self::class, new self());
     }
 }

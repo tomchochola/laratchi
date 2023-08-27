@@ -207,7 +207,7 @@ class AllInput extends IlluminateValidatedInput
         if ($format === null) {
             return resolveDate()
                 ->parse($value, $tz)
-                ->setTimezone((new Config())->appTimezone());
+                ->setTimezone(Config::inject()->appTimezone());
         }
 
         $value = resolveDate()->createFromFormat($format, $value, $tz);
@@ -216,7 +216,7 @@ class AllInput extends IlluminateValidatedInput
             return null;
         }
 
-        return $value->setTimezone((new Config())->appTimezone());
+        return $value->setTimezone(Config::inject()->appTimezone());
     }
 
     /**
