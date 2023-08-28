@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Exceptions;
 
 use Illuminate\Validation\Validator;
+use Tomchochola\Laratchi\Support\Resolver;
 
 class Thrower
 {
@@ -45,23 +46,19 @@ class Thrower
     }
 
     /**
+     * Default constructor.
+     */
+    public static function default(): self
+    {
+        return new self(Resolver::resolveValidator());
+    }
+
+    /**
      * Throw validation exception.
      */
     public function throw(): never
     {
-        throw new HttpException(
-            $this->status,
-            $this->message,
-            null,
-            $this->headers,
-            $this->code,
-            \array_replace(
-                [
-                    'errors' => $this->validator->errors()->messages(),
-                ],
-                $this->data,
-            ),
-        );
+        throw new ValidationException($this->validator, $this->status, $this->message, null, $this->headers, $this->code, $this->data);
     }
 
     /**

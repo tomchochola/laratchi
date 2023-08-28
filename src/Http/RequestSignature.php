@@ -7,6 +7,8 @@ namespace Tomchochola\Laratchi\Http;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
+use Tomchochola\Laratchi\Encoding\Hash;
+use Tomchochola\Laratchi\Support\Resolver;
 
 class RequestSignature
 {
@@ -22,6 +24,14 @@ class RequestSignature
      */
     public function __construct(public Request $request)
     {
+    }
+
+    /**
+     * Default constructor.
+     */
+    public static function default(string $key = ''): self
+    {
+        return (new self(Resolver::resolveRequest()))->defaults()->key($key);
     }
 
     /**
@@ -135,6 +145,6 @@ class RequestSignature
      */
     public function hash(): string
     {
-        return \hash('sha256', \implode('|', $this->data));
+        return Hash::encode($this->data);
     }
 }

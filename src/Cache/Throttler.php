@@ -6,11 +6,12 @@ namespace Tomchochola\Laratchi\Cache;
 
 use Closure;
 use Illuminate\Cache\RateLimiter;
-use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Cache\RateLimiting\Limit as IlluminateLimit;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
+use Tomchochola\Laratchi\Encoding\Hash;
 use Tomchochola\Laratchi\Support\Resolver;
 
 class Throttler
@@ -23,9 +24,19 @@ class Throttler
     /**
      * Constructor.
      */
-    public function __construct(public Limit $limit)
+    public function __construct(public IlluminateLimit $limit)
     {
         $this->limiter = Resolver::resolveRateLimiter();
+    }
+
+    /**
+     * Default constructor.
+     *
+     * @param Closure(int): Response|Closure(int): never|Closure(): Response|Closure(): never|null $responseCallback
+     */
+    public static function default(string $key = '', int $maxAttempts = 3, int $decayMinutes = 60, ?Closure $responseCallback = null): self
+    {
+        return new self(Limit::default($key, $maxAttempts, $decayMinutes, $responseCallback));
     }
 
     /**
@@ -33,7 +44,7 @@ class Throttler
      */
     public function hash(): string
     {
-        return \sprintf('%s:%s', static::class, assertString($this->limit->key));
+        return static::class.':'.Hash::encode([$this->limit->key]);
     }
 
     /**

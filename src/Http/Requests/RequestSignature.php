@@ -7,6 +7,7 @@ namespace Tomchochola\Laratchi\Http\Requests;
 use Stringable;
 use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Config\Config;
+use Tomchochola\Laratchi\Encoding\Hash;
 use Tomchochola\Laratchi\Support\Resolver;
 
 class RequestSignature implements Stringable
@@ -150,6 +151,6 @@ class RequestSignature implements Stringable
      */
     public function hash(): string
     {
-        return \hash('sha256', \implode('|', \array_replace($this->internal, $this->data)));
+        return Hash::encode(\array_replace($this->internal, $this->data));
     }
 }
