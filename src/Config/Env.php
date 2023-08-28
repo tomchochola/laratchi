@@ -54,7 +54,7 @@ class Env
      */
     public function appEnv(): string
     {
-        return $this->assertString('APP_ENV');
+        return $this->mustParseString('APP_ENV');
     }
 
     /**
