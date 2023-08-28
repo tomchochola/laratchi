@@ -47,7 +47,7 @@ class Config
     public function mixed(?string $key = null): mixed
     {
         if (! $this->app->bound('env')) {
-            Panicker::panic(__METHOD__, 'env is not bound to the container');
+            Panicker::panic(__METHOD__, 'env is not bound to the container', \compact('key'));
         }
 
         if ($key === null) {
@@ -65,11 +65,11 @@ class Config
     public function assign(string $key, mixed $value): static
     {
         if (! $this->app->bound('env')) {
-            Panicker::panic(__METHOD__, 'env is not bound to the container');
+            Panicker::panic(__METHOD__, 'env is not bound to the container', \compact('key', 'value'));
         }
 
         if (! $this->repository->has($key)) {
-            Panicker::panic(__METHOD__, 'undefined config key', \compact('key'));
+            Panicker::panic(__METHOD__, 'undefined config key', \compact('key', 'value'));
         }
 
         $this->repository->set($key, $value);

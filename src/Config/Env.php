@@ -37,7 +37,7 @@ class Env
     public function mixed(?string $key = null): mixed
     {
         if ($this->app->bound('env')) {
-            Panicker::panic(__METHOD__, 'env is already bound to the container');
+            Panicker::panic(__METHOD__, 'env is already bound to the container', \compact('key'));
         }
 
         $value = IlluminateEnv::get($key ?? '');
