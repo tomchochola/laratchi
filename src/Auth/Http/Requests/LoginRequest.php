@@ -42,4 +42,14 @@ class LoginRequest extends SecureFormRequest
     {
         return $this->validatedInput()->except(['password']);
     }
+
+    /**
+     * Get multiple credentials.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function multipleCredentials(): array
+    {
+        return [];
+    }
 }

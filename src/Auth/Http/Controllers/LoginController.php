@@ -33,9 +33,15 @@ class LoginController extends TransactionController
      */
     protected function validatePassword(LoginRequest $request, User $me): void
     {
+        $password = $request->validatedInput()->string('password');
+
+        if ($password === null) {
+            return;
+        }
+
         [$hit] = $this->throttle($this->limit('password'), $this->onThrottle($request, ['password'], 'auth.throttle'));
 
-        if (! resolveHasher()->check($request->validatedInput()->mustString('password'), $me->getAuthPassword())) {
+        if (! resolveHasher()->check($password, $me->getAuthPassword())) {
             $hit();
             $request->throwSingleValidationException(['password'], 'auth.password');
         }
@@ -84,17 +90,20 @@ class LoginController extends TransactionController
      */
     protected function me(LoginRequest $request): User
     {
-        $credentials = $request->credentials();
+        $credentialsArray = \array_merge([$request->credentials()], $request->multipleCredentials());
 
-        [$hit] = $this->throttle($this->limit('credentials'), $this->onThrottle($request, \array_keys($credentials), 'auth.throttle'));
+        foreach ($credentialsArray as $index => $credentials) {
+            [$hit] = $this->throttle($this->limit("credentials.{$index}"), $this->onThrottle($request, \array_keys($credentials), 'auth.throttle'));
 
-        $me = resolveUserProvider()->retrieveByCredentials($credentials);
+            $user = resolveUserProvider()->retrieveByCredentials($credentials);
 
-        if (! $me instanceof User) {
+            if ($user instanceof User) {
+                return $user;
+            }
+
             $hit();
-            $request->throwSingleValidationException(\array_keys($credentials), 'auth.failed');
         }
 
-        return $me;
+        $request->throwSingleValidationException(\array_keys($request->credentials()), 'auth.failed');
     }
 }
