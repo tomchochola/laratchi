@@ -8,6 +8,7 @@ use Illuminate\Contracts\Translation\Translator as TranslatorContract;
 use Illuminate\Contracts\Validation\Factory as ValidationFactoryContract;
 use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Validation\Validator as IlluminateValidator;
+use Tomchochola\Laratchi\Support\Resolver;
 use Tomchochola\Laratchi\Support\Typer;
 
 class Validator extends IlluminateValidator
@@ -55,6 +56,66 @@ class Validator extends IlluminateValidator
         static::extend($clonedFactory, static::class);
 
         return $clonedFactory;
+    }
+
+    /**
+     * Get input from headers.
+     */
+    public static function fromHeaders(): IlluminateValidator
+    {
+        return Resolver::resolveValidator(Resolver::resolveRequest()->headers->all());
+    }
+
+    /**
+     * Get input from request.
+     */
+    public static function fromRequest(): IlluminateValidator
+    {
+        return Resolver::resolveValidator(Resolver::resolveRequest()->all());
+    }
+
+    /**
+     * Get input from route.
+     */
+    public static function fromRoute(): IlluminateValidator
+    {
+        return Resolver::resolveValidator(Resolver::resolveRoute()->parameters ?? []);
+    }
+
+    /**
+     * Get input from cookies.
+     */
+    public static function fromCookies(): IlluminateValidator
+    {
+        return Resolver::resolveValidator(Resolver::resolveRequest()->cookies->all());
+    }
+
+    /**
+     * Get input from files.
+     */
+    public static function fromFiles(): IlluminateValidator
+    {
+        return Resolver::resolveValidator(Resolver::resolveRequest()->allFiles());
+    }
+
+    /**
+     * Get input from request attributes.
+     */
+    public static function fromAttributes(): IlluminateValidator
+    {
+        return Resolver::resolveValidator(Resolver::resolveRequest()->attributes->all());
+    }
+
+    /**
+     * Get input from session.
+     */
+    public static function fromSession(): IlluminateValidator
+    {
+        return Resolver::resolveValidator(
+            Resolver::resolveRequest()
+                ->session()
+                ->all(),
+        );
     }
 
     /**

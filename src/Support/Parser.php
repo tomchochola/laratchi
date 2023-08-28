@@ -14,6 +14,66 @@ class Parser extends ValidatedInput
     use ParseTrait;
 
     /**
+     * Get input from headers.
+     */
+    public static function fromHeaders(): self
+    {
+        return new self(Resolver::resolveRequest()->headers->all());
+    }
+
+    /**
+     * Get input from request.
+     */
+    public static function fromRequest(): self
+    {
+        return new self(Resolver::resolveRequest()->all());
+    }
+
+    /**
+     * Get input from route.
+     */
+    public static function fromRoute(): self
+    {
+        return new self(Resolver::resolveRoute()->parameters ?? []);
+    }
+
+    /**
+     * Get input from cookies.
+     */
+    public static function fromCookies(): self
+    {
+        return new self(Resolver::resolveRequest()->cookies->all());
+    }
+
+    /**
+     * Get input from files.
+     */
+    public static function fromFiles(): self
+    {
+        return new self(Resolver::resolveRequest()->allFiles());
+    }
+
+    /**
+     * Get input from request attributes.
+     */
+    public static function fromAttributes(): self
+    {
+        return new self(Resolver::resolveRequest()->attributes->all());
+    }
+
+    /**
+     * Get input from session.
+     */
+    public static function fromSession(): self
+    {
+        return new self(
+            Resolver::resolveRequest()
+                ->session()
+                ->all(),
+        );
+    }
+
+    /**
      * Mixed getter.
      */
     public function mixed(?string $key = null): mixed
