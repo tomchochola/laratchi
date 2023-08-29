@@ -33,7 +33,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * String resolver.
      */
-    public function string(string $key, ?string $default = null): ?string
+    public function string(string $key, string|null $default = null): string|null
     {
         $value = $this->get($key, $default);
 
@@ -53,7 +53,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Mandatory string resolver.
      */
-    public function mustString(string $key, ?string $default = null): string
+    public function mustString(string $key, string|null $default = null): string
     {
         $value = $this->string($key, $default);
 
@@ -67,7 +67,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Bool resolver.
      */
-    public function bool(string $key, ?bool $default = null): ?bool
+    public function bool(string $key, bool|null $default = null): bool|null
     {
         $value = $this->get($key, $default);
 
@@ -87,7 +87,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Mandatory bool resolver.
      */
-    public function mustBool(string $key, ?bool $default = null): bool
+    public function mustBool(string $key, bool|null $default = null): bool
     {
         $value = $this->bool($key, $default);
 
@@ -101,7 +101,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Int resolver.
      */
-    public function int(string $key, ?int $default = null): ?int
+    public function int(string $key, int|null $default = null): int|null
     {
         $value = $this->get($key, $default);
 
@@ -121,7 +121,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Mandatory int resolver.
      */
-    public function mustInt(string $key, ?int $default = null): int
+    public function mustInt(string $key, int|null $default = null): int
     {
         $value = $this->int($key, $default);
 
@@ -135,7 +135,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Float resolver.
      */
-    public function float(string $key, ?float $default = null): ?float
+    public function float(string $key, float|null $default = null): float|null
     {
         $value = $this->get($key, $default);
 
@@ -155,7 +155,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Mandatory float resolver.
      */
-    public function mustFloat(string $key, ?float $default = null): float
+    public function mustFloat(string $key, float|null $default = null): float
     {
         $value = $this->float($key, $default);
 
@@ -169,7 +169,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * File resolver.
      */
-    public function file(string $key, ?UploadedFile $default = null): ?UploadedFile
+    public function file(string $key, UploadedFile|null $default = null): UploadedFile|null
     {
         $value = $this->get($key, $default);
 
@@ -183,7 +183,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Mandatory file resolver.
      */
-    public function mustFile(string $key, ?UploadedFile $default = null): UploadedFile
+    public function mustFile(string $key, UploadedFile|null $default = null): UploadedFile
     {
         $value = $this->file($key, $default);
 
@@ -201,7 +201,7 @@ class ValidatedInput extends IlluminateValidatedInput
      *
      * @return array<mixed>|null
      */
-    public function array(string $key, ?array $default = null): ?array
+    public function array(string $key, array|null $default = null): array|null
     {
         $value = $this->get($key, $default);
 
@@ -219,7 +219,7 @@ class ValidatedInput extends IlluminateValidatedInput
      *
      * @return array<mixed>
      */
-    public function mustArray(string $key, ?array $default): array
+    public function mustArray(string $key, array|null $default): array
     {
         $value = $this->array($key, $default);
 
@@ -233,7 +233,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Date resolver.
      */
-    public function date(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): ?Carbon
+    public function date(string $key, Carbon|null $default = null, string|null $format = null, string|null $tz = null): Carbon|null
     {
         $value = $this->get($key, $default);
 
@@ -248,12 +248,12 @@ class ValidatedInput extends IlluminateValidatedInput
         }
 
         if ($format === null) {
-            return resolveDate()
+            return \resolveDate()
                 ->parse($value, $tz)
                 ->setTimezone(Config::inject()->appTimezone());
         }
 
-        $value = resolveDate()->createFromFormat($format, $value, $tz);
+        $value = \resolveDate()->createFromFormat($format, $value, $tz);
 
         if ($value === false) {
             Panicker::panic(__METHOD__, 'assertion failed', \compact('key', 'value', 'default'));
@@ -265,7 +265,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Mandatory date resolver.
      */
-    public function mustDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): Carbon
+    public function mustDate(string $key, Carbon|null $default = null, string|null $format = null, string|null $tz = null): Carbon
     {
         $value = $this->date($key, $default, $format, $tz);
 
@@ -299,7 +299,7 @@ class ValidatedInput extends IlluminateValidatedInput
      *
      * @param array<mixed>|null $default
      */
-    public function validatedInput(string $key, ?array $default): static
+    public function validatedInput(string $key, array|null $default): static
     {
         return new static($this->mustArray($key, $default));
     }
@@ -311,14 +311,14 @@ class ValidatedInput extends IlluminateValidatedInput
      *
      * @return array<int, static>
      */
-    public function validatedInputs(string $key, ?array $default): array
+    public function validatedInputs(string $key, array|null $default): array
     {
         $validatedInputs = [];
 
         $data = $this->mustArray($key, $default);
 
         foreach ($data as $validatedInput) {
-            if (! \is_array($validatedInput)) {
+            if (!\is_array($validatedInput)) {
                 $validatedInputs[] = new static(['value' => $validatedInput]);
             } else {
                 $validatedInputs[] = new static($validatedInput);
@@ -347,7 +347,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * String or int resolver.
      */
-    public function stringOrInt(string $key, string|int|null $default = null): string|int|null
+    public function stringOrInt(string $key, int|string|null $default = null): int|string|null
     {
         $value = $this->get($key, $default);
 
@@ -373,7 +373,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Mandatory string or int resolver.
      */
-    public function mustStringOrInt(string $key, string|int|null $default = null): string|int
+    public function mustStringOrInt(string $key, int|string|null $default = null): int|string
     {
         $value = $this->stringOrInt($key, $default);
 
@@ -387,7 +387,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Int or string resolver.
      */
-    public function intOrString(string $key, string|int|null $default = null): string|int|null
+    public function intOrString(string $key, int|string|null $default = null): int|string|null
     {
         return $this->stringOrInt($key, $default);
     }
@@ -395,7 +395,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Mandatory int or string resolver..
      */
-    public function mustIntOrString(string $key, string|int|null $default = null): string|int
+    public function mustIntOrString(string $key, int|string|null $default = null): int|string
     {
         return $this->mustStringOrInt($key, $default);
     }
@@ -403,7 +403,7 @@ class ValidatedInput extends IlluminateValidatedInput
     /**
      * Mixed getter.
      */
-    public function mixed(?string $key = null): mixed
+    public function mixed(string|null $key = null): mixed
     {
         if ($key === null) {
             return $this->input;

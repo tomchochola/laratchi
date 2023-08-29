@@ -11,6 +11,6 @@ class DataUri
      */
     public static function encode(string $mime, string $data): string
     {
-        return 'data:'.$mime.';base64,'.\base64_encode($data);
+        return 'data:' . $mime . ';base64,' . \base64_encode($data);
     }
 }

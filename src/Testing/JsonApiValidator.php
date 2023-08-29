@@ -36,7 +36,7 @@ class JsonApiValidator
      * @param ?array<string, mixed> $attributes
      * @param ?array<string, mixed> $meta
      */
-    public function __construct(protected ?string $type, ?array $attributes = null, ?array $meta = null)
+    public function __construct(protected string|null $type, array|null $attributes = null, array|null $meta = null)
     {
         if ($attributes !== null) {
             $this->attributes($attributes);
@@ -97,7 +97,7 @@ class JsonApiValidator
      *
      * @return $this
      */
-    public function relationship(string $name, self $rules, ?bool $filled, ?array $meta = null, ?array $links = null): static
+    public function relationship(string $name, self $rules, bool|null $filled, array|null $meta = null, array|null $links = null): static
     {
         if ($filled === false) {
             return $this->relationships([$name => Validity::make()->missing()]);
@@ -151,13 +151,13 @@ class JsonApiValidator
     /**
      * Add relationship collection rules.
      *
-     * @param self|array<int, self> $rules
+     * @param array<int, self>|self $rules
      * @param ?array<string, mixed> $meta
      * @param ?array<string, mixed> $links
      *
      * @return $this
      */
-    public function relationshipCollection(string $name, self|array $rules, bool $filled, ?array $meta = null, ?array $links = null): static
+    public function relationshipCollection(string $name, array|self $rules, bool $filled, array|null $meta = null, array|null $links = null): static
     {
         if ($filled === false) {
             return $this->relationships([$name => Validity::make()->missing()]);

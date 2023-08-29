@@ -29,11 +29,11 @@ class HasLocalePreferenceMiddleware
 
         $locale = $me->preferredLocale();
 
-        if ($config->appLocale() !== $locale) {
+        if ($locale !== $config->appLocale()) {
             $config->setAppLocale($locale);
         }
 
-        if ($request->getLocale() !== $locale) {
+        if ($locale !== $request->getLocale()) {
             $request->setLocale($locale);
         }
 

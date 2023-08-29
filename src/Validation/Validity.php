@@ -28,33 +28,51 @@ use Tomchochola\Laratchi\Validation\Rules\VoidRule;
 class Validity implements ArrayableContract
 {
     public const TINY_INT_MAX = 127;
+
     public const TINY_INT_MIN = -128;
+
     public const UNSIGNED_TINY_INT_MAX = 255;
+
     public const UNSIGNED_TINY_INT_MIN = 0;
 
     public const SMALL_INT_MAX = 32767;
+
     public const SMALL_INT_MIN = -32768;
+
     public const UNSIGNED_SMALL_INT_MAX = 65535;
+
     public const UNSIGNED_SMALL_INT_MIN = 0;
 
     public const MEDIUM_INT_MAX = 8388607;
+
     public const MEDIUM_INT_MIN = -8388608;
+
     public const UNSIGNED_MEDIUM_INT_MAX = 16777215;
+
     public const UNSIGNED_MEDIUM_INT_MIN = 0;
 
     public const INT_MAX = 2147483647;
+
     public const INT_MIN = -2147483648;
+
     public const UNSIGNED_INT_MAX = 4294967295;
+
     public const UNSIGNED_INT_MIN = 0;
 
     public const BIG_INT_MAX = \PHP_INT_MAX;
+
     public const BIG_INT_MIN = \PHP_INT_MIN;
+
     public const UNSIGNED_BIG_INT_MAX = \PHP_INT_MAX;
+
     public const UNSIGNED_BIG_INT_MIN = 0;
 
     public const TINY_TEXT_MAX = 256;
+
     public const TEXT_MAX = 65535;
+
     public const MEDIUM_TEXT_MAX = 16777215;
+
     public const LONG_TEXT_MAX = 4294967295;
 
     public const VARCHAR_MAX = 65535;
@@ -156,9 +174,7 @@ class Validity implements ArrayableContract
     /**
      * Constructor.
      */
-    protected function __construct()
-    {
-    }
+    protected function __construct() {}
 
     /**
      * Create a new validity instance.
@@ -209,7 +225,7 @@ class Validity implements ArrayableContract
      */
     public function if(bool $flag): static
     {
-        if (! $flag) {
+        if (!$flag) {
             return $this->skipNext();
         }
 
@@ -389,7 +405,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function collection(?int $maxItems, ?int $minItems = null): static
+    public function collection(int|null $maxItems, int|null $minItems = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -433,7 +449,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function array(?array $structure): static
+    public function array(array|null $structure): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -551,7 +567,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function between(int|float $min, int|float $max): static
+    public function between(float|int $min, float|int $max): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -640,7 +656,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function currentPassword(?string $guard = null): static
+    public function currentPassword(string|null $guard = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -704,7 +720,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function decimal(int $min, ?int $max = null): static
+    public function decimal(int $min, int|null $max = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -839,13 +855,13 @@ class Validity implements ArrayableContract
      * @return $this
      */
     public function dimensionsRule(
-        ?int $width = null,
-        ?int $height = null,
-        ?int $minWidth = null,
-        ?int $maxWidth = null,
-        ?int $minHeight = null,
-        ?int $maxHeight = null,
-        ?float $ratio = null,
+        int|null $width = null,
+        int|null $height = null,
+        int|null $minWidth = null,
+        int|null $maxWidth = null,
+        int|null $minHeight = null,
+        int|null $maxHeight = null,
+        float|null $ratio = null,
     ): static {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -961,8 +977,8 @@ class Validity implements ArrayableContract
             return $this;
         }
 
-        Typer::assert(! $filterUnicode || ! $filter, 'filter and filter_unicode can not coexist');
-        Typer::assert(! $strict || ! $rfc, 'strict and rfc can not coexist');
+        Typer::assert(!$filterUnicode || !$filter, 'filter and filter_unicode can not coexist');
+        Typer::assert(!$strict || !$rfc, 'strict and rfc can not coexist');
 
         if (Config::inject()->appEnvIs(['testing'])) {
             return $this->addRule('email');
@@ -1074,7 +1090,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function excludeIfRule(Closure|bool $condition): static
+    public function excludeIfRule(bool|Closure $condition): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1162,7 +1178,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function file(?int $max, ?array $mimetypes): static
+    public function file(int|null $max, array|null $mimetypes): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1281,7 +1297,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function image(?int $max, ?array $mimeTypes): static
+    public function image(int|null $max, array|null $mimeTypes): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1314,7 +1330,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function video(?int $max, ?array $mimeTypes): static
+    public function video(int|null $max, array|null $mimeTypes): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1400,7 +1416,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function integer(?int $max, ?int $min): static
+    public function integer(int|null $max, int|null $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1583,7 +1599,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function max(int|float $max): static
+    public function max(float|int $max): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1599,7 +1615,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function min(int|float $min): static
+    public function min(float|int $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1705,7 +1721,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function multipleOf(int|float $multipleOf): static
+    public function multipleOf(float|int $multipleOf): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -1773,7 +1789,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function numeric(?float $max, ?float $min): static
+    public function numeric(float|null $max, float|null $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2108,7 +2124,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function size(int|float $size): static
+    public function size(float|int $size): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2142,7 +2158,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function string(?int $max, ?int $min = null): static
+    public function string(int|null $max, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2185,7 +2201,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function bytes(?int $max, ?int $min = null): static
+    public function bytes(int|null $max, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2228,7 +2244,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function varchar(?int $max = null, ?int $min = null): static
+    public function varchar(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2266,7 +2282,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unique(string $table, string $column, mixed $id = null, ?string $idColumn = null, array $wheres = []): static
+    public function unique(string $table, string $column, mixed $id = null, string|null $idColumn = null, array $wheres = []): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2544,7 +2560,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function tinyText(?int $max = null, ?int $min = null, bool $bytes = false): static
+    public function tinyText(int|null $max = null, int|null $min = null, bool $bytes = false): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2574,7 +2590,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function text(?int $max = null, ?int $min = null, bool $bytes = false): static
+    public function text(int|null $max = null, int|null $min = null, bool $bytes = false): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2604,7 +2620,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function mediumText(?int $max = null, ?int $min = null, bool $bytes = false): static
+    public function mediumText(int|null $max = null, int|null $min = null, bool $bytes = false): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2634,7 +2650,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function longText(?int $max = null, ?int $min = null, bool $bytes = false): static
+    public function longText(int|null $max = null, int|null $min = null, bool $bytes = false): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2664,7 +2680,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function tinyInt(?int $max = null, ?int $min = null): static
+    public function tinyInt(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2686,7 +2702,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedTinyInt(?int $max = null, ?int $min = null): static
+    public function unsignedTinyInt(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2708,7 +2724,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function smallInt(?int $max = null, ?int $min = null): static
+    public function smallInt(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2730,7 +2746,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedSmallInt(?int $max = null, ?int $min = null): static
+    public function unsignedSmallInt(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2752,7 +2768,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function mediumInt(?int $max = null, ?int $min = null): static
+    public function mediumInt(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2774,7 +2790,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedMediumInt(?int $max = null, ?int $min = null): static
+    public function unsignedMediumInt(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2796,7 +2812,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function int(?int $max = null, ?int $min = null): static
+    public function int(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2818,7 +2834,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedInt(?int $max = null, ?int $min = null): static
+    public function unsignedInt(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2840,7 +2856,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function bigInt(?int $max = null, ?int $min = null): static
+    public function bigInt(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2861,7 +2877,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsignedBigInt(?int $max = null, ?int $min = null): static
+    public function unsignedBigInt(int|null $max = null, int|null $min = null): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2882,7 +2898,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function unsigned(?int $max, ?int $min): static
+    public function unsigned(int|null $max, int|null $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2902,7 +2918,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function signed(?int $max, ?int $min): static
+    public function signed(int|null $max, int|null $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2918,7 +2934,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function positive(?int $max, ?int $min): static
+    public function positive(int|null $max, int|null $min): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -2997,7 +3013,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function pluck(Closure $callback, string $column = 'id', ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    public function pluck(Closure $callback, string $column = 'id', Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3019,7 +3035,7 @@ class Validity implements ArrayableContract
 
                 $exists = $keys->contains($value);
 
-                if (! $exists) {
+                if (!$exists) {
                     return false;
                 }
 
@@ -3052,7 +3068,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notPluck(Closure $callback, string $column = 'id', ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    public function notPluck(Closure $callback, string $column = 'id', Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3074,7 +3090,7 @@ class Validity implements ArrayableContract
 
                 $exists = $keys->contains($value);
 
-                if (! $exists) {
+                if (!$exists) {
                     return true;
                 }
 
@@ -3107,7 +3123,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function pluckKey(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    public function pluckKey(Closure $callback, Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3132,7 +3148,7 @@ class Validity implements ArrayableContract
 
                 $exists = $keys->contains($value);
 
-                if (! $exists) {
+                if (!$exists) {
                     return false;
                 }
 
@@ -3165,7 +3181,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notPluckKey(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    public function notPluckKey(Closure $callback, Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3190,7 +3206,7 @@ class Validity implements ArrayableContract
 
                 $exists = $keys->contains($value);
 
-                if (! $exists) {
+                if (!$exists) {
                     return true;
                 }
 
@@ -3223,7 +3239,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function pluckRouteKey(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    public function pluckRouteKey(Closure $callback, Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3248,7 +3264,7 @@ class Validity implements ArrayableContract
 
                 $exists = $keys->contains($value);
 
-                if (! $exists) {
+                if (!$exists) {
                     return false;
                 }
 
@@ -3281,7 +3297,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notPluckRouteKey(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    public function notPluckRouteKey(Closure $callback, Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3306,7 +3322,7 @@ class Validity implements ArrayableContract
 
                 $exists = $keys->contains($value);
 
-                if (! $exists) {
+                if (!$exists) {
                     return true;
                 }
 
@@ -3339,7 +3355,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function builder(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    public function builder(Closure $callback, Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3353,7 +3369,7 @@ class Validity implements ArrayableContract
 
                 $exists = $builder->toBase()->exists();
 
-                if (! $exists) {
+                if (!$exists) {
                     return false;
                 }
 
@@ -3386,7 +3402,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notBuilder(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    public function notBuilder(Closure $callback, Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3400,7 +3416,7 @@ class Validity implements ArrayableContract
 
                 $exists = $builder->toBase()->exists();
 
-                if (! $exists) {
+                if (!$exists) {
                     return true;
                 }
 
@@ -3433,7 +3449,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function builderKey(Closure $callback, ?Closure $each = null, int|string $message = 'validation.invalid'): static
+    public function builderKey(Closure $callback, Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3449,7 +3465,7 @@ class Validity implements ArrayableContract
 
                 $exists = $builder->toBase()->exists();
 
-                if (! $exists) {
+                if (!$exists) {
                     return false;
                 }
 
@@ -3482,7 +3498,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notBuilderKey(Closure $callback, ?Closure $each = null, string|int $message = 'validation.invalid'): static
+    public function notBuilderKey(Closure $callback, Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3498,7 +3514,7 @@ class Validity implements ArrayableContract
 
                 $exists = $builder->toBase()->exists();
 
-                if (! $exists) {
+                if (!$exists) {
                     return true;
                 }
 
@@ -3531,7 +3547,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function builderRouteKey(Closure $callback, ?Closure $each = null, string|int $message = 'validation.invalid'): static
+    public function builderRouteKey(Closure $callback, Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3549,7 +3565,7 @@ class Validity implements ArrayableContract
 
                 $exists = $builder->toBase()->exists();
 
-                if (! $exists) {
+                if (!$exists) {
                     return false;
                 }
 
@@ -3582,7 +3598,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notBuilderRouteKey(Closure $callback, ?Closure $each = null, string|int $message = 'validation.invalid'): static
+    public function notBuilderRouteKey(Closure $callback, Closure|null $each = null, int|string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3600,7 +3616,7 @@ class Validity implements ArrayableContract
 
                 $exists = $builder->toBase()->exists();
 
-                if (! $exists) {
+                if (!$exists) {
                     return true;
                 }
 
@@ -3633,7 +3649,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function builderId(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function builderId(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         return $this->builderKey($callback, $each, $message);
     }
@@ -3648,7 +3664,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notBuilderId(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function notBuilderId(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         return $this->notBuilderKey($callback, $each, $message);
     }
@@ -3663,7 +3679,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function builderSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function builderSlug(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         return $this->builderRouteKey($callback, $each, $message);
     }
@@ -3678,7 +3694,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notBuilderSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function notBuilderSlug(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         return $this->notBuilderRouteKey($callback, $each, $message);
     }
@@ -3693,7 +3709,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function existingId(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function existingId(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         return $this->builderKey($callback, $each, $message);
     }
@@ -3708,7 +3724,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notExistingId(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function notExistingId(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         return $this->notBuilderKey($callback, $each, $message);
     }
@@ -3723,7 +3739,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function existingSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function existingSlug(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         return $this->builderRouteKey($callback, $each, $message);
     }
@@ -3738,7 +3754,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notExistingSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function notExistingSlug(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         return $this->notBuilderRouteKey($callback, $each, $message);
     }
@@ -3753,7 +3769,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function builderIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function builderIdSlug(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3773,7 +3789,7 @@ class Validity implements ArrayableContract
 
                 $exists = $builder->toBase()->exists();
 
-                if (! $exists) {
+                if (!$exists) {
                     return false;
                 }
 
@@ -3806,7 +3822,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notBuilderIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function notBuilderIdSlug(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         if ($this->skipNext) {
             $this->skipNext = false;
@@ -3826,7 +3842,7 @@ class Validity implements ArrayableContract
 
                 $exists = $builder->toBase()->exists();
 
-                if (! $exists) {
+                if (!$exists) {
                     return true;
                 }
 
@@ -3859,7 +3875,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function existingIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function existingIdSlug(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         return $this->builderIdSlug($callback, $each, $message);
     }
@@ -3874,7 +3890,7 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function notExistingIdSlug(Closure $callback, ?Closure $each = null, string $message = 'validation.invalid'): static
+    public function notExistingIdSlug(Closure $callback, Closure|null $each = null, string $message = 'validation.invalid'): static
     {
         return $this->notBuilderIdSlug($callback, $each, $message);
     }
@@ -3965,16 +3981,16 @@ class Validity implements ArrayableContract
     public function toArray(): array
     {
         Typer::assert(
-            $this->unsafe
-                || $this->array
-                || $this->collection
-                || $this->boolean
-                || $this->file
-                || $this->integer
-                || $this->numeric
-                || $this->string
-                || $this->prohibited
-                || $this->missing,
+            $this->unsafe ||
+                $this->array ||
+                $this->collection ||
+                $this->boolean ||
+                $this->file ||
+                $this->integer ||
+                $this->numeric ||
+                $this->string ||
+                $this->prohibited ||
+                $this->missing,
             'attribute must be validated against base type (array|object|collection|boolean|file|integer|numeric|string)',
         );
         Typer::assert($this->unsafe || $this->required || $this->nullable || $this->missing || $this->prohibited, 'attribute must be validated against nullable or required');
@@ -4047,17 +4063,17 @@ class Validity implements ArrayableContract
      *
      * @return $this
      */
-    public function addRule(mixed $rule, ?array $arguments = null): static
+    public function addRule(mixed $rule, array|null $arguments = null): static
     {
         Typer::assert($this->skipNext === false);
 
         if (\is_string($rule)) {
             if ($arguments !== null && \count($arguments) > 0) {
-                $rule = $rule.(\str_contains($rule, ':') ? ',' : ':').$this->formatArguments($arguments);
+                $rule = $rule . (\str_contains($rule, ':') ? ',' : ':') . $this->formatArguments($arguments);
             }
         }
 
-        if (! \in_array($rule, $this->rules, true)) {
+        if (!\in_array($rule, $this->rules, true)) {
             $this->rules[] = $rule;
         }
 
@@ -4139,6 +4155,6 @@ class Validity implements ArrayableContract
      */
     protected function formatArguments(array $arguments): string
     {
-        return strPutCsv($arguments);
+        return \strPutCsv($arguments);
     }
 }

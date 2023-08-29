@@ -17,9 +17,9 @@ class RouteServiceProvider extends ServiceProvider
         parent::boot();
 
         $this->routes(static function (): void {
-            resolveRouteRegistrar()->get('/', SpaRedirectController::class);
+            \resolveRouteRegistrar()->get('/', SpaRedirectController::class);
 
-            resolveRouteRegistrar()->group(resolveApp()->basePath('routes/http.php'));
+            \resolveRouteRegistrar()->group(\resolveApp()->basePath('routes/http.php'));
         });
     }
 }

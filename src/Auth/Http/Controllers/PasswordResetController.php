@@ -74,11 +74,11 @@ class PasswordResetController extends TransactionController
 
         $token = $request->validatedInput()->mustString('token');
 
-        if (! Config::inject()->appEnvIs(['production']) && $token === '111111') {
+        if (!Config::inject()->appEnvIs(['production']) && $token === '111111') {
             return;
         }
 
-        if (! resolvePasswordBroker()->tokenExists($me, $token)) {
+        if (!\resolvePasswordBroker()->tokenExists($me, $token)) {
             $hit();
             $request->throwSingleValidationException(['token'], PasswordBroker::INVALID_TOKEN);
         }
@@ -89,7 +89,7 @@ class PasswordResetController extends TransactionController
      */
     protected function reset(PasswordResetRequest $request, User $me): void
     {
-        $me->update(['password' => resolveHasher()->make($request->validatedInput()->mustString('password'))]);
+        $me->update(['password' => \resolveHasher()->make($request->validatedInput()->mustString('password'))]);
     }
 
     /**
@@ -97,7 +97,7 @@ class PasswordResetController extends TransactionController
      */
     protected function login(PasswordResetRequest $request, User $me): void
     {
-        resolveGuard()->login($me);
+        \resolveGuard()->login($me);
     }
 
     /**
@@ -109,9 +109,9 @@ class PasswordResetController extends TransactionController
 
         [$hit] = $this->throttle($this->limit('credentials'), $this->onThrottle($request, \array_keys($credentials), 'auth.throttle'));
 
-        $me = resolveUserProvider()->retrieveByCredentials($credentials);
+        $me = \resolveUserProvider()->retrieveByCredentials($credentials);
 
-        if (! $me instanceof User) {
+        if (!$me instanceof User) {
             $hit();
             $request->throwSingleValidationException(\array_keys($credentials), 'auth.failed');
         }
@@ -128,6 +128,6 @@ class PasswordResetController extends TransactionController
      */
     protected function deleteToken(PasswordResetRequest $request, User $me): void
     {
-        resolvePasswordBroker()->deleteToken($me);
+        \resolvePasswordBroker()->deleteToken($me);
     }
 }

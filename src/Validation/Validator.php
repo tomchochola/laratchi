@@ -142,7 +142,7 @@ class Validator extends IlluminateValidator
     public function validateProhibitedWithout(string $attribute, mixed $value, array $parameters): bool
     {
         foreach ($parameters as $key) {
-            if (! $this->validateRequired($key, $this->getValue($key))) {
+            if (!$this->validateRequired($key, $this->getValue($key))) {
                 return false;
             }
         }
@@ -158,7 +158,7 @@ class Validator extends IlluminateValidator
     public function validateProhibitedWithAll(string $attribute, mixed $value, array $parameters): bool
     {
         foreach ($parameters as $key) {
-            if (! $this->validateRequired($key, $this->getValue($key))) {
+            if (!$this->validateRequired($key, $this->getValue($key))) {
                 return true;
             }
         }

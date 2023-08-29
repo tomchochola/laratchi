@@ -18,7 +18,9 @@ class Kernel extends ConsoleKernel
     {
         parent::schedule($schedule);
 
-        foreach (mustConfigArray('auth.passwords') as $passwordBrokerName => $config) {
+        $schedule->command('cache:prune-stale-tags')->hourly();
+
+        foreach (\mustConfigArray('auth.passwords') as $passwordBrokerName => $config) {
             $schedule
                 ->command("auth:clear-resets {$passwordBrokerName}")
                 ->dailyAt('04:00')

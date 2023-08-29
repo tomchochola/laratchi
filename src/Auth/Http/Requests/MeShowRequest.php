@@ -12,7 +12,7 @@ class MeShowRequest extends SecureFormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): Response|bool
+    public function authorize(): bool|Response
     {
         return true;
     }

@@ -34,16 +34,16 @@ class EmailVerificationVerifyController extends TransactionController
     /**
      * Me.
      */
-    protected function me(EmailVerificationVerifyRequest $request): User&MustVerifyEmail
+    protected function me(EmailVerificationVerifyRequest $request): MustVerifyEmail&User
     {
         $credentials = $request->credentials();
 
         [$hit] = $this->throttle($this->limit('credentials'), $this->onThrottle($request, \array_keys($credentials)));
 
         if (\count($credentials) > 0) {
-            $me = resolveUserProvider()->retrieveByCredentials($credentials);
+            $me = \resolveUserProvider()->retrieveByCredentials($credentials);
 
-            if (! $me instanceof User) {
+            if (!$me instanceof User) {
                 $hit();
                 $request->throwSingleValidationException(\array_keys($credentials), 'auth.failed');
             }
@@ -51,7 +51,7 @@ class EmailVerificationVerifyController extends TransactionController
             $me = $request->mustAuth();
         }
 
-        if (! $me instanceof MustVerifyEmail || $me->getEmailForVerification() === '') {
+        if (!$me instanceof MustVerifyEmail || $me->getEmailForVerification() === '') {
             throw new AuthorizationException();
         }
 
@@ -61,7 +61,7 @@ class EmailVerificationVerifyController extends TransactionController
     /**
      * Mark email as verified.
      */
-    protected function verify(EmailVerificationVerifyRequest $request, User&MustVerifyEmail $me): void
+    protected function verify(EmailVerificationVerifyRequest $request, MustVerifyEmail&User $me): void
     {
         $me->markEmailAsVerified();
     }
@@ -69,15 +69,15 @@ class EmailVerificationVerifyController extends TransactionController
     /**
      * Make response.
      */
-    protected function response(EmailVerificationVerifyRequest $request, User&MustVerifyEmail $me): SymfonyResponse
+    protected function response(EmailVerificationVerifyRequest $request, MustVerifyEmail&User $me): SymfonyResponse
     {
-        return resolveResponseFactory()->noContent();
+        return \resolveResponseFactory()->noContent();
     }
 
     /**
      * Check user has verified email.
      */
-    protected function hasVerifiedEmail(EmailVerificationVerifyRequest $request, User&MustVerifyEmail $me): void
+    protected function hasVerifiedEmail(EmailVerificationVerifyRequest $request, MustVerifyEmail&User $me): void
     {
         if ($me->hasVerifiedEmail()) {
             throw new ConflictHttpException();
@@ -87,11 +87,11 @@ class EmailVerificationVerifyController extends TransactionController
     /**
      * Validate token.
      */
-    protected function validateToken(EmailVerificationVerifyRequest $request, User&MustVerifyEmail $me): void
+    protected function validateToken(EmailVerificationVerifyRequest $request, MustVerifyEmail&User $me): void
     {
         [$hit] = $this->throttle($this->limit('token'), $this->onThrottle($request, ['token']));
 
-        if (! EmailBrokerService::inject()->validate($me->getTable(), $me->getEmailForVerification(), $request->validatedInput()->mustString('token'))) {
+        if (!EmailBrokerService::inject()->validate($me->getTable(), $me->getEmailForVerification(), $request->validatedInput()->mustString('token'))) {
             $hit();
             $request->throwExistsValidationException(['token']);
         }

@@ -25,7 +25,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableString(string $key, ?string $value): static
+    public function assignNullableString(string $key, string|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -45,7 +45,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableBool(string $key, ?bool $value): static
+    public function assignNullableBool(string $key, bool|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -65,7 +65,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableInt(string $key, ?int $value): static
+    public function assignNullableInt(string $key, int|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -85,7 +85,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableFloat(string $key, ?float $value): static
+    public function assignNullableFloat(string $key, float|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -109,7 +109,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableArray(string $key, ?array $value): static
+    public function assignNullableArray(string $key, array|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -129,7 +129,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableFile(string $key, ?UploadedFile $value): static
+    public function assignNullableFile(string $key, UploadedFile|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -149,7 +149,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableCarbon(string $key, ?Carbon $value): static
+    public function assignNullableCarbon(string $key, Carbon|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -169,7 +169,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableObject(string $key, ?object $value): static
+    public function assignNullableObject(string $key, object|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -179,7 +179,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignScalar(string $key, int|float|string|bool $value): static
+    public function assignScalar(string $key, bool|float|int|string $value): static
     {
         return $this->assign($key, $value);
     }
@@ -189,7 +189,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableScalar(string $key, int|float|string|bool|null $value): static
+    public function assignNullableScalar(string $key, bool|float|int|string|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -219,7 +219,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableEnum(string $key, string $enum, ?BackedEnum $value): static
+    public function assignNullableEnum(string $key, string $enum, BackedEnum|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -249,7 +249,7 @@ trait AssignTrait
      * @return T|null
      * @return $this
      */
-    public function assignNullableInstance(string $key, string $class, ?object $value): static
+    public function assignNullableInstance(string $key, string $class, object|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -279,7 +279,7 @@ trait AssignTrait
      *
      * @return $this
      */
-    public function assignNullableA(string $key, string $class, ?string $value): static
+    public function assignNullableA(string $key, string $class, string|null $value): static
     {
         return $this->assign($key, $value);
     }
@@ -296,6 +296,6 @@ trait AssignTrait
      */
     public function assignIn(string $key, array $enum, mixed $value): static
     {
-        return $this->assign($key, assertIn($value, $enum));
+        return $this->assign($key, \assertIn($value, $enum));
     }
 }

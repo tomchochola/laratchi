@@ -18,7 +18,7 @@ class Debug
         $encoded = [];
 
         foreach ($data as $key => $value) {
-            $encoded[] = $key.'('.\get_debug_type($value).'):'.static::encodeValue($value);
+            $encoded[] = $key . '(' . \get_debug_type($value) . '):' . static::encodeValue($value);
         }
 
         return \implode(' ', $encoded);
@@ -30,7 +30,7 @@ class Debug
     public static function encodeValue(mixed $value): string
     {
         if (\is_string($value)) {
-            return '"'.\str_replace('"', '""', $value).'"';
+            return '"' . \str_replace('"', '""', $value) . '"';
         }
 
         if (\is_bool($value)) {

@@ -17,13 +17,13 @@ class ThrottleSupport
      *
      * @return array{Closure(): void, Closure(): void}
      */
-    public static function throttle(Limit $limit, ?Closure $onError = null): array
+    public static function throttle(Limit $limit, Closure|null $onError = null): array
     {
         $hash = Typer::assertString($limit->key);
 
         $key = "throttle:{$hash}";
 
-        $rateLimiter = resolveRateLimiter();
+        $rateLimiter = \resolveRateLimiter();
 
         $failed = $rateLimiter->tooManyAttempts($key, $limit->maxAttempts);
 
@@ -52,7 +52,7 @@ class ThrottleSupport
      *
      * @return Closure(): void
      */
-    public static function hit(Limit $limit, ?Closure $onError = null): Closure
+    public static function hit(Limit $limit, Closure|null $onError = null): Closure
     {
         [$hit, $clear] = static::throttle($limit, $onError);
 

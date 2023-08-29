@@ -31,16 +31,16 @@ class EmailVerificationResendController extends TransactionController
     /**
      * Me.
      */
-    protected function me(EmailVerificationResendRequest $request): User&MustVerifyEmail
+    protected function me(EmailVerificationResendRequest $request): MustVerifyEmail&User
     {
         $credentials = $request->credentials();
 
         [$hit] = $this->throttle($this->limit('credentials'), $this->onThrottle($request, \array_keys($credentials)));
 
         if (\count($credentials) > 0) {
-            $me = resolveUserProvider()->retrieveByCredentials($credentials);
+            $me = \resolveUserProvider()->retrieveByCredentials($credentials);
 
-            if (! $me instanceof User) {
+            if (!$me instanceof User) {
                 $hit();
                 $request->throwSingleValidationException(\array_keys($credentials), 'auth.failed');
             }
@@ -48,7 +48,7 @@ class EmailVerificationResendController extends TransactionController
             $me = $request->mustAuth();
         }
 
-        if (! $me instanceof MustVerifyEmail || $me->getEmailForVerification() === '') {
+        if (!$me instanceof MustVerifyEmail || $me->getEmailForVerification() === '') {
             throw new AuthorizationException();
         }
 
@@ -58,7 +58,7 @@ class EmailVerificationResendController extends TransactionController
     /**
      * Send email verification notification.
      */
-    protected function send(EmailVerificationResendRequest $request, User&MustVerifyEmail $me): void
+    protected function send(EmailVerificationResendRequest $request, MustVerifyEmail&User $me): void
     {
         $this->hit($this->limit('send'));
 
@@ -68,15 +68,15 @@ class EmailVerificationResendController extends TransactionController
     /**
      * Make response.
      */
-    protected function response(EmailVerificationResendRequest $request, User&MustVerifyEmail $me): SymfonyResponse
+    protected function response(EmailVerificationResendRequest $request, MustVerifyEmail&User $me): SymfonyResponse
     {
-        return resolveResponseFactory()->noContent(202);
+        return \resolveResponseFactory()->noContent(202);
     }
 
     /**
      * Check user has verified email.
      */
-    protected function hasVerifiedEmail(EmailVerificationResendRequest $request, User&MustVerifyEmail $me): void
+    protected function hasVerifiedEmail(EmailVerificationResendRequest $request, MustVerifyEmail&User $me): void
     {
         if ($me->hasVerifiedEmail()) {
             throw new ConflictHttpException();

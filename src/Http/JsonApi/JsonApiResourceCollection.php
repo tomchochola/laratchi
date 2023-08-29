@@ -22,9 +22,7 @@ class JsonApiResourceCollection
      * @param Collection<array-key, T>|CursorPaginator|Paginator $collection
      * @param Closure(B): JsonApiResource $closureMap
      */
-    public function __construct(public Collection|CursorPaginator|Paginator $collection, public Closure $closureMap)
-    {
-    }
+    public function __construct(public Collection|CursorPaginator|Paginator $collection, public Closure $closureMap) {}
 
     /**
      * Get response.
@@ -34,8 +32,8 @@ class JsonApiResourceCollection
      */
     public function response(array $meta = [], int $status = 200, array $headers = []): JsonResponse
     {
-        $included = collect();
-        $collection = $this->collection instanceof Collection ? $this->collection : collect($this->collection->items());
+        $included = \collect();
+        $collection = $this->collection instanceof Collection ? $this->collection : \collect($this->collection->items());
 
         $data = [
             'data' => $collection

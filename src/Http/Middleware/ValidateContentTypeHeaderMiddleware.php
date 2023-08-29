@@ -24,7 +24,7 @@ class ValidateContentTypeHeaderMiddleware
 
         $contentType = $request->getContentTypeFormat();
 
-        if (! \in_array($contentType, $contentTypes, true)) {
+        if (!\in_array($contentType, $contentTypes, true)) {
             throw new UnsupportedMediaTypeHttpException('Content-Type Header Invalid');
         }
 

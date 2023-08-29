@@ -28,11 +28,11 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()
+            'name' => \fake()->name(),
+            'email' => \fake()
                 ->unique()
                 ->email(),
-            'email_verified_at' => resolveDate()->now(),
+            'email_verified_at' => \resolveDate()->now(),
             'password' => Str::random(),
             'remember_token' => Str::random(),
             'locale' => Config::inject()->appLocale(),
@@ -50,9 +50,9 @@ class UserFactory extends Factory
     /**
      * Create model with password filled.
      */
-    public function password(?string $password = null): static
+    public function password(string|null $password = null): static
     {
-        return $this->set('password', resolveHasher()->make($password ?? static::PASSWORD));
+        return $this->set('password', \resolveHasher()->make($password ?? static::PASSWORD));
     }
 
     /**
@@ -68,7 +68,7 @@ class UserFactory extends Factory
      */
     public function randomLocale(): static
     {
-        return $this->set('locale', fake()->randomElement(mustConfigArray('app.locales')));
+        return $this->set('locale', \fake()->randomElement(\mustConfigArray('app.locales')));
     }
 
     /**

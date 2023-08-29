@@ -41,7 +41,7 @@ class LoginController extends TransactionController
 
         [$hit] = $this->throttle($this->limit('password'), $this->onThrottle($request, ['password'], 'auth.throttle'));
 
-        if (! resolveHasher()->check($password, $me->getAuthPassword())) {
+        if (!\resolveHasher()->check($password, $me->getAuthPassword())) {
             $hit();
             $request->throwSingleValidationException(['password'], 'auth.password');
         }
@@ -74,7 +74,7 @@ class LoginController extends TransactionController
      */
     protected function login(LoginRequest $request, User $me): void
     {
-        resolveGuard()->login($me);
+        \resolveGuard()->login($me);
     }
 
     /**
@@ -95,7 +95,7 @@ class LoginController extends TransactionController
         foreach ($credentialsArray as $index => $credentials) {
             [$hit] = $this->throttle($this->limit("credentials.{$index}"), $this->onThrottle($request, \array_keys($credentials), 'auth.throttle'));
 
-            $user = resolveUserProvider()->retrieveByCredentials($credentials);
+            $user = \resolveUserProvider()->retrieveByCredentials($credentials);
 
             if ($user instanceof User) {
                 return $user;

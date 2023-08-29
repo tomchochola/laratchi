@@ -15,28 +15,26 @@ class DatabaseTokenGuard implements GuardContract
     /**
      * The currently authenticated user.
      */
-    public User|false|null $user = null;
+    public false|User|null $user = null;
 
     /**
      * The currently authenticated database token.
      */
-    public ?DatabaseToken $databaseToken = null;
+    public DatabaseToken|null $databaseToken = null;
 
     /**
      * Create a new guard instance.
      */
-    public function __construct(public string $guardName)
-    {
-    }
+    public function __construct(public string $guardName) {}
 
     /**
      * Get cookie name.
      */
     public function cookieName(): string
     {
-        $env = currentEnv();
+        $env = \currentEnv();
 
-        return ($env === 'local' ? '' : '__Host-').Str::slug(mustConfigString('app.name').'_'.$env."_database_token_{$this->guardName}", '_');
+        return ($env === 'local' ? '' : '__Host-') . Str::slug(\mustConfigString('app.name') . '_' . $env . "_database_token_{$this->guardName}", '_');
     }
 
     /**
@@ -58,7 +56,7 @@ class DatabaseTokenGuard implements GuardContract
     /**
      * @inheritDoc
      */
-    public function user(): ?User
+    public function user(): User|null
     {
         if ($this->user === false) {
             return null;
@@ -83,8 +81,8 @@ class DatabaseTokenGuard implements GuardContract
         $user = $databaseToken->user($this->guardName);
 
         if (
-            $user === null
-            || CanLoginService::inject()
+            $user === null ||
+            CanLoginService::inject()
                 ->authorize($user)
                 ->denied()
         ) {
@@ -100,7 +98,7 @@ class DatabaseTokenGuard implements GuardContract
     /**
      * @inheritDoc
      */
-    public function id(): ?int
+    public function id(): int|null
     {
         return $this->user()?->getKey();
     }
@@ -112,7 +110,7 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function validate(array $credentials = []): never
     {
-        assertNever();
+        \assertNever();
     }
 
     /**
@@ -128,7 +126,7 @@ class DatabaseTokenGuard implements GuardContract
      */
     public function setUser(AuthenticatableContract $user): void
     {
-        $this->user = assertInstance($user, User::class);
+        $this->user = \assertInstance($user, User::class);
     }
 
     /**
@@ -141,11 +139,11 @@ class DatabaseTokenGuard implements GuardContract
         $this->databaseToken = $databaseToken;
         $this->user = $user;
 
-        $bearer = assertNotNull($databaseToken->bearer);
+        $bearer = \assertNotNull($databaseToken->bearer);
 
-        $cookieJar = resolveCookieJar();
+        $cookieJar = \resolveCookieJar();
         $cookieJar->queue(
-            $cookieJar->forever($this->cookieName(), $bearer, '/', null, ! isEnv(['local']), true, false, Config::inject()->appEnvIs(['production']) ? 'Lax' : 'None'),
+            $cookieJar->forever($this->cookieName(), $bearer, '/', null, !\isEnv(['local']), true, false, Config::inject()->appEnvIs(['production']) ? 'Lax' : 'None'),
         );
 
         return $databaseToken;
@@ -166,15 +164,15 @@ class DatabaseTokenGuard implements GuardContract
         $this->databaseToken = null;
         $this->user = false;
 
-        resolveCookieJar()->expire($this->cookieName(), '/', null);
+        \resolveCookieJar()->expire($this->cookieName(), '/', null);
     }
 
     /**
      * Resolve bearer from request.
      */
-    public function bearer(): ?string
+    public function bearer(): string|null
     {
-        $request = resolveRequest();
+        $request = \resolveRequest();
 
         $bearer = $request->bearerToken();
 

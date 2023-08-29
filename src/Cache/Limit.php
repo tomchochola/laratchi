@@ -14,9 +14,9 @@ class Limit extends IlluminateLimit
     /**
      * @inheritDoc
      *
-     * @param Closure(int): Response|Closure(int): never|Closure(): Response|Closure(): never|null $responseCallback
+     * @param Closure(): never|Closure(): Response|Closure(int): never|Closure(int): Response|null $responseCallback
      */
-    public function __construct(string $key, int $maxAttempts, int $decayMinutes, ?Closure $responseCallback = null)
+    public function __construct(string $key, int $maxAttempts, int $decayMinutes, Closure|null $responseCallback = null)
     {
         parent::__construct($key, $maxAttempts, $decayMinutes);
 
@@ -26,9 +26,9 @@ class Limit extends IlluminateLimit
     /**
      * Default constructor.
      *
-     * @param Closure(int): Response|Closure(int): never|Closure(): Response|Closure(): never|null $responseCallback
+     * @param Closure(): never|Closure(): Response|Closure(int): never|Closure(int): Response|null $responseCallback
      */
-    public static function default(string $key = '', int $maxAttempts = 3, int $decayMinutes = 60, ?Closure $responseCallback = null): self
+    public static function default(string $key = '', int $maxAttempts = 3, int $decayMinutes = 60, Closure|null $responseCallback = null): self
     {
         return new self(RequestSignature::default($key)->hash(), $maxAttempts, $decayMinutes, $responseCallback);
     }

@@ -5,51 +5,43 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Validation\Rules;
 
 use Closure;
-use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
-class CallbackRule implements RuleContract
+class CallbackRule implements ValidationRule
 {
     /**
      * Create a new rule instance.
      *
      * @param Closure(mixed, mixed=): (bool|int|string) $callback
      */
-    public function __construct(protected Closure $callback, protected int|string $message = 'validation.invalid')
-    {
-    }
+    public function __construct(protected Closure $callback, protected int|string $message = 'validation.invalid') {}
 
     /**
      * @inheritDoc
      */
-    public function passes(mixed $attribute, mixed $value): bool
+    public function validate(mixed $attribute, mixed $value, Closure $fail): void
     {
         $passes = ($this->callback)($value, $attribute);
 
         if (\is_string($passes)) {
-            $this->message = $passes;
+            $fail(\mustTransString($passes));
 
-            return false;
+            return;
         }
 
         if (\is_int($passes)) {
             throw new UnprocessableEntityHttpException('', null, $passes);
         }
 
-        if (! $passes && \is_int($this->message)) {
+        if (!$passes && \is_int($this->message)) {
             throw new UnprocessableEntityHttpException('', null, $this->message);
         }
 
-        return $passes;
-    }
+        if ($passes) {
+            return;
+        }
 
-    /**
-     * @inheritDoc
-     *
-     * @return string|array<int, string>
-     */
-    public function message(): string|array
-    {
-        return mustTransString((string) $this->message);
+        $fail(\mustTransString((string) $this->message));
     }
 }

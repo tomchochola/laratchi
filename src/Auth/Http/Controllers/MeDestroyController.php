@@ -32,7 +32,7 @@ class MeDestroyController extends TransactionController
      */
     protected function response(MeDestroyRequest $request, User $me): SymfonyResponse
     {
-        return resolveResponseFactory()->noContent();
+        return \resolveResponseFactory()->noContent();
     }
 
     /**
@@ -40,7 +40,7 @@ class MeDestroyController extends TransactionController
      */
     protected function logout(MeDestroyRequest $request, User $me): void
     {
-        resolveGuard()->logout();
+        \resolveGuard()->logout();
     }
 
     /**
@@ -58,7 +58,7 @@ class MeDestroyController extends TransactionController
     {
         [$hit] = $this->throttle($this->limit('password'), $this->onThrottle($request, ['password'], 'auth.throttle'));
 
-        if (! resolveHasher()->check($request->validatedInput()->mustString('password'), $me->getAuthPassword())) {
+        if (!\resolveHasher()->check($request->validatedInput()->mustString('password'), $me->getAuthPassword())) {
             $hit();
             $request->throwSingleValidationException(['password'], 'auth.password');
         }

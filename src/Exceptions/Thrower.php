@@ -41,9 +41,7 @@ class Thrower
     /**
      * Constructor.
      */
-    public function __construct(public Validator $validator)
-    {
-    }
+    public function __construct(public Validator $validator) {}
 
     /**
      * Default constructor.

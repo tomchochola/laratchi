@@ -41,7 +41,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByKey(int $key, ?Closure $closure = null): ?static
+    public static function findByKey(int $key, Closure|null $closure = null): static|null
     {
         $builder = static::query()->whereKey($key);
 
@@ -58,7 +58,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustFindByKey(int $key, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindByKey(int $key, Closure|null $closure = null, Closure|null $onError = null): static
     {
         $instance = static::findByKey($key, $closure);
 
@@ -78,7 +78,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByRouteKey(string $key, ?Closure $closure = null): ?static
+    public static function findByRouteKey(string $key, Closure|null $closure = null): static|null
     {
         $qualifier = new static();
 
@@ -99,7 +99,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustFindByRouteKey(string $key, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindByRouteKey(string $key, Closure|null $closure = null, Closure|null $onError = null): static
     {
         $instance = static::findByRouteKey($key, $closure);
 
@@ -119,7 +119,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function resolve(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
+    public static function resolve(int|null $id = null, string|null $slug = null, Closure|null $closure = null): static|null
     {
         if ($id !== null && $id > 0) {
             $instance = static::findByKey($id, $closure);
@@ -142,7 +142,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustResolve(?int $id = null, ?string $slug = null, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustResolve(int|null $id = null, string|null $slug = null, Closure|null $closure = null, Closure|null $onError = null): static
     {
         if ($id !== null && $id > 0) {
             $instance = static::findByKey($id, $closure);
@@ -172,7 +172,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function resolveFromRequest(FormRequest $request, ?Closure $closure = null, ?string $idKey = 'id', ?string $routeKey = 'slug'): ?static
+    public static function resolveFromRequest(FormRequest $request, Closure|null $closure = null, string|null $idKey = 'id', string|null $routeKey = 'slug'): static|null
     {
         return static::resolve($idKey !== null ? $request->allInput()->int($idKey) : null, $routeKey !== null ? $request->allInput()->string($routeKey) : null, $closure);
     }
@@ -182,7 +182,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function mustResolveFromRequest(FormRequest $request, ?Closure $closure = null, ?string $idKey = 'id', ?string $routeKey = 'slug'): static
+    public static function mustResolveFromRequest(FormRequest $request, Closure|null $closure = null, string|null $idKey = 'id', string|null $routeKey = 'slug'): static
     {
         return static::mustResolve(
             $idKey !== null ? $request->allInput()->int($idKey) : null,
@@ -204,7 +204,7 @@ trait ModelTrait
      * @param array<mixed> $attributes
      * @param (Closure(static): void)|null $closure
      */
-    public static function create(array $attributes, ?Closure $closure = null): static
+    public static function create(array $attributes, Closure|null $closure = null): static
     {
         $model = new static($attributes);
 
@@ -223,7 +223,7 @@ trait ModelTrait
      * @param array<mixed> $attributes
      * @param (Closure(static): void)|null $closure
      */
-    public static function make(array $attributes, ?Closure $closure = null): static
+    public static function make(array $attributes, Closure|null $closure = null): static
     {
         $model = new static($attributes);
 
@@ -283,7 +283,7 @@ trait ModelTrait
      *
      * @param array<mixed> $values
      */
-    public static function scopeIdSlug(Builder $builder, array $values, ?bool $preferId = null): void
+    public static function scopeIdSlug(Builder $builder, array $values, bool|null $preferId = null): void
     {
         $qualifier = new static();
 
@@ -306,7 +306,7 @@ trait ModelTrait
      *
      * @param array<mixed> $values
      */
-    public static function scopeNotIdSlug(Builder $builder, array $values, ?bool $preferId = null): void
+    public static function scopeNotIdSlug(Builder $builder, array $values, bool|null $preferId = null): void
     {
         $qualifier = new static();
 
@@ -329,7 +329,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findById(int $key, ?Closure $closure = null): ?static
+    public static function findById(int $key, Closure|null $closure = null): static|null
     {
         return static::findByKey($key, $closure);
     }
@@ -340,7 +340,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustFindById(int $key, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindById(int $key, Closure|null $closure = null, Closure|null $onError = null): static
     {
         return static::mustFindByKey($key, $closure, $onError);
     }
@@ -350,7 +350,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findBySlug(string $key, ?Closure $closure = null): ?static
+    public static function findBySlug(string $key, Closure|null $closure = null): static|null
     {
         return static::findByRouteKey($key, $closure);
     }
@@ -361,7 +361,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustFindBySlug(string $key, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindBySlug(string $key, Closure|null $closure = null, Closure|null $onError = null): static
     {
         return static::mustFindByRouteKey($key, $closure, $onError);
     }
@@ -371,7 +371,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByIdSlug(int|string $value, ?Closure $closure = null, ?bool $preferId = null): ?static
+    public static function findByIdSlug(int|string $value, Closure|null $closure = null, bool|null $preferId = null): static|null
     {
         $builder = static::query();
 
@@ -390,7 +390,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustFindByIdSlug(int|string $value, ?Closure $closure = null, ?Closure $onError = null, ?bool $preferId = null): static
+    public static function mustFindByIdSlug(int|string $value, Closure|null $closure = null, Closure|null $onError = null, bool|null $preferId = null): static
     {
         $instance = static::findByIdSlug($value, $closure, $preferId);
 
@@ -413,7 +413,7 @@ trait ModelTrait
      *
      * @return Collection<array-key, static>
      */
-    public static function allById(array $values, ?Closure $closure = null): Collection
+    public static function allById(array $values, Closure|null $closure = null): Collection
     {
         $builder = static::query();
 
@@ -434,7 +434,7 @@ trait ModelTrait
      *
      * @return Collection<array-key, static>
      */
-    public static function allBySlug(array $values, ?Closure $closure = null): Collection
+    public static function allBySlug(array $values, Closure|null $closure = null): Collection
     {
         $builder = static::query();
 
@@ -455,7 +455,7 @@ trait ModelTrait
      *
      * @return Collection<array-key, static>
      */
-    public static function allByIdSlug(array $values, ?Closure $closure = null, ?bool $preferId = null): Collection
+    public static function allByIdSlug(array $values, Closure|null $closure = null, bool|null $preferId = null): Collection
     {
         $builder = static::query();
 
@@ -473,7 +473,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByIdOrSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
+    public static function findByIdOrSlug(int|null $id = null, string|null $slug = null, Closure|null $closure = null): static|null
     {
         if ($id !== null && $id > 0) {
             $instance = static::findById($id, $closure);
@@ -496,7 +496,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustFindByIdOrSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindByIdOrSlug(int|null $id = null, string|null $slug = null, Closure|null $closure = null, Closure|null $onError = null): static
     {
         $instance = static::findByIdOrSlug($id, $slug, $closure);
 
@@ -516,7 +516,7 @@ trait ModelTrait
      *
      * @param (Closure(Builder): void)|null $closure
      */
-    public static function findByIdXorSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null): ?static
+    public static function findByIdXorSlug(int|null $id = null, string|null $slug = null, Closure|null $closure = null): static|null
     {
         if ($id !== null && $id > 0) {
             return static::findById($id, $closure);
@@ -535,7 +535,7 @@ trait ModelTrait
      * @param (Closure(Builder): void)|null $closure
      * @param ?Closure(): never $onError
      */
-    public static function mustFindByIdXorSlug(?int $id = null, ?string $slug = null, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindByIdXorSlug(int|null $id = null, string|null $slug = null, Closure|null $closure = null, Closure|null $onError = null): static
     {
         $instance = static::findByIdXorSlug($id, $slug, $closure);
 
@@ -619,7 +619,7 @@ trait ModelTrait
      *
      * @param ?Closure(Builder): void $closure
      */
-    public static function scopeHas(Builder $builder, string $relation, ?Closure $closure = null, string $operator = '>=', int $count = 1): void
+    public static function scopeHas(Builder $builder, string $relation, Closure|null $closure = null, string $operator = '>=', int $count = 1): void
     {
         $builder->whereHas($relation, $closure, $operator, $count);
     }
@@ -629,7 +629,7 @@ trait ModelTrait
      *
      * @param ?Closure(Builder): void $closure
      */
-    public static function scopeNotHas(Builder $builder, string $relation, ?Closure $closure = null): void
+    public static function scopeNotHas(Builder $builder, string $relation, Closure|null $closure = null): void
     {
         $builder->whereDoesntHave($relation, $closure);
     }
@@ -640,7 +640,7 @@ trait ModelTrait
      * @param array<mixed> $values
      * @param ?Closure(Builder): void $closure
      */
-    public static function scopeHasId(Builder $builder, string $relation, array $values, ?Closure $closure = null, string $operator = '>=', int $count = 1): void
+    public static function scopeHasId(Builder $builder, string $relation, array $values, Closure|null $closure = null, string $operator = '>=', int $count = 1): void
     {
         $builder->whereHas(
             $relation,
@@ -662,7 +662,7 @@ trait ModelTrait
      * @param array<mixed> $values
      * @param ?Closure(Builder): void $closure
      */
-    public static function scopeNotHasId(Builder $builder, string $relation, array $values, ?Closure $closure = null): void
+    public static function scopeNotHasId(Builder $builder, string $relation, array $values, Closure|null $closure = null): void
     {
         $builder->whereDoesntHave($relation, static function (Builder $builder) use ($values, $closure): void {
             $builder->whereKey($values);
@@ -722,7 +722,7 @@ trait ModelTrait
      *
      * @param Closure(Builder): void|null $closure
      */
-    public static function findByKeyXorRouteKey(?int $key = null, ?string $routeKey = null, ?Closure $closure = null): ?static
+    public static function findByKeyXorRouteKey(int|null $key = null, string|null $routeKey = null, Closure|null $closure = null): static|null
     {
         if ($key !== null) {
             return static::findByKey($key, $closure);
@@ -741,7 +741,7 @@ trait ModelTrait
      * @param Closure(Builder): void|null $closure
      * @param Closure(): never|null $onError
      */
-    public static function mustFindByKeyXorRouteKey(?int $key = null, ?string $routeKey = null, ?Closure $closure = null, ?Closure $onError = null): static
+    public static function mustFindByKeyXorRouteKey(int|null $key = null, string|null $routeKey = null, Closure|null $closure = null, Closure|null $onError = null): static
     {
         $instance = static::findByIdXorSlug($key, $routeKey, $closure);
 
@@ -813,7 +813,7 @@ trait ModelTrait
     /**
      * Get ?int attribute.
      */
-    public function int(string $key): ?int
+    public function int(string $key): int|null
     {
         return $this->assertNullableInt($key);
     }
@@ -829,7 +829,7 @@ trait ModelTrait
     /**
      * Get ?float attribute.
      */
-    public function float(string $key): ?float
+    public function float(string $key): float|null
     {
         return $this->assertNullableFloat($key);
     }
@@ -845,7 +845,7 @@ trait ModelTrait
     /**
      * Get ?string attribute.
      */
-    public function string(string $key): ?string
+    public function string(string $key): string|null
     {
         return $this->assertNullableString($key);
     }
@@ -861,7 +861,7 @@ trait ModelTrait
     /**
      * Get ?bool attribute.
      */
-    public function bool(string $key): ?bool
+    public function bool(string $key): bool|null
     {
         return $this->assertNullableBool($key);
     }
@@ -879,7 +879,7 @@ trait ModelTrait
      *
      * @return array<mixed>|null
      */
-    public function array(string $key): ?array
+    public function array(string $key): array|null
     {
         return $this->assertNullableArray($key);
     }
@@ -897,7 +897,7 @@ trait ModelTrait
     /**
      * Get ?object attribute.
      */
-    public function object(string $key): ?object
+    public function object(string $key): object|null
     {
         return $this->assertNullableObject($key);
     }
@@ -913,7 +913,7 @@ trait ModelTrait
     /**
      * Get ?Carbon attribute.
      */
-    public function carbon(string $key): ?Carbon
+    public function carbon(string $key): Carbon|null
     {
         return $this->assertNullableCarbon($key);
     }
@@ -935,7 +935,7 @@ trait ModelTrait
      *
      * @return ?T
      */
-    public function relation(string $key, string $type): ?Model
+    public function relation(string $key, string $type): Model|null
     {
         return $this->assertNullableRelation($key, $type);
     }
@@ -993,7 +993,7 @@ trait ModelTrait
     {
         $ok = parent::save($options);
 
-        assertNeverIfNot($ok, 'model not saved correctly');
+        \assertNeverIfNot($ok, 'model not saved correctly');
 
         return true;
     }
@@ -1003,11 +1003,11 @@ trait ModelTrait
      */
     public function delete(): bool
     {
-        assertNeverIfNot($this->exists, 'model not exists');
+        \assertNeverIfNot($this->exists, 'model not exists');
 
         $ok = parent::delete();
 
-        assertNeverIfNot($ok === true, 'model not deleted correctly');
+        \assertNeverIfNot($ok === true, 'model not deleted correctly');
 
         return true;
     }
@@ -1020,7 +1020,7 @@ trait ModelTrait
      */
     public function update(array $attributes = [], array $options = []): bool
     {
-        assertNeverIfNot($this->exists, 'model not exists');
+        \assertNeverIfNot($this->exists, 'model not exists');
 
         $this->fill($attributes);
 
@@ -1039,7 +1039,7 @@ trait ModelTrait
      */
     public function updateQuietly(array $attributes = [], array $options = []): bool
     {
-        assertNeverIfNot($this->exists, 'model not exists');
+        \assertNeverIfNot($this->exists, 'model not exists');
 
         $this->fill($attributes);
 
@@ -1058,7 +1058,7 @@ trait ModelTrait
      */
     public function updateOrFail(array $attributes = [], array $options = []): bool
     {
-        assertNeverIfNot($this->exists, 'model not exists');
+        \assertNeverIfNot($this->exists, 'model not exists');
 
         $this->fill($attributes);
 
@@ -1080,7 +1080,7 @@ trait ModelTrait
     /**
      * Mixed getter.
      */
-    public function mixed(?string $key = null): mixed
+    public function mixed(string|null $key = null): mixed
     {
         if ($key === null) {
             return $this->getAttributes();
@@ -1122,9 +1122,9 @@ trait ModelTrait
      *
      * @return T|null
      */
-    public function assertNullableRelation(string $key, string $class): ?Model
+    public function assertNullableRelation(string $key, string $class): Model|null
     {
-        return assertNullableInstance($this->loadedRelationship($key), $class);
+        return \assertNullableInstance($this->loadedRelationship($key), $class);
     }
 
     /**
@@ -1138,7 +1138,7 @@ trait ModelTrait
      */
     public function assertRelationship(string $key, string $class): Model
     {
-        return assertInstance($this->loadedRelationship($key), $class);
+        return \assertInstance($this->loadedRelationship($key), $class);
     }
 
     /**
@@ -1152,7 +1152,7 @@ trait ModelTrait
      */
     public function assertRelationshipCollection(string $key, string $class): Collection
     {
-        return assertInstance($this->loadedRelationship($key), Collection::class);
+        return \assertInstance($this->loadedRelationship($key), Collection::class);
     }
 
     /**

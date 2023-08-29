@@ -38,7 +38,7 @@ class MakeEnumCommand extends GeneratorCommand
     {
         $customPath = $this->laravel->basePath('stubs/enum.stub');
 
-        return \file_exists($customPath) ? $customPath : __DIR__.'/stubs/enum.stub';
+        return \file_exists($customPath) ? $customPath : __DIR__ . '/stubs/enum.stub';
     }
 
     /**
@@ -46,6 +46,6 @@ class MakeEnumCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace(mixed $rootNamespace): string
     {
-        return parent::getDefaultNamespace($rootNamespace).'\\Enums';
+        return parent::getDefaultNamespace($rootNamespace) . '\\Enums';
     }
 }

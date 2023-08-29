@@ -24,7 +24,7 @@ class MeShowController extends Controller
     /**
      * Me.
      */
-    protected function me(MeShowRequest $request): ?User
+    protected function me(MeShowRequest $request): User|null
     {
         return $request->auth();
     }
@@ -32,10 +32,10 @@ class MeShowController extends Controller
     /**
      * Make response.
      */
-    protected function response(MeShowRequest $request, ?User $me): SymfonyResponse
+    protected function response(MeShowRequest $request, User|null $me): SymfonyResponse
     {
         if ($me === null) {
-            return resolveResponseFactory()->noContent();
+            return \resolveResponseFactory()->noContent();
         }
 
         return $me->meResource()->response();

@@ -56,20 +56,20 @@ class RegisterController extends TransactionController
      */
     protected function login(RegisterRequest $request, User $me): void
     {
-        resolveGuard()->login($me);
+        \resolveGuard()->login($me);
     }
 
     /**
      * Check if user can login.
      */
-    protected function canLogin(RegisterRequest $request, User $me): ?SymfonyResponse
+    protected function canLogin(RegisterRequest $request, User $me): SymfonyResponse|null
     {
         if (
             CanLoginService::inject()
                 ->authorize($me)
                 ->denied()
         ) {
-            return resolveResponseFactory()->noContent();
+            return \resolveResponseFactory()->noContent();
         }
 
         return null;
@@ -88,7 +88,7 @@ class RegisterController extends TransactionController
      */
     protected function store(RegisterRequest $request): User
     {
-        $me = assertInstance(resolveUserProvider()->createModel(), User::class);
+        $me = \assertInstance(\resolveUserProvider()->createModel(), User::class);
 
         $me->fill($request->data());
 
@@ -107,7 +107,7 @@ class RegisterController extends TransactionController
         foreach ($credentialsArray as $index => $credentials) {
             [$hit] = $this->throttle($this->limit("credentials.{$index}"), $this->onThrottle($request, \array_keys($credentials)));
 
-            $user = resolveUserProvider()->retrieveByCredentials($credentials);
+            $user = \resolveUserProvider()->retrieveByCredentials($credentials);
 
             if ($user instanceof User) {
                 $hit();
@@ -119,7 +119,7 @@ class RegisterController extends TransactionController
     /**
      * Shortcut.
      */
-    protected function shortcut(RegisterRequest $request): ?SymfonyResponse
+    protected function shortcut(RegisterRequest $request): SymfonyResponse|null
     {
         return null;
     }
@@ -127,7 +127,7 @@ class RegisterController extends TransactionController
     /**
      * Email confirmation.
      */
-    protected function emailConfirmation(RegisterRequest $request): ?SymfonyResponse
+    protected function emailConfirmation(RegisterRequest $request): SymfonyResponse|null
     {
         if (static::$emailConfirmation === false) {
             return null;
@@ -150,6 +150,6 @@ class RegisterController extends TransactionController
 
         $broker->anonymous($guard, $email, Config::inject()->appLocale());
 
-        return resolveResponseFactory()->noContent(202);
+        return \resolveResponseFactory()->noContent(202);
     }
 }

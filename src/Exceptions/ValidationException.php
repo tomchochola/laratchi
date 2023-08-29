@@ -24,7 +24,7 @@ class ValidationException extends IlluminateValidationException implements GetDa
         Validator $validator,
         int $statusCode = 422,
         string $message = '',
-        ?Throwable $previous = null,
+        Throwable|null $previous = null,
         public array $headers = [],
         int $code = 0,
         public array $data = [],

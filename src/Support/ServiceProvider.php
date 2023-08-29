@@ -18,31 +18,31 @@ class ServiceProvider extends IlluminateServiceProvider
      */
     public function boot(): void
     {
-        $this->loadTranslationsFrom(__DIR__.'/../../lang', 'laratchi');
+        $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'laratchi');
 
-        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'laratchi');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'laratchi');
 
-        if (! $this->app->runningInConsole()) {
+        if (!$this->app->runningInConsole()) {
             return;
         }
 
-        $app = assertInstance($this->app, Application::class);
+        $app = \assertInstance($this->app, Application::class);
 
         $this->publishes(
             [
-                __DIR__.'/../../lang' => $app->langPath('vendor/laratchi'),
+                __DIR__ . '/../../lang' => $app->langPath('vendor/laratchi'),
             ],
             ['laratchi-lang', 'laratchi', 'lang'],
         );
 
         $this->publishes(
             [
-                __DIR__.'/../../database/migrations' => $app->databasePath('migrations'),
+                __DIR__ . '/../../database/migrations' => $app->databasePath('migrations'),
             ],
             ['laratchi-migrations', 'laratchi', 'migrations'],
         );
 
-        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
 
         $this->commands([ValidityGeneratorCommand::class, TestMailCommand::class, MakeTchiCommand::class, MakeEnumCommand::class]);
     }

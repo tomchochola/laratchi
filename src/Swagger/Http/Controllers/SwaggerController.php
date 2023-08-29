@@ -20,7 +20,7 @@ class SwaggerController extends Controller
 
         $url = Typer::assertString($route->parameter('url'));
 
-        return resolveResponseFactory()->view('laratchi::swagger', [
+        return \resolveResponseFactory()->view('laratchi::swagger', [
             'url' => $url,
         ]);
     }

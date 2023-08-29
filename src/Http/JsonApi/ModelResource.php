@@ -23,7 +23,7 @@ class ModelResource extends ClosureResource
      * @param ?Closure(T): array<string, JsonApiRelationship> $closureRelationships
      * @param ?Closure(T): array<string, mixed> $closureMeta
      */
-    public function __construct(Model $model, ?Closure $closureAttributes = null, ?Closure $closureRelationships = null, ?Closure $closureMeta = null)
+    public function __construct(Model $model, Closure|null $closureAttributes = null, Closure|null $closureRelationships = null, Closure|null $closureMeta = null)
     {
         parent::__construct(
             $model,

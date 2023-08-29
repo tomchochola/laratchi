@@ -4,30 +4,27 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation\Rules;
 
-use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Pagination\Cursor;
 
-class CursorRule implements RuleContract
+class CursorRule implements ValidationRule
 {
     /**
      * @inheritDoc
      */
-    public function passes(mixed $attribute, mixed $value): bool
+    public function validate(mixed $attribute, mixed $value, Closure $fail): void
     {
-        if (! \is_string($value)) {
-            return false;
+        if (!\is_string($value)) {
+            $fail(\mustTransString('validation.invalid'));
+
+            return;
         }
 
-        return Cursor::fromEncoded($value) !== null;
-    }
+        if (Cursor::fromEncoded($value) !== null) {
+            return;
+        }
 
-    /**
-     * @inheritDoc
-     *
-     * @return string|array<int, string>
-     */
-    public function message(): string|array
-    {
-        return mustTransString('validation.invalid');
+        $fail(\mustTransString('validation.invalid'));
     }
 }

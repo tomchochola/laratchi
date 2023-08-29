@@ -4,27 +4,26 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation\Rules;
 
-use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class RecaptchaRule implements RuleContract
+class RecaptchaRule implements ValidationRule
 {
     /**
      * Create a new rule instance.
      */
-    public function __construct(protected string $secret, protected string $message = 'validation.invalid')
-    {
-    }
+    public function __construct(protected string $secret, protected string $message = 'validation.invalid') {}
 
     /**
      * @inheritDoc
      */
-    public function passes(mixed $attribute, mixed $value): bool
+    public function validate(mixed $attribute, mixed $value, Closure $fail): void
     {
-        if (isEnv(['local', 'testing'])) {
-            return true;
+        if (\isEnv(['local', 'testing'])) {
+            return;
         }
 
-        $response = resolveHttp()
+        $response = \resolveHttp()
             ->accept('application/json')
             ->asForm()
             ->post('https://www.google.com/recaptcha/api/siteverify', [
@@ -32,20 +31,10 @@ class RecaptchaRule implements RuleContract
                 'response' => $value,
             ]);
 
-        if ($response->successful()) {
-            return $response->json('success') === true;
+        if ($response->successful() && $response->json('success') === true) {
+            return;
         }
 
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     *
-     * @return string|array<int, string>
-     */
-    public function message(): string|array
-    {
-        return mustTransString($this->message);
+        $fail(\mustTransString($this->message));
     }
 }

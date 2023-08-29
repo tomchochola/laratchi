@@ -14,6 +14,6 @@ class SpaRedirectController extends Controller
      */
     public function __invoke(): SymfonyResponse
     {
-        return resolveResponseFactory()->redirectTo(mustTransString('spa.url'));
+        return \resolveResponseFactory()->redirectTo(\mustTransString('spa.url'));
     }
 }

@@ -28,23 +28,23 @@ class AuthShouldUseMiddleware
         $want = $request->headers->get('X-Auth-Guard');
         $current = $config->authDefaultsGuard();
 
-        if ($want === null && ! \in_array($current, $guards, true)) {
+        if ($want === null && !\in_array($current, $guards, true)) {
             $want = $guards[0];
         }
 
-        if (! \in_array($want, $guards, true)) {
+        if (!\in_array($want, $guards, true)) {
             throw new BadRequestHttpException('X-Auth-Guard Header Invalid');
         }
 
-        if ($config->authDefaultsGuard() !== $want) {
+        if ($want !== $config->authDefaultsGuard()) {
             $config->setAuthDefaultsGuard($want);
         }
 
-        if ($config->authDefaultsPasswords() !== $want) {
+        if ($want !== $config->authDefaultsPasswords()) {
             $config->setAuthDefaultsPasswords($want);
         }
 
-        if ($config->authDefaultsProvider() !== $want) {
+        if ($want !== $config->authDefaultsProvider()) {
             $config->setAuthDefaultsProvider($want);
         }
 

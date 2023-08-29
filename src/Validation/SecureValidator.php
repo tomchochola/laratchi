@@ -199,7 +199,7 @@ class SecureValidator extends Validator
     ];
 
     /**
-     * @var array<string, string|array<string, string>>
+     * @var array<string, array<string, string>|string>
      */
     public static array $customMsgs = [];
 
@@ -280,7 +280,7 @@ class SecureValidator extends Validator
     /**
      * @inheritDoc
      */
-    protected function getInlineMessage(mixed $attribute, mixed $rule): ?string
+    protected function getInlineMessage(mixed $attribute, mixed $rule): string|null
     {
         $snake = Str::snake($rule);
 
@@ -300,7 +300,7 @@ class SecureValidator extends Validator
      *
      * @param ?array<mixed> $source
      */
-    protected function getFromLocalArray(mixed $attribute, mixed $lowerRule, mixed $source = null): ?string
+    protected function getFromLocalArray(mixed $attribute, mixed $lowerRule, mixed $source = null): string|null
     {
         $message = static::$customMsgs[$lowerRule] ?? (static::MSGS[$lowerRule] ?? 'fallback');
 
@@ -312,7 +312,7 @@ class SecureValidator extends Validator
      */
     protected function replaceProhibitedWith(string $message, string $attribute, string $rule, array $parameters): string
     {
-        return \str_replace(':values', strPutCsv($this->getAttributeList($parameters)), $message);
+        return \str_replace(':values', \strPutCsv($this->getAttributeList($parameters)), $message);
     }
 
     /**
@@ -320,7 +320,7 @@ class SecureValidator extends Validator
      */
     protected function replaceMissingWith(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
     {
-        return \str_replace(':values', strPutCsv($this->getAttributeList($parameters)), $message);
+        return \str_replace(':values', \strPutCsv($this->getAttributeList($parameters)), $message);
     }
 
     /**
@@ -332,7 +332,7 @@ class SecureValidator extends Validator
             $parameter = $this->getDisplayableValue($attribute, $parameter);
         }
 
-        return \str_replace(':values', strPutCsv($parameters), $message);
+        return \str_replace(':values', \strPutCsv($parameters), $message);
     }
 
     /**
@@ -344,7 +344,7 @@ class SecureValidator extends Validator
             $parameter = $this->getDisplayableValue($attribute, $parameter);
         }
 
-        return \str_replace(':values', strPutCsv($parameters), $message);
+        return \str_replace(':values', \strPutCsv($parameters), $message);
     }
 
     /**
@@ -352,7 +352,7 @@ class SecureValidator extends Validator
      */
     protected function replaceMimetypes(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
     {
-        return \str_replace(':values', strPutCsv($parameters), $message);
+        return \str_replace(':values', \strPutCsv($parameters), $message);
     }
 
     /**
@@ -360,7 +360,7 @@ class SecureValidator extends Validator
      */
     protected function replaceMimes(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
     {
-        return \str_replace(':values', strPutCsv($parameters), $message);
+        return \str_replace(':values', \strPutCsv($parameters), $message);
     }
 
     /**
@@ -368,7 +368,7 @@ class SecureValidator extends Validator
      */
     protected function replaceRequiredWith(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
     {
-        return \str_replace(':values', strPutCsv($this->getAttributeList($parameters)), $message);
+        return \str_replace(':values', \strPutCsv($this->getAttributeList($parameters)), $message);
     }
 
     /**
@@ -384,7 +384,7 @@ class SecureValidator extends Validator
             $values[] = $this->getDisplayableValue($parameters[0], $value);
         }
 
-        return \str_replace([':other', ':values'], [$other, strPutCsv($values)], $message);
+        return \str_replace([':other', ':values'], [$other, \strPutCsv($values)], $message);
     }
 
     /**
@@ -400,7 +400,7 @@ class SecureValidator extends Validator
             $values[] = $this->getDisplayableValue($parameters[0], $value);
         }
 
-        return \str_replace([':other', ':values'], [$other, strPutCsv($values)], $message);
+        return \str_replace([':other', ':values'], [$other, \strPutCsv($values)], $message);
     }
 
     /**
@@ -408,7 +408,7 @@ class SecureValidator extends Validator
      */
     protected function replaceProhibits(mixed $message, mixed $attribute, mixed $rule, mixed $parameters): string
     {
-        return \str_replace(':other', strPutCsv($this->getAttributeList($parameters)), $message);
+        return \str_replace(':other', \strPutCsv($this->getAttributeList($parameters)), $message);
     }
 
     /**
@@ -420,7 +420,7 @@ class SecureValidator extends Validator
             $parameter = $this->getDisplayableValue($attribute, $parameter);
         }
 
-        return \str_replace(':values', strPutCsv($parameters), $message);
+        return \str_replace(':values', \strPutCsv($parameters), $message);
     }
 
     /**
@@ -432,7 +432,7 @@ class SecureValidator extends Validator
             $parameter = $this->getDisplayableValue($attribute, $parameter);
         }
 
-        return \str_replace(':values', strPutCsv($parameters), $message);
+        return \str_replace(':values', \strPutCsv($parameters), $message);
     }
 
     /**
@@ -444,7 +444,7 @@ class SecureValidator extends Validator
             $parameter = $this->getDisplayableValue($attribute, $parameter);
         }
 
-        return \str_replace(':values', strPutCsv($parameters), $message);
+        return \str_replace(':values', \strPutCsv($parameters), $message);
     }
 
     /**
@@ -456,6 +456,6 @@ class SecureValidator extends Validator
             $parameter = $this->getDisplayableValue($attribute, $parameter);
         }
 
-        return \str_replace(':values', strPutCsv($parameters), $message);
+        return \str_replace(':values', \strPutCsv($parameters), $message);
     }
 }

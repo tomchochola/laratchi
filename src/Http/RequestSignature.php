@@ -22,9 +22,7 @@ class RequestSignature
     /**
      * Constructor.
      */
-    public function __construct(public Request $request)
-    {
-    }
+    public function __construct(public Request $request) {}
 
     /**
      * Default constructor.
@@ -49,9 +47,9 @@ class RequestSignature
      *
      * @return $this
      */
-    public function auth(?string $guard = null): static
+    public function auth(string|null $guard = null): static
     {
-        return $this->user(assertNullableInstance($this->request->user($guard), AuthenticatableContract::class));
+        return $this->user(\assertNullableInstance($this->request->user($guard), AuthenticatableContract::class));
     }
 
     /**
@@ -59,13 +57,13 @@ class RequestSignature
      *
      * @return $this
      */
-    public function user(?AuthenticatableContract $auth): static
+    public function user(AuthenticatableContract|null $auth): static
     {
         if ($auth === null) {
             return $this->data('user', '');
         }
 
-        return $this->data('user', \sprintf('%s:%s', $auth::class, assertNullableScalar($auth->getAuthIdentifier())));
+        return $this->data('user', \sprintf('%s:%s', $auth::class, \assertNullableScalar($auth->getAuthIdentifier())));
     }
 
     /**
@@ -85,7 +83,7 @@ class RequestSignature
      */
     public function action(): static
     {
-        return $this->data('action', assertInstance($this->request->route(), Route::class)->getActionName());
+        return $this->data('action', \assertInstance($this->request->route(), Route::class)->getActionName());
     }
 
     /**

@@ -26,7 +26,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Mixed getter.
      */
-    public function mixed(?string $key = null): mixed
+    public function mixed(string|null $key = null): mixed
     {
         if ($key === null) {
             return $this->all();
@@ -64,7 +64,7 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param Closure(int): never|Closure(int): Response|null $responseCallback
      */
-    public function throttler(string $key, int $maxAttempts, int $decayMinutes, ?Closure $responseCallback = null): Throttler
+    public function throttler(string $key, int $maxAttempts, int $decayMinutes, Closure|null $responseCallback = null): Throttler
     {
         return new Throttler(
             new Limit(
@@ -96,7 +96,5 @@ class FormRequest extends IlluminateFormRequest
     /**
      * @inheritDoc
      */
-    public function validateResolved(): void
-    {
-    }
+    public function validateResolved(): void {}
 }

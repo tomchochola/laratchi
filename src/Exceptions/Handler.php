@@ -8,6 +8,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as IlluminateHandler;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Session\TokenMismatchException;
@@ -59,7 +60,7 @@ class Handler extends IlluminateHandler
     /**
      * @inheritDoc
      */
-    protected function unauthenticated(mixed $request, AuthenticationException $exception): SymfonyResponse
+    protected function unauthenticated(mixed $request, AuthenticationException $exception): JsonResponse|RedirectResponse|Response
     {
         $httpException = $this->httpException(401, $exception);
 
@@ -87,55 +88,9 @@ class Handler extends IlluminateHandler
     }
 
     /**
-     * Bleeding invalid json implementation.
-     */
-    protected function bleedingInvalidJson(Request $request, ValidationException $exception): JsonResponse
-    {
-        $httpException = $this->httpException($exception->status, $exception);
-
-        $completed = [];
-
-        foreach ($exception->errors() as $attribute => $messages) {
-            $completed[$attribute] = [
-                'attribute' => $attribute,
-                'messages' => $messages,
-                'rules' => [],
-            ];
-        }
-
-        foreach ($exception->validator->failed() as $attribute => $errors) {
-            $completed[$attribute] ??= [
-                'attribute' => $attribute,
-                'messages' => [],
-                'rules' => [],
-            ];
-
-            foreach (assertArray($errors) as $error => $params) {
-                $parameters = [];
-
-                foreach (assertArray($params) as $key => $value) {
-                    $parameters[] = [
-                        'key' => (string) $key,
-                        'value' => $value,
-                    ];
-                }
-
-                $completed[$attribute]['rules'][] = [
-                    'rule' => $error,
-                    'parameters' => $parameters,
-                ];
-            }
-        }
-
-        return $this->jsonResponse($request, $exception, $httpException, [
-            'errors' => \array_values($completed),
-        ]);
-    }
-
-    /**
      * @inheritDoc
      */
-    protected function invalid(mixed $request, ValidationException $exception): Response
+    protected function invalid(mixed $request, ValidationException $exception): RedirectResponse|Response
     {
         $httpException = $this->httpException($exception->status, $exception);
 
@@ -149,7 +104,7 @@ class Handler extends IlluminateHandler
     /**
      * @inheritDoc
      */
-    protected function prepareResponse(mixed $request, Throwable $e): Response
+    protected function prepareResponse(mixed $request, Throwable $e): RedirectResponse|Response
     {
         $httpException = $this->httpException(500, $e);
 
@@ -182,7 +137,7 @@ class Handler extends IlluminateHandler
         $status = $httpException->getStatusCode();
 
         if ($this->debug()) {
-            if (! $exception instanceof ValidationException) {
+            if (!$exception instanceof ValidationException) {
                 $json = $this->convertExceptionToArray($exception);
 
                 unset($json['message']);
@@ -211,7 +166,7 @@ class Handler extends IlluminateHandler
     /**
      * Symfony response.
      */
-    protected function symfony(Request $request, Throwable $exception, HttpExceptionInterface $httpException): Response
+    protected function symfony(Request $request, Throwable $exception, HttpExceptionInterface $httpException): RedirectResponse|Response
     {
         $response = new SymfonyResponse($this->renderExceptionContent($exception), $httpException->getStatusCode(), $httpException->getHeaders());
 
@@ -221,15 +176,15 @@ class Handler extends IlluminateHandler
     /**
      * Send view response.
      */
-    protected function laratchi(Request $request, Throwable $exception, HttpExceptionInterface $httpException): Response
+    protected function laratchi(Request $request, Throwable $exception, HttpExceptionInterface $httpException): RedirectResponse|Response
     {
         $data = [
-            'title' => mustTransString("laratchi::statuses.{$httpException->getStatusCode()}"),
+            'title' => \mustTransString("laratchi::statuses.{$httpException->getStatusCode()}"),
             'status' => $httpException->getStatusCode(),
             'code' => $httpException->getCode(),
         ];
 
-        $response = resolveResponseFactory()->view('laratchi::status', $data, $httpException->getStatusCode(), $httpException->getHeaders());
+        $response = \resolveResponseFactory()->view('laratchi::status', $data, $httpException->getStatusCode(), $httpException->getHeaders());
 
         return $this->toIlluminateResponse($response, $exception)->prepare($request);
     }

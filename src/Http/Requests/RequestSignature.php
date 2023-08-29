@@ -63,7 +63,7 @@ class RequestSignature implements Stringable
      *
      * @return $this
      */
-    public function user(?User $user): static
+    public function user(User|null $user): static
     {
         if ($user === null) {
             $this->internal['user'] = '';
@@ -81,7 +81,7 @@ class RequestSignature implements Stringable
      */
     public function ip(): static
     {
-        $this->internal['ip'] = resolveRequest()->ip() ?? '';
+        $this->internal['ip'] = \resolveRequest()->ip() ?? '';
 
         return $this;
     }
@@ -117,7 +117,7 @@ class RequestSignature implements Stringable
      */
     public function query(): static
     {
-        $this->internal['query'] = resolveRequest()->getQueryString() ?? '';
+        $this->internal['query'] = \resolveRequest()->getQueryString() ?? '';
 
         return $this;
     }

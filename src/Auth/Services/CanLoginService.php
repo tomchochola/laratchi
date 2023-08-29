@@ -19,9 +19,7 @@ class CanLoginService
     /**
      * Constructor.
      */
-    protected function __construct()
-    {
-    }
+    protected function __construct() {}
 
     /**
      * Inject.

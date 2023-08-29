@@ -32,7 +32,7 @@ class PasswordUpdateController extends TransactionController
      */
     protected function update(PasswordUpdateRequest $request, User $me): void
     {
-        $me->update(['password' => resolveHasher()->make($request->validatedInput()->mustString('new_password'))]);
+        $me->update(['password' => \resolveHasher()->make($request->validatedInput()->mustString('new_password'))]);
     }
 
     /**
@@ -50,7 +50,7 @@ class PasswordUpdateController extends TransactionController
     {
         [$hit] = $this->throttle($this->limit('password'), $this->onThrottle($request, ['password'], 'auth.throttle'));
 
-        if (! resolveHasher()->check($request->validatedInput()->mustString('password'), $me->getAuthPassword())) {
+        if (!\resolveHasher()->check($request->validatedInput()->mustString('password'), $me->getAuthPassword())) {
             $hit();
             $request->throwSingleValidationException(['password'], 'auth.password');
         }
@@ -61,7 +61,7 @@ class PasswordUpdateController extends TransactionController
      */
     protected function login(PasswordUpdateRequest $request, User $me): void
     {
-        resolveGuard()->login($me);
+        \resolveGuard()->login($me);
     }
 
     /**

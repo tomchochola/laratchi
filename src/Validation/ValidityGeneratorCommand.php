@@ -38,7 +38,7 @@ class ValidityGeneratorCommand extends GeneratorCommand
     {
         $customPath = $this->laravel->basePath($stub);
 
-        return \file_exists($customPath) ? $customPath : __DIR__.'/validity.stub';
+        return \file_exists($customPath) ? $customPath : __DIR__ . '/validity.stub';
     }
 
     /**
@@ -46,6 +46,6 @@ class ValidityGeneratorCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace(mixed $rootNamespace): string
     {
-        return parent::getDefaultNamespace($rootNamespace).'\\Http\\Validation';
+        return parent::getDefaultNamespace($rootNamespace) . '\\Http\\Validation';
     }
 }

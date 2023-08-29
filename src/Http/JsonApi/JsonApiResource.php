@@ -29,7 +29,7 @@ abstract class JsonApiResource
      *
      * @return ?array<string, mixed>
      */
-    public function attributes(): ?array
+    public function attributes(): array|null
     {
         return null;
     }
@@ -39,7 +39,7 @@ abstract class JsonApiResource
      *
      * @return ?array<string, mixed>
      */
-    public function meta(): ?array
+    public function meta(): array|null
     {
         return null;
     }
@@ -49,7 +49,7 @@ abstract class JsonApiResource
      *
      * @return ?array<string, JsonApiRelationship>
      */
-    public function relationships(): ?array
+    public function relationships(): array|null
     {
         return null;
     }
@@ -108,7 +108,7 @@ abstract class JsonApiResource
      */
     public function response(array $meta = [], int $status = 200, array $headers = []): JsonResponse
     {
-        $included = collect();
+        $included = \collect();
 
         $data = ['data' => $this->data($included)];
 
@@ -131,7 +131,7 @@ abstract class JsonApiResource
      *
      * @return ?array<string, mixed>
      */
-    public function encodeRelationships(array $relationships, Collection $included): ?array
+    public function encodeRelationships(array $relationships, Collection $included): array|null
     {
         $data = [];
 

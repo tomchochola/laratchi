@@ -55,19 +55,6 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Locale data provider.
-     *
-     * @return array<string, array{string}>
-     */
-    public function localeDataProvider(): array
-    {
-        return [
-            'en' => ['en'],
-            'cs' => ['cs'],
-        ];
-    }
-
-    /**
      * @inheritDoc
      *
      * @param array<mixed> $parameters
@@ -93,7 +80,7 @@ abstract class TestCase extends BaseTestCase
 
         $auth->wasRecentlyCreated = false;
 
-        resolveAuthManager()
+        \resolveAuthManager()
             ->guard($guard ?? $auth->getTable())
             ->setUser($auth);
 
@@ -164,7 +151,7 @@ abstract class TestCase extends BaseTestCase
         $json = Arr::except($json, ['exception', 'file', 'line', 'trace', 'internal']);
 
         $this->validate(
-            resolveValidatorFactory()->make($json, [
+            \resolveValidatorFactory()->make($json, [
                 'code' => Validity::make()
                     ->required()
                     ->inInteger([$code]),
@@ -197,10 +184,10 @@ abstract class TestCase extends BaseTestCase
             Arr::forget($jsonErrors, \is_int($key) ? $value : $key);
         }
 
-        static::assertCount(0, $jsonErrors, 'Unexpected validation errors occurred: '.\json_encode($jsonErrors).'.');
+        static::assertCount(0, $jsonErrors, 'Unexpected validation errors occurred: ' . \json_encode($jsonErrors) . '.');
 
         $this->validate(
-            resolveValidatorFactory()->make($json, [
+            \resolveValidatorFactory()->make($json, [
                 'errors' => Validity::make()
                     ->required()
                     ->array(null),
@@ -220,7 +207,7 @@ abstract class TestCase extends BaseTestCase
      * @param ?array<string, mixed> $attributes
      * @param ?array<string, mixed> $meta
      */
-    protected function jsonApiValidator(?string $type, ?array $attributes = null, ?array $meta = null): JsonApiValidator
+    protected function jsonApiValidator(string|null $type, array|null $attributes = null, array|null $meta = null): JsonApiValidator
     {
         return $this->structure($type, $attributes, $meta);
     }
@@ -231,7 +218,7 @@ abstract class TestCase extends BaseTestCase
      * @param ?array<string, mixed> $attributes
      * @param ?array<string, mixed> $meta
      */
-    protected function structure(?string $type, ?array $attributes = null, ?array $meta = null): JsonApiValidator
+    protected function structure(string|null $type, array|null $attributes = null, array|null $meta = null): JsonApiValidator
     {
         return new JsonApiValidator($type, $attributes, $meta);
     }
@@ -241,7 +228,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @param array<int, JsonApiValidator> $includedValidators
      */
-    protected function validateJsonApiResponse(TestResponse $response, ?JsonApiValidator $validator, array $includedValidators): void
+    protected function validateJsonApiResponse(TestResponse $response, JsonApiValidator|null $validator, array $includedValidators): void
     {
         $response->assertSuccessful();
 
@@ -272,7 +259,7 @@ abstract class TestCase extends BaseTestCase
         $json = Typer::assertArray($response->json());
 
         $this->validate(
-            resolveValidatorFactory()->make($json, [
+            \resolveValidatorFactory()->make($json, [
                 'data' => Validity::make()
                     ->nullable()
                     ->object(['id', 'type', 'slug']),
@@ -362,7 +349,7 @@ abstract class TestCase extends BaseTestCase
         if ($validator !== null) {
             $resource = Typer::assertArray($response->json('data'));
 
-            $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, $validator->rules()));
+            $this->validate(SecureValidator::clone(\resolveValidatorFactory())->make($resource, $validator->rules()));
         }
 
         $included = Typer::assertNullableArray($response->json('included')) ?? [];
@@ -370,7 +357,7 @@ abstract class TestCase extends BaseTestCase
         foreach ($includedValidators as $index => $includedValidator) {
             $resource = Typer::assertArray($included[$index]);
 
-            $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, $includedValidator->rules()));
+            $this->validate(SecureValidator::clone(\resolveValidatorFactory())->make($resource, $includedValidator->rules()));
         }
     }
 
@@ -409,7 +396,7 @@ abstract class TestCase extends BaseTestCase
         $json = Typer::assertArray($response->json());
 
         $this->validate(
-            resolveValidatorFactory()->make($json, [
+            \resolveValidatorFactory()->make($json, [
                 'data' => Validity::make()
                     ->nullable()
                     ->collection(null),
@@ -499,7 +486,7 @@ abstract class TestCase extends BaseTestCase
         $collection = Typer::assertArray($response->json('data'));
 
         foreach ($collection as $index => $resource) {
-            $this->validate(SecureValidator::clone(resolveValidatorFactory())->make(Typer::assertArray($resource), $validators[$index]->rules()));
+            $this->validate(SecureValidator::clone(\resolveValidatorFactory())->make(Typer::assertArray($resource), $validators[$index]->rules()));
         }
 
         $included = Typer::assertNullableArray($response->json('included')) ?? [];
@@ -507,7 +494,7 @@ abstract class TestCase extends BaseTestCase
         foreach ($includedValidators as $index => $includedValidator) {
             $resource = Typer::assertArray($included[$index]);
 
-            $this->validate(SecureValidator::clone(resolveValidatorFactory())->make($resource, $includedValidator->rules()));
+            $this->validate(SecureValidator::clone(\resolveValidatorFactory())->make($resource, $includedValidator->rules()));
         }
     }
 
@@ -530,7 +517,7 @@ abstract class TestCase extends BaseTestCase
     private function validate(ValidatorContract $validator): void
     {
         if ($validator->fails()) {
-            static::assertEmpty($validator->failed(), 'Json api response validation failed: '.\json_encode($validator->failed()));
+            static::assertEmpty($validator->failed(), 'Json api response validation failed: ' . \json_encode($validator->failed()));
         }
     }
 }

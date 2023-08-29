@@ -32,26 +32,26 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Validated input cache.
      */
-    protected ?ValidatedInput $validatedInput = null;
+    protected ValidatedInput|null $validatedInput = null;
 
     /**
      * All input cache.
      */
-    protected ?AllInput $allInput = null;
+    protected AllInput|null $allInput = null;
 
     /**
      * Route parameters cache.
      */
-    protected ?AllInput $routeParameters = null;
+    protected AllInput|null $routeParameters = null;
 
     /**
      * Create validation exception.
      *
      * @param array<array-key, array<string, array<string>>> $errors
      */
-    public static function createValidationException(?Validator $validator, array $errors): ValidationException
+    public static function createValidationException(Validator|null $validator, array $errors): ValidationException
     {
-        $validator ??= resolveValidatorFactory()->make([], []);
+        $validator ??= \resolveValidatorFactory()->make([], []);
 
         foreach ($errors as $field => $exceptions) {
             foreach ($exceptions as $exception => $params) {
@@ -67,9 +67,9 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<array-key> $keys
      */
-    public static function createThrottleValidationException(?Validator $validator, array $keys, int $seconds, string $rule = 'throttled'): ValidationException
+    public static function createThrottleValidationException(Validator|null $validator, array $keys, int $seconds, string $rule = 'throttled'): ValidationException
     {
-        $validator ??= resolveValidatorFactory()->make([], []);
+        $validator ??= \resolveValidatorFactory()->make([], []);
 
         foreach ($keys as $key) {
             $validator->addFailure((string) $key, $rule, [
@@ -86,9 +86,9 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<array-key> $keys
      */
-    public static function createUniqueValidationException(?Validator $validator, array $keys): ValidationException
+    public static function createUniqueValidationException(Validator|null $validator, array $keys): ValidationException
     {
-        $validator ??= resolveValidatorFactory()->make([], []);
+        $validator ??= \resolveValidatorFactory()->make([], []);
 
         return static::createSingleValidationException($validator, $keys, 'Unique');
     }
@@ -98,9 +98,9 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<array-key> $keys
      */
-    public static function createExistsValidationException(?Validator $validator, array $keys): ValidationException
+    public static function createExistsValidationException(Validator|null $validator, array $keys): ValidationException
     {
-        $validator ??= resolveValidatorFactory()->make([], []);
+        $validator ??= \resolveValidatorFactory()->make([], []);
 
         return static::createSingleValidationException($validator, $keys, 'Exists');
     }
@@ -110,9 +110,9 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param array<array-key> $keys
      */
-    public static function createSingleValidationException(?Validator $validator, array $keys, string $rule): ValidationException
+    public static function createSingleValidationException(Validator|null $validator, array $keys, string $rule): ValidationException
     {
-        $validator ??= resolveValidatorFactory()->make([], []);
+        $validator ??= \resolveValidatorFactory()->make([], []);
 
         return static::createValidationException($validator, \array_map(static fn (): array => [$rule => []], \array_flip($keys)));
     }
@@ -252,7 +252,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Nullable integer.
      */
-    public function nullableInteger(string $key, ?int $default = null): ?int
+    public function nullableInteger(string $key, int|null $default = null): int|null
     {
         return $this->allInput()->int($key, $default);
     }
@@ -268,7 +268,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Nullable float.
      */
-    public function nullableFloat(string $key, ?float $default = null): ?float
+    public function nullableFloat(string $key, float|null $default = null): float|null
     {
         return $this->allInput()->float($key, $default);
     }
@@ -284,7 +284,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Nullable date.
      */
-    public function nullableDate(string $key, ?Carbon $default = null, ?string $format = null, ?string $tz = null): ?Carbon
+    public function nullableDate(string $key, Carbon|null $default = null, string|null $format = null, string|null $tz = null): Carbon|null
     {
         return $this->allInput()->date($key, $default, $format, $tz);
     }
@@ -299,11 +299,11 @@ class FormRequest extends IlluminateFormRequest
     public function collect(mixed $key = null): Collection
     {
         if (\is_array($key)) {
-            return collect($this->allInput()->only($key));
+            return \collect($this->allInput()->only($key));
         }
 
         if ($key === null) {
-            return collect($this->allInput()->all());
+            return \collect($this->allInput()->all());
         }
 
         $value = $this->allInput()->get($key);
@@ -313,7 +313,7 @@ class FormRequest extends IlluminateFormRequest
         }
 
         if (\is_array($value)) {
-            return collect($value);
+            return \collect($value);
         }
 
         return new Collection([$key => $value]);
@@ -322,7 +322,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Resolve varchar.
      */
-    public function varchar(string $key, ?string $default = null): string
+    public function varchar(string $key, string|null $default = null): string
     {
         return $this->allInput()->mustString($key, $default);
     }
@@ -330,7 +330,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Nullable varchar.
      */
-    public function nullableVarchar(string $key, ?string $default = null): ?string
+    public function nullableVarchar(string $key, string|null $default = null): string|null
     {
         return $this->allInput()->string($key, $default);
     }
@@ -338,7 +338,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Get me.
      */
-    public function me(): ?User
+    public function me(): User|null
     {
         return User::auth();
     }
@@ -346,7 +346,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Authenticate user.
      */
-    public function auth(): ?User
+    public function auth(): User|null
     {
         return User::auth();
     }
@@ -384,7 +384,7 @@ class FormRequest extends IlluminateFormRequest
             return true;
         }
 
-        if (! $this->hasValidSignature()) {
+        if (!$this->hasValidSignature()) {
             throw new InvalidSignatureException();
         }
 
@@ -394,7 +394,7 @@ class FormRequest extends IlluminateFormRequest
     /**
      * Mixed getter.
      */
-    public function mixed(?string $key = null): mixed
+    public function mixed(string|null $key = null): mixed
     {
         if ($key === null) {
             return $this->all();
@@ -416,7 +416,7 @@ class FormRequest extends IlluminateFormRequest
         bool $signed = false,
         bool $cursor = false,
         bool $page = false,
-        ?int $take = null,
+        int|null $take = null,
         bool $filter = false,
         bool $id = false,
         bool $slug = false,
@@ -424,7 +424,7 @@ class FormRequest extends IlluminateFormRequest
         bool $count = false,
         bool $filterId = false,
         bool $filterSearch = false,
-        ?array $sort = null,
+        array|null $sort = null,
         bool $filterSlug = false,
         bool $filterNotId = false,
         bool $filterIdSlug = false,

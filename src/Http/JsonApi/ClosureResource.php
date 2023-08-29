@@ -27,16 +27,15 @@ class ClosureResource extends JsonApiResource
         public Closure $closureId,
         public Closure $closureSlug,
         public Closure $closureType,
-        public ?Closure $closureAttributes = null,
-        public ?Closure $closureRelationships = null,
-        public ?Closure $closureMeta = null,
-    ) {
-    }
+        public Closure|null $closureAttributes = null,
+        public Closure|null $closureRelationships = null,
+        public Closure|null $closureMeta = null,
+    ) {}
 
     /**
      * @inheritDoc
      */
-    public function attributes(): ?array
+    public function attributes(): array|null
     {
         if ($this->closureAttributes === null) {
             return null;
@@ -48,7 +47,7 @@ class ClosureResource extends JsonApiResource
     /**
      * @inheritDoc
      */
-    public function meta(): ?array
+    public function meta(): array|null
     {
         if ($this->closureMeta === null) {
             return null;
@@ -60,7 +59,7 @@ class ClosureResource extends JsonApiResource
     /**
      * @inheritDoc
      */
-    public function relationships(): ?array
+    public function relationships(): array|null
     {
         if ($this->closureRelationships === null) {
             return null;

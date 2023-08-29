@@ -17,11 +17,11 @@ class ModelRelationship extends JsonApiRelationship
      *
      * @template T of Model|User|Pivot
      *
-     * @param T|Collection<array-key, T>|null $resource
+     * @param Collection<array-key, T>|T|null $resource
      * @param ?Closure(): array<string, mixed> $closureMeta
      */
-    public function __construct(mixed $resource, ?Closure $closureMeta = null)
+    public function __construct(mixed $resource, Closure|null $closureMeta = null)
     {
-        parent::__construct($resource, static fn (Model|User|Pivot $model): JsonApiResource => $model->embedResource(), $closureMeta);
+        parent::__construct($resource, static fn (Model|Pivot|User $model): JsonApiResource => $model->embedResource(), $closureMeta);
     }
 }

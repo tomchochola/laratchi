@@ -35,7 +35,7 @@ class MediaSeedSupport
     {
         $keyword = \implode(',', $keywords);
 
-        $json = once(static function () use ($keyword): array {
+        $json = \once(static function () use ($keyword): array {
             $query = \http_build_query([
                 'method' => 'search',
                 'keyword' => $keyword,
@@ -51,10 +51,10 @@ class MediaSeedSupport
 
         $randomIndex = \random_int(0, 99);
 
-        $url =
-            Arr::get($json, "0.images.123RF.image.{$randomIndex}.link_image") ??
-            (Arr::get($json, '0.images.123RF.image.0.link_image') ??
-                (Arr::get($json, '0.images.stockunlimited.image.0.link_image') ?? Arr::get($json, '0.images.freeimages.image.0.link_image')));
+        $url
+            = Arr::get($json, "0.images.123RF.image.{$randomIndex}.link_image")
+            ?? (Arr::get($json, '0.images.123RF.image.0.link_image')
+                ?? (Arr::get($json, '0.images.stockunlimited.image.0.link_image') ?? Arr::get($json, '0.images.freeimages.image.0.link_image')));
 
         if ($url === null) {
             return static::imageUrl(['random']);
@@ -76,7 +76,7 @@ class MediaSeedSupport
     /**
      * Create fake image.
      *
-     * @param 'jpeg'|'png'|'gif'|'webp'|'wbmp'|'bmp' $extension
+     * @param 'bmp'|'gif'|'jpeg'|'png'|'wbmp'|'webp' $extension
      */
     public static function fakeImage(string $extension = 'webp', int $width = 10, int $height = 10): File
     {

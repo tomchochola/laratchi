@@ -15,7 +15,7 @@ class Panicker
      *
      * @param array<mixed> $args
      */
-    public static function panic(string $source, string $message = 'panic', array $args = [], int $code = 0, ?Throwable $previous = null): never
+    public static function panic(string $source, string $message = 'panic', array $args = [], int $code = 0, Throwable|null $previous = null): never
     {
         throw new RuntimeException(static::message($source, $message, $args), $code, $previous);
     }
@@ -33,6 +33,6 @@ class Panicker
             return $msg;
         }
 
-        return $msg.' | '.Debug::encode($args);
+        return $msg . ' | ' . Debug::encode($args);
     }
 }

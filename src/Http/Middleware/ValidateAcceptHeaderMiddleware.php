@@ -18,11 +18,11 @@ class ValidateAcceptHeaderMiddleware
      */
     public function handle(Request $request, Closure $next, string ...$accepts): SymfonyResponse
     {
-        if (! $request->hasHeader('Accept')) {
+        if (!$request->hasHeader('Accept')) {
             return $next($request);
         }
 
-        if (! $request->accepts($accepts)) {
+        if (!$request->accepts($accepts)) {
             throw new NotAcceptableHttpException('Accept Header Invalid');
         }
 

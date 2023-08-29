@@ -29,7 +29,7 @@ class MakeTchiCommand extends GeneratorCommand
     /**
      * @inheritDoc
      */
-    public function handle(): ?bool
+    public function handle(): bool|null
     {
         $modelName = $this->modelName();
 
@@ -103,7 +103,7 @@ class MakeTchiCommand extends GeneratorCommand
     /**
      * Make stub.
      */
-    protected function make(string $qualifiedClassName, ?string $path, string $stubName): void
+    protected function make(string $qualifiedClassName, string|null $path, string $stubName): void
     {
         $stub = $this->files->get($this->laravel->basePath("stubs/{$stubName}"));
 
@@ -139,7 +139,7 @@ class MakeTchiCommand extends GeneratorCommand
 
         $qualifiedUserModel = $this->userProviderModel() ?? 'App\\Models\\User';
 
-        $userModel = class_basename($qualifiedUserModel);
+        $userModel = \class_basename($qualifiedUserModel);
 
         $userModelFactoryName = "{$userModel}Factory";
         $qualifiedUserModelFactoryName = "Database\\Factories\\{$userModelFactoryName}";
@@ -222,7 +222,7 @@ class MakeTchiCommand extends GeneratorCommand
     {
         $path = $this->laravel->basePath('public/docs/openapi_v1.json');
 
-        if (! $this->files->exists($path)) {
+        if (!$this->files->exists($path)) {
             return;
         }
 
@@ -616,7 +616,7 @@ class MakeTchiCommand extends GeneratorCommand
             ],
         ];
 
-        if (! isset($json['components']['parameters']['filterId'])) {
+        if (!isset($json['components']['parameters']['filterId'])) {
             $json['components']['parameters']['filterId'] = [
                 'description' => 'id filter',
                 'in' => 'query',
@@ -631,7 +631,7 @@ class MakeTchiCommand extends GeneratorCommand
             ];
         }
 
-        if (! isset($json['components']['parameters']['filterNotId'])) {
+        if (!isset($json['components']['parameters']['filterNotId'])) {
             $json['components']['parameters']['filterNotId'] = [
                 'description' => 'not id filter',
                 'in' => 'query',
@@ -646,7 +646,7 @@ class MakeTchiCommand extends GeneratorCommand
             ];
         }
 
-        if (! isset($json['components']['parameters']['filterSlug'])) {
+        if (!isset($json['components']['parameters']['filterSlug'])) {
             $json['components']['parameters']['filterSlug'] = [
                 'description' => 'slug filter',
                 'in' => 'query',
@@ -661,7 +661,7 @@ class MakeTchiCommand extends GeneratorCommand
             ];
         }
 
-        if (! isset($json['components']['parameters']['filterNotSlug'])) {
+        if (!isset($json['components']['parameters']['filterNotSlug'])) {
             $json['components']['parameters']['filterNotSlug'] = [
                 'description' => 'not slug filter',
                 'in' => 'query',
@@ -676,7 +676,7 @@ class MakeTchiCommand extends GeneratorCommand
             ];
         }
 
-        if (! isset($json['components']['parameters']['mode'])) {
+        if (!isset($json['components']['parameters']['mode'])) {
             $json['components']['parameters']['mode'] = [
                 'description' => 'mode',
                 'in' => 'query',
@@ -699,7 +699,7 @@ class MakeTchiCommand extends GeneratorCommand
      */
     protected function tableName(): string
     {
-        return Str::snake(Str::pluralStudly(class_basename($this->modelName())));
+        return Str::snake(Str::pluralStudly(\class_basename($this->modelName())));
     }
 
     /**
@@ -717,7 +717,7 @@ class MakeTchiCommand extends GeneratorCommand
     {
         $path = $this->laravel->databasePath('seeders/DatabaseSeeder.php');
 
-        if (! $this->files->exists($path)) {
+        if (!$this->files->exists($path)) {
             return;
         }
 
@@ -725,7 +725,7 @@ class MakeTchiCommand extends GeneratorCommand
 
         $databaseSeeder = $this->files->get($path);
 
-        if (! \str_contains($databaseSeeder, 'public function run(): void')) {
+        if (!\str_contains($databaseSeeder, 'public function run(): void')) {
             $databaseSeeder = \str_replace("{\n", "{\n    /**\n     * @inheritDoc\n     */\n    public function run(): void\n    {\n    }\n", $databaseSeeder);
         }
 
@@ -745,7 +745,7 @@ class MakeTchiCommand extends GeneratorCommand
     {
         $path = $this->laravel->basePath('docs/database_schema.md');
 
-        if (! $this->files->exists($path)) {
+        if (!$this->files->exists($path)) {
             return;
         }
 
@@ -769,7 +769,7 @@ class MakeTchiCommand extends GeneratorCommand
     {
         $path = $this->laravel->basePath('routes/api.php');
 
-        if (! $this->files->exists($path)) {
+        if (!$this->files->exists($path)) {
             return;
         }
 
@@ -794,7 +794,7 @@ class MakeTchiCommand extends GeneratorCommand
     {
         $path = $this->laravel->basePath('tests/TestCase.php');
 
-        if (! $this->files->exists($path)) {
+        if (!$this->files->exists($path)) {
             return;
         }
 

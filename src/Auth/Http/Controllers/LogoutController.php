@@ -28,7 +28,7 @@ class LogoutController extends TransactionController
      */
     protected function logout(LogoutRequest $request, User $me): void
     {
-        resolveGuard()->logout();
+        \resolveGuard()->logout();
     }
 
     /**
@@ -36,7 +36,7 @@ class LogoutController extends TransactionController
      */
     protected function response(LogoutRequest $request, User $me): SymfonyResponse
     {
-        return resolveResponseFactory()->noContent();
+        return \resolveResponseFactory()->noContent();
     }
 
     /**

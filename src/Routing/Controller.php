@@ -47,7 +47,7 @@ class Controller extends IlluminateController
      *
      * @return array{Closure(): void, Closure(): void}
      */
-    protected function throttle(Limit $limit, ?Closure $onError = null): array
+    protected function throttle(Limit $limit, Closure|null $onError = null): array
     {
         return ThrottleSupport::throttle($limit, $onError);
     }
@@ -59,7 +59,7 @@ class Controller extends IlluminateController
      *
      * @return Closure(): void
      */
-    protected function hit(Limit $limit, ?Closure $onError = null): Closure
+    protected function hit(Limit $limit, Closure|null $onError = null): Closure
     {
         return ThrottleSupport::hit($limit, $onError);
     }
@@ -67,7 +67,7 @@ class Controller extends IlluminateController
     /**
      * Throttle limit.
      */
-    protected function limit(string|RequestSignature $signature): Limit
+    protected function limit(RequestSignature|string $signature): Limit
     {
         $signature = $signature instanceof RequestSignature ? $signature : new RequestSignature($signature);
 

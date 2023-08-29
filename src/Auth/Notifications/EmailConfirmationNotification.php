@@ -27,10 +27,10 @@ class EmailConfirmationNotification extends Notification implements ShouldQueueC
      */
     protected function __construct(
         protected string $guardName,
-        protected ?string $token = null,
-        protected ?string $email = null,
-        protected ?string $spa = null,
-        protected ?string $url = null,
+        protected string|null $token = null,
+        protected string|null $email = null,
+        protected string|null $spa = null,
+        protected string|null $url = null,
     ) {
         $this->afterCommit();
     }
@@ -38,7 +38,7 @@ class EmailConfirmationNotification extends Notification implements ShouldQueueC
     /**
      * Inject.
      */
-    public static function inject(string $guardName, ?string $token = null, ?string $email = null, ?string $spa = null, ?string $url = null): self
+    public static function inject(string $guardName, string|null $token = null, string|null $email = null, string|null $spa = null, string|null $url = null): self
     {
         return new static::$template($guardName, $token, $email, $spa, $url);
     }
@@ -85,6 +85,6 @@ class EmailConfirmationNotification extends Notification implements ShouldQueueC
             'locale' => $this->locale,
         ]);
 
-        return ($this->spa ?? Trans::inject()->assertString('spa.email_confirmation_url')).'?'.$query;
+        return ($this->spa ?? Trans::inject()->assertString('spa.email_confirmation_url')) . '?' . $query;
     }
 }

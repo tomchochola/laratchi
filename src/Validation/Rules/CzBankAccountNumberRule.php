@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation\Rules;
 
-use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Tomchochola\Laratchi\Config\Config;
 
-class CzBankAccountNumberRule implements RuleContract
+class CzBankAccountNumberRule implements ValidationRule
 {
     public const PREFIX_WEIGHTS = [10, 5, 8, 4, 2, 1];
 
@@ -81,50 +82,50 @@ class CzBankAccountNumberRule implements RuleContract
     /**
      * Create a new rule instance.
      */
-    public function __construct(protected bool $validateBankCode = true)
-    {
-    }
+    public function __construct(protected bool $validateBankCode = true) {}
 
     /**
      * @inheritDoc
      */
-    public function passes(mixed $attribute, mixed $value): bool
+    public function validate(mixed $attribute, mixed $value, Closure $fail): void
     {
-        if (! \is_string($value)) {
-            return false;
+        if (!\is_string($value)) {
+            $fail(\mustTransString('validation.regex'));
+
+            return;
         }
 
         if (Config::inject()->appEnvIs(['testing'])) {
-            return true;
+            return;
         }
 
         if (\preg_match('/^(([0-9]{0,6})-)?([0-9]{2,10})\\/([0-9]{4})$/', $value, $parts) !== 1) {
-            return false;
+            $fail(\mustTransString('validation.regex'));
+
+            return;
         }
 
-        if (! $this->validatePrefix($parts)) {
-            return false;
+        if (!$this->validatePrefix($parts)) {
+            $fail(\mustTransString('validation.regex'));
+
+            return;
         }
 
-        if (! $this->validateBase($parts)) {
-            return false;
+        if (!$this->validateBase($parts)) {
+            $fail(\mustTransString('validation.regex'));
+
+            return;
         }
 
-        if (! $this->validateBankCode) {
-            return true;
+        if (!$this->validateBankCode) {
+            return;
         }
 
-        return \in_array($parts[4], static::$bankCodes, true);
-    }
+        if (\in_array($parts[4], static::$bankCodes, true)) {
+            return;
+        }
 
-    /**
-     * @inheritDoc
-     *
-     * @return string|array<int, string>
-     */
-    public function message(): string|array
-    {
-        return mustTransString('validation.regex');
+        $fail(\mustTransString('validation.regex'));
     }
 
     /**

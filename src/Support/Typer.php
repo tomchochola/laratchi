@@ -27,7 +27,7 @@ class Typer
     /**
      * Assert nullable string.
      */
-    public static function assertNullableString(mixed $value): ?string
+    public static function assertNullableString(mixed $value): string|null
     {
         \assert($value === null || \is_string($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -47,7 +47,7 @@ class Typer
     /**
      * Assert nullable bool.
      */
-    public static function assertNullableBool(mixed $value): ?bool
+    public static function assertNullableBool(mixed $value): bool|null
     {
         \assert($value === null || \is_bool($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -67,7 +67,7 @@ class Typer
     /**
      * Assert nullable int.
      */
-    public static function assertNullableInt(mixed $value): ?int
+    public static function assertNullableInt(mixed $value): int|null
     {
         \assert($value === null || \is_int($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -87,7 +87,7 @@ class Typer
     /**
      * Assert nullable float.
      */
-    public static function assertNullableFloat(mixed $value): ?float
+    public static function assertNullableFloat(mixed $value): float|null
     {
         \assert($value === null || \is_float($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -111,7 +111,7 @@ class Typer
      *
      * @return array<mixed>|null
      */
-    public static function assertNullableArray(mixed $value): ?array
+    public static function assertNullableArray(mixed $value): array|null
     {
         \assert($value === null || \is_array($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -131,7 +131,7 @@ class Typer
     /**
      * Assert nullable file.
      */
-    public static function assertNullableFile(mixed $value): ?UploadedFile
+    public static function assertNullableFile(mixed $value): UploadedFile|null
     {
         \assert($value === null || $value instanceof UploadedFile, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -151,7 +151,7 @@ class Typer
     /**
      * Assert nullable carbon.
      */
-    public static function assertNullableCarbon(mixed $value): ?Carbon
+    public static function assertNullableCarbon(mixed $value): Carbon|null
     {
         \assert($value === null || $value instanceof Carbon, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -171,7 +171,7 @@ class Typer
     /**
      * Assert nullable object.
      */
-    public static function assertNullableObject(mixed $value): ?object
+    public static function assertNullableObject(mixed $value): object|null
     {
         \assert($value === null || \is_object($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -183,7 +183,7 @@ class Typer
      *
      * @return scalar
      */
-    public static function assertScalar(mixed $value): int|float|string|bool
+    public static function assertScalar(mixed $value): bool|float|int|string
     {
         \assert(\is_scalar($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -195,7 +195,7 @@ class Typer
      *
      * @return scalar|null
      */
-    public static function assertNullableScalar(mixed $value): int|float|string|bool|null
+    public static function assertNullableScalar(mixed $value): bool|float|int|string|null
     {
         \assert($value === null || \is_scalar($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -229,7 +229,7 @@ class Typer
      *
      * @return T|null
      */
-    public static function assertNullableEnum(mixed $value, string $enum): ?BackedEnum
+    public static function assertNullableEnum(mixed $value, string $enum): BackedEnum|null
     {
         if ($value === null || $value instanceof $enum) {
             return $value;
@@ -265,7 +265,7 @@ class Typer
      *
      * @return T|null
      */
-    public static function assertNullableInstance(mixed $value, string $class): ?object
+    public static function assertNullableInstance(mixed $value, string $class): object|null
     {
         if ($value === null || $value instanceof $class) {
             return $value;
@@ -301,7 +301,7 @@ class Typer
      *
      * @return class-string<T>|null
      */
-    public static function assertNullableA(mixed $value, string $class): ?string
+    public static function assertNullableA(mixed $value, string $class): string|null
     {
         if ($value === null) {
             return $value;
@@ -319,13 +319,13 @@ class Typer
      */
     public static function parseString(mixed $value): string
     {
-        return parseNullableString($value) ?? '';
+        return \parseNullableString($value) ?? '';
     }
 
     /**
      * Parse nullable string.
      */
-    public static function parseNullableString(mixed $value): ?string
+    public static function parseNullableString(mixed $value): string|null
     {
         if ($value === null || \is_string($value)) {
             return $value;
@@ -345,7 +345,7 @@ class Typer
      */
     public static function mustParseString(mixed $value): string
     {
-        $value = mustParseNullableString($value);
+        $value = \mustParseNullableString($value);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -355,7 +355,7 @@ class Typer
     /**
      * Must parse nullable string.
      */
-    public static function mustParseNullableString(mixed $value): ?string
+    public static function mustParseNullableString(mixed $value): string|null
     {
         if ($value === null || \is_string($value)) {
             return $value;
@@ -373,13 +373,13 @@ class Typer
      */
     public static function parseBool(mixed $value): bool
     {
-        return parseNullableBool($value) ?? false;
+        return \parseNullableBool($value) ?? false;
     }
 
     /**
      * Parse nullable bool.
      */
-    public static function parseNullableBool(mixed $value): ?bool
+    public static function parseNullableBool(mixed $value): bool|null
     {
         if ($value === null || \is_bool($value)) {
             return $value;
@@ -393,7 +393,7 @@ class Typer
      */
     public static function mustParseBool(mixed $value): bool
     {
-        $value = mustParseNullableBool($value);
+        $value = \mustParseNullableBool($value);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -403,7 +403,7 @@ class Typer
     /**
      * Must parse nullable bool.
      */
-    public static function mustParseNullableBool(mixed $value): ?bool
+    public static function mustParseNullableBool(mixed $value): bool|null
     {
         if ($value === null || \is_bool($value)) {
             return $value;
@@ -421,13 +421,13 @@ class Typer
      */
     public static function parseInt(mixed $value): int
     {
-        return parseNullableInt($value) ?? 0;
+        return \parseNullableInt($value) ?? 0;
     }
 
     /**
      * Parse nullable int.
      */
-    public static function parseNullableInt(mixed $value): ?int
+    public static function parseNullableInt(mixed $value): int|null
     {
         if ($value === null || \is_int($value)) {
             return $value;
@@ -447,7 +447,7 @@ class Typer
      */
     public static function mustParseInt(mixed $value): int
     {
-        $value = mustParseNullableInt($value);
+        $value = \mustParseNullableInt($value);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -457,7 +457,7 @@ class Typer
     /**
      * Must parse nullable int.
      */
-    public static function mustParseNullableInt(mixed $value): ?int
+    public static function mustParseNullableInt(mixed $value): int|null
     {
         if ($value === null || \is_int($value)) {
             return $value;
@@ -475,13 +475,13 @@ class Typer
      */
     public static function parseFloat(mixed $value): float
     {
-        return parseNullableFloat($value) ?? 0.0;
+        return \parseNullableFloat($value) ?? 0.0;
     }
 
     /**
      * Parse nullable float.
      */
-    public static function parseNullableFloat(mixed $value): ?float
+    public static function parseNullableFloat(mixed $value): float|null
     {
         if ($value === null || \is_float($value)) {
             return $value;
@@ -501,7 +501,7 @@ class Typer
      */
     public static function mustParseFloat(mixed $value): float
     {
-        $value = mustParseNullableFloat($value);
+        $value = \mustParseNullableFloat($value);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -511,7 +511,7 @@ class Typer
     /**
      * Must parse nullable float.
      */
-    public static function mustParseNullableFloat(mixed $value): ?float
+    public static function mustParseNullableFloat(mixed $value): float|null
     {
         if ($value === null || \is_int($value)) {
             return $value;
@@ -531,7 +531,7 @@ class Typer
      */
     public static function parseArray(mixed $value): array
     {
-        return parseNullableArray($value) ?? [];
+        return \parseNullableArray($value) ?? [];
     }
 
     /**
@@ -539,7 +539,7 @@ class Typer
      *
      * @return array<mixed>|null
      */
-    public static function parseNullableArray(mixed $value): ?array
+    public static function parseNullableArray(mixed $value): array|null
     {
         if ($value === null || \is_array($value)) {
             return $value;
@@ -559,7 +559,7 @@ class Typer
      */
     public static function mustParseArray(mixed $value): array
     {
-        $value = mustParseNullableArray($value);
+        $value = \mustParseNullableArray($value);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -571,7 +571,7 @@ class Typer
      *
      * @return array<mixed>|null
      */
-    public static function mustParseNullableArray(mixed $value): ?array
+    public static function mustParseNullableArray(mixed $value): array|null
     {
         if (\is_object($value)) {
             return \get_object_vars($value);
@@ -587,13 +587,13 @@ class Typer
      */
     public static function parseFile(mixed $value): UploadedFile
     {
-        return parseNullableFile($value) ?? UploadedFile::createFromBase(UploadedFile::fake()->create(assertString(\tempnam(\sys_get_temp_dir(), 'php'))));
+        return \parseNullableFile($value) ?? UploadedFile::createFromBase(UploadedFile::fake()->create(\assertString(\tempnam(\sys_get_temp_dir(), 'php'))));
     }
 
     /**
      * Parse nullable file.
      */
-    public static function parseNullableFile(mixed $value): ?UploadedFile
+    public static function parseNullableFile(mixed $value): UploadedFile|null
     {
         if ($value === null || $value instanceof UploadedFile) {
             return $value;
@@ -607,29 +607,29 @@ class Typer
      */
     public static function mustParseFile(mixed $value): UploadedFile
     {
-        return assertFile($value);
+        return \assertFile($value);
     }
 
     /**
      * Must parse nullable file.
      */
-    public static function mustParseNullableFile(mixed $value): ?UploadedFile
+    public static function mustParseNullableFile(mixed $value): UploadedFile|null
     {
-        return assertNullableFile($value);
+        return \assertNullableFile($value);
     }
 
     /**
      * Parse carbon.
      */
-    public static function parseCarbon(mixed $value, ?string $format = null, ?string $tz = null): Carbon
+    public static function parseCarbon(mixed $value, string|null $format = null, string|null $tz = null): Carbon
     {
-        return parseNullableCarbon($value, $format, $tz) ?? resolveNow();
+        return \parseNullableCarbon($value, $format, $tz) ?? \resolveNow();
     }
 
     /**
      * Parse nullable carbon.
      */
-    public static function parseNullableCarbon(mixed $value, ?string $format = null, ?string $tz = null): ?Carbon
+    public static function parseNullableCarbon(mixed $value, string|null $format = null, string|null $tz = null): Carbon|null
     {
         if ($value === null || $value instanceof Carbon) {
             return $value;
@@ -642,12 +642,12 @@ class Typer
         }
 
         if ($format === null) {
-            return resolveDate()
+            return \resolveDate()
                 ->parse($value, $tz)
                 ->setTimezone(Config::inject()->appTimezone());
         }
 
-        $value = resolveDate()->createFromFormat($format, $value, $tz);
+        $value = \resolveDate()->createFromFormat($format, $value, $tz);
 
         if ($value === false) {
             return null;
@@ -659,9 +659,9 @@ class Typer
     /**
      * Must parse carbon.
      */
-    public static function mustParseCarbon(mixed $value, ?string $format = null, ?string $tz = null): Carbon
+    public static function mustParseCarbon(mixed $value, string|null $format = null, string|null $tz = null): Carbon
     {
-        $value = mustParseNullableCarbon($value, $format, $tz);
+        $value = \mustParseNullableCarbon($value, $format, $tz);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -671,7 +671,7 @@ class Typer
     /**
      * Must parse nullable carbon.
      */
-    public static function mustParseNullableCarbon(mixed $value, ?string $format = null, ?string $tz = null): ?Carbon
+    public static function mustParseNullableCarbon(mixed $value, string|null $format = null, string|null $tz = null): Carbon|null
     {
         if ($value === null || $value instanceof Carbon) {
             return $value;
@@ -682,12 +682,12 @@ class Typer
         \assert($value !== false && $value !== '', Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         if ($format === null) {
-            return resolveDate()
+            return \resolveDate()
                 ->parse($value, $tz)
                 ->setTimezone(Config::inject()->appTimezone());
         }
 
-        $value = resolveDate()->createFromFormat($format, $value, $tz);
+        $value = \resolveDate()->createFromFormat($format, $value, $tz);
 
         \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -699,13 +699,13 @@ class Typer
      */
     public static function parseObject(mixed $value): object
     {
-        return parseNullableObject($value) ?? new stdClass();
+        return \parseNullableObject($value) ?? new stdClass();
     }
 
     /**
      * Parse nullable object.
      */
-    public static function parseNullableObject(mixed $value): ?object
+    public static function parseNullableObject(mixed $value): object|null
     {
         if ($value === null || \is_object($value)) {
             return $value;
@@ -723,7 +723,7 @@ class Typer
      */
     public static function mustParseObject(mixed $value): object
     {
-        $value = mustParseNullableObject($value);
+        $value = \mustParseNullableObject($value);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -733,7 +733,7 @@ class Typer
     /**
      * Must parse nullable object.
      */
-    public static function mustParseNullableObject(mixed $value): ?object
+    public static function mustParseNullableObject(mixed $value): object|null
     {
         if (\is_array($value)) {
             return (object) $value;
@@ -747,15 +747,15 @@ class Typer
     /**
      * Parse scalar.
      */
-    public static function parseScalar(mixed $value): string|int|float|bool
+    public static function parseScalar(mixed $value): bool|float|int|string
     {
-        return parseNullableScalar($value) ?? '';
+        return \parseNullableScalar($value) ?? '';
     }
 
     /**
      * Parse nullable scalar.
      */
-    public static function parseNullableScalar(mixed $value): string|int|float|bool|null
+    public static function parseNullableScalar(mixed $value): bool|float|int|string|null
     {
         if ($value === null || \is_scalar($value)) {
             return $value;
@@ -767,9 +767,9 @@ class Typer
     /**
      * Must parse scalar.
      */
-    public static function mustParseScalar(mixed $value): string|int|float|bool
+    public static function mustParseScalar(mixed $value): bool|float|int|string
     {
-        $value = mustParseNullableScalar($value);
+        $value = \mustParseNullableScalar($value);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -779,7 +779,7 @@ class Typer
     /**
      * Must parse nullable scalar.
      */
-    public static function mustParseNullableScalar(mixed $value): string|int|float|bool|null
+    public static function mustParseNullableScalar(mixed $value): bool|float|int|string|null
     {
         \assert($value === null || \is_scalar($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -797,7 +797,7 @@ class Typer
      */
     public static function parseEnum(mixed $value, string $enum): BackedEnum
     {
-        return parseNullableEnum($value, $enum) ?? $enum::cases()[0];
+        return \parseNullableEnum($value, $enum) ?? $enum::cases()[0];
     }
 
     /**
@@ -809,12 +809,12 @@ class Typer
      *
      * @return T|null
      */
-    public static function parseNullableEnum(mixed $value, string $enum): ?BackedEnum
+    public static function parseNullableEnum(mixed $value, string $enum): BackedEnum|null
     {
         if ((string) (new ReflectionEnum($enum))->getBackingType() === 'int') {
-            $value = parseNullableInt($value);
+            $value = \parseNullableInt($value);
         } else {
-            $value = parseNullableString($value);
+            $value = \parseNullableString($value);
         }
 
         if ($value === null) {
@@ -835,7 +835,7 @@ class Typer
      */
     public static function mustParseEnum(mixed $value, string $enum): BackedEnum
     {
-        $value = mustParseNullableEnum($value, $enum);
+        $value = \mustParseNullableEnum($value, $enum);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -851,12 +851,12 @@ class Typer
      *
      * @return T|null
      */
-    public static function mustParseNullableEnum(mixed $value, string $enum): ?BackedEnum
+    public static function mustParseNullableEnum(mixed $value, string $enum): BackedEnum|null
     {
         if ((string) (new ReflectionEnum($enum))->getBackingType() === 'int') {
-            $value = mustParseNullableInt($value);
+            $value = \mustParseNullableInt($value);
         } else {
-            $value = mustParseNullableString($value);
+            $value = \mustParseNullableString($value);
         }
 
         if ($value === null) {
@@ -894,7 +894,7 @@ class Typer
      *
      * @return T
      */
-    public static function assertNotNull(mixed $value): string|int|float|bool|object|array
+    public static function assertNotNull(mixed $value): array|bool|float|int|object|string
     {
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
@@ -924,7 +924,7 @@ class Typer
      */
     public static function parseIntEnum(mixed $value, string $enum): BackedEnum
     {
-        return parseNullableIntEnum($value, $enum) ?? $enum::cases()[0];
+        return \parseNullableIntEnum($value, $enum) ?? $enum::cases()[0];
     }
 
     /**
@@ -936,9 +936,9 @@ class Typer
      *
      * @return T|null
      */
-    public static function parseNullableIntEnum(mixed $value, string $enum): ?BackedEnum
+    public static function parseNullableIntEnum(mixed $value, string $enum): BackedEnum|null
     {
-        $value = parseNullableInt($value);
+        $value = \parseNullableInt($value);
 
         if ($value === null) {
             return $value;
@@ -958,7 +958,7 @@ class Typer
      */
     public static function mustParseIntEnum(mixed $value, string $enum): BackedEnum
     {
-        $value = mustParseNullableIntEnum($value, $enum);
+        $value = \mustParseNullableIntEnum($value, $enum);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value', 'enum')));
 
@@ -974,9 +974,9 @@ class Typer
      *
      * @return T|null
      */
-    public static function mustParseNullableIntEnum(mixed $value, string $enum): ?BackedEnum
+    public static function mustParseNullableIntEnum(mixed $value, string $enum): BackedEnum|null
     {
-        $value = mustParseNullableInt($value);
+        $value = \mustParseNullableInt($value);
 
         if ($value === null) {
             return $value;
@@ -996,7 +996,7 @@ class Typer
      */
     public static function parseStringEnum(mixed $value, string $enum): BackedEnum
     {
-        return parseNullableStringEnum($value, $enum) ?? $enum::cases()[0];
+        return \parseNullableStringEnum($value, $enum) ?? $enum::cases()[0];
     }
 
     /**
@@ -1008,9 +1008,9 @@ class Typer
      *
      * @return T|null
      */
-    public static function parseNullableStringEnum(mixed $value, string $enum): ?BackedEnum
+    public static function parseNullableStringEnum(mixed $value, string $enum): BackedEnum|null
     {
-        $value = parseNullableString($value);
+        $value = \parseNullableString($value);
 
         if ($value === null) {
             return $value;
@@ -1030,7 +1030,7 @@ class Typer
      */
     public static function mustParseStringEnum(mixed $value, string $enum): BackedEnum
     {
-        $value = mustParseNullableStringEnum($value, $enum);
+        $value = \mustParseNullableStringEnum($value, $enum);
 
         \assert($value !== null, Panicker::message(__METHOD__, 'assertion failed', \compact('value', 'enum')));
 
@@ -1046,9 +1046,9 @@ class Typer
      *
      * @return T|null
      */
-    public static function mustParseNullableStringEnum(mixed $value, string $enum): ?BackedEnum
+    public static function mustParseNullableStringEnum(mixed $value, string $enum): BackedEnum|null
     {
-        $value = mustParseNullableString($value);
+        $value = \mustParseNullableString($value);
 
         if ($value === null) {
             return $value;
@@ -1174,13 +1174,13 @@ class Typer
      *
      * @template T of string|int|float|object|array|null
      *
-     * @param T|bool $value
+     * @param bool|T $value
      *
      * @return T
      */
-    public static function assertNotBool(mixed $value): string|int|float|object|array|null
+    public static function assertNotBool(mixed $value): array|float|int|object|string|null
     {
-        \assert(! \is_bool($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
+        \assert(!\is_bool($value), Panicker::message(__METHOD__, 'assertion failed', \compact('value')));
 
         return $value;
     }

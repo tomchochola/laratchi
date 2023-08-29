@@ -11,31 +11,31 @@ use Tomchochola\Laratchi\Support\Resolver;
 use Tomchochola\Laratchi\Support\Typer;
 use Tomchochola\Laratchi\Translation\Trans;
 
-if (! \function_exists('mustTransString')) {
+if (!\function_exists('mustTransString')) {
     /**
      * Mandatory string translation resolver.
      *
      * @param array<string, string> $replace
      */
-    function mustTransString(string $key, array $replace = [], ?string $locale = null, bool $fallback = true): string
+    function mustTransString(string $key, array $replace = [], string|null $locale = null, bool $fallback = true): string
     {
         return Trans::inject()->assertString($key, $replace, $locale, $fallback);
     }
 }
 
-if (! \function_exists('mustTransJsonString')) {
+if (!\function_exists('mustTransJsonString')) {
     /**
      * Mandatory string json translation resolver.
      *
      * @param array<string, string> $replace
      */
-    function mustTransJsonString(string $message, array $replace = [], ?string $locale = null, bool $fallback = true): string
+    function mustTransJsonString(string $message, array $replace = [], string|null $locale = null, bool $fallback = true): string
     {
         return Trans::inject()->assertString($message, $replace, $locale, $fallback);
     }
 }
 
-if (! \function_exists('mustTransArray')) {
+if (!\function_exists('mustTransArray')) {
     /**
      * Mandatory array translation resolver.
      *
@@ -43,21 +43,21 @@ if (! \function_exists('mustTransArray')) {
      *
      * @return array<mixed>
      */
-    function mustTransArray(string $key, array $replace = [], ?string $locale = null, bool $fallback = true): array
+    function mustTransArray(string $key, array $replace = [], string|null $locale = null, bool $fallback = true): array
     {
         return Trans::inject()->assertArray($key, $replace, $locale, $fallback);
     }
 }
 
-if (! \function_exists('configBool')) {
+if (!\function_exists('configBool')) {
     /**
      * Config boolean resolver.
      *
      * @param array<bool|null> $in
      */
-    function configBool(string $key, ?bool $default = null, array $in = []): ?bool
+    function configBool(string $key, bool|null $default = null, array $in = []): bool|null
     {
-        $value = resolveConfig()->get($key, $default) ?? $default;
+        $value = \resolveConfig()->get($key, $default) ?? $default;
 
         \assert($value === null || \is_bool($value), Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -69,15 +69,15 @@ if (! \function_exists('configBool')) {
     }
 }
 
-if (! \function_exists('mustConfigBool')) {
+if (!\function_exists('mustConfigBool')) {
     /**
      * Mandatory config boolean resolver.
      *
      * @param array<bool> $in
      */
-    function mustConfigBool(string $key, ?bool $default = null, array $in = []): bool
+    function mustConfigBool(string $key, bool|null $default = null, array $in = []): bool
     {
-        $value = configBool($key, $default, $in);
+        $value = \configBool($key, $default, $in);
 
         \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -85,15 +85,15 @@ if (! \function_exists('mustConfigBool')) {
     }
 }
 
-if (! \function_exists('configInt')) {
+if (!\function_exists('configInt')) {
     /**
      * Config int resolver.
      *
      * @param array<int|null> $in
      */
-    function configInt(string $key, ?int $default = null, array $in = []): ?int
+    function configInt(string $key, int|null $default = null, array $in = []): int|null
     {
-        $value = resolveConfig()->get($key, $default) ?? $default;
+        $value = \resolveConfig()->get($key, $default) ?? $default;
 
         \assert($value === null || \is_int($value), Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -105,15 +105,15 @@ if (! \function_exists('configInt')) {
     }
 }
 
-if (! \function_exists('mustConfigInt')) {
+if (!\function_exists('mustConfigInt')) {
     /**
      * Mandatory config int resolver.
      *
      * @param array<int> $in
      */
-    function mustConfigInt(string $key, ?int $default = null, array $in = []): int
+    function mustConfigInt(string $key, int|null $default = null, array $in = []): int
     {
-        $value = configInt($key, $default, $in);
+        $value = \configInt($key, $default, $in);
 
         \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -121,15 +121,15 @@ if (! \function_exists('mustConfigInt')) {
     }
 }
 
-if (! \function_exists('configFloat')) {
+if (!\function_exists('configFloat')) {
     /**
      * Config float resolver.
      *
      * @param array<float|null> $in
      */
-    function configFloat(string $key, ?float $default = null, array $in = []): ?float
+    function configFloat(string $key, float|null $default = null, array $in = []): float|null
     {
-        $value = resolveConfig()->get($key, $default) ?? $default;
+        $value = \resolveConfig()->get($key, $default) ?? $default;
 
         \assert($value === null || \is_float($value), Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -141,15 +141,15 @@ if (! \function_exists('configFloat')) {
     }
 }
 
-if (! \function_exists('mustConfigFloat')) {
+if (!\function_exists('mustConfigFloat')) {
     /**
      * Mandatory config float resolver.
      *
      * @param array<float> $in
      */
-    function mustConfigFloat(string $key, ?float $default = null, array $in = []): float
+    function mustConfigFloat(string $key, float|null $default = null, array $in = []): float
     {
-        $value = configFloat($key, $default, $in);
+        $value = \configFloat($key, $default, $in);
 
         \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -157,7 +157,7 @@ if (! \function_exists('mustConfigFloat')) {
     }
 }
 
-if (! \function_exists('configArray')) {
+if (!\function_exists('configArray')) {
     /**
      * Config array resolver.
      *
@@ -165,9 +165,9 @@ if (! \function_exists('configArray')) {
      *
      * @return array<mixed>|null
      */
-    function configArray(string $key, ?array $default = null): ?array
+    function configArray(string $key, array|null $default = null): array|null
     {
-        $value = resolveConfig()->get($key, $default) ?? $default;
+        $value = \resolveConfig()->get($key, $default) ?? $default;
 
         \assert($value === null || \is_array($value), Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -175,7 +175,7 @@ if (! \function_exists('configArray')) {
     }
 }
 
-if (! \function_exists('mustConfigArray')) {
+if (!\function_exists('mustConfigArray')) {
     /**
      * Mandatory config array resolver.
      *
@@ -183,9 +183,9 @@ if (! \function_exists('mustConfigArray')) {
      *
      * @return array<mixed>
      */
-    function mustConfigArray(string $key, ?array $default = null): array
+    function mustConfigArray(string $key, array|null $default = null): array
     {
-        $value = configArray($key, $default);
+        $value = \configArray($key, $default);
 
         \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -193,15 +193,15 @@ if (! \function_exists('mustConfigArray')) {
     }
 }
 
-if (! \function_exists('configString')) {
+if (!\function_exists('configString')) {
     /**
      * Config string resolver.
      *
      * @param array<string|null> $in
      */
-    function configString(string $key, ?string $default = null, array $in = []): ?string
+    function configString(string $key, string|null $default = null, array $in = []): string|null
     {
-        $value = resolveConfig()->get($key, $default) ?? $default;
+        $value = \resolveConfig()->get($key, $default) ?? $default;
 
         \assert($value === null || \is_string($value), Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -213,15 +213,15 @@ if (! \function_exists('configString')) {
     }
 }
 
-if (! \function_exists('mustConfigString')) {
+if (!\function_exists('mustConfigString')) {
     /**
      * Mandatory config string resolver.
      *
      * @param array<string> $in
      */
-    function mustConfigString(string $key, ?string $default = null, array $in = []): string
+    function mustConfigString(string $key, string|null $default = null, array $in = []): string
     {
-        $value = configString($key, $default, $in);
+        $value = \configString($key, $default, $in);
 
         \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -229,7 +229,7 @@ if (! \function_exists('mustConfigString')) {
     }
 }
 
-if (! \function_exists('inject')) {
+if (!\function_exists('inject')) {
     /**
      * Resolve a service from the container.
      *
@@ -246,7 +246,7 @@ if (! \function_exists('inject')) {
     }
 }
 
-if (! \function_exists('resolveApp')) {
+if (!\function_exists('resolveApp')) {
     /**
      * Resolve app.
      */
@@ -256,7 +256,7 @@ if (! \function_exists('resolveApp')) {
     }
 }
 
-if (! \function_exists('resolveArtisan')) {
+if (!\function_exists('resolveArtisan')) {
     /**
      * Resolve console kernel.
      */
@@ -266,7 +266,7 @@ if (! \function_exists('resolveArtisan')) {
     }
 }
 
-if (! \function_exists('resolveKernel')) {
+if (!\function_exists('resolveKernel')) {
     /**
      * Resolve HTTP kernel.
      */
@@ -276,7 +276,7 @@ if (! \function_exists('resolveKernel')) {
     }
 }
 
-if (! \function_exists('resolveConsoleKernel')) {
+if (!\function_exists('resolveConsoleKernel')) {
     /**
      * Resolve console kernel.
      */
@@ -286,7 +286,7 @@ if (! \function_exists('resolveConsoleKernel')) {
     }
 }
 
-if (! \function_exists('resolveHttpKernel')) {
+if (!\function_exists('resolveHttpKernel')) {
     /**
      * Resolve HTTP kernel.
      */
@@ -296,7 +296,7 @@ if (! \function_exists('resolveHttpKernel')) {
     }
 }
 
-if (! \function_exists('resolveAuthManager')) {
+if (!\function_exists('resolveAuthManager')) {
     /**
      * Resolve auth manager.
      */
@@ -306,27 +306,27 @@ if (! \function_exists('resolveAuthManager')) {
     }
 }
 
-if (! \function_exists('resolveGuard')) {
+if (!\function_exists('resolveGuard')) {
     /**
      * Resolve guard.
      */
-    function resolveGuard(?string $name = null): Tomchochola\Laratchi\Auth\DatabaseTokenGuard
+    function resolveGuard(string|null $name = null): Tomchochola\Laratchi\Auth\DatabaseTokenGuard
     {
         return Resolver::resolveDatabaseTokenGuard($name);
     }
 }
 
-if (! \function_exists('resolveUserProvider')) {
+if (!\function_exists('resolveUserProvider')) {
     /**
      * Resolve user provider.
      */
-    function resolveUserProvider(?string $name = null): Illuminate\Auth\EloquentUserProvider
+    function resolveUserProvider(string|null $name = null): Illuminate\Auth\EloquentUserProvider
     {
         return Resolver::resolveEloquentUserProvider($name);
     }
 }
 
-if (! \function_exists('resolveBlade')) {
+if (!\function_exists('resolveBlade')) {
     /**
      * Resolve blade.
      */
@@ -336,7 +336,7 @@ if (! \function_exists('resolveBlade')) {
     }
 }
 
-if (! \function_exists('resolveBroadcastManager')) {
+if (!\function_exists('resolveBroadcastManager')) {
     /**
      * Resolve broadcast manager.
      */
@@ -346,7 +346,7 @@ if (! \function_exists('resolveBroadcastManager')) {
     }
 }
 
-if (! \function_exists('resolveBus')) {
+if (!\function_exists('resolveBus')) {
     /**
      * Resolve bus.
      */
@@ -356,7 +356,7 @@ if (! \function_exists('resolveBus')) {
     }
 }
 
-if (! \function_exists('resolveCacheManager')) {
+if (!\function_exists('resolveCacheManager')) {
     /**
      * Resolve cache manager.
      */
@@ -366,17 +366,17 @@ if (! \function_exists('resolveCacheManager')) {
     }
 }
 
-if (! \function_exists('resolveCache')) {
+if (!\function_exists('resolveCache')) {
     /**
      * Resolve cache.
      */
-    function resolveCache(?string $name = null): Illuminate\Contracts\Cache\Repository
+    function resolveCache(string|null $name = null): Illuminate\Contracts\Cache\Repository
     {
         return Resolver::resolveCacheManager()->store($name);
     }
 }
 
-if (! \function_exists('resolveConfig')) {
+if (!\function_exists('resolveConfig')) {
     /**
      * Resolve config.
      */
@@ -386,7 +386,7 @@ if (! \function_exists('resolveConfig')) {
     }
 }
 
-if (! \function_exists('resolveCookieJar')) {
+if (!\function_exists('resolveCookieJar')) {
     /**
      * Resolve cookie.
      */
@@ -396,7 +396,7 @@ if (! \function_exists('resolveCookieJar')) {
     }
 }
 
-if (! \function_exists('resolveEncrypter')) {
+if (!\function_exists('resolveEncrypter')) {
     /**
      * Resolve encrypter.
      */
@@ -406,7 +406,7 @@ if (! \function_exists('resolveEncrypter')) {
     }
 }
 
-if (! \function_exists('resolveDatabaseManager')) {
+if (!\function_exists('resolveDatabaseManager')) {
     /**
      * Resolve database manager.
      */
@@ -416,17 +416,17 @@ if (! \function_exists('resolveDatabaseManager')) {
     }
 }
 
-if (! \function_exists('resolveDatabase')) {
+if (!\function_exists('resolveDatabase')) {
     /**
      * Resolve database.
      */
-    function resolveDatabase(?string $name = null): Illuminate\Database\Connection
+    function resolveDatabase(string|null $name = null): Illuminate\Database\Connection
     {
         return Resolver::resolveDatabaseManager()->connection($name);
     }
 }
 
-if (! \function_exists('resolveEventDispatcher')) {
+if (!\function_exists('resolveEventDispatcher')) {
     /**
      * Resolve event dispatcher.
      */
@@ -436,7 +436,7 @@ if (! \function_exists('resolveEventDispatcher')) {
     }
 }
 
-if (! \function_exists('resolveFilesystem')) {
+if (!\function_exists('resolveFilesystem')) {
     /**
      * Resolve filesystem.
      */
@@ -446,7 +446,7 @@ if (! \function_exists('resolveFilesystem')) {
     }
 }
 
-if (! \function_exists('resolveGate')) {
+if (!\function_exists('resolveGate')) {
     /**
      * Resolve gate.
      */
@@ -456,7 +456,7 @@ if (! \function_exists('resolveGate')) {
     }
 }
 
-if (! \function_exists('resolveHashManager')) {
+if (!\function_exists('resolveHashManager')) {
     /**
      * Resolve hash manager.
      */
@@ -466,17 +466,17 @@ if (! \function_exists('resolveHashManager')) {
     }
 }
 
-if (! \function_exists('resolveHasher')) {
+if (!\function_exists('resolveHasher')) {
     /**
      * Resolve hasher.
      */
-    function resolveHasher(?string $driver = null): Illuminate\Contracts\Hashing\Hasher
+    function resolveHasher(string|null $driver = null): Illuminate\Contracts\Hashing\Hasher
     {
         return Resolver::resolveHasher($driver);
     }
 }
 
-if (! \function_exists('resolveHttp')) {
+if (!\function_exists('resolveHttp')) {
     /**
      * Resolve HTTP client.
      */
@@ -486,7 +486,7 @@ if (! \function_exists('resolveHttp')) {
     }
 }
 
-if (! \function_exists('resolveTranslator')) {
+if (!\function_exists('resolveTranslator')) {
     /**
      * Resolve translator.
      */
@@ -496,7 +496,7 @@ if (! \function_exists('resolveTranslator')) {
     }
 }
 
-if (! \function_exists('resolveLogger')) {
+if (!\function_exists('resolveLogger')) {
     /**
      * Resolve logger.
      */
@@ -506,7 +506,7 @@ if (! \function_exists('resolveLogger')) {
     }
 }
 
-if (! \function_exists('resolveMailManager')) {
+if (!\function_exists('resolveMailManager')) {
     /**
      * Resolve mail manager.
      */
@@ -516,7 +516,7 @@ if (! \function_exists('resolveMailManager')) {
     }
 }
 
-if (! \function_exists('resolveNotificator')) {
+if (!\function_exists('resolveNotificator')) {
     /**
      * Resolve notification manager.
      */
@@ -526,7 +526,7 @@ if (! \function_exists('resolveNotificator')) {
     }
 }
 
-if (! \function_exists('resolveParallelTesting')) {
+if (!\function_exists('resolveParallelTesting')) {
     /**
      * Resolve parallel testing.
      */
@@ -536,7 +536,7 @@ if (! \function_exists('resolveParallelTesting')) {
     }
 }
 
-if (! \function_exists('resolvePasswordBrokerManager')) {
+if (!\function_exists('resolvePasswordBrokerManager')) {
     /**
      * Resolve password broker manager.
      */
@@ -546,27 +546,27 @@ if (! \function_exists('resolvePasswordBrokerManager')) {
     }
 }
 
-if (! \function_exists('resolvePasswordBroker')) {
+if (!\function_exists('resolvePasswordBroker')) {
     /**
      * Resolve password broker.
      */
-    function resolvePasswordBroker(?string $name = null): Illuminate\Auth\Passwords\PasswordBroker
+    function resolvePasswordBroker(string|null $name = null): Illuminate\Auth\Passwords\PasswordBroker
     {
         return Resolver::resolvePasswordBroker($name);
     }
 }
 
-if (! \function_exists('resolvePasswordTokenRepository')) {
+if (!\function_exists('resolvePasswordTokenRepository')) {
     /**
      * Resolve password token repository.
      */
-    function resolvePasswordTokenRepository(?string $name = null): Illuminate\Auth\Passwords\DatabaseTokenRepository
+    function resolvePasswordTokenRepository(string|null $name = null): Illuminate\Auth\Passwords\DatabaseTokenRepository
     {
         return Resolver::resolveDatabaseTokenRepository($name);
     }
 }
 
-if (! \function_exists('resolveQueueManager')) {
+if (!\function_exists('resolveQueueManager')) {
     /**
      * Resolve queue manager.
      */
@@ -576,7 +576,7 @@ if (! \function_exists('resolveQueueManager')) {
     }
 }
 
-if (! \function_exists('resolveRateLimiter')) {
+if (!\function_exists('resolveRateLimiter')) {
     /**
      * Resolve rate limiter.
      */
@@ -586,7 +586,7 @@ if (! \function_exists('resolveRateLimiter')) {
     }
 }
 
-if (! \function_exists('resolveRedirector')) {
+if (!\function_exists('resolveRedirector')) {
     /**
      * Resolve redirector.
      */
@@ -596,7 +596,7 @@ if (! \function_exists('resolveRedirector')) {
     }
 }
 
-if (! \function_exists('resolveRedisManager')) {
+if (!\function_exists('resolveRedisManager')) {
     /**
      * Resolve redis manager.
      */
@@ -606,7 +606,7 @@ if (! \function_exists('resolveRedisManager')) {
     }
 }
 
-if (! \function_exists('resolveRequest')) {
+if (!\function_exists('resolveRequest')) {
     /**
      * Resolve request.
      */
@@ -616,7 +616,7 @@ if (! \function_exists('resolveRequest')) {
     }
 }
 
-if (! \function_exists('resolveResponseFactory')) {
+if (!\function_exists('resolveResponseFactory')) {
     /**
      * Resolve response factory.
      */
@@ -626,7 +626,7 @@ if (! \function_exists('resolveResponseFactory')) {
     }
 }
 
-if (! \function_exists('resolveRouter')) {
+if (!\function_exists('resolveRouter')) {
     /**
      * Resolve router.
      */
@@ -636,7 +636,7 @@ if (! \function_exists('resolveRouter')) {
     }
 }
 
-if (! \function_exists('resolveRouteRegistrar')) {
+if (!\function_exists('resolveRouteRegistrar')) {
     /**
      * Resolve route registrar.
      */
@@ -646,7 +646,7 @@ if (! \function_exists('resolveRouteRegistrar')) {
     }
 }
 
-if (! \function_exists('resolveSchema')) {
+if (!\function_exists('resolveSchema')) {
     /**
      * Resolve schema.
      */
@@ -656,7 +656,7 @@ if (! \function_exists('resolveSchema')) {
     }
 }
 
-if (! \function_exists('resolveSessionManager')) {
+if (!\function_exists('resolveSessionManager')) {
     /**
      * Resolve session manager.
      */
@@ -666,17 +666,17 @@ if (! \function_exists('resolveSessionManager')) {
     }
 }
 
-if (! \function_exists('resolveSession')) {
+if (!\function_exists('resolveSession')) {
     /**
      * Resolve session.
      */
-    function resolveSession(?string $driver = null): Illuminate\Session\Store
+    function resolveSession(string|null $driver = null): Illuminate\Session\Store
     {
         return Resolver::resolveSessionStore($driver);
     }
 }
 
-if (! \function_exists('resolveFilesystemManager')) {
+if (!\function_exists('resolveFilesystemManager')) {
     /**
      * Resolve filesystem manager.
      */
@@ -686,7 +686,7 @@ if (! \function_exists('resolveFilesystemManager')) {
     }
 }
 
-if (! \function_exists('resolveUrlFactory')) {
+if (!\function_exists('resolveUrlFactory')) {
     /**
      * Resolve url factory.
      */
@@ -696,7 +696,7 @@ if (! \function_exists('resolveUrlFactory')) {
     }
 }
 
-if (! \function_exists('resolveValidatorFactory')) {
+if (!\function_exists('resolveValidatorFactory')) {
     /**
      * Resolve validator factory.
      */
@@ -706,7 +706,7 @@ if (! \function_exists('resolveValidatorFactory')) {
     }
 }
 
-if (! \function_exists('resolveViewFactory')) {
+if (!\function_exists('resolveViewFactory')) {
     /**
      * Resolve view factory.
      */
@@ -716,7 +716,7 @@ if (! \function_exists('resolveViewFactory')) {
     }
 }
 
-if (! \function_exists('resolveExceptionHandler')) {
+if (!\function_exists('resolveExceptionHandler')) {
     /**
      * Resolve exception handler.
      */
@@ -726,7 +726,7 @@ if (! \function_exists('resolveExceptionHandler')) {
     }
 }
 
-if (! \function_exists('resolveDate')) {
+if (!\function_exists('resolveDate')) {
     /**
      * Resolve date factory.
      */
@@ -736,7 +736,7 @@ if (! \function_exists('resolveDate')) {
     }
 }
 
-if (! \function_exists('resolveNow')) {
+if (!\function_exists('resolveNow')) {
     /**
      * Resolve now.
      */
@@ -746,7 +746,7 @@ if (! \function_exists('resolveNow')) {
     }
 }
 
-if (! \function_exists('resolveMix')) {
+if (!\function_exists('resolveMix')) {
     /**
      * Resolve mix.
      */
@@ -756,7 +756,7 @@ if (! \function_exists('resolveMix')) {
     }
 }
 
-if (! \function_exists('resolveVite')) {
+if (!\function_exists('resolveVite')) {
     /**
      * Resolve vite.
      */
@@ -766,7 +766,7 @@ if (! \function_exists('resolveVite')) {
     }
 }
 
-if (! \function_exists('unsafeEnv')) {
+if (!\function_exists('unsafeEnv')) {
     /**
      * Unsafe env resolver.
      */
@@ -780,15 +780,15 @@ if (! \function_exists('unsafeEnv')) {
     }
 }
 
-if (! \function_exists('envString')) {
+if (!\function_exists('envString')) {
     /**
      * Env string resolver.
      *
      * @param array<string|null> $in
      */
-    function envString(string $key, ?string $default = null, bool $trim = true, array $in = []): ?string
+    function envString(string $key, string|null $default = null, bool $trim = true, array $in = []): string|null
     {
-        $value = unsafeEnv($key, $default) ?? $default;
+        $value = \unsafeEnv($key, $default) ?? $default;
 
         if ($value === null) {
             return null;
@@ -818,15 +818,15 @@ if (! \function_exists('envString')) {
     }
 }
 
-if (! \function_exists('mustEnvString')) {
+if (!\function_exists('mustEnvString')) {
     /**
      * Mandatory env string resolver.
      *
      * @param array<string> $in
      */
-    function mustEnvString(string $key, ?string $default = null, bool $trim = true, array $in = []): string
+    function mustEnvString(string $key, string|null $default = null, bool $trim = true, array $in = []): string
     {
-        $value = envString($key, $default, $trim, $in);
+        $value = \envString($key, $default, $trim, $in);
 
         \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -834,15 +834,15 @@ if (! \function_exists('mustEnvString')) {
     }
 }
 
-if (! \function_exists('envBool')) {
+if (!\function_exists('envBool')) {
     /**
      * Env bool resolver.
      *
      * @param array<bool|null> $in
      */
-    function envBool(string $key, ?bool $default = null, array $in = []): ?bool
+    function envBool(string $key, bool|null $default = null, array $in = []): bool|null
     {
-        $value = unsafeEnv($key, $default) ?? $default;
+        $value = \unsafeEnv($key, $default) ?? $default;
 
         if ($value === null) {
             return null;
@@ -860,15 +860,15 @@ if (! \function_exists('envBool')) {
     }
 }
 
-if (! \function_exists('mustEnvBool')) {
+if (!\function_exists('mustEnvBool')) {
     /**
      * Mandatory env bool resolver.
      *
      * @param array<bool> $in
      */
-    function mustEnvBool(string $key, ?bool $default = null, array $in = []): bool
+    function mustEnvBool(string $key, bool|null $default = null, array $in = []): bool
     {
-        $value = envBool($key, $default, $in);
+        $value = \envBool($key, $default, $in);
 
         \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -876,15 +876,15 @@ if (! \function_exists('mustEnvBool')) {
     }
 }
 
-if (! \function_exists('envInt')) {
+if (!\function_exists('envInt')) {
     /**
      * Env int resolver.
      *
      * @param array<int|null> $in
      */
-    function envInt(string $key, ?int $default = null, array $in = []): ?int
+    function envInt(string $key, int|null $default = null, array $in = []): int|null
     {
-        $value = unsafeEnv($key, $default) ?? $default;
+        $value = \unsafeEnv($key, $default) ?? $default;
 
         if ($value === null) {
             return null;
@@ -902,15 +902,15 @@ if (! \function_exists('envInt')) {
     }
 }
 
-if (! \function_exists('mustEnvInt')) {
+if (!\function_exists('mustEnvInt')) {
     /**
      * Mandatory env int resolver.
      *
      * @param array<int> $in
      */
-    function mustEnvInt(string $key, ?int $default = null, array $in = []): int
+    function mustEnvInt(string $key, int|null $default = null, array $in = []): int
     {
-        $value = envInt($key, $default, $in);
+        $value = \envInt($key, $default, $in);
 
         \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -918,15 +918,15 @@ if (! \function_exists('mustEnvInt')) {
     }
 }
 
-if (! \function_exists('envFloat')) {
+if (!\function_exists('envFloat')) {
     /**
      * Env float resolver.
      *
      * @param array<float|null> $in
      */
-    function envFloat(string $key, ?float $default = null, array $in = []): ?float
+    function envFloat(string $key, float|null $default = null, array $in = []): float|null
     {
-        $value = unsafeEnv($key, $default) ?? $default;
+        $value = \unsafeEnv($key, $default) ?? $default;
 
         if ($value === null) {
             return null;
@@ -944,15 +944,15 @@ if (! \function_exists('envFloat')) {
     }
 }
 
-if (! \function_exists('mustEnvFloat')) {
+if (!\function_exists('mustEnvFloat')) {
     /**
      * Mandatory env float resolver.
      *
      * @param array<float> $in
      */
-    function mustEnvFloat(string $key, ?float $default = null, array $in = []): float
+    function mustEnvFloat(string $key, float|null $default = null, array $in = []): float
     {
-        $value = envFloat($key, $default, $in);
+        $value = \envFloat($key, $default, $in);
 
         \assert($value !== null, Panicker::message(__FUNCTION__, 'assertion failed', \compact('key', 'value', 'default')));
 
@@ -960,17 +960,17 @@ if (! \function_exists('mustEnvFloat')) {
     }
 }
 
-if (! \function_exists('currentEnv')) {
+if (!\function_exists('currentEnv')) {
     /**
      * Get current env.
      *
-     * @return "local"|"testing"|"development"|"staging"|"production"
+     * @return "development"|"local"|"production"|"staging"|"testing"
      */
     function currentEnv(): string
     {
-        $app = resolveApp();
+        $app = \resolveApp();
 
-        $value = $app->bound('env') ? $app->make('env') : mustEnvString('APP_ENV');
+        $value = $app->bound('env') ? $app->make('env') : \mustEnvString('APP_ENV');
 
         if (\in_array($value, ['local', 'testing', 'development', 'staging', 'production'], true)) {
             return $value;
@@ -980,19 +980,19 @@ if (! \function_exists('currentEnv')) {
     }
 }
 
-if (! \function_exists('isEnv')) {
+if (!\function_exists('isEnv')) {
     /**
      * Check for current env.
      *
-     * @param array<"local"|"testing"|"development"|"staging"|"production"> $envs
+     * @param array<"development"|"local"|"production"|"staging"|"testing"> $envs
      */
     function isEnv(array $envs): bool
     {
-        return \in_array(currentEnv(), $envs, true);
+        return \in_array(\currentEnv(), $envs, true);
     }
 }
 
-if (! \function_exists('mapEnv')) {
+if (!\function_exists('mapEnv')) {
     /**
      * Map env.
      *
@@ -1008,11 +1008,11 @@ if (! \function_exists('mapEnv')) {
      */
     function mapEnv(array $mapping): mixed
     {
-        return $mapping[currentEnv()];
+        return $mapping[\currentEnv()];
     }
 }
 
-if (! \function_exists('assertNever')) {
+if (!\function_exists('assertNever')) {
     /**
      * Assert never.
      */
@@ -1022,7 +1022,7 @@ if (! \function_exists('assertNever')) {
     }
 }
 
-if (! \function_exists('assertNeverIf')) {
+if (!\function_exists('assertNeverIf')) {
     /**
      * Assert never if.
      */
@@ -1034,19 +1034,19 @@ if (! \function_exists('assertNeverIf')) {
     }
 }
 
-if (! \function_exists('assertNeverIfNot')) {
+if (!\function_exists('assertNeverIfNot')) {
     /**
      * Assert never if not.
      */
     function assertNeverIfNot(bool $pass, string $message = 'assert never if not'): void
     {
-        if (! $pass) {
+        if (!$pass) {
             Panicker::panic(__FUNCTION__, $message);
         }
     }
 }
 
-if (! \function_exists('assertNeverClosure')) {
+if (!\function_exists('assertNeverClosure')) {
     /**
      * Assert never closure.
      *
@@ -1060,7 +1060,7 @@ if (! \function_exists('assertNeverClosure')) {
     }
 }
 
-if (! \function_exists('strPutCsv')) {
+if (!\function_exists('strPutCsv')) {
     /**
      * Encode array to csv.
      *
@@ -1072,7 +1072,7 @@ if (! \function_exists('strPutCsv')) {
     }
 }
 
-if (! \function_exists('locale')) {
+if (!\function_exists('locale')) {
     /**
      * Locale.
      */
@@ -1082,7 +1082,7 @@ if (! \function_exists('locale')) {
     }
 }
 
-if (! \function_exists('locales')) {
+if (!\function_exists('locales')) {
     /**
      * Locales.
      *
@@ -1094,7 +1094,7 @@ if (! \function_exists('locales')) {
     }
 }
 
-if (! \function_exists('assertString')) {
+if (!\function_exists('assertString')) {
     /**
      * Assert string.
      */
@@ -1104,17 +1104,17 @@ if (! \function_exists('assertString')) {
     }
 }
 
-if (! \function_exists('assertNullableString')) {
+if (!\function_exists('assertNullableString')) {
     /**
      * Assert nullable string.
      */
-    function assertNullableString(mixed $value): ?string
+    function assertNullableString(mixed $value): string|null
     {
         return Typer::assertNullableString($value);
     }
 }
 
-if (! \function_exists('assertBool')) {
+if (!\function_exists('assertBool')) {
     /**
      * Assert bool.
      */
@@ -1124,17 +1124,17 @@ if (! \function_exists('assertBool')) {
     }
 }
 
-if (! \function_exists('assertNullableBool')) {
+if (!\function_exists('assertNullableBool')) {
     /**
      * Assert nullable bool.
      */
-    function assertNullableBool(mixed $value): ?bool
+    function assertNullableBool(mixed $value): bool|null
     {
         return Typer::assertNullableBool($value);
     }
 }
 
-if (! \function_exists('assertInt')) {
+if (!\function_exists('assertInt')) {
     /**
      * Assert int.
      */
@@ -1144,17 +1144,17 @@ if (! \function_exists('assertInt')) {
     }
 }
 
-if (! \function_exists('assertNullableInt')) {
+if (!\function_exists('assertNullableInt')) {
     /**
      * Assert nullable int.
      */
-    function assertNullableInt(mixed $value): ?int
+    function assertNullableInt(mixed $value): int|null
     {
         return Typer::assertNullableInt($value);
     }
 }
 
-if (! \function_exists('assertFloat')) {
+if (!\function_exists('assertFloat')) {
     /**
      * Assert float.
      */
@@ -1164,17 +1164,17 @@ if (! \function_exists('assertFloat')) {
     }
 }
 
-if (! \function_exists('assertNullableFloat')) {
+if (!\function_exists('assertNullableFloat')) {
     /**
      * Assert nullable float.
      */
-    function assertNullableFloat(mixed $value): ?float
+    function assertNullableFloat(mixed $value): float|null
     {
         return Typer::assertNullableFloat($value);
     }
 }
 
-if (! \function_exists('assertArray')) {
+if (!\function_exists('assertArray')) {
     /**
      * Assert array.
      *
@@ -1186,19 +1186,19 @@ if (! \function_exists('assertArray')) {
     }
 }
 
-if (! \function_exists('assertNullableArray')) {
+if (!\function_exists('assertNullableArray')) {
     /**
      * Assert nullable array.
      *
      * @return array<mixed>|null
      */
-    function assertNullableArray(mixed $value): ?array
+    function assertNullableArray(mixed $value): array|null
     {
         return Typer::assertNullableArray($value);
     }
 }
 
-if (! \function_exists('assertFile')) {
+if (!\function_exists('assertFile')) {
     /**
      * Assert file.
      */
@@ -1208,17 +1208,17 @@ if (! \function_exists('assertFile')) {
     }
 }
 
-if (! \function_exists('assertNullableFile')) {
+if (!\function_exists('assertNullableFile')) {
     /**
      * Assert nullable file.
      */
-    function assertNullableFile(mixed $value): ?UploadedFile
+    function assertNullableFile(mixed $value): UploadedFile|null
     {
         return Typer::assertNullableFile($value);
     }
 }
 
-if (! \function_exists('assertCarbon')) {
+if (!\function_exists('assertCarbon')) {
     /**
      * Assert carbon.
      */
@@ -1228,17 +1228,17 @@ if (! \function_exists('assertCarbon')) {
     }
 }
 
-if (! \function_exists('assertNullableCarbon')) {
+if (!\function_exists('assertNullableCarbon')) {
     /**
      * Assert nullable carbon.
      */
-    function assertNullableCarbon(mixed $value): ?Carbon
+    function assertNullableCarbon(mixed $value): Carbon|null
     {
         return Typer::assertNullableCarbon($value);
     }
 }
 
-if (! \function_exists('assertObject')) {
+if (!\function_exists('assertObject')) {
     /**
      * Assert object.
      */
@@ -1248,41 +1248,41 @@ if (! \function_exists('assertObject')) {
     }
 }
 
-if (! \function_exists('assertNullableObject')) {
+if (!\function_exists('assertNullableObject')) {
     /**
      * Assert nullable object.
      */
-    function assertNullableObject(mixed $value): ?object
+    function assertNullableObject(mixed $value): object|null
     {
         return Typer::assertNullableObject($value);
     }
 }
 
-if (! \function_exists('assertScalar')) {
+if (!\function_exists('assertScalar')) {
     /**
      * Assert scalar.
      *
      * @return scalar
      */
-    function assertScalar(mixed $value): int|float|string|bool
+    function assertScalar(mixed $value): bool|float|int|string
     {
         return Typer::assertScalar($value);
     }
 }
 
-if (! \function_exists('assertNullableScalar')) {
+if (!\function_exists('assertNullableScalar')) {
     /**
      * Assert nullable scalar.
      *
      * @return scalar|null
      */
-    function assertNullableScalar(mixed $value): int|float|string|bool|null
+    function assertNullableScalar(mixed $value): bool|float|int|string|null
     {
         return Typer::assertNullableScalar($value);
     }
 }
 
-if (! \function_exists('assertEnum')) {
+if (!\function_exists('assertEnum')) {
     /**
      * Assert enum.
      *
@@ -1298,7 +1298,7 @@ if (! \function_exists('assertEnum')) {
     }
 }
 
-if (! \function_exists('assertNullableEnum')) {
+if (!\function_exists('assertNullableEnum')) {
     /**
      * Assert nullable enum.
      *
@@ -1308,13 +1308,13 @@ if (! \function_exists('assertNullableEnum')) {
      *
      * @return T|null
      */
-    function assertNullableEnum(mixed $value, string $enum): ?BackedEnum
+    function assertNullableEnum(mixed $value, string $enum): BackedEnum|null
     {
         return Typer::assertNullableEnum($value, $enum);
     }
 }
 
-if (! \function_exists('assertInstance')) {
+if (!\function_exists('assertInstance')) {
     /**
      * Assert instance.
      *
@@ -1330,7 +1330,7 @@ if (! \function_exists('assertInstance')) {
     }
 }
 
-if (! \function_exists('assertNullableInstance')) {
+if (!\function_exists('assertNullableInstance')) {
     /**
      * Assert nullable instance.
      *
@@ -1340,13 +1340,13 @@ if (! \function_exists('assertNullableInstance')) {
      *
      * @return T|null
      */
-    function assertNullableInstance(mixed $value, string $class): ?object
+    function assertNullableInstance(mixed $value, string $class): object|null
     {
         return Typer::assertNullableInstance($value, $class);
     }
 }
 
-if (! \function_exists('assertA')) {
+if (!\function_exists('assertA')) {
     /**
      * Assert a.
      *
@@ -1362,7 +1362,7 @@ if (! \function_exists('assertA')) {
     }
 }
 
-if (! \function_exists('assertNullableA')) {
+if (!\function_exists('assertNullableA')) {
     /**
      * Assert nullable a.
      *
@@ -1372,13 +1372,13 @@ if (! \function_exists('assertNullableA')) {
      *
      * @return class-string<T>|null
      */
-    function assertNullableA(mixed $value, string $class): ?string
+    function assertNullableA(mixed $value, string $class): string|null
     {
         return Typer::assertNullableA($value, $class);
     }
 }
 
-if (! \function_exists('parseString')) {
+if (!\function_exists('parseString')) {
     /**
      * Parse string.
      */
@@ -1388,17 +1388,17 @@ if (! \function_exists('parseString')) {
     }
 }
 
-if (! \function_exists('parseNullableString')) {
+if (!\function_exists('parseNullableString')) {
     /**
      * Parse nullable string.
      */
-    function parseNullableString(mixed $value): ?string
+    function parseNullableString(mixed $value): string|null
     {
         return Typer::parseNullableString($value);
     }
 }
 
-if (! \function_exists('mustParseString')) {
+if (!\function_exists('mustParseString')) {
     /**
      * Must parse string.
      */
@@ -1408,17 +1408,17 @@ if (! \function_exists('mustParseString')) {
     }
 }
 
-if (! \function_exists('mustParseNullableString')) {
+if (!\function_exists('mustParseNullableString')) {
     /**
      * Must parse nullable string.
      */
-    function mustParseNullableString(mixed $value): ?string
+    function mustParseNullableString(mixed $value): string|null
     {
         return Typer::mustParseNullableString($value);
     }
 }
 
-if (! \function_exists('parseBool')) {
+if (!\function_exists('parseBool')) {
     /**
      * Parse bool.
      */
@@ -1428,17 +1428,17 @@ if (! \function_exists('parseBool')) {
     }
 }
 
-if (! \function_exists('parseNullableBool')) {
+if (!\function_exists('parseNullableBool')) {
     /**
      * Parse nullable bool.
      */
-    function parseNullableBool(mixed $value): ?bool
+    function parseNullableBool(mixed $value): bool|null
     {
         return Typer::parseNullableBool($value);
     }
 }
 
-if (! \function_exists('mustParseBool')) {
+if (!\function_exists('mustParseBool')) {
     /**
      * Must parse bool.
      */
@@ -1448,17 +1448,17 @@ if (! \function_exists('mustParseBool')) {
     }
 }
 
-if (! \function_exists('mustParseNullableBool')) {
+if (!\function_exists('mustParseNullableBool')) {
     /**
      * Must parse nullable bool.
      */
-    function mustParseNullableBool(mixed $value): ?bool
+    function mustParseNullableBool(mixed $value): bool|null
     {
         return Typer::mustParseNullableBool($value);
     }
 }
 
-if (! \function_exists('parseInt')) {
+if (!\function_exists('parseInt')) {
     /**
      * Parse int.
      */
@@ -1468,17 +1468,17 @@ if (! \function_exists('parseInt')) {
     }
 }
 
-if (! \function_exists('parseNullableInt')) {
+if (!\function_exists('parseNullableInt')) {
     /**
      * Parse nullable int.
      */
-    function parseNullableInt(mixed $value): ?int
+    function parseNullableInt(mixed $value): int|null
     {
         return Typer::parseNullableInt($value);
     }
 }
 
-if (! \function_exists('mustParseInt')) {
+if (!\function_exists('mustParseInt')) {
     /**
      * Must parse int.
      */
@@ -1488,17 +1488,17 @@ if (! \function_exists('mustParseInt')) {
     }
 }
 
-if (! \function_exists('mustParseNullableInt')) {
+if (!\function_exists('mustParseNullableInt')) {
     /**
      * Must parse nullable int.
      */
-    function mustParseNullableInt(mixed $value): ?int
+    function mustParseNullableInt(mixed $value): int|null
     {
         return Typer::mustParseNullableInt($value);
     }
 }
 
-if (! \function_exists('parseFloat')) {
+if (!\function_exists('parseFloat')) {
     /**
      * Parse float.
      */
@@ -1508,17 +1508,17 @@ if (! \function_exists('parseFloat')) {
     }
 }
 
-if (! \function_exists('parseNullableFloat')) {
+if (!\function_exists('parseNullableFloat')) {
     /**
      * Parse nullable float.
      */
-    function parseNullableFloat(mixed $value): ?float
+    function parseNullableFloat(mixed $value): float|null
     {
         return Typer::parseNullableFloat($value);
     }
 }
 
-if (! \function_exists('mustParseFloat')) {
+if (!\function_exists('mustParseFloat')) {
     /**
      * Must parse float.
      */
@@ -1528,17 +1528,17 @@ if (! \function_exists('mustParseFloat')) {
     }
 }
 
-if (! \function_exists('mustParseNullableFloat')) {
+if (!\function_exists('mustParseNullableFloat')) {
     /**
      * Must parse nullable float.
      */
-    function mustParseNullableFloat(mixed $value): ?float
+    function mustParseNullableFloat(mixed $value): float|null
     {
         return Typer::mustParseNullableFloat($value);
     }
 }
 
-if (! \function_exists('parseArray')) {
+if (!\function_exists('parseArray')) {
     /**
      * Parse array.
      *
@@ -1550,19 +1550,19 @@ if (! \function_exists('parseArray')) {
     }
 }
 
-if (! \function_exists('parseNullableArray')) {
+if (!\function_exists('parseNullableArray')) {
     /**
      * Parse nullable array.
      *
      * @return array<mixed>|null
      */
-    function parseNullableArray(mixed $value): ?array
+    function parseNullableArray(mixed $value): array|null
     {
         return Typer::parseNullableArray($value);
     }
 }
 
-if (! \function_exists('mustParseArray')) {
+if (!\function_exists('mustParseArray')) {
     /**
      * Must parse array.
      *
@@ -1574,19 +1574,19 @@ if (! \function_exists('mustParseArray')) {
     }
 }
 
-if (! \function_exists('mustParseNullableArray')) {
+if (!\function_exists('mustParseNullableArray')) {
     /**
      * Must parse nullable array.
      *
      * @return array<mixed>|null
      */
-    function mustParseNullableArray(mixed $value): ?array
+    function mustParseNullableArray(mixed $value): array|null
     {
         return Typer::mustParseNullableArray($value);
     }
 }
 
-if (! \function_exists('parseFile')) {
+if (!\function_exists('parseFile')) {
     /**
      * Parse file.
      */
@@ -1596,17 +1596,17 @@ if (! \function_exists('parseFile')) {
     }
 }
 
-if (! \function_exists('parseNullableFile')) {
+if (!\function_exists('parseNullableFile')) {
     /**
      * Parse nullable file.
      */
-    function parseNullableFile(mixed $value): ?UploadedFile
+    function parseNullableFile(mixed $value): UploadedFile|null
     {
         return Typer::parseNullableFile($value);
     }
 }
 
-if (! \function_exists('mustParseFile')) {
+if (!\function_exists('mustParseFile')) {
     /**
      * Must parse file.
      */
@@ -1616,57 +1616,57 @@ if (! \function_exists('mustParseFile')) {
     }
 }
 
-if (! \function_exists('mustParseNullableFile')) {
+if (!\function_exists('mustParseNullableFile')) {
     /**
      * Must parse nullable file.
      */
-    function mustParseNullableFile(mixed $value): ?UploadedFile
+    function mustParseNullableFile(mixed $value): UploadedFile|null
     {
         return Typer::mustParseNullableFile($value);
     }
 }
 
-if (! \function_exists('parseCarbon')) {
+if (!\function_exists('parseCarbon')) {
     /**
      * Parse carbon.
      */
-    function parseCarbon(mixed $value, ?string $format = null, ?string $tz = null): Carbon
+    function parseCarbon(mixed $value, string|null $format = null, string|null $tz = null): Carbon
     {
         return Typer::parseCarbon($value, $format, $tz);
     }
 }
 
-if (! \function_exists('parseNullableCarbon')) {
+if (!\function_exists('parseNullableCarbon')) {
     /**
      * Parse nullable carbon.
      */
-    function parseNullableCarbon(mixed $value, ?string $format = null, ?string $tz = null): ?Carbon
+    function parseNullableCarbon(mixed $value, string|null $format = null, string|null $tz = null): Carbon|null
     {
         return Typer::parseNullableCarbon($value, $format, $tz);
     }
 }
 
-if (! \function_exists('mustParseCarbon')) {
+if (!\function_exists('mustParseCarbon')) {
     /**
      * Must parse carbon.
      */
-    function mustParseCarbon(mixed $value, ?string $format = null, ?string $tz = null): Carbon
+    function mustParseCarbon(mixed $value, string|null $format = null, string|null $tz = null): Carbon
     {
         return Typer::mustParseCarbon($value, $format, $tz);
     }
 }
 
-if (! \function_exists('mustParseNullableCarbon')) {
+if (!\function_exists('mustParseNullableCarbon')) {
     /**
      * Must parse nullable carbon.
      */
-    function mustParseNullableCarbon(mixed $value, ?string $format = null, ?string $tz = null): ?Carbon
+    function mustParseNullableCarbon(mixed $value, string|null $format = null, string|null $tz = null): Carbon|null
     {
         return Typer::mustParseNullableCarbon($value, $format, $tz);
     }
 }
 
-if (! \function_exists('parseObject')) {
+if (!\function_exists('parseObject')) {
     /**
      * Parse object.
      */
@@ -1676,17 +1676,17 @@ if (! \function_exists('parseObject')) {
     }
 }
 
-if (! \function_exists('parseNullableObject')) {
+if (!\function_exists('parseNullableObject')) {
     /**
      * Parse nullable object.
      */
-    function parseNullableObject(mixed $value): ?object
+    function parseNullableObject(mixed $value): object|null
     {
         return Typer::parseNullableObject($value);
     }
 }
 
-if (! \function_exists('mustParseObject')) {
+if (!\function_exists('mustParseObject')) {
     /**
      * Must parse object.
      */
@@ -1696,57 +1696,57 @@ if (! \function_exists('mustParseObject')) {
     }
 }
 
-if (! \function_exists('mustParseNullableObject')) {
+if (!\function_exists('mustParseNullableObject')) {
     /**
      * Must parse nullable object.
      */
-    function mustParseNullableObject(mixed $value): ?object
+    function mustParseNullableObject(mixed $value): object|null
     {
         return Typer::mustParseNullableObject($value);
     }
 }
 
-if (! \function_exists('parseScalar')) {
+if (!\function_exists('parseScalar')) {
     /**
      * Parse scalar.
      */
-    function parseScalar(mixed $value): string|int|float|bool
+    function parseScalar(mixed $value): bool|float|int|string
     {
         return Typer::parseScalar($value);
     }
 }
 
-if (! \function_exists('parseNullableScalar')) {
+if (!\function_exists('parseNullableScalar')) {
     /**
      * Parse nullable scalar.
      */
-    function parseNullableScalar(mixed $value): string|int|float|bool|null
+    function parseNullableScalar(mixed $value): bool|float|int|string|null
     {
         return Typer::parseNullableScalar($value);
     }
 }
 
-if (! \function_exists('mustParseScalar')) {
+if (!\function_exists('mustParseScalar')) {
     /**
      * Must parse scalar.
      */
-    function mustParseScalar(mixed $value): string|int|float|bool
+    function mustParseScalar(mixed $value): bool|float|int|string
     {
         return Typer::mustParseScalar($value);
     }
 }
 
-if (! \function_exists('mustParseNullableScalar')) {
+if (!\function_exists('mustParseNullableScalar')) {
     /**
      * Must parse nullable scalar.
      */
-    function mustParseNullableScalar(mixed $value): string|int|float|bool|null
+    function mustParseNullableScalar(mixed $value): bool|float|int|string|null
     {
         return Typer::mustParseNullableScalar($value);
     }
 }
 
-if (! \function_exists('parseEnum')) {
+if (!\function_exists('parseEnum')) {
     /**
      * Parse enum.
      *
@@ -1762,7 +1762,7 @@ if (! \function_exists('parseEnum')) {
     }
 }
 
-if (! \function_exists('parseNullableEnum')) {
+if (!\function_exists('parseNullableEnum')) {
     /**
      * Parse nullable enum.
      *
@@ -1772,13 +1772,13 @@ if (! \function_exists('parseNullableEnum')) {
      *
      * @return T|null
      */
-    function parseNullableEnum(mixed $value, string $enum): ?BackedEnum
+    function parseNullableEnum(mixed $value, string $enum): BackedEnum|null
     {
         return Typer::parseNullableEnum($value, $enum);
     }
 }
 
-if (! \function_exists('mustParseEnum')) {
+if (!\function_exists('mustParseEnum')) {
     /**
      * Must parse enum.
      *
@@ -1794,7 +1794,7 @@ if (! \function_exists('mustParseEnum')) {
     }
 }
 
-if (! \function_exists('mustParseNullableEnum')) {
+if (!\function_exists('mustParseNullableEnum')) {
     /**
      * Must parse nullable enum.
      *
@@ -1804,13 +1804,13 @@ if (! \function_exists('mustParseNullableEnum')) {
      *
      * @return T|null
      */
-    function mustParseNullableEnum(mixed $value, string $enum): ?BackedEnum
+    function mustParseNullableEnum(mixed $value, string $enum): BackedEnum|null
     {
         return Typer::mustParseNullableEnum($value, $enum);
     }
 }
 
-if (! \function_exists('assertIn')) {
+if (!\function_exists('assertIn')) {
     /**
      * Assert in.
      *
@@ -1827,7 +1827,7 @@ if (! \function_exists('assertIn')) {
     }
 }
 
-if (! \function_exists('assertNotNull')) {
+if (!\function_exists('assertNotNull')) {
     /**
      * Assert not null.
      *
@@ -1837,13 +1837,13 @@ if (! \function_exists('assertNotNull')) {
      *
      * @return T
      */
-    function assertNotNull(mixed $value): string|int|float|bool|object|array
+    function assertNotNull(mixed $value): array|bool|float|int|object|string
     {
         return Typer::assertNotNull($value);
     }
 }
 
-if (! \function_exists('assertNull')) {
+if (!\function_exists('assertNull')) {
     /**
      * Assert null.
      */
@@ -1853,7 +1853,7 @@ if (! \function_exists('assertNull')) {
     }
 }
 
-if (! \function_exists('parseIntEnum')) {
+if (!\function_exists('parseIntEnum')) {
     /**
      * Parse int enum.
      *
@@ -1869,7 +1869,7 @@ if (! \function_exists('parseIntEnum')) {
     }
 }
 
-if (! \function_exists('parseNullableIntEnum')) {
+if (!\function_exists('parseNullableIntEnum')) {
     /**
      * Parse nullable int enum.
      *
@@ -1879,13 +1879,13 @@ if (! \function_exists('parseNullableIntEnum')) {
      *
      * @return T|null
      */
-    function parseNullableIntEnum(mixed $value, string $enum): ?BackedEnum
+    function parseNullableIntEnum(mixed $value, string $enum): BackedEnum|null
     {
         return Typer::parseNullableIntEnum($value, $enum);
     }
 }
 
-if (! \function_exists('mustParseIntEnum')) {
+if (!\function_exists('mustParseIntEnum')) {
     /**
      * Must parse int enum.
      *
@@ -1901,7 +1901,7 @@ if (! \function_exists('mustParseIntEnum')) {
     }
 }
 
-if (! \function_exists('mustParseNullableIntEnum')) {
+if (!\function_exists('mustParseNullableIntEnum')) {
     /**
      * Must parse nullable int enum.
      *
@@ -1911,13 +1911,13 @@ if (! \function_exists('mustParseNullableIntEnum')) {
      *
      * @return T|null
      */
-    function mustParseNullableIntEnum(mixed $value, string $enum): ?BackedEnum
+    function mustParseNullableIntEnum(mixed $value, string $enum): BackedEnum|null
     {
         return Typer::mustParseNullableIntEnum($value, $enum);
     }
 }
 
-if (! \function_exists('parseStringEnum')) {
+if (!\function_exists('parseStringEnum')) {
     /**
      * Parse string enum.
      *
@@ -1933,7 +1933,7 @@ if (! \function_exists('parseStringEnum')) {
     }
 }
 
-if (! \function_exists('parseNullableStringEnum')) {
+if (!\function_exists('parseNullableStringEnum')) {
     /**
      * Parse nullable string enum.
      *
@@ -1943,13 +1943,13 @@ if (! \function_exists('parseNullableStringEnum')) {
      *
      * @return T|null
      */
-    function parseNullableStringEnum(mixed $value, string $enum): ?BackedEnum
+    function parseNullableStringEnum(mixed $value, string $enum): BackedEnum|null
     {
         return Typer::parseNullableStringEnum($value, $enum);
     }
 }
 
-if (! \function_exists('mustParseStringEnum')) {
+if (!\function_exists('mustParseStringEnum')) {
     /**
      * Must parse string enum.
      *
@@ -1965,7 +1965,7 @@ if (! \function_exists('mustParseStringEnum')) {
     }
 }
 
-if (! \function_exists('mustParseNullableStringEnum')) {
+if (!\function_exists('mustParseNullableStringEnum')) {
     /**
      * Must parse nullable string enum.
      *
@@ -1975,7 +1975,7 @@ if (! \function_exists('mustParseNullableStringEnum')) {
      *
      * @return T|null
      */
-    function mustParseNullableStringEnum(mixed $value, string $enum): ?BackedEnum
+    function mustParseNullableStringEnum(mixed $value, string $enum): BackedEnum|null
     {
         return Typer::mustParseNullableStringEnum($value, $enum);
     }

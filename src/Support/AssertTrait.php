@@ -26,7 +26,7 @@ trait AssertTrait
     /**
      * Assert nullable string.
      */
-    public function assertNullableString(string $key): ?string
+    public function assertNullableString(string $key): string|null
     {
         $value = $this->mixed($key);
 
@@ -50,7 +50,7 @@ trait AssertTrait
     /**
      * Assert nullable bool.
      */
-    public function assertNullableBool(string $key): ?bool
+    public function assertNullableBool(string $key): bool|null
     {
         $value = $this->mixed($key);
 
@@ -74,7 +74,7 @@ trait AssertTrait
     /**
      * Assert nullable int.
      */
-    public function assertNullableInt(string $key): ?int
+    public function assertNullableInt(string $key): int|null
     {
         $value = $this->mixed($key);
 
@@ -98,7 +98,7 @@ trait AssertTrait
     /**
      * Assert nullable float.
      */
-    public function assertNullableFloat(string $key): ?float
+    public function assertNullableFloat(string $key): float|null
     {
         $value = $this->mixed($key);
 
@@ -126,7 +126,7 @@ trait AssertTrait
      *
      * @return array<mixed>|null
      */
-    public function assertNullableArray(string $key): ?array
+    public function assertNullableArray(string $key): array|null
     {
         $value = $this->mixed($key);
 
@@ -150,7 +150,7 @@ trait AssertTrait
     /**
      * Assert nullable file.
      */
-    public function assertNullableFile(string $key): ?UploadedFile
+    public function assertNullableFile(string $key): UploadedFile|null
     {
         $value = $this->mixed($key);
 
@@ -174,7 +174,7 @@ trait AssertTrait
     /**
      * Assert nullable carbon.
      */
-    public function assertNullableCarbon(string $key): ?Carbon
+    public function assertNullableCarbon(string $key): Carbon|null
     {
         $value = $this->mixed($key);
 
@@ -198,7 +198,7 @@ trait AssertTrait
     /**
      * Assert nullable object.
      */
-    public function assertNullableObject(string $key): ?object
+    public function assertNullableObject(string $key): object|null
     {
         $value = $this->mixed($key);
 
@@ -210,7 +210,7 @@ trait AssertTrait
     /**
      * Assert scalar.
      */
-    public function assertScalar(string $key): int|float|string|bool
+    public function assertScalar(string $key): bool|float|int|string
     {
         $value = $this->mixed($key);
 
@@ -222,7 +222,7 @@ trait AssertTrait
     /**
      * Assert nullable scalar.
      */
-    public function assertNullableScalar(string $key): int|float|string|bool|null
+    public function assertNullableScalar(string $key): bool|float|int|string|null
     {
         $value = $this->mixed($key);
 
@@ -258,7 +258,7 @@ trait AssertTrait
      *
      * @return T|null
      */
-    public function assertNullableEnum(string $key, string $enum): ?BackedEnum
+    public function assertNullableEnum(string $key, string $enum): BackedEnum|null
     {
         $value = $this->mixed($key);
 
@@ -296,7 +296,7 @@ trait AssertTrait
      *
      * @return T|null
      */
-    public function assertNullableInstance(string $key, string $class): ?object
+    public function assertNullableInstance(string $key, string $class): object|null
     {
         $value = $this->mixed($key);
 
@@ -336,7 +336,7 @@ trait AssertTrait
      *
      * @return class-string<T>|null
      */
-    public function assertNullableA(string $key, string $class): ?string
+    public function assertNullableA(string $key, string $class): string|null
     {
         $value = $this->mixed($key);
 
@@ -374,9 +374,9 @@ trait AssertTrait
     /**
      * Assert not null.
      *
-     * @return string|int|float|bool|object|array<mixed>
+     * @return array<mixed>|bool|float|int|object|string
      */
-    public function assertNotNull(string $key): string|int|float|bool|object|array
+    public function assertNotNull(string $key): array|bool|float|int|object|string
     {
         $value = $this->mixed($key);
 

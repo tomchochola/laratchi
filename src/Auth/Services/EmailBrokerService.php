@@ -21,9 +21,7 @@ class EmailBrokerService
     /**
      * Constructor.
      */
-    protected function __construct()
-    {
-    }
+    protected function __construct() {}
 
     /**
      * Inject.
@@ -40,7 +38,7 @@ class EmailBrokerService
     {
         $token = $this->token();
 
-        resolveCache()->set($this->cacheKey($guard, $email), $token, $this->cacheExpiration());
+        \resolveCache()->set($this->cacheKey($guard, $email), $token, $this->cacheExpiration());
 
         return $token;
     }
@@ -50,11 +48,11 @@ class EmailBrokerService
      */
     public function validate(string $guard, string $email, string $token): bool
     {
-        if (! Config::inject()->appEnvIs(['production']) && $token === '111111') {
+        if (!Config::inject()->appEnvIs(['production']) && $token === '111111') {
             return true;
         }
 
-        return resolveCache()->get($this->cacheKey($guard, $email)) === $token;
+        return $token === \resolveCache()->get($this->cacheKey($guard, $email));
     }
 
     /**
@@ -62,7 +60,7 @@ class EmailBrokerService
      */
     public function confirm(string $guard, string $email): void
     {
-        resolveCache()->set($this->cacheKey($guard, $email), true, $this->cacheExpiration());
+        \resolveCache()->set($this->cacheKey($guard, $email), true, $this->cacheExpiration());
     }
 
     /**
@@ -70,7 +68,7 @@ class EmailBrokerService
      */
     public function confirmed(string $guard, string $email): bool
     {
-        return resolveCache()->get($this->cacheKey($guard, $email)) === true;
+        return \resolveCache()->get($this->cacheKey($guard, $email)) === true;
     }
 
     /**
@@ -100,8 +98,8 @@ class EmailBrokerService
     /**
      * Token expiration in minutes.
      */
-    protected function cacheExpiration(): ?int
+    protected function cacheExpiration(): int|null
     {
-        return configInt('auth.verification.expire');
+        return \configInt('auth.verification.expire');
     }
 }

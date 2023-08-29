@@ -44,9 +44,9 @@ class Config
     /**
      * Mixed getter.
      */
-    public function mixed(?string $key = null): mixed
+    public function mixed(string|null $key = null): mixed
     {
-        if (! $this->app->bound('env')) {
+        if (!$this->app->bound('env')) {
             Panicker::panic(__METHOD__, 'env is not bound to the container', \compact('key'));
         }
 
@@ -64,11 +64,11 @@ class Config
      */
     public function assign(string $key, mixed $value): static
     {
-        if (! $this->app->bound('env')) {
+        if (!$this->app->bound('env')) {
             Panicker::panic(__METHOD__, 'env is not bound to the container', \compact('key', 'value'));
         }
 
-        if (! $this->repository->has($key)) {
+        if (!$this->repository->has($key)) {
             Panicker::panic(__METHOD__, 'undefined config key', \compact('key', 'value'));
         }
 
@@ -95,7 +95,7 @@ class Config
         $locales = [];
 
         foreach ($this->assertArray('app.locales') as $locale) {
-            $locales[] = assertString($locale);
+            $locales[] = \assertString($locale);
         }
 
         return $locales;
@@ -127,7 +127,7 @@ class Config
         $guards = [];
 
         foreach (\array_keys($this->assertArray('auth.guards')) as $guard) {
-            $guards[] = assertString($guard);
+            $guards[] = \assertString($guard);
         }
 
         return $guards;
@@ -138,7 +138,7 @@ class Config
      */
     public function appEnv(): string
     {
-        return assertString($this->app->environment());
+        return \assertString($this->app->environment());
     }
 
     /**
@@ -180,7 +180,7 @@ class Config
      */
     public function setAuthDefaultsGuard(string $guard): static
     {
-        resolveAuthManager()->shouldUse($guard);
+        \resolveAuthManager()->shouldUse($guard);
 
         return $this;
     }
@@ -211,7 +211,7 @@ class Config
         $passwords = [];
 
         foreach (\array_keys($this->assertArray('auth.passwords')) as $password) {
-            $passwords[] = assertString($password);
+            $passwords[] = \assertString($password);
         }
 
         return $passwords;
@@ -227,7 +227,7 @@ class Config
         $providers = [];
 
         foreach (\array_keys($this->assertArray('auth.providers')) as $provider) {
-            $providers[] = assertString($provider);
+            $providers[] = \assertString($provider);
         }
 
         return $providers;

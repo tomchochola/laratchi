@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation\Rules;
 
-use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Tomchochola\Laratchi\Config\Config;
 
-class PostCodeRule implements RuleContract
+class PostCodeRule implements ValidationRule
 {
     public const ISO_3166 = [
         'AFG' => 'AF',
@@ -3224,22 +3225,16 @@ class PostCodeRule implements RuleContract
     /**
      * @inheritDoc
      */
-    public function message(): string
+    public function validate(mixed $attribute, mixed $value, Closure $fail): void
     {
-        return mustTransString('validation.regex');
-    }
+        if (!\is_string($value)) {
+            $fail(\mustTransString('validation.regex'));
 
-    /**
-     * @inheritDoc
-     */
-    public function passes(mixed $attribute, mixed $value): bool
-    {
-        if (! \is_string($value)) {
-            return false;
+            return;
         }
 
         if ($this->countryCode === '') {
-            return true;
+            return;
         }
 
         if (\array_key_exists($this->countryCode, static::ISO_3166)) {
@@ -3247,27 +3242,29 @@ class PostCodeRule implements RuleContract
         } elseif (\in_array($this->countryCode, static::ISO_3166, true)) {
             $iso2 = $this->countryCode;
         } else {
-            return false;
+            $fail(\mustTransString('validation.regex'));
+
+            return;
         }
 
         if (Config::inject()->appEnvIs(['testing'])) {
-            return true;
+            return;
         }
 
         $pattern = static::$patterns[$iso2] ?? null;
 
         if ($pattern === null) {
-            return true;
+            return;
         }
 
         if (\preg_match($pattern, $value) !== 1) {
-            return false;
+            $fail(\mustTransString('validation.regex'));
+
+            return;
         }
 
-        if ($this->validateEnum && \array_key_exists($iso2, static::$enums)) {
-            return \in_array($value, static::$enums[$iso2], true);
+        if ($this->validateEnum && \array_key_exists($iso2, static::$enums) && !\in_array($value, static::$enums[$iso2], true)) {
+            $fail(\mustTransString('validation.regex'));
         }
-
-        return true;
     }
 }

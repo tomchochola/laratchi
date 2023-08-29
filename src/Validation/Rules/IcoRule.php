@@ -4,54 +4,53 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation\Rules;
 
-use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Tomchochola\Laratchi\Config\Config;
 
-class IcoRule implements RuleContract
+class IcoRule implements ValidationRule
 {
     /**
      * Create a new rule instance.
      */
-    public function __construct(protected bool $validateAres = true, protected ?int $cacheDuration = 86400)
-    {
-    }
+    public function __construct(protected bool $validateAres = true, protected int|null $cacheDuration = 86400) {}
 
     /**
      * @inheritDoc
      */
-    public function passes(mixed $attribute, mixed $value): bool
+    public function validate(mixed $attribute, mixed $value, Closure $fail): void
     {
-        if (! \is_string($value)) {
-            return false;
+        if (!\is_string($value)) {
+            $fail(\mustTransString('validation.regex'));
+
+            return;
         }
 
         if (Config::inject()->appEnvIs(['testing'])) {
-            return true;
+            return;
         }
 
         if (\preg_match('/^\\d{8}$/', $value) !== 1) {
-            return false;
+            $fail(\mustTransString('validation.regex'));
+
+            return;
         }
 
-        if (! $this->validateChecksum($value)) {
-            return false;
+        if (!$this->validateChecksum($value)) {
+            $fail(\mustTransString('validation.regex'));
+
+            return;
         }
 
-        if (! $this->validateAres) {
-            return true;
+        if (!$this->validateAres) {
+            return;
         }
 
-        return $this->validateAres($value);
-    }
+        if ($this->validateAres($value)) {
+            return;
+        }
 
-    /**
-     * @inheritDoc
-     *
-     * @return string|array<int, string>
-     */
-    public function message(): string|array
-    {
-        return mustTransString('validation.regex');
+        $fail(\mustTransString('validation.regex'));
     }
 
     /**
@@ -75,7 +74,7 @@ class IcoRule implements RuleContract
             $controll = 11 - $cheksum;
         }
 
-        return (int) $value[7] === $controll;
+        return $controll === (int) $value[7];
     }
 
     /**
@@ -83,9 +82,9 @@ class IcoRule implements RuleContract
      */
     protected function validateAres(string $value): bool
     {
-        $cache = resolveCacheManager()
+        $cache = \resolveCacheManager()
             ->getStore()
-            ->get(static::class.':'.$value);
+            ->get(static::class . ':' . $value);
 
         if (\is_bool($cache)) {
             return $cache;
@@ -93,14 +92,14 @@ class IcoRule implements RuleContract
 
         $response = \file_get_contents("https://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi?ico={$value}");
 
-        if (! \is_string($response)) {
-            assertNever('ares not responding');
+        if (!\is_string($response)) {
+            \assertNever('ares not responding');
         }
 
         $passes = \str_contains($response, 'Shoda_ICO');
 
         if ($this->cacheDuration !== null) {
-            resolveCacheManager()->put(static::class.':'.$value, $passes, $this->cacheDuration);
+            \resolveCacheManager()->put(static::class . ':' . $value, $passes, $this->cacheDuration);
         }
 
         return $passes;

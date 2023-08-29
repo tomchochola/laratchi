@@ -31,7 +31,7 @@ class Trans
      *
      * @param array<string, string> $replace
      */
-    public function assertString(string $key, array $replace = [], ?string $locale = null, bool $fallback = false): string
+    public function assertString(string $key, array $replace = [], string|null $locale = null, bool $fallback = false): string
     {
         \assert($this->translator->has($key, $locale, $fallback), Panicker::message(__METHOD__, 'translation must exists', \compact('key', 'locale', 'fallback')));
 
@@ -49,7 +49,7 @@ class Trans
      *
      * @return array<string>
      */
-    public function assertArray(string $key, array $replace = [], ?string $locale = null, bool $fallback = false): array
+    public function assertArray(string $key, array $replace = [], string|null $locale = null, bool $fallback = false): array
     {
         \assert($this->translator->has($key, $locale, $fallback), Panicker::message(__METHOD__, 'translation must exists', \compact('key', 'locale', 'fallback')));
 

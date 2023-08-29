@@ -32,7 +32,7 @@ class PasswordForgotController extends TransactionController
      */
     protected function response(PasswordForgotRequest $request, User $me): SymfonyResponse
     {
-        return resolveResponseFactory()->noContent(202);
+        return \resolveResponseFactory()->noContent(202);
     }
 
     /**
@@ -40,7 +40,7 @@ class PasswordForgotController extends TransactionController
      */
     protected function send(PasswordForgotRequest $request, User $me): void
     {
-        $me->sendPasswordResetNotification(resolvePasswordBroker()->createToken($me));
+        $me->sendPasswordResetNotification(\resolvePasswordBroker()->createToken($me));
     }
 
     /**
@@ -52,9 +52,9 @@ class PasswordForgotController extends TransactionController
 
         [$hit] = $this->throttle($this->limit('credentials'), $this->onThrottle($request, \array_keys($credentials), 'auth.throttle'));
 
-        $me = resolveUserProvider()->retrieveByCredentials($credentials);
+        $me = \resolveUserProvider()->retrieveByCredentials($credentials);
 
-        if (! $me instanceof User) {
+        if (!$me instanceof User) {
             $hit();
             $request->throwSingleValidationException(\array_keys($credentials), 'auth.failed');
         }
@@ -72,7 +72,7 @@ class PasswordForgotController extends TransactionController
     protected function validateToken(PasswordForgotRequest $request, User $me): void
     {
         if (
-            resolvePasswordBroker()
+            \resolvePasswordBroker()
                 ->getRepository()
                 ->recentlyCreatedToken($me)
         ) {

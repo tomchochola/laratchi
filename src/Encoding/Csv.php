@@ -12,7 +12,7 @@ class Csv
     public static function value(mixed $value): string
     {
         if (\is_string($value)) {
-            return '"'.\str_replace('"', '""', $value).'"';
+            return '"' . \str_replace('"', '""', $value) . '"';
         }
 
         if (\is_bool($value)) {
@@ -23,7 +23,7 @@ class Csv
             return '';
         }
 
-        return (string) assertScalar($value);
+        return (string) \assertScalar($value);
     }
 
     /**

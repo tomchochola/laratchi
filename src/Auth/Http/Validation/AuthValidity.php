@@ -20,14 +20,12 @@ class AuthValidity
      *
      * @var ?array<int, string>
      */
-    public static ?array $allowedLocales = null;
+    public static array|null $allowedLocales = null;
 
     /**
      * Constructor.
      */
-    protected function __construct()
-    {
-    }
+    protected function __construct() {}
 
     /**
      * Inject.
@@ -94,7 +92,7 @@ class AuthValidity
      */
     public function locale(): Validity
     {
-        return Validity::make()->inString(static::$allowedLocales ?? mustConfigArray('app.locales'));
+        return Validity::make()->inString(static::$allowedLocales ?? \mustConfigArray('app.locales'));
     }
 
     /**

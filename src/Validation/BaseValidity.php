@@ -153,7 +153,7 @@ class BaseValidity
         bool $signed = false,
         bool $cursor = false,
         bool $page = false,
-        int|bool $take = false,
+        bool|int $take = false,
         bool $filter = false,
         bool $id = false,
         bool $slug = false,

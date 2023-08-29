@@ -21,7 +21,7 @@ class DatabaseToken extends Model
     /**
      * Plain text bearer.
      */
-    public ?string $bearer = null;
+    public string|null $bearer = null;
 
     /**
      * @inheritDoc
@@ -39,9 +39,9 @@ class DatabaseToken extends Model
     /**
      * Find database token matching given bearer.
      */
-    public function findByBearer(string $bearer): ?static
+    public function findByBearer(string $bearer): static|null
     {
-        if (! \str_contains($bearer, '|')) {
+        if (!\str_contains($bearer, '|')) {
             return null;
         }
 
@@ -59,7 +59,7 @@ class DatabaseToken extends Model
             return null;
         }
 
-        if (! \hash_equals($instance->mustString('hash'), \hash('sha256', $token))) {
+        if (!\hash_equals($instance->mustString('hash'), \hash('sha256', $token))) {
             return null;
         }
 
@@ -88,15 +88,15 @@ class DatabaseToken extends Model
     /**
      * Get user.
      */
-    public function user(string $guardName): ?User
+    public function user(string $guardName): User|null
     {
-        return assertNullableInstance($this->relationship($guardName, null)->getResults(), User::class);
+        return \assertNullableInstance($this->relationship($guardName, null)->getResults(), User::class);
     }
 
     /**
      * Relationship.
      */
-    protected function relationship(string $guardName, ?User $user): BelongsTo
+    protected function relationship(string $guardName, User|null $user): BelongsTo
     {
         $instance = new (Config::inject()->assertA("auth.providers.{$guardName}.model", User::class))();
 

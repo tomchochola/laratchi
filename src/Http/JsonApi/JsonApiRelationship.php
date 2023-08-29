@@ -15,20 +15,18 @@ class JsonApiRelationship
      * @template T
      * @template B
      *
-     * @param T|Collection<array-key, T>|null $resource
+     * @param Collection<array-key, T>|T|null $resource
      * @param Closure(B): JsonApiResource $closureMap
      * @param ?Closure(): array<string, mixed> $closureMeta
      */
-    public function __construct(public mixed $resource, public Closure $closureMap, public ?Closure $closureMeta = null)
-    {
-    }
+    public function __construct(public mixed $resource, public Closure $closureMap, public Closure|null $closureMeta = null) {}
 
     /**
      * Get meta.
      *
      * @return ?array<string, mixed>
      */
-    public function meta(): ?array
+    public function meta(): array|null
     {
         if ($this->closureMeta === null) {
             return null;

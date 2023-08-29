@@ -13,7 +13,7 @@ class RegisterRequest extends SecureFormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): Response|bool
+    public function authorize(): bool|Response
     {
         $this->mustGuest();
 
@@ -56,7 +56,7 @@ class RegisterRequest extends SecureFormRequest
 
         return $this->validatedInput()
             ->merge([
-                'password' => $password === null ? null : resolveHasher()->make($password),
+                'password' => $password === null ? null : \resolveHasher()->make($password),
                 'email_verified_at' => null,
                 'remember_token' => null,
             ])

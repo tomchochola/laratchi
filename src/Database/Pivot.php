@@ -25,11 +25,11 @@ class Pivot extends IlluminatePivot
      */
     public function delete(): int
     {
-        assertNeverIfNot($this->exists, 'model not exists');
+        \assertNeverIfNot($this->exists, 'model not exists');
 
         $ok = parent::delete();
 
-        assertNeverIfNot($ok === 1, 'model not deleted correctly');
+        \assertNeverIfNot($ok === 1, 'model not deleted correctly');
 
         return $ok;
     }

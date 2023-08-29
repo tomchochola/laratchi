@@ -108,7 +108,7 @@ class Resolver
      */
     public static function resolveConsoleKernel(): ConsoleKernel
     {
-        return assertInstance(ArtisanFacade::getFacadeRoot(), ConsoleKernel::class);
+        return \assertInstance(ArtisanFacade::getFacadeRoot(), ConsoleKernel::class);
     }
 
     /**
@@ -116,7 +116,7 @@ class Resolver
      */
     public static function resolveAuthManager(): AuthManager
     {
-        return assertInstance(AuthFacade::getFacadeRoot(), AuthManager::class);
+        return \assertInstance(AuthFacade::getFacadeRoot(), AuthManager::class);
     }
 
     /**
@@ -124,7 +124,7 @@ class Resolver
      */
     public static function resolveBladeCompiler(): BladeCompiler
     {
-        return assertInstance(BladeFacade::getFacadeRoot(), BladeCompiler::class);
+        return \assertInstance(BladeFacade::getFacadeRoot(), BladeCompiler::class);
     }
 
     /**
@@ -132,7 +132,7 @@ class Resolver
      */
     public static function resolveBroadcastManager(): BroadcastManager
     {
-        return assertInstance(BroadcastFacade::getFacadeRoot(), BroadcastManager::class);
+        return \assertInstance(BroadcastFacade::getFacadeRoot(), BroadcastManager::class);
     }
 
     /**
@@ -140,7 +140,7 @@ class Resolver
      */
     public static function resolveQueueingDispatcher(): QueueingDispatcherContract
     {
-        return assertInstance(BusFacade::getFacadeRoot(), QueueingDispatcherContract::class);
+        return \assertInstance(BusFacade::getFacadeRoot(), QueueingDispatcherContract::class);
     }
 
     /**
@@ -148,7 +148,7 @@ class Resolver
      */
     public static function resolveCacheManager(): CacheManager
     {
-        return assertInstance(CacheFacade::getFacadeRoot(), CacheManager::class);
+        return \assertInstance(CacheFacade::getFacadeRoot(), CacheManager::class);
     }
 
     /**
@@ -156,7 +156,7 @@ class Resolver
      */
     public static function resolveConfigRepository(): ConfigRepository
     {
-        return assertInstance(ConfigFacade::getFacadeRoot(), ConfigRepository::class);
+        return \assertInstance(ConfigFacade::getFacadeRoot(), ConfigRepository::class);
     }
 
     /**
@@ -164,7 +164,7 @@ class Resolver
      */
     public static function resolveCookieJar(): CookieJar
     {
-        return assertInstance(CookieFacade::getFacadeRoot(), CookieJar::class);
+        return \assertInstance(CookieFacade::getFacadeRoot(), CookieJar::class);
     }
 
     /**
@@ -172,7 +172,7 @@ class Resolver
      */
     public static function resolveEncrypter(): Encrypter
     {
-        return assertInstance(CryptFacade::getFacadeRoot(), Encrypter::class);
+        return \assertInstance(CryptFacade::getFacadeRoot(), Encrypter::class);
     }
 
     /**
@@ -180,7 +180,7 @@ class Resolver
      */
     public static function resolveDateFactory(): DateFactory
     {
-        return assertInstance(DateFacade::getFacadeRoot(), DateFactory::class);
+        return \assertInstance(DateFacade::getFacadeRoot(), DateFactory::class);
     }
 
     /**
@@ -188,7 +188,7 @@ class Resolver
      */
     public static function resolveDatabaseManager(): DatabaseManager
     {
-        return assertInstance(DBFacade::getFacadeRoot(), DatabaseManager::class);
+        return \assertInstance(DBFacade::getFacadeRoot(), DatabaseManager::class);
     }
 
     /**
@@ -196,7 +196,7 @@ class Resolver
      */
     public static function resolveEventDispatcher(): EventDispatcherContract
     {
-        return assertInstance(EventFacade::getFacadeRoot(), EventDispatcherContract::class);
+        return \assertInstance(EventFacade::getFacadeRoot(), EventDispatcherContract::class);
     }
 
     /**
@@ -204,7 +204,7 @@ class Resolver
      */
     public static function resolveFilesystem(): Filesystem
     {
-        return assertInstance(FileFacade::getFacadeRoot(), Filesystem::class);
+        return \assertInstance(FileFacade::getFacadeRoot(), Filesystem::class);
     }
 
     /**
@@ -212,7 +212,7 @@ class Resolver
      */
     public static function resolveGate(): Gate
     {
-        return assertInstance(GateFacade::getFacadeRoot(), Gate::class);
+        return \assertInstance(GateFacade::getFacadeRoot(), Gate::class);
     }
 
     /**
@@ -220,7 +220,7 @@ class Resolver
      */
     public static function resolveHashManager(): HashManager
     {
-        return assertInstance(HashFacade::getFacadeRoot(), HashManager::class);
+        return \assertInstance(HashFacade::getFacadeRoot(), HashManager::class);
     }
 
     /**
@@ -228,7 +228,7 @@ class Resolver
      */
     public static function resolveHttpClientFactory(): HttpClientFactory
     {
-        return assertInstance(HttpFacade::getFacadeRoot(), HttpClientFactory::class);
+        return \assertInstance(HttpFacade::getFacadeRoot(), HttpClientFactory::class);
     }
 
     /**
@@ -236,7 +236,7 @@ class Resolver
      */
     public static function resolveTranslator(): Translator
     {
-        return assertInstance(LangFacade::getFacadeRoot(), Translator::class);
+        return \assertInstance(LangFacade::getFacadeRoot(), Translator::class);
     }
 
     /**
@@ -244,7 +244,7 @@ class Resolver
      */
     public static function resolveLogManager(): LogManager
     {
-        return assertInstance(LogFacade::getFacadeRoot(), LogManager::class);
+        return \assertInstance(LogFacade::getFacadeRoot(), LogManager::class);
     }
 
     /**
@@ -252,7 +252,7 @@ class Resolver
      */
     public static function resolveMailFactory(): MailFactoryContract
     {
-        return assertInstance(MailFacade::getFacadeRoot(), MailFactoryContract::class);
+        return \assertInstance(MailFacade::getFacadeRoot(), MailFactoryContract::class);
     }
 
     /**
@@ -260,7 +260,7 @@ class Resolver
      */
     public static function resolveNotificationFactory(): NotificationFactoryContract
     {
-        return assertInstance(NotificationFacade::getFacadeRoot(), NotificationFactoryContract::class);
+        return \assertInstance(NotificationFacade::getFacadeRoot(), NotificationFactoryContract::class);
     }
 
     /**
@@ -268,7 +268,7 @@ class Resolver
      */
     public static function resolveParallelTesting(): ParallelTesting
     {
-        return assertInstance(ParallelTestingFacade::getFacadeRoot(), ParallelTesting::class);
+        return \assertInstance(ParallelTestingFacade::getFacadeRoot(), ParallelTesting::class);
     }
 
     /**
@@ -276,7 +276,7 @@ class Resolver
      */
     public static function resolvePasswordBrokerManager(): PasswordBrokerManager
     {
-        return assertInstance(PasswordFacade::getFacadeRoot(), PasswordBrokerManager::class);
+        return \assertInstance(PasswordFacade::getFacadeRoot(), PasswordBrokerManager::class);
     }
 
     /**
@@ -284,7 +284,7 @@ class Resolver
      */
     public static function resolveQueueManager(): QueueManager
     {
-        return assertInstance(QueueFacade::getFacadeRoot(), QueueManager::class);
+        return \assertInstance(QueueFacade::getFacadeRoot(), QueueManager::class);
     }
 
     /**
@@ -292,7 +292,7 @@ class Resolver
      */
     public static function resolveRateLimiter(): RateLimiter
     {
-        return assertInstance(RateLimiterFacade::getFacadeRoot(), RateLimiter::class);
+        return \assertInstance(RateLimiterFacade::getFacadeRoot(), RateLimiter::class);
     }
 
     /**
@@ -300,7 +300,7 @@ class Resolver
      */
     public static function resolveRedirector(): Redirector
     {
-        return assertInstance(RedirectFacade::getFacadeRoot(), Redirector::class);
+        return \assertInstance(RedirectFacade::getFacadeRoot(), Redirector::class);
     }
 
     /**
@@ -308,7 +308,7 @@ class Resolver
      */
     public static function resolveRedisManager(): RedisManager
     {
-        return assertInstance(RedisFacade::getFacadeRoot(), RedisManager::class);
+        return \assertInstance(RedisFacade::getFacadeRoot(), RedisManager::class);
     }
 
     /**
@@ -316,7 +316,7 @@ class Resolver
      */
     public static function resolveRequest(): Request
     {
-        return assertInstance(RequestFacade::getFacadeRoot(), Request::class);
+        return \assertInstance(RequestFacade::getFacadeRoot(), Request::class);
     }
 
     /**
@@ -324,7 +324,7 @@ class Resolver
      */
     public static function resolveResponseFactory(): ResponseFactory
     {
-        return assertInstance(ResponseFacade::getFacadeRoot(), ResponseFactory::class);
+        return \assertInstance(ResponseFacade::getFacadeRoot(), ResponseFactory::class);
     }
 
     /**
@@ -332,7 +332,7 @@ class Resolver
      */
     public static function resolveRouter(): Router
     {
-        return assertInstance(RouteFacade::getFacadeRoot(), Router::class);
+        return \assertInstance(RouteFacade::getFacadeRoot(), Router::class);
     }
 
     /**
@@ -340,7 +340,7 @@ class Resolver
      */
     public static function resolveSchemaBuilder(): SchemaBuilder
     {
-        return assertInstance(SchemaFacade::getFacadeRoot(), SchemaBuilder::class);
+        return \assertInstance(SchemaFacade::getFacadeRoot(), SchemaBuilder::class);
     }
 
     /**
@@ -348,7 +348,7 @@ class Resolver
      */
     public static function resolveSessionManager(): SessionManager
     {
-        return assertInstance(SessionFacade::getFacadeRoot(), SessionManager::class);
+        return \assertInstance(SessionFacade::getFacadeRoot(), SessionManager::class);
     }
 
     /**
@@ -356,7 +356,7 @@ class Resolver
      */
     public static function resolveFilesystemManager(): FilesystemManager
     {
-        return assertInstance(StorageFacade::getFacadeRoot(), FilesystemManager::class);
+        return \assertInstance(StorageFacade::getFacadeRoot(), FilesystemManager::class);
     }
 
     /**
@@ -364,7 +364,7 @@ class Resolver
      */
     public static function resolveUrlGenerator(): UrlGenerator
     {
-        return assertInstance(URLFacade::getFacadeRoot(), UrlGenerator::class);
+        return \assertInstance(URLFacade::getFacadeRoot(), UrlGenerator::class);
     }
 
     /**
@@ -372,7 +372,7 @@ class Resolver
      */
     public static function resolveValidatorFactory(): ValidationFactory
     {
-        return assertInstance(ValidatorFacade::getFacadeRoot(), ValidationFactory::class);
+        return \assertInstance(ValidatorFacade::getFacadeRoot(), ValidationFactory::class);
     }
 
     /**
@@ -380,7 +380,7 @@ class Resolver
      */
     public static function resolveViewFactory(): ViewFactory
     {
-        return assertInstance(ViewFacade::getFacadeRoot(), ViewFactory::class);
+        return \assertInstance(ViewFacade::getFacadeRoot(), ViewFactory::class);
     }
 
     /**
@@ -419,7 +419,7 @@ class Resolver
      */
     public static function make(string $abstract, string $class, array $parameters = []): object
     {
-        return assertInstance(static::resolveApp()->make($abstract, $parameters), $class);
+        return \assertInstance(static::resolveApp()->make($abstract, $parameters), $class);
     }
 
     /**
@@ -434,7 +434,7 @@ class Resolver
      */
     public static function resolve(string $class, array $parameters = []): object
     {
-        return assertInstance(static::resolveApp()->make($class, $parameters), $class);
+        return \assertInstance(static::resolveApp()->make($class, $parameters), $class);
     }
 
     /**
@@ -448,9 +448,9 @@ class Resolver
     /**
      * Resolve session store.
      */
-    public static function resolveSessionStore(?string $driver = null): SessionStore
+    public static function resolveSessionStore(string|null $driver = null): SessionStore
     {
-        return assertInstance(static::resolveSessionManager()->driver($driver), SessionStore::class);
+        return \assertInstance(static::resolveSessionManager()->driver($driver), SessionStore::class);
     }
 
     /**
@@ -464,41 +464,41 @@ class Resolver
     /**
      * Resolve hasher.
      */
-    public static function resolveHasher(?string $driver = null): HasherContract
+    public static function resolveHasher(string|null $driver = null): HasherContract
     {
-        return assertInstance(static::resolveHashManager()->driver($driver), HasherContract::class);
+        return \assertInstance(static::resolveHashManager()->driver($driver), HasherContract::class);
     }
 
     /**
      * Resolve database token guard.
      */
-    public static function resolveDatabaseTokenGuard(?string $name = null): DatabaseTokenGuard
+    public static function resolveDatabaseTokenGuard(string|null $name = null): DatabaseTokenGuard
     {
-        return assertInstance(static::resolveAuthManager()->guard($name), DatabaseTokenGuard::class);
+        return \assertInstance(static::resolveAuthManager()->guard($name), DatabaseTokenGuard::class);
     }
 
     /**
      * Resolve eloquent user provider.
      */
-    public static function resolveEloquentUserProvider(?string $name = null): EloquentUserProvider
+    public static function resolveEloquentUserProvider(string|null $name = null): EloquentUserProvider
     {
-        return assertInstance(static::resolveAuthManager()->createUserProvider($name), EloquentUserProvider::class);
+        return \assertInstance(static::resolveAuthManager()->createUserProvider($name), EloquentUserProvider::class);
     }
 
     /**
      * Resolve password broker.
      */
-    public static function resolvePasswordBroker(?string $name = null): PasswordBroker
+    public static function resolvePasswordBroker(string|null $name = null): PasswordBroker
     {
-        return assertInstance(static::resolvePasswordBrokerManager()->broker($name), PasswordBroker::class);
+        return \assertInstance(static::resolvePasswordBrokerManager()->broker($name), PasswordBroker::class);
     }
 
     /**
      * Resolve database token repository.
      */
-    public static function resolveDatabaseTokenRepository(?string $name = null): DatabaseTokenRepository
+    public static function resolveDatabaseTokenRepository(string|null $name = null): DatabaseTokenRepository
     {
-        return assertInstance(static::resolvePasswordBroker($name)->getRepository(), DatabaseTokenRepository::class);
+        return \assertInstance(static::resolvePasswordBroker($name)->getRepository(), DatabaseTokenRepository::class);
     }
 
     /**
@@ -514,7 +514,7 @@ class Resolver
      */
     public static function resolveRoute(): Route
     {
-        return assertInstance(static::resolveRouter()->current(), Route::class);
+        return \assertInstance(static::resolveRouter()->current(), Route::class);
     }
 
     /**

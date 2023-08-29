@@ -11,7 +11,7 @@ class Facade extends IlluminateFacade
     /**
      * Get resolved instance.
      */
-    public static function getResolved(string $abstract): ?object
+    public static function getResolved(string $abstract): object|null
     {
         return static::$resolvedInstance[$abstract] ?? null;
     }

@@ -32,9 +32,9 @@ class Throttler
     /**
      * Default constructor.
      *
-     * @param Closure(int): Response|Closure(int): never|Closure(): Response|Closure(): never|null $responseCallback
+     * @param Closure(): never|Closure(): Response|Closure(int): never|Closure(int): Response|null $responseCallback
      */
-    public static function default(string $key = '', int $maxAttempts = 3, int $decayMinutes = 60, ?Closure $responseCallback = null): self
+    public static function default(string $key = '', int $maxAttempts = 3, int $decayMinutes = 60, Closure|null $responseCallback = null): self
     {
         return new self(Limit::default($key, $maxAttempts, $decayMinutes, $responseCallback));
     }
@@ -44,17 +44,17 @@ class Throttler
      */
     public function hash(): string
     {
-        return static::class.':'.Hash::encode([$this->limit->key]);
+        return static::class . ':' . Hash::encode([$this->limit->key]);
     }
 
     /**
      * Throttle.
      *
-     * @param Closure(int): never|Closure(int): Response|Closure(): never|Closure(): Response|null $callback
+     * @param Closure(): never|Closure(): Response|Closure(int): never|Closure(int): Response|null $callback
      *
      * @return $this
      */
-    public function throttle(?Closure $callback = null): static
+    public function throttle(Closure|null $callback = null): static
     {
         if ($this->failed()) {
             $this->throw($callback);
@@ -67,11 +67,11 @@ class Throttler
      * Throttle given callback.
      *
      * @param Closure($this): void|Closure(): void $closure
-     * @param Closure(int): never|Closure(int): Response|Closure(): never|Closure(): Response|null $onError
+     * @param Closure(): never|Closure(): Response|Closure(int): never|Closure(int): Response|null $onError
      *
      * @return $this
      */
-    public function callback(Closure $closure, ?Closure $onError = null): static
+    public function callback(Closure $closure, Closure|null $onError = null): static
     {
         $this->throttle($onError);
 
@@ -89,9 +89,9 @@ class Throttler
     /**
      * Throw exception.
      *
-     * @param Closure(int): never|Closure(int): Response|Closure(): never|Closure(): Response|null $callback
+     * @param Closure(): never|Closure(): Response|Closure(int): never|Closure(int): Response|null $callback
      */
-    public function throw(?Closure $callback = null): never
+    public function throw(Closure|null $callback = null): never
     {
         if ($callback !== null) {
             throw new HttpResponseException($callback($this->availableIn()));

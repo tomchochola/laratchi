@@ -34,7 +34,7 @@ class TestMailCommand extends Command
 
         $target = (new AnonymousNotifiable())->route('mail', $mail);
 
-        resolveNotificator()->sendNow($target, new TestNotification());
+        \resolveNotificator()->sendNow($target, new TestNotification());
 
         $this->info("Test notification sent to: [{$mail}].");
 

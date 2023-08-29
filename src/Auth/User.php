@@ -46,9 +46,9 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
     /**
      * User auth or null.
      */
-    public static function auth(): ?static
+    public static function auth(): static|null
     {
-        $me = resolveAuthManager()
+        $me = \resolveAuthManager()
             ->guard()
             ->user();
 
@@ -78,7 +78,7 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
      */
     public static function guest(): bool
     {
-        return resolveAuthManager()
+        return \resolveAuthManager()
             ->guard()
             ->guest();
     }

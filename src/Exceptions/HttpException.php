@@ -16,7 +16,7 @@ class HttpException extends SymfonyHttpException implements GetDataInterface
      * @param array<mixed> $headers
      * @param array<mixed> $data
      */
-    public function __construct(int $statusCode, string $message = '', ?Throwable $previous = null, array $headers = [], int $code = 0, public array $data = [])
+    public function __construct(int $statusCode, string $message = '', Throwable|null $previous = null, array $headers = [], int $code = 0, public array $data = [])
     {
         parent::__construct($statusCode, $message, $previous, $headers, $code);
     }

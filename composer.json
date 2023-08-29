@@ -5,7 +5,8 @@
   "type": "library",
   "keywords": [
     "tomchochola",
-    "laratchi"
+    "laratchi",
+    "laravel"
   ],
   "authors": [
     {
@@ -14,18 +15,17 @@
     }
   ],
   "require": {
-    "php": "^8.1",
-    "laravel/framework": "^9.45",
-    "league/iso3166": "^4.1",
+    "php": "^8.2",
+    "laravel/framework": "^10.20",
     "redeyeventures/geopattern": "^1.1",
     "spatie/once": "^3.1"
   },
   "require-dev": {
-    "composer/composer": "^2.0",
-    "fakerphp/faker": "^1.9.1",
-    "phpunit/phpunit": "^9.5.10"
+    "composer/composer": "^2.5",
+    "fakerphp/faker": "^1.23",
+    "phpunit/phpunit": "^10.3"
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true,
   "autoload": {
     "psr-4": {
@@ -36,11 +36,12 @@
     ]
   },
   "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
     "sort-packages": true
   },
   "extra": {
     "laravel": {
-      "dont-discover": [],
       "providers": [
         "Tomchochola\\Laratchi\\Support\\ServiceProvider"
       ]

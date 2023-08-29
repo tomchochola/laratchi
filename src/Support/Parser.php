@@ -76,7 +76,7 @@ class Parser extends ValidatedInput
     /**
      * Mixed getter.
      */
-    public function mixed(?string $key = null): mixed
+    public function mixed(string|null $key = null): mixed
     {
         if ($key === null) {
             return $this->input;

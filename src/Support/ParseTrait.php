@@ -25,7 +25,7 @@ trait ParseTrait
     /**
      * Parse nullable string.
      */
-    public function parseNullableString(string $key): ?string
+    public function parseNullableString(string $key): string|null
     {
         $value = $this->mixed($key);
 
@@ -57,7 +57,7 @@ trait ParseTrait
     /**
      * Must parse nullable string.
      */
-    public function mustParseNullableString(string $key): ?string
+    public function mustParseNullableString(string $key): string|null
     {
         $value = $this->mixed($key);
 
@@ -83,7 +83,7 @@ trait ParseTrait
     /**
      * Parse nullable bool.
      */
-    public function parseNullableBool(string $key): ?bool
+    public function parseNullableBool(string $key): bool|null
     {
         $value = $this->mixed($key);
 
@@ -109,7 +109,7 @@ trait ParseTrait
     /**
      * Must parse nullable bool.
      */
-    public function mustParseNullableBool(string $key): ?bool
+    public function mustParseNullableBool(string $key): bool|null
     {
         $value = $this->mixed($key);
 
@@ -135,7 +135,7 @@ trait ParseTrait
     /**
      * Parse nullable int.
      */
-    public function parseNullableInt(string $key): ?int
+    public function parseNullableInt(string $key): int|null
     {
         $value = $this->mixed($key);
 
@@ -167,7 +167,7 @@ trait ParseTrait
     /**
      * Must parse nullable int.
      */
-    public function mustParseNullableInt(string $key): ?int
+    public function mustParseNullableInt(string $key): int|null
     {
         $value = $this->mixed($key);
 
@@ -193,7 +193,7 @@ trait ParseTrait
     /**
      * Parse nullable float.
      */
-    public function parseNullableFloat(string $key): ?float
+    public function parseNullableFloat(string $key): float|null
     {
         $value = $this->mixed($key);
 
@@ -225,7 +225,7 @@ trait ParseTrait
     /**
      * Must parse nullable float.
      */
-    public function mustParseNullableFloat(string $key): ?float
+    public function mustParseNullableFloat(string $key): float|null
     {
         $value = $this->mixed($key);
 
@@ -255,7 +255,7 @@ trait ParseTrait
      *
      * @return array<mixed>|null
      */
-    public function parseNullableArray(string $key): ?array
+    public function parseNullableArray(string $key): array|null
     {
         $value = $this->mixed($key);
 
@@ -289,7 +289,7 @@ trait ParseTrait
      *
      * @return array<mixed>|null
      */
-    public function mustParseNullableArray(string $key): ?array
+    public function mustParseNullableArray(string $key): array|null
     {
         $value = $this->mixed($key);
 
@@ -307,13 +307,13 @@ trait ParseTrait
      */
     public function parseFile(string $key): UploadedFile
     {
-        return $this->parseNullableFile($key) ?? UploadedFile::createFromBase(UploadedFile::fake()->create(assertString(\tempnam(\sys_get_temp_dir(), 'php'))));
+        return $this->parseNullableFile($key) ?? UploadedFile::createFromBase(UploadedFile::fake()->create(\assertString(\tempnam(\sys_get_temp_dir(), 'php'))));
     }
 
     /**
      * Parse nullable file.
      */
-    public function parseNullableFile(string $key): ?UploadedFile
+    public function parseNullableFile(string $key): UploadedFile|null
     {
         $value = $this->mixed($key);
 
@@ -339,7 +339,7 @@ trait ParseTrait
     /**
      * Must parse nullable file.
      */
-    public function mustParseNullableFile(string $key): ?UploadedFile
+    public function mustParseNullableFile(string $key): UploadedFile|null
     {
         $value = $this->mixed($key);
 
@@ -351,15 +351,15 @@ trait ParseTrait
     /**
      * Parse carbon.
      */
-    public function parseCarbon(string $key, ?string $format = null, ?string $tz = null): Carbon
+    public function parseCarbon(string $key, string|null $format = null, string|null $tz = null): Carbon
     {
-        return $this->parseNullableCarbon($key, $format, $tz) ?? resolveNow();
+        return $this->parseNullableCarbon($key, $format, $tz) ?? \resolveNow();
     }
 
     /**
      * Parse nullable carbon.
      */
-    public function parseNullableCarbon(string $key, ?string $format = null, ?string $tz = null): ?Carbon
+    public function parseNullableCarbon(string $key, string|null $format = null, string|null $tz = null): Carbon|null
     {
         $value = $this->mixed($key);
 
@@ -374,12 +374,12 @@ trait ParseTrait
         }
 
         if ($format === null) {
-            return resolveDate()
+            return \resolveDate()
                 ->parse($value, $tz)
                 ->setTimezone(Config::inject()->appTimezone());
         }
 
-        $value = resolveDate()->createFromFormat($format, $value, $tz);
+        $value = \resolveDate()->createFromFormat($format, $value, $tz);
 
         if ($value === false) {
             return null;
@@ -391,7 +391,7 @@ trait ParseTrait
     /**
      * Must parse carbon.
      */
-    public function mustParseCarbon(string $key, ?string $format = null, ?string $tz = null): Carbon
+    public function mustParseCarbon(string $key, string|null $format = null, string|null $tz = null): Carbon
     {
         $value = $this->mustParseNullableCarbon($key, $format, $tz);
 
@@ -403,7 +403,7 @@ trait ParseTrait
     /**
      * Must parse nullable carbon.
      */
-    public function mustParseNullableCarbon(string $key, ?string $format = null, ?string $tz = null): ?Carbon
+    public function mustParseNullableCarbon(string $key, string|null $format = null, string|null $tz = null): Carbon|null
     {
         $value = $this->mixed($key);
 
@@ -416,12 +416,12 @@ trait ParseTrait
         \assert($value !== false && $value !== '', Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         if ($format === null) {
-            return resolveDate()
+            return \resolveDate()
                 ->parse($value, $tz)
                 ->setTimezone(Config::inject()->appTimezone());
         }
 
-        $value = resolveDate()->createFromFormat($format, $value, $tz);
+        $value = \resolveDate()->createFromFormat($format, $value, $tz);
 
         \assert($value !== false, Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
@@ -439,7 +439,7 @@ trait ParseTrait
     /**
      * Parse nullable object.
      */
-    public function parseNullableObject(string $key): ?object
+    public function parseNullableObject(string $key): object|null
     {
         $value = $this->mixed($key);
 
@@ -469,7 +469,7 @@ trait ParseTrait
     /**
      * Must parse nullable object.
      */
-    public function mustParseNullableObject(string $key): ?object
+    public function mustParseNullableObject(string $key): object|null
     {
         $value = $this->mixed($key);
 
@@ -485,7 +485,7 @@ trait ParseTrait
     /**
      * Parse scalar.
      */
-    public function parseScalar(string $key): string|bool|int|float
+    public function parseScalar(string $key): bool|float|int|string
     {
         return $this->parseNullableScalar($key) ?? '';
     }
@@ -493,7 +493,7 @@ trait ParseTrait
     /**
      * Parse nullable scalar.
      */
-    public function parseNullableScalar(string $key): string|bool|int|float|null
+    public function parseNullableScalar(string $key): bool|float|int|string|null
     {
         $value = $this->mixed($key);
 
@@ -507,7 +507,7 @@ trait ParseTrait
     /**
      * Must parse scalar.
      */
-    public function mustParseScalar(string $key): string|bool|int|float
+    public function mustParseScalar(string $key): bool|float|int|string
     {
         $value = $this->mustParseNullableScalar($key);
 
@@ -519,7 +519,7 @@ trait ParseTrait
     /**
      * Must parse nullable scalar.
      */
-    public function mustParseNullableScalar(string $key): string|bool|int|float|null
+    public function mustParseNullableScalar(string $key): bool|float|int|string|null
     {
         $value = $this->mixed($key);
 
@@ -551,7 +551,7 @@ trait ParseTrait
      *
      * @return T|null
      */
-    public function parseNullableEnum(string $key, string $enum): ?BackedEnum
+    public function parseNullableEnum(string $key, string $enum): BackedEnum|null
     {
         if ((string) (new ReflectionEnum($enum))->getBackingType() === 'int') {
             $value = $this->parseNullableInt($key);
@@ -593,7 +593,7 @@ trait ParseTrait
      *
      * @return T|null
      */
-    public function mustParseNullableEnum(string $key, string $enum): ?BackedEnum
+    public function mustParseNullableEnum(string $key, string $enum): BackedEnum|null
     {
         if ((string) (new ReflectionEnum($enum))->getBackingType() === 'int') {
             $value = $this->mustParseNullableInt($key);
@@ -631,7 +631,7 @@ trait ParseTrait
      *
      * @return T|null
      */
-    public function parseNullableIntEnum(string $key, string $enum): ?BackedEnum
+    public function parseNullableIntEnum(string $key, string $enum): BackedEnum|null
     {
         $value = $this->parseNullableInt($key);
 
@@ -669,7 +669,7 @@ trait ParseTrait
      *
      * @return T|null
      */
-    public function mustParseNullableIntEnum(string $key, string $enum): ?BackedEnum
+    public function mustParseNullableIntEnum(string $key, string $enum): BackedEnum|null
     {
         $value = $this->mustParseNullableInt($key);
 
@@ -703,7 +703,7 @@ trait ParseTrait
      *
      * @return T|null
      */
-    public function parseNullableStringEnum(string $key, string $enum): ?BackedEnum
+    public function parseNullableStringEnum(string $key, string $enum): BackedEnum|null
     {
         $value = $this->parseNullableString($key);
 
@@ -741,7 +741,7 @@ trait ParseTrait
      *
      * @return T|null
      */
-    public function mustParseNullableStringEnum(string $key, string $enum): ?BackedEnum
+    public function mustParseNullableStringEnum(string $key, string $enum): BackedEnum|null
     {
         $value = $this->mustParseNullableString($key);
 
