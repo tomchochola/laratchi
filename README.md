@@ -179,10 +179,10 @@ Due to the proprietary nature of Laratchi, contributions are not accepted. If yo
 
 All rights reserved by Tomáš Chochola. For detailed licensing information, refer to the [License](LICENSE.md) file.
 
+> ⚠️ Disclaimer: Before using Laratchi, make sure to read the [License](LICENSE.md) and adhere strictly to its terms. Failure to comply will result in license revocation and may attract legal actions.
+
 ## ✨ Conclusion
 
 Why settle for Laravel, when you can have Laratchi? Get your license now and supercharge your Laravel projects like never before!
-
-> ⚠️ Disclaimer: Before using Laratchi, make sure to read the [License](LICENSE.md) and adhere strictly to its terms. Failure to comply will result in license revocation and may attract legal actions.
 
 🔥 **Don't just build applications, build experiences with Laratchi.** 🔥
