@@ -185,4 +185,4 @@ All rights reserved by Tomáš Chochola. For detailed licensing information, ref
 
 Why settle for Laravel, when you can have Laratchi? Get your license now and supercharge your Laravel projects like never before!
 
-🔥 **Don't just build applications, build experiences with Laratchi.** 🔥
+🔥 **Don't just build applications, build experiences with Tchi.** 🔥
