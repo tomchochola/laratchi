@@ -234,8 +234,10 @@ class MakeTchiCommand extends GeneratorCommand
         $json = Typer::assertArray(\json_decode($openApi, true));
 
         $json['tags'] = \array_merge(Typer::assertArray($json['tags']), [
-            'name' => $table,
-            'description' => $modelName,
+            [
+                'name' => $table,
+                'description' => $modelName,
+            ],
         ]);
 
         $json['paths']["/{$table}/index"] = [
