@@ -43,8 +43,8 @@ class ViewService
 
         $phase = $phases[\array_rand($phases)];
 
-        return 'data:image/svg+xml;utf8,'
-            . \rawurlencode(
+        return 'data:image/svg+xml;utf8,' .
+            \rawurlencode(
                 \resolveViewFactory()
                     ->make("laratchi::phases.{$phase}", ['color' => $this->color()])
                     ->render(),
@@ -56,8 +56,8 @@ class ViewService
      */
     public function nightBackground(): string
     {
-        return 'data:image/svg+xml;utf8,'
-            . \rawurlencode(
+        return 'data:image/svg+xml;utf8,' .
+            \rawurlencode(
                 \resolveViewFactory()
                     ->make('laratchi::phases.night', ['color' => $this->color()])
                     ->render(),
@@ -69,8 +69,8 @@ class ViewService
      */
     public function illustration(int $status): string
     {
-        return 'data:image/svg+xml;utf8,'
-            . \rawurlencode(
+        return 'data:image/svg+xml;utf8,' .
+            \rawurlencode(
                 \resolveViewFactory()
                     ->first(
                         ["laratchi::illustrations.{$status}", 'laratchi::illustrations.' . \mb_substr((string) $status, 0, -2) . 'xx', 'laratchi::illustrations.1xx'],
