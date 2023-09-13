@@ -22,8 +22,8 @@
   },
   "require-dev": {
     "composer/composer": "^2.0",
-    "fakerphp/faker": "^1.9.1",
-    "phpunit/phpunit": "^9.5.10"
+    "fakerphp/faker": "^1.9",
+    "phpunit/phpunit": "^9.5"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -36,11 +36,12 @@
     ]
   },
   "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
     "sort-packages": true
   },
   "extra": {
     "laravel": {
-      "dont-discover": [],
       "providers": [
         "Tomchochola\\Laratchi\\Support\\ServiceProvider"
       ]

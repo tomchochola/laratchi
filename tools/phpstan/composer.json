@@ -1,19 +1,25 @@
 {
+  "require": {
+    "php": "^8.1"
+  },
   "require-dev": {
-    "tomchochola/phpstan-rules": "dev-main"
+    "composer/composer": "^2.5",
+    "tomchochola/phpstan-rules": "^3.x-dev"
   },
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/tomchochola/phpstan-rules"
+      "url": "https://github.com/tomchochola/phpstan-rules.git"
     }
   ],
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true,
   "config": {
     "allow-plugins": {
       "phpstan/extension-installer": true
     },
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
     "sort-packages": true
   }
 }
