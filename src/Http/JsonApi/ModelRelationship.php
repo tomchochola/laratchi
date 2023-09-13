@@ -22,6 +22,6 @@ class ModelRelationship extends JsonApiRelationship
      */
     public function __construct(mixed $resource, Closure|null $closureMeta = null)
     {
-        parent::__construct($resource, static fn (Model|Pivot|User $model): JsonApiResource => $model->embedResource(), $closureMeta);
+        parent::__construct($resource, static fn(Model|Pivot|User $model): JsonApiResource => $model->embedResource(), $closureMeta);
     }
 }

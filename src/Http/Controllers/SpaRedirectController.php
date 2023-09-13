@@ -19,7 +19,7 @@ class SpaRedirectController extends Controller
         $trans = Trans::inject();
 
         if ($trans->translator->hasForLocale('spa.url')) {
-            return resolveResponseFactory()->redirectTo(mustTransString('spa.url'));
+            return \resolveResponseFactory()->redirectTo(\mustTransString('spa.url'));
         }
 
         throw new NotFoundHttpException();
