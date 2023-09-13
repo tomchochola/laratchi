@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Validation;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ClosureValidationRule;
 use Illuminate\Validation\InvokableValidationRule;
@@ -208,21 +209,35 @@ class SecureValidator extends Validator
      */
     public function passes(): bool
     {
-        $passes = parent::passes();
+        $this->messages = new MessageBag();
 
-        if ($passes === false) {
-            return false;
+        foreach (\array_keys(\array_diff_key($this->dot($this->data), $this->rules)) as $attribute) {
+            $this->addFailure((string) $attribute, 'Missing');
         }
 
-        $extraAttributes = \array_diff_key(Arr::dot($this->data), $this->rules);
+        return $this->messages->isEmpty() && parent::passes();
+    }
 
-        foreach ($extraAttributes as $attribute => $value) {
-            if (\count($this->getExplicitKeys((string) $attribute)) === 0) {
-                $this->addFailure((string) $attribute, 'missing');
+    /**
+     * Flatten a multi-dimensional associative array with dots.
+     *
+     * @param array<mixed> $data
+     *
+     * @return array<mixed>
+     */
+    public function dot(array $data, string $prepend = ''): array
+    {
+        $results = [];
+
+        foreach ($data as $key => $value) {
+            $results[$prepend . $key] = null;
+
+            if (\is_array($value)) {
+                $results = \array_replace($results, $this->dot($value, $prepend . $key . '.'));
             }
         }
 
-        return $this->messages->isEmpty();
+        return $results;
     }
 
     /**
