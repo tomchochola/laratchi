@@ -26,12 +26,12 @@ stan: vendor tools
 .PHONY: lint
 lint: vendor tools
 	${MAKE_COMPOSER} validate --strict
-	"tools/prettier-lint/node_modules/.bin/prettier" -c .
+	"tools/prettier/node_modules/.bin/prettier" --plugin=tools/prettier/node_modules/@prettier/plugin-xml/src/plugin.js -c .
 	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
 
 .PHONY: fix
 fix: vendor tools
-	"tools/prettier-fix/node_modules/.bin/prettier" -w .
+	"tools/prettier/node_modules/.bin/prettier" --plugin=tools/prettier/node_modules/@prettier/plugin-xml/src/plugin.js --plugin=tools/prettier/node_modules/@prettier/plugin-php/src/index.js -w .
 	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
 
 .PHONY: composer
@@ -67,13 +67,10 @@ update: update-tools update-composer
 clean: clean-tools clean-composer
 
 # Dependencies
-tools: tools/prettier-lint/node_modules/.bin/prettier tools/prettier-fix/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer
+tools: tools/prettier/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer
 
-tools/prettier-lint/node_modules/.bin/prettier:
-	npm --prefix=tools/prettier-lint update
-
-tools/prettier-fix/node_modules/.bin/prettier:
-	npm --prefix=tools/prettier-fix update
+tools/prettier/node_modules/.bin/prettier:
+	npm --prefix=tools/prettier update
 
 vendor:
 	${MAKE_COMPOSER} install
