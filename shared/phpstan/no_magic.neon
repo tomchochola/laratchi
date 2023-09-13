@@ -9,3 +9,28 @@ parameters:
     -
       namespace: 'Illuminate\Foundation\Events\Dispatchable'
       message: 'use Tomchochola\Laratchi\Support\Resolver::resolveEventDispatcher()->*()'
+  disallowedMethodCalls:
+      -
+        method: 'Illuminate\Database\Schema\Blueprint::morphs()'
+        message: 'no unhandled foreign keys allowed, use regular foreign keys'
+      -
+        method: 'Illuminate\Database\Schema\Blueprint::nullableMorphs()'
+        message: 'no unhandled foreign keys allowed, use regular foreign keys'
+      -
+        method: 'Illuminate\Database\Schema\Blueprint::nullableNumericMorphs()'
+        message: 'no unhandled foreign keys allowed, use regular foreign keys'
+      -
+        method: 'Illuminate\Database\Schema\Blueprint::nullableUlidMorphs()'
+        message: 'no unhandled foreign keys allowed, use regular foreign keys'
+      -
+        method: 'Illuminate\Database\Schema\Blueprint::nullableUuidMorphs()'
+        message: 'no unhandled foreign keys allowed, use regular foreign keys'
+      -
+        method: 'Illuminate\Database\Schema\Blueprint::numericMorphs()'
+        message: 'no unhandled foreign keys allowed, use regular foreign keys'
+      -
+        method: 'Illuminate\Database\Schema\Blueprint::ulidMorphs()'
+        message: 'no unhandled foreign keys allowed, use regular foreign keys'
+      -
+        method: 'Illuminate\Database\Schema\Blueprint::uuidMorphs()'
+        message: 'no unhandled foreign keys allowed, use regular foreign keys'
