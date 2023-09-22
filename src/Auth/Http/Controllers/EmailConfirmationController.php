@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Tomchochola\Laratchi\Auth\Http\Requests\EmailConfirmationRequest;
@@ -24,6 +25,8 @@ class EmailConfirmationController extends TransactionController
 
         $this->verify($request);
 
+        $this->mustVerifyEmail($request);
+
         return $this->response($request);
     }
 
@@ -33,6 +36,28 @@ class EmailConfirmationController extends TransactionController
     protected function verify(EmailConfirmationRequest $request): void
     {
         EmailBrokerService::inject()->confirm(Config::inject()->authDefaultsGuard(), $request->validatedInput()->mustString('email'));
+    }
+
+    /**
+     * Mark email for interfaced users.
+     */
+    protected function mustVerifyEmail(EmailConfirmationRequest $request): void
+    {
+        $me = resolveUserProvider()->retrieveByCredentials(['email' => $request->validatedInput()->mustString('email')]);
+
+        if (! $me instanceof MustVerifyEmail) {
+            return;
+        }
+
+        if ($me->getEmailForVerification() !== '') {
+            return;
+        }
+
+        if ($me->hasVerifiedEmail()) {
+            return;
+        }
+
+        $me->markEmailAsVerified();
     }
 
     /**

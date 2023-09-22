@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Auth\Http\Controllers;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tomchochola\Laratchi\Auth\Http\Requests\RegisterRequest;
 use Tomchochola\Laratchi\Auth\Services\CanLoginService;
@@ -93,6 +94,10 @@ class RegisterController extends TransactionController
         $me->fill($request->data());
 
         $me->save();
+
+        if (static::$emailConfirmation && $me instanceof MustVerifyEmail && $me->hasVerifiedEmail() === false && $me->getEmailForVerification() !== '') {
+            $me->markEmailAsVerified();
+        }
 
         return $me->refresh();
     }
