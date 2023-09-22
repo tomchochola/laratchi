@@ -34,3 +34,37 @@ parameters:
       -
         method: 'Illuminate\Database\Schema\Blueprint::uuidMorphs()'
         message: 'no unhandled foreign keys allowed, use regular foreign keys'
+  disallowedStaticCalls:
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::observe()'
+        message: 'no magic async code allowed, use linear code only'
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::retrieved()'
+        message: 'no magic async code allowed, use linear code only'
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::saving()'
+        message: 'no magic async code allowed, use linear code only'
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::saved()'
+        message: 'no magic async code allowed, use linear code only'
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::updating()'
+        message: 'no magic async code allowed, use linear code only'
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::updated()'
+        message: 'no magic async code allowed, use linear code only'
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::creating()'
+        message: 'no magic async code allowed, use linear code only'
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::created()'
+        message: 'no magic async code allowed, use linear code only'
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::replicating()'
+        message: 'no magic async code allowed, use linear code only'
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::deleting()'
+        message: 'no magic async code allowed, use linear code only'
+      -
+        method: 'Illuminate\Database\Eloquent\Concerns\HasEvents::deleted()'
+        message: 'no magic async code allowed, use linear code only'

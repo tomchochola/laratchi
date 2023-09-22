@@ -9,7 +9,6 @@ use Illuminate\Contracts\Translation\HasLocalePreference as HasLocalePreferenceC
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as IlluminateUser;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Str;
 use Tomchochola\Laratchi\Auth\Notifications\EmailVerificationNotification;
 use Tomchochola\Laratchi\Auth\Notifications\PasswordInitNotification;
 use Tomchochola\Laratchi\Auth\Notifications\PasswordResetNotification;
@@ -207,30 +206,5 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
     public function meResource(): JsonApiResource
     {
         return new ModelResource($this);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected static function booted(): void
-    {
-        parent::booted();
-
-        static::updating(static function (self $user): void {
-            if ($user->isDirty('password')) {
-                if ($user->getRememberToken() !== '') {
-                    $user->setRememberToken(Str::random(60));
-                }
-            }
-        });
-
-        static::updated(static function (self $user): void {
-            if ($user->wasChanged('password')) {
-                $user
-                    ->databaseTokens()
-                    ->getQuery()
-                    ->delete();
-            }
-        });
     }
 }
