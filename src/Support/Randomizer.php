@@ -24,7 +24,7 @@ class Randomizer
         $code = (string) \random_int($startWithZero ? 0 : 1, 9);
 
         for ($i = 1; $i < $length; ++$i) {
-            $code = $code . \random_int(0, 9);
+            $code .= \random_int(0, 9);
         }
 
         return $code;
@@ -46,7 +46,7 @@ class Randomizer
         $last = \count($source) - 1;
 
         for ($i = 0; $i < $length; ++$i) {
-            $code = $code . $source[\random_int(0, $last)];
+            $code .= $source[\random_int(0, $last)];
         }
 
         return $code;

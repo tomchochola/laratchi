@@ -72,6 +72,14 @@ class EmailBrokerService
     }
 
     /**
+     * Email is pending.
+     */
+    public function pending(string $guard, string $email): bool
+    {
+        return \resolveCache()->has($this->cacheKey($guard, $email)) && !$this->confirmed($guard, $email);
+    }
+
+    /**
      * Send anonymous notification.
      */
     public function anonymous(string $guard, string $email, string $locale): void
