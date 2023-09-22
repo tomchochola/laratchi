@@ -49,7 +49,7 @@ class EmailConfirmationController extends TransactionController
             return;
         }
 
-        if ($me->getEmailForVerification() !== '') {
+        if ($me->getEmailForVerification() === '') {
             return;
         }
 
