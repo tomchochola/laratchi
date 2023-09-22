@@ -117,6 +117,10 @@ class MeUpdateController extends TransactionController
             return null;
         }
 
+        if ($broker->pending($guard, $email)) {
+            return resolveResponseFactory()->noContent(202);
+        }
+
         $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['email']));
 
         $broker->anonymous($guard, $email, Config::inject()->appLocale());
