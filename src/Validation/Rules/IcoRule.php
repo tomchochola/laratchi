@@ -65,7 +65,7 @@ class IcoRule implements RuleContract
             $cheksum += (int) $value[$i] * (8 - $i);
         }
 
-        $cheksum = $cheksum % 11;
+        $cheksum %= 11;
 
         if ($cheksum === 0) {
             $controll = 1;
