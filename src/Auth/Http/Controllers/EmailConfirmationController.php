@@ -43,9 +43,9 @@ class EmailConfirmationController extends TransactionController
      */
     protected function mustVerifyEmail(EmailConfirmationRequest $request): void
     {
-        $me = resolveUserProvider()->retrieveByCredentials(['email' => $request->validatedInput()->mustString('email')]);
+        $me = \resolveUserProvider()->retrieveByCredentials(['email' => $request->validatedInput()->mustString('email')]);
 
-        if (! $me instanceof MustVerifyEmail) {
+        if (!$me instanceof MustVerifyEmail) {
             return;
         }
 
@@ -85,13 +85,7 @@ class EmailConfirmationController extends TransactionController
     {
         [$hit] = $this->throttle($this->limit('token'), $this->onThrottle($request, ['token']));
 
-        if (
-            !EmailBrokerService::inject()->validate(
-                Config::inject()->authDefaultsGuard(),
-                $request->validatedInput()->mustString('email'),
-                $request->validatedInput()->mustString('token'),
-            )
-        ) {
+        if (!EmailBrokerService::inject()->validate(Config::inject()->authDefaultsGuard(), $request->validatedInput()->mustString('email'), $request->validatedInput()->mustString('token'))) {
             $hit();
             $request->throwExistsValidationException(['token']);
         }

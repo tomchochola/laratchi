@@ -184,18 +184,17 @@ trait ModelTrait
      */
     public static function mustResolveFromRequest(FormRequest $request, Closure|null $closure = null, string|null $idKey = 'id', string|null $routeKey = 'slug'): static
     {
-        return static::mustResolve(
-            $idKey !== null ? $request->allInput()->int($idKey) : null,
-            $routeKey !== null ? $request->allInput()->string($routeKey) : null,
-            $closure,
-            static function () use ($request, $idKey, $routeKey): never {
-                if ($idKey !== null && $routeKey !== null) {
-                    $request->throwSingleValidationException([$idKey, $routeKey], 'invalid');
-                }
+        return static::mustResolve($idKey !== null ? $request->allInput()->int($idKey) : null, $routeKey !== null ? $request->allInput()->string($routeKey) : null, $closure, static function () use (
+            $request,
+            $idKey,
+            $routeKey,
+        ): never {
+            if ($idKey !== null && $routeKey !== null) {
+                $request->throwSingleValidationException([$idKey, $routeKey], 'invalid');
+            }
 
-                $request->throwSingleValidationException([$idKey ?? ($routeKey ?? '')], 'invalid');
-            },
-        );
+            $request->throwSingleValidationException([$idKey ?? ($routeKey ?? '')], 'invalid');
+        });
     }
 
     /**

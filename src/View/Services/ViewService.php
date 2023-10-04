@@ -72,10 +72,7 @@ class ViewService
         return 'data:image/svg+xml;utf8,' .
             \rawurlencode(
                 \resolveViewFactory()
-                    ->first(
-                        ["laratchi::illustrations.{$status}", 'laratchi::illustrations.' . \mb_substr((string) $status, 0, -2) . 'xx', 'laratchi::illustrations.1xx'],
-                        ['color' => $this->color()],
-                    )
+                    ->first(["laratchi::illustrations.{$status}", 'laratchi::illustrations.' . \mb_substr((string) $status, 0, -2) . 'xx', 'laratchi::illustrations.1xx'], ['color' => $this->color()])
                     ->render(),
             );
     }

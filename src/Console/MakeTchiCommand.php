@@ -731,11 +731,7 @@ class MakeTchiCommand extends GeneratorCommand
             $databaseSeeder = \str_replace("{\n", "{\n    /**\n     * @inheritDoc\n     */\n    public function run(): void\n    {\n    }\n", $databaseSeeder);
         }
 
-        $databaseSeeder = \str_replace(
-            "public function run(): void\n    {\n",
-            "public function run(): void\n    {\n        \$this->callOnce({$modelName}Seeder::class);\n",
-            $databaseSeeder,
-        );
+        $databaseSeeder = \str_replace("public function run(): void\n    {\n", "public function run(): void\n    {\n        \$this->callOnce({$modelName}Seeder::class);\n", $databaseSeeder);
 
         $this->files->put($path, $databaseSeeder);
     }

@@ -35,13 +35,9 @@ class Validator extends IlluminateValidator
      */
     public static function extend(ValidationFactoryContract $factory, string $validator): void
     {
-        Typer::assertInstance($factory, ValidationFactory::class)->resolver(static function (
-            TranslatorContract $translator,
-            array $data,
-            array $rules,
-            array $messages,
-            array $attributes,
-        ) use ($validator): IlluminateValidator {
+        Typer::assertInstance($factory, ValidationFactory::class)->resolver(static function (TranslatorContract $translator, array $data, array $rules, array $messages, array $attributes) use (
+            $validator,
+        ): IlluminateValidator {
             return new $validator($translator, $data, $rules, $messages, $attributes);
         });
     }

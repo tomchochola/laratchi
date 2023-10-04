@@ -20,15 +20,8 @@ class ValidationException extends IlluminateValidationException implements GetDa
      *
      * @phpstan-ignore-next-line
      */
-    public function __construct(
-        Validator $validator,
-        int $statusCode = 422,
-        string $message = '',
-        Throwable|null $previous = null,
-        public array $headers = [],
-        int $code = 0,
-        public array $data = [],
-    ) {
+    public function __construct(Validator $validator, int $statusCode = 422, string $message = '', Throwable|null $previous = null, public array $headers = [], int $code = 0, public array $data = [])
+    {
         $this->validator = $validator;
         $this->response = null;
         $this->status = $statusCode;
