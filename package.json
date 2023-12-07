@@ -1,0 +1,40 @@
+{
+  "name": "@tomchochola/laratchi",
+  "description": "laratchi",
+  "keywords": [
+    "tomchochola",
+    "laratchi"
+  ],
+  "homepage": "https://github.com/tomchochola/laratchi",
+  "bugs": {
+    "email": "chocholatom1997@gmail.com",
+    "url": "https://github.com/tomchochola/laratchi/issues"
+  },
+  "license": "SEE LICENSE IN LICENSE.md",
+  "author": {
+    "email": "chocholatom1997@gmail.com",
+    "name": "Tomáš Chochola",
+    "url": "https://github.com/tomchochola"
+  },
+  "contributors": [
+    {
+      "email": "chocholatom1997@gmail.com",
+      "name": "Tomáš Chochola",
+      "url": "https://github.com/tomchochola"
+    }
+  ],
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tomchochola"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomchochola/laratchi.git"
+  },
+  "devDependencies": {
+    "@prettier/plugin-php": "latest",
+    "@prettier/plugin-xml": "latest",
+    "prettier": "latest"
+  },
+  "private": true
+}

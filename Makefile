@@ -9,74 +9,69 @@ MAKE_PHP ?= ${MAKE_PHP_8_2_BIN}
 MAKE_COMPOSER ?= ${MAKE_PHP} ${MAKE_COMPOSER_2_BIN}
 
 # Default goal
-.DEFAULT_GOAL := assert-never
+.DEFAULT_GOAL := panic
 
 # Goals
 .PHONY: check
-check: stan lint audit
+check: stan lint audit test
 
 .PHONY: audit
-audit: vendor tools
+audit: ./vendor ./node_modules ./package-lock.json
 	${MAKE_COMPOSER} audit
+	${MAKE_COMPOSER} check-platform-reqs
+	${MAKE_COMPOSER} validate --strict --no-check-all
+	npm audit --audit-level info
 
 .PHONY: stan
-stan: vendor tools
-	${MAKE_PHP} tools/phpstan/vendor/bin/phpstan analyse
+stan: ./vendor ./vendor/bin/phpstan
+	${MAKE_PHP} ./vendor/bin/phpstan analyse
 
 .PHONY: lint
-lint: vendor tools
-	${MAKE_COMPOSER} validate --strict
-	"tools/prettier-lint/node_modules/.bin/prettier" -c .
-	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
+lint: ./vendor ./node_modules/.bin/prettier ./vendor/bin/php-cs-fixer
+	./node_modules/.bin/prettier --plugin=@prettier/plugin-xml --xml-quote-attributes=double --xml-whitespace-sensitivity=ignore -c .
+	${MAKE_PHP} ./vendor/bin/php-cs-fixer fix --dry-run --diff
 
 .PHONY: fix
-fix: vendor tools
-	"tools/prettier-fix/node_modules/.bin/prettier" -w .
-	${MAKE_PHP} tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
+fix: ./vendor ./node_modules/.bin/prettier ./vendor/bin/php-cs-fixer
+	./node_modules/.bin/prettier --plugin=@prettier/plugin-xml --xml-quote-attributes=double --xml-whitespace-sensitivity=ignore --plugin=@prettier/plugin-php --php-version=8.2 -w .
+	${MAKE_PHP} ./vendor/bin/php-cs-fixer fix
 
-.PHONY: composer
-composer:
-	${MAKE_COMPOSER} install
-
-.PHONY: composer-no-dev
-composer-no-dev:
-	${MAKE_COMPOSER} install --no-dev -a
-
-.PHONY: clean-composer
-clean-composer:
-	git clean -xfd vendor composer.lock
-
-.PHONY: update-composer
-update-composer: clean-composer
-	${MAKE_COMPOSER} update
-
-.PHONY: clean-tools
-clean-tools:
-	git clean -xfd tools
-
-.PHONY: update-tools
-update-tools: clean-tools tools
-
-.PHONY: update
-update: update-tools update-composer
+.PHONY: test
+test: ./vendor ./vendor/bin/phpunit
+	${MAKE_PHP} ./vendor/bin/phpunit
 
 .PHONY: clean
-clean: clean-tools clean-composer
+clean:
+	rm -rf ./node_modules
+	rm -rf ./package-lock.json
+	rm -rf ./vendor
+	rm -rf ./composer.lock
+	rm -rf ./.php-cs-fixer.cache
+	rm -rf ./.phpunit.result.cache
+
+# Deploy / Release
+.PHONY: local
+local:
+	${MAKE_COMPOSER} update
+	npm update --install-links
+
+.PHONY: testing
+testing: local
+
+.PHONY: development
+development: local
+
+.PHONY: production
+production:
+	${MAKE_COMPOSER} install -a --no-dev
+	npm install --omit dev --install-links
+
+.PHONY: staging
+staging: production
 
 # Dependencies
-tools: tools/prettier-lint/node_modules/.bin/prettier tools/prettier-fix/node_modules/.bin/prettier tools/phpstan/vendor/bin/phpstan tools/php-cs-fixer/vendor/bin/php-cs-fixer
+./vendor ./vendor/bin/phpstan ./vendor/bin/php-cs-fixer ./vendor/bin/phpunit:
+	${MAKE_COMPOSER} update
 
-tools/prettier-lint/node_modules/.bin/prettier:
-	npm --prefix=tools/prettier-lint update
-
-tools/prettier-fix/node_modules/.bin/prettier:
-	npm --prefix=tools/prettier-fix update
-
-vendor:
-	${MAKE_COMPOSER} install
-
-tools/phpstan/vendor/bin/phpstan:
-	${MAKE_COMPOSER} --working-dir=tools/phpstan update
-
-tools/php-cs-fixer/vendor/bin/php-cs-fixer:
-	${MAKE_COMPOSER} --working-dir=tools/php-cs-fixer update
+./node_modules ./package-lock.json ./node_modules/.bin/prettier:
+	npm update --install-links
