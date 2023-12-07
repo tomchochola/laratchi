@@ -1,17 +1,32 @@
 {
   "name": "tomchochola/laratchi",
-  "description": "Laratchi",
-  "license": "proprietary",
+  "description": "laratchi",
   "type": "library",
   "keywords": [
     "tomchochola",
-    "laratchi",
-    "laravel"
+    "laratchi"
   ],
+  "homepage": "https://github.com/tomchochola/laratchi",
+  "readme": "README.md",
+  "license": "proprietary",
   "authors": [
     {
       "name": "Tomáš Chochola",
-      "email": "chocholatom1997@gmail.com"
+      "email": "chocholatom1997@gmail.com",
+      "homepage": "https://github.com/tomchochola",
+      "role": "Author"
+    }
+  ],
+  "support": {
+    "email": "chocholatom1997@gmail.com",
+    "issues": "https://github.com/tomchochola/laratchi/issues",
+    "source": "https://github.com/tomchochola/laratchi.git",
+    "docs": "https://github.com/tomchochola/laratchi"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/tomchochola"
     }
   ],
   "require": {
@@ -21,24 +36,46 @@
     "spatie/once": "^3.1"
   },
   "require-dev": {
-    "composer/composer": "^2.5",
-    "fakerphp/faker": "^1.23",
-    "phpunit/phpunit": "^10.3"
+    "fakerphp/faker": "@stable",
+    "phpunit/phpunit": "@stable",
+    "tomchochola/php-cs-fixer": "@dev",
+    "tomchochola/phpstan-rules": "@dev"
   },
-  "minimum-stability": "stable",
-  "prefer-stable": true,
   "autoload": {
     "psr-4": {
-      "Tomchochola\\Laratchi\\": "src/"
+      "Tomchochola\\Laratchi\\": "src"
     },
     "files": [
       "src/Helpers/functions.php"
     ]
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/tomchochola/php-cs-fixer.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/tomchochola/phpstan-rules.git"
+    }
+  ],
   "config": {
-    "optimize-autoloader": true,
+    "allow-plugins": {
+      "phpstan/extension-installer": true
+    },
     "preferred-install": "dist",
-    "sort-packages": true
+    "audit": {
+      "abandoned": "fail"
+    },
+    "optimize-autoloader": true,
+    "platform-check": true
   },
   "extra": {
     "laravel": {

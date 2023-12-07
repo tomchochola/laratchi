@@ -740,7 +740,7 @@ if (!\function_exists('resolveNow')) {
     /**
      * Resolve now.
      */
-    function resolveNow(): Illuminate\Support\Carbon
+    function resolveNow(): Carbon
     {
         return Resolver::resolveDateFactory()->now();
     }
