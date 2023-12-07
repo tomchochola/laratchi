@@ -81,19 +81,19 @@ abstract class JsonApiResource
 
         $attributes = $this->attributes();
 
-        if ($attributes !== null) {
+        if ($attributes !== null && \count($attributes) !== 0) {
             $data['attributes'] = $attributes;
         }
 
         $meta = $this->meta();
 
-        if ($meta !== null) {
+        if ($meta !== null && \count($meta) !== 0) {
             $data['meta'] = $meta;
         }
 
         $relationships = $this->relationships();
 
-        if ($relationships !== null) {
+        if ($relationships !== null && \count($relationships) !== 0) {
             $data['relationships'] = $this->encodeRelationships($relationships, $included);
         }
 
