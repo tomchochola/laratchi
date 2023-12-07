@@ -17,7 +17,7 @@ class TransactionController extends Controller
         return Typer::assertInstance(
             \resolveDatabaseManager()
                 ->connection()
-                ->transaction(fn (): SymfonyResponse => parent::callAction($method, $parameters)),
+                ->transaction(fn(): SymfonyResponse => parent::callAction($method, $parameters)),
             SymfonyResponse::class,
         );
     }

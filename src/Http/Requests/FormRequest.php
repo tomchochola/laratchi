@@ -114,7 +114,7 @@ class FormRequest extends IlluminateFormRequest
     {
         $validator ??= \resolveValidatorFactory()->make([], []);
 
-        return static::createValidationException($validator, \array_map(static fn (): array => [$rule => []], \array_flip($keys)));
+        return static::createValidationException($validator, \array_map(static fn(): array => [$rule => []], \array_flip($keys)));
     }
 
     /**

@@ -1307,19 +1307,7 @@ class Validity implements ArrayableContract
 
         return $this->file(
             $max ?? 10240,
-            $mimeTypes ?? [
-                'image/gif',
-                'image/jpeg',
-                'image/png',
-                'image/svg+xml',
-                'image/svg',
-                'image/webp',
-                'image/bmp',
-                'image/x-bmp',
-                'image/x-ms-bmp',
-                'image/heif',
-                'image/heic',
-            ],
+            $mimeTypes ?? ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/svg', 'image/webp', 'image/bmp', 'image/x-bmp', 'image/x-ms-bmp', 'image/heif', 'image/heic'],
         );
     }
 
@@ -3981,16 +3969,7 @@ class Validity implements ArrayableContract
     public function toArray(): array
     {
         Typer::assert(
-            $this->unsafe ||
-                $this->array ||
-                $this->collection ||
-                $this->boolean ||
-                $this->file ||
-                $this->integer ||
-                $this->numeric ||
-                $this->string ||
-                $this->prohibited ||
-                $this->missing,
+            $this->unsafe || $this->array || $this->collection || $this->boolean || $this->file || $this->integer || $this->numeric || $this->string || $this->prohibited || $this->missing,
             'attribute must be validated against base type (array|object|collection|boolean|file|integer|numeric|string)',
         );
         Typer::assert($this->unsafe || $this->required || $this->nullable || $this->missing || $this->prohibited, 'attribute must be validated against nullable or required');

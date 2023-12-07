@@ -142,9 +142,7 @@ class DatabaseTokenGuard implements GuardContract
         $bearer = \assertNotNull($databaseToken->bearer);
 
         $cookieJar = \resolveCookieJar();
-        $cookieJar->queue(
-            $cookieJar->forever($this->cookieName(), $bearer, '/', null, !\isEnv(['local']), true, false, Config::inject()->appEnvIs(['production']) ? 'Lax' : 'None'),
-        );
+        $cookieJar->queue($cookieJar->forever($this->cookieName(), $bearer, '/', null, !\isEnv(['local']), true, false, Config::inject()->appEnvIs(['production']) ? 'Lax' : 'None'));
 
         return $databaseToken;
     }

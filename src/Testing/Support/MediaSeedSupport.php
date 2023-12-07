@@ -51,10 +51,9 @@ class MediaSeedSupport
 
         $randomIndex = \random_int(0, 99);
 
-        $url
-            = Arr::get($json, "0.images.123RF.image.{$randomIndex}.link_image")
-            ?? (Arr::get($json, '0.images.123RF.image.0.link_image')
-                ?? (Arr::get($json, '0.images.stockunlimited.image.0.link_image') ?? Arr::get($json, '0.images.freeimages.image.0.link_image')));
+        $url =
+            Arr::get($json, "0.images.123RF.image.{$randomIndex}.link_image") ??
+            (Arr::get($json, '0.images.123RF.image.0.link_image') ?? (Arr::get($json, '0.images.stockunlimited.image.0.link_image') ?? Arr::get($json, '0.images.freeimages.image.0.link_image')));
 
         if ($url === null) {
             return static::imageUrl(['random']);
