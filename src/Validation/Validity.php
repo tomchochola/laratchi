@@ -1086,7 +1086,7 @@ class Validity implements ArrayableContract
     /**
      * Add exclude_if rule.
      *
-     * @param (Closure(): bool)|bool $condition
+     * @param bool|(Closure(): bool) $condition
      *
      * @return $this
      */
@@ -2350,7 +2350,7 @@ class Validity implements ArrayableContract
     /**
      * Add required_if rule.
      *
-     * @param (callable(): bool)|bool $condition
+     * @param bool|(callable(): bool) $condition
      *
      * @return $this
      */
@@ -2512,7 +2512,7 @@ class Validity implements ArrayableContract
     /**
      * Add prohibited if rule.
      *
-     * @param (Closure(): bool)|bool $condition
+     * @param bool|(Closure(): bool) $condition
      *
      * @return $this
      */
