@@ -19,6 +19,11 @@ class MeUpdateController extends TransactionController
     public static bool $emailConfirmation = true;
 
     /**
+     * E-mail confirmation resend.
+     */
+    public static bool $emailConfirmationResend = true;
+
+    /**
      * Handle the incoming request.
      */
     public function __invoke(MeUpdateRequest $request): SymfonyResponse
@@ -117,10 +122,14 @@ class MeUpdateController extends TransactionController
             return null;
         }
 
-        $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['email']));
+        if (static::$emailConfirmationResend) {
+            $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['email']));
 
-        $broker->anonymous($guard, $email, Config::inject()->appLocale());
+            $broker->anonymous($guard, $email, Config::inject()->appLocale());
 
-        return \resolveResponseFactory()->noContent(202);
+            return \resolveResponseFactory()->noContent(202);
+        }
+
+        $request->throwSingleValidationException(['email'], 'Confirmed');
     }
 }
