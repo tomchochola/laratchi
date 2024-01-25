@@ -1,44 +1,48 @@
 @php
-  $config = Tomchochola\Laratchi\Config\Config::inject();
+    $config = Tomchochola\Laratchi\Config\Config::inject();
 
-  $appName = $config->appName();
+    $appName = $config->appName();
 @endphp
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<head>
+    <meta charset="utf-8"/>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="author" content="Tomáš Chochola <chocholatom1997@gmail.com>"/>
 
-    <meta name="author" content="Tomáš Chochola <chocholatom1997@gmail.com>" />
+    <meta name="robots" content="noindex, nofollow"/>
 
     <title>{{ $appName }}</title>
 
-    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/favicon-16x16.png" sizes="16x16" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin="anonymous"/>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/index.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/swagger-ui.min.css" />
-  </head>
-  <body>
-    <div id="swagger"></div>
-    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/swagger-ui-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/swagger-ui-standalone-preset.min.js"></script>
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/favicon-32x32.png" sizes="32x32" crossorigin="anonymous"/>
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/favicon-16x16.png" sizes="16x16" crossorigin="anonymous"/>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/index.min.css" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui.min.css" crossorigin="anonymous"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist/swagger-ui-standalone-preset.min.js" crossorigin="anonymous"></script>
+
     <script>
-      window.onload = function () {
-        window.ui = SwaggerUIBundle({
-          url: {!! "'{$url}'" !!},
-          spec: undefined,
-          dom_id: '#swagger',
-          deepLinking: true,
-          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-          plugins: [SwaggerUIBundle.plugins.DownloadUrl],
-          layout: 'StandaloneLayout',
+        document.addEventListener('DOMContentLoaded', () => {
+            window.ui = SwaggerUIBundle({
+                url: {!! isset($url) ? "'{$url}'" : 'void 0' !!},
+                spec: {!! isset($spec) ? "'{$spec}'" : 'void 0' !!},
+                dom_id: '#swagger',
+                deepLinking: true,
+                presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+                plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+                layout: 'StandaloneLayout',
+            });
         });
-      };
     </script>
-  </body>
+</head>
+<body>
+    <div id="swagger"></div>
+</body>
 </html>
