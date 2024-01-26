@@ -23,6 +23,8 @@ class EmailConfirmationResendController extends TransactionController
 
         $this->hasVerifiedEmail($request);
 
+        $this->send($request);
+
         return $this->response($request);
     }
 
@@ -59,5 +61,20 @@ class EmailConfirmationResendController extends TransactionController
             $hit();
             $request->throwUniqueValidationException(\array_keys($credentials));
         }
+    }
+
+    /**
+     * Send email verification notification.
+     */
+    protected function send(EmailConfirmationResendRequest $request): void
+    {
+        $email = $request->validatedInput()->mustString('email');
+
+        $guard = Config::inject()->authDefaultsGuard();
+        $broker = EmailBrokerService::inject();
+
+        $this->hit($this->limit('email_confirmation_send'), $this->onThrottle($request, ['email']));
+
+        $broker->anonymous($guard, $email, Config::inject()->appLocale());
     }
 }
