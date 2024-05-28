@@ -115,12 +115,7 @@ class Migrator
         }
 
         $schema->table('database_tokens', static function (Blueprint $table) use ($model): void {
-            $table
-                ->foreignIdFor($model)
-                ->nullable()
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+            $table->foreignIdFor($model)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 }

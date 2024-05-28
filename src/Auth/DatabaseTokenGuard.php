@@ -80,12 +80,7 @@ class DatabaseTokenGuard implements GuardContract
 
         $user = $databaseToken->user($this->guardName);
 
-        if (
-            $user === null ||
-            CanLoginService::inject()
-                ->authorize($user)
-                ->denied()
-        ) {
+        if ($user === null || CanLoginService::inject()->authorize($user)->denied()) {
             return $this->user = $this->databaseToken = null;
         }
 
@@ -153,10 +148,7 @@ class DatabaseTokenGuard implements GuardContract
     public function logout(): void
     {
         if ($this->databaseToken !== null) {
-            $this->databaseToken
-                ->newQuery()
-                ->whereKey($this->databaseToken->getKey())
-                ->delete();
+            $this->databaseToken->newQuery()->whereKey($this->databaseToken->getKey())->delete();
         }
 
         $this->databaseToken = null;

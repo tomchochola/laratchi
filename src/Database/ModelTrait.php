@@ -288,10 +288,7 @@ trait ModelTrait
 
         if ($preferId === null) {
             $builder->where(static function (Builder $builder) use ($values, $qualifier): void {
-                $builder
-                    ->whereKey($values)
-                    ->getQuery()
-                    ->orWhereIn($qualifier->getQualifiedRouteKeyName(), $values);
+                $builder->whereKey($values)->getQuery()->orWhereIn($qualifier->getQualifiedRouteKeyName(), $values);
             });
         } elseif ($preferId) {
             $builder->whereKey($values);
@@ -311,10 +308,7 @@ trait ModelTrait
 
         if ($preferId === null) {
             $builder->where(static function (Builder $builder) use ($values, $qualifier): void {
-                $builder
-                    ->whereKeyNot($values)
-                    ->getQuery()
-                    ->whereNotIn($qualifier->getQualifiedRouteKeyName(), $values);
+                $builder->whereKeyNot($values)->getQuery()->whereNotIn($qualifier->getQualifiedRouteKeyName(), $values);
             });
         } elseif ($preferId) {
             $builder->whereKeyNot($values);

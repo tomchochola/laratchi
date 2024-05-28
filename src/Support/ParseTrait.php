@@ -374,9 +374,7 @@ trait ParseTrait
         }
 
         if ($format === null) {
-            return \resolveDate()
-                ->parse($value, $tz)
-                ->setTimezone(Config::inject()->appTimezone());
+            return \resolveDate()->parse($value, $tz)->setTimezone(Config::inject()->appTimezone());
         }
 
         $value = \resolveDate()->createFromFormat($format, $value, $tz);
@@ -416,9 +414,7 @@ trait ParseTrait
         \assert($value !== false && $value !== '', Panicker::message(__METHOD__, 'assertion failed', \compact('key', 'value')));
 
         if ($format === null) {
-            return \resolveDate()
-                ->parse($value, $tz)
-                ->setTimezone(Config::inject()->appTimezone());
+            return \resolveDate()->parse($value, $tz)->setTimezone(Config::inject()->appTimezone());
         }
 
         $value = \resolveDate()->createFromFormat($format, $value, $tz);

@@ -3015,10 +3015,7 @@ class Validity implements ArrayableContract
             new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool|int {
                 if ($keys === null) {
                     $builder = $callback();
-                    $keys = $builder
-                        ->getQuery()
-                        ->distinct()
-                        ->pluck($builder->qualifyColumn($column));
+                    $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($column));
                 }
 
                 $exists = $keys->contains($value);
@@ -3070,10 +3067,7 @@ class Validity implements ArrayableContract
             new CallbackRule(static function (mixed $value, mixed $attribute = null) use ($callback, $each, $column, &$keys): bool|int {
                 if ($keys === null) {
                     $builder = $callback();
-                    $keys = $builder
-                        ->getQuery()
-                        ->distinct()
-                        ->pluck($builder->qualifyColumn($column));
+                    $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($column));
                 }
 
                 $exists = $keys->contains($value);
@@ -3128,10 +3122,7 @@ class Validity implements ArrayableContract
 
                     $model = Typer::assertInstance($builder->getModel(), Model::class);
 
-                    $keys = $builder
-                        ->getQuery()
-                        ->distinct()
-                        ->pluck($builder->qualifyColumn($model->getKeyName()));
+                    $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getKeyName()));
                 }
 
                 $exists = $keys->contains($value);
@@ -3186,10 +3177,7 @@ class Validity implements ArrayableContract
 
                     $model = Typer::assertInstance($builder->getModel(), Model::class);
 
-                    $keys = $builder
-                        ->getQuery()
-                        ->distinct()
-                        ->pluck($builder->qualifyColumn($model->getKeyName()));
+                    $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getKeyName()));
                 }
 
                 $exists = $keys->contains($value);
@@ -3244,10 +3232,7 @@ class Validity implements ArrayableContract
 
                     $model = Typer::assertInstance($builder->getModel(), Model::class);
 
-                    $keys = $builder
-                        ->getQuery()
-                        ->distinct()
-                        ->pluck($builder->qualifyColumn($model->getRouteKeyName()));
+                    $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getRouteKeyName()));
                 }
 
                 $exists = $keys->contains($value);
@@ -3302,10 +3287,7 @@ class Validity implements ArrayableContract
 
                     $model = Typer::assertInstance($builder->getModel(), Model::class);
 
-                    $keys = $builder
-                        ->getQuery()
-                        ->distinct()
-                        ->pluck($builder->qualifyColumn($model->getRouteKeyName()));
+                    $keys = $builder->getQuery()->distinct()->pluck($builder->qualifyColumn($model->getRouteKeyName()));
                 }
 
                 $exists = $keys->contains($value);
@@ -4010,6 +3992,10 @@ class Validity implements ArrayableContract
 
         if ($this->collection) {
             $rules[] = 'collection';
+
+            if (!\in_array('array', $rules, true)) {
+                $rules[] = 'array';
+            }
         }
 
         if ($this->boolean) {

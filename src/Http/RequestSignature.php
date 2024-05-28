@@ -37,9 +37,7 @@ class RequestSignature
      */
     public function defaults(): static
     {
-        return $this->auth()
-            ->ip()
-            ->action();
+        return $this->auth()->ip()->action();
     }
 
     /**

@@ -96,9 +96,7 @@ class PasswordResetController extends TransactionController
             \resolveUserProvider()->updateRememberToken($me, Str::random(60));
         }
 
-        $me->databaseTokens()
-            ->getQuery()
-            ->delete();
+        $me->databaseTokens()->getQuery()->delete();
     }
 
     /**

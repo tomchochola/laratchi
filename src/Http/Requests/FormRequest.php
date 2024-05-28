@@ -432,33 +432,20 @@ class FormRequest extends IlluminateFormRequest
     ): array {
         if ($signed) {
             $rules = \array_replace($rules, [
-                'signature' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->string(null),
-                'expires' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->integer(null, null),
+                'signature' => Validity::make()->nullable()->filled()->string(null),
+                'expires' => Validity::make()->nullable()->filled()->integer(null, null),
             ]);
         }
 
         if ($cursor) {
             $rules = \array_replace($rules, [
-                'cursor' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->string(null)
-                    ->cursor(),
+                'cursor' => Validity::make()->nullable()->filled()->string(null)->cursor(),
             ]);
         }
 
         if ($page) {
             $rules = \array_replace($rules, [
-                'page' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->positive(null, null),
+                'page' => Validity::make()->nullable()->filled()->positive(null, null),
             ]);
         }
 
@@ -474,10 +461,7 @@ class FormRequest extends IlluminateFormRequest
 
         if ($filter) {
             $rules = \array_replace($rules, [
-                'filter' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->array(null),
+                'filter' => Validity::make()->nullable()->filled()->array(null),
             ]);
         }
 
@@ -523,75 +507,42 @@ class FormRequest extends IlluminateFormRequest
 
         if ($filterId) {
             $rules = \array_replace($rules, [
-                'filter.id' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->collection(null),
-                'filter.id.*' => Validity::make()
-                    ->required()
-                    ->distinct()
-                    ->id(),
+                'filter.id' => Validity::make()->nullable()->filled()->collection(null),
+                'filter.id.*' => Validity::make()->required()->distinct()->id(),
             ]);
         }
 
         if ($filterNotId) {
             $rules = \array_replace($rules, [
-                'filter.not_id' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->collection(null),
-                'filter.not_id.*' => Validity::make()
-                    ->required()
-                    ->distinct()
-                    ->id(),
+                'filter.not_id' => Validity::make()->nullable()->filled()->collection(null),
+                'filter.not_id.*' => Validity::make()->required()->distinct()->id(),
             ]);
         }
 
         if ($filterIdSlug) {
             $rules = \array_replace($rules, [
-                'filter.id_slug' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->collection(null),
-                'filter.id_slug.*' => Validity::make()
-                    ->required()
-                    ->distinct()
-                    ->idSlug(),
+                'filter.id_slug' => Validity::make()->nullable()->filled()->collection(null),
+                'filter.id_slug.*' => Validity::make()->required()->distinct()->idSlug(),
             ]);
         }
 
         if ($filterNotIdSlug) {
             $rules = \array_replace($rules, [
-                'filter.not_id_slug' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->collection(null),
-                'filter.not_id_slug.*' => Validity::make()
-                    ->required()
-                    ->distinct()
-                    ->idSlug(),
+                'filter.not_id_slug' => Validity::make()->nullable()->filled()->collection(null),
+                'filter.not_id_slug.*' => Validity::make()->required()->distinct()->idSlug(),
             ]);
         }
 
         if ($filterSlug) {
             $rules = \array_replace($rules, [
-                'filter.slug' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->collection(null),
-                'filter.slug.*' => Validity::make()
-                    ->required()
-                    ->distinct()
-                    ->slug(),
+                'filter.slug' => Validity::make()->nullable()->filled()->collection(null),
+                'filter.slug.*' => Validity::make()->required()->distinct()->slug(),
             ]);
         }
 
         if ($filterSearch) {
             $rules = \array_replace($rules, [
-                'filter.search' => Validity::make()
-                    ->nullable()
-                    ->filled()
-                    ->varchar(),
+                'filter.search' => Validity::make()->nullable()->filled()->varchar(),
             ]);
         }
 
@@ -602,10 +553,7 @@ class FormRequest extends IlluminateFormRequest
                     ->filled()
                     ->collection(null)
                     ->missingWith(['count']),
-                'sort.*' => Validity::make()
-                    ->required()
-                    ->distinct()
-                    ->inString($sort),
+                'sort.*' => Validity::make()->required()->distinct()->inString($sort),
             ]);
         }
 

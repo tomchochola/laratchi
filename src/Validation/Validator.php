@@ -107,11 +107,7 @@ class Validator extends IlluminateValidator
      */
     public static function fromSession(): IlluminateValidator
     {
-        return Resolver::resolveValidator(
-            Resolver::resolveRequest()
-                ->session()
-                ->all(),
-        );
+        return Resolver::resolveValidator(Resolver::resolveRequest()->session()->all());
     }
 
     /**

@@ -66,11 +66,7 @@ class Parser extends ValidatedInput
      */
     public static function fromSession(): self
     {
-        return new self(
-            Resolver::resolveRequest()
-                ->session()
-                ->all(),
-        );
+        return new self(Resolver::resolveRequest()->session()->all());
     }
 
     /**

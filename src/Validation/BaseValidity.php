@@ -31,9 +31,7 @@ class BaseValidity
      */
     public function cursor(): Validity
     {
-        return Validity::make()
-            ->string(null)
-            ->cursor();
+        return Validity::make()->string(null)->cursor();
     }
 
     /**
@@ -109,9 +107,7 @@ class BaseValidity
      */
     public function date(): Validity
     {
-        return Validity::make()
-            ->string(null)
-            ->dateFormat();
+        return Validity::make()->string(null)->dateFormat();
     }
 
     /**
@@ -119,9 +115,7 @@ class BaseValidity
      */
     public function datetime(): Validity
     {
-        return Validity::make()
-            ->string(null)
-            ->dateFormat('Y-m-d\\TH:i:s.u\\Z');
+        return Validity::make()->string(null)->dateFormat('Y-m-d\\TH:i:s.u\\Z');
     }
 
     /**
@@ -177,25 +171,19 @@ class BaseValidity
                     ->nullable()
                     ->filled()
                     ->requiredWith(['expires']),
-                'expires' => $this->expires()
-                    ->nullable()
-                    ->filled(),
+                'expires' => $this->expires()->nullable()->filled(),
             ]);
         }
 
         if ($cursor) {
             $rules = \array_replace($rules, [
-                'cursor' => $this->cursor()
-                    ->nullable()
-                    ->filled(),
+                'cursor' => $this->cursor()->nullable()->filled(),
             ]);
         }
 
         if ($page) {
             $rules = \array_replace($rules, [
-                'page' => $this->page()
-                    ->nullable()
-                    ->filled(),
+                'page' => $this->page()->nullable()->filled(),
             ]);
         }
 
@@ -209,25 +197,19 @@ class BaseValidity
 
         if ($filter || $filterId || $filterSlug || $filterNotId || $filterNotSlug || $filterSearch) {
             $rules = \array_replace($rules, [
-                'filter' => $this->filter()
-                    ->nullable()
-                    ->filled(),
+                'filter' => $this->filter()->nullable()->filled(),
             ]);
         }
 
         if ($id) {
             $rules = \array_replace($rules, [
-                'id' => $this->id()
-                    ->nullable()
-                    ->filled(),
+                'id' => $this->id()->nullable()->filled(),
             ]);
         }
 
         if ($slug) {
             $rules = \array_replace($rules, [
-                'slug' => $this->slug()
-                    ->nullable()
-                    ->filled(),
+                'slug' => $this->slug()->nullable()->filled(),
             ]);
         }
 
@@ -261,64 +243,42 @@ class BaseValidity
 
         if ($filterId) {
             $rules = \array_replace($rules, [
-                'filter.id' => $this->collection()
-                    ->nullable()
-                    ->filled(),
-                'filter.id.*' => $this->id()
-                    ->required()
-                    ->distinct(),
+                'filter.id' => $this->collection()->nullable()->filled(),
+                'filter.id.*' => $this->id()->required()->distinct(),
             ]);
         }
 
         if ($filterNotId) {
             $rules = \array_replace($rules, [
-                'filter.not_id' => $this->collection()
-                    ->nullable()
-                    ->filled(),
-                'filter.not_id.*' => $this->id()
-                    ->required()
-                    ->distinct(),
+                'filter.not_id' => $this->collection()->nullable()->filled(),
+                'filter.not_id.*' => $this->id()->required()->distinct(),
             ]);
         }
 
         if ($filterSlug) {
             $rules = \array_replace($rules, [
-                'filter.slug' => $this->collection()
-                    ->nullable()
-                    ->filled(),
-                'filter.slug.*' => $this->slug()
-                    ->required()
-                    ->distinct(),
+                'filter.slug' => $this->collection()->nullable()->filled(),
+                'filter.slug.*' => $this->slug()->required()->distinct(),
             ]);
         }
 
         if ($filterNotSlug) {
             $rules = \array_replace($rules, [
-                'filter.not_slug' => $this->collection()
-                    ->nullable()
-                    ->filled(),
-                'filter.not_slug.*' => $this->slug()
-                    ->required()
-                    ->distinct(),
+                'filter.not_slug' => $this->collection()->nullable()->filled(),
+                'filter.not_slug.*' => $this->slug()->required()->distinct(),
             ]);
         }
 
         if ($filterSearch) {
             $rules = \array_replace($rules, [
-                'filter.search' => $this->search()
-                    ->nullable()
-                    ->filled(),
+                'filter.search' => $this->search()->nullable()->filled(),
             ]);
         }
 
         if ($sort !== null) {
             $rules = \array_replace($rules, [
-                'sort' => $this->collection()
-                    ->nullable()
-                    ->filled(),
-                'sort.*' => $this->sort($sort)
-                    ->required()
-                    ->distinct(),
+                'sort' => $this->collection()->nullable()->filled(),
+                'sort.*' => $this->sort($sort)->required()->distinct(),
             ]);
         }
 
@@ -332,19 +292,14 @@ class BaseValidity
 
         if ($data || $dataId !== null) {
             $rules = \array_replace($rules, [
-                'data' => $this->collection()
-                    ->nullable()
-                    ->filled(),
+                'data' => $this->collection()->nullable()->filled(),
                 'data.*' => $this->array()->required(),
             ]);
         }
 
         if ($dataId !== null) {
             $rules = \array_replace($rules, [
-                'data.*.id' => $this->id()
-                    ->builderKey($dataId)
-                    ->distinct()
-                    ->required(),
+                'data.*.id' => $this->id()->builderKey($dataId)->distinct()->required(),
             ]);
         }
 

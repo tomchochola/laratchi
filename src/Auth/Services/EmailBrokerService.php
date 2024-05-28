@@ -84,7 +84,9 @@ class EmailBrokerService
      */
     public function anonymous(string $guard, string $email, string $locale): void
     {
-        (new AnonymousNotifiable())->route('mail', $email)->notify(EmailConfirmationNotification::inject($guard, $this->store($guard, $email), $email)->locale($locale));
+        (new AnonymousNotifiable())
+            ->route('mail', $email)
+            ->notify(EmailConfirmationNotification::inject($guard, $this->store($guard, $email), $email)->locale($locale));
     }
 
     /**

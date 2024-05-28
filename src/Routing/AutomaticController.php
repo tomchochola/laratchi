@@ -22,11 +22,6 @@ class AutomaticController extends Controller
             return parent::callAction($method, $parameters);
         }
 
-        return Typer::assertInstance(
-            Resolver::resolveDatabaseManager()
-                ->connection()
-                ->transaction(fn(): Response => parent::callAction($method, $parameters)),
-            Response::class,
-        );
+        return Typer::assertInstance(Resolver::resolveDatabaseManager()->connection()->transaction(fn(): Response => parent::callAction($method, $parameters)), Response::class);
     }
 }

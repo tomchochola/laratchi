@@ -14,10 +14,7 @@ class SignedUrlSupport
     public static function make(string $action, array $parameters, int $expires): string
     {
         if ($expires > 0) {
-            $parameters['expires'] = \resolveDate()
-                ->now()
-                ->addMinutes($expires)
-                ->getTimestamp();
+            $parameters['expires'] = \resolveDate()->now()->addMinutes($expires)->getTimestamp();
         }
 
         \ksort($parameters);

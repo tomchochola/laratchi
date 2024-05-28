@@ -66,17 +66,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function throttler(string $key, int $maxAttempts, int $decayMinutes, Closure|null $responseCallback = null): Throttler
     {
-        return new Throttler(
-            new Limit(
-                $this->signature()
-                    ->defaults()
-                    ->key($key)
-                    ->hash(),
-                $maxAttempts,
-                $decayMinutes,
-                $responseCallback,
-            ),
-        );
+        return new Throttler(new Limit($this->signature()->defaults()->key($key)->hash(), $maxAttempts, $decayMinutes, $responseCallback));
     }
 
     /**
@@ -86,11 +76,7 @@ class FormRequest extends IlluminateFormRequest
      */
     public function validate(array $rules): Parser
     {
-        return new Parser(
-            $this->validatorFactory()
-                ->make($this->all(), $rules)
-                ->validate(),
-        );
+        return new Parser($this->validatorFactory()->make($this->all(), $rules)->validate());
     }
 
     /**
