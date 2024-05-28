@@ -22,6 +22,10 @@ class ValidateContentTypeHeaderMiddleware
             return $next($request);
         }
 
+        if (\in_array($request->getContent(), [null, false, ''], true)) {
+            return $next($request);
+        }
+
         $contentType = $request->getContentTypeFormat();
 
         if (!\in_array($contentType, $contentTypes, true)) {
