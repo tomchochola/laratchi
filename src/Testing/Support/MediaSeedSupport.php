@@ -7,10 +7,8 @@ namespace Tomchochola\Laratchi\Testing\Support;
 use Illuminate\Http\Testing\File;
 use Illuminate\Http\Testing\FileFactory;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use RedeyeVentures\GeoPattern\GeoPattern;
-use Tomchochola\Laratchi\Support\Typer;
 
 class MediaSeedSupport
 {
@@ -27,39 +25,23 @@ class MediaSeedSupport
     }
 
     /**
+     * Generate random image url.
+     */
+    public static function randomImageUrl(int $width = 800, int $height = 600): string
+    {
+        return "https://placehold.co/{$width}x{$height}";
+    }
+
+    /**
      * Generate random image url from keywords.
+     *
+     * @deprecated use `randomImageUrl` instead
      *
      * @param array<int, string> $keywords
      */
     public static function imageUrl(array $keywords): string
     {
-        $keyword = \implode(',', $keywords);
-
-        $json = \once(static function () use ($keyword): array {
-            $query = \http_build_query([
-                'method' => 'search',
-                'keyword' => $keyword,
-                'itemsperpage' => 100,
-                'itemsperpage_su' => 1,
-                'itemsperpage_free' => 1,
-            ]);
-
-            $response = Typer::assertNotBool(\file_get_contents("https://www.123rfapis.com?{$query}"));
-
-            return Typer::assertArray(\json_decode($response, true));
-        });
-
-        $randomIndex = \random_int(0, 99);
-
-        $url =
-            Arr::get($json, "0.images.123RF.image.{$randomIndex}.link_image") ??
-            (Arr::get($json, '0.images.123RF.image.0.link_image') ?? (Arr::get($json, '0.images.stockunlimited.image.0.link_image') ?? Arr::get($json, '0.images.freeimages.image.0.link_image')));
-
-        if ($url === null) {
-            return static::imageUrl(['random']);
-        }
-
-        return Typer::assertString($url);
+        return 'https://placehold.co/800x600';
     }
 
     /**
