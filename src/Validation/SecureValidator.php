@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tomchochola\Laratchi\Validation;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ClosureValidationRule;
@@ -265,11 +264,25 @@ class SecureValidator extends Validator
     {
         $message = parent::makeReplacements($message, $attribute, $rule, $parameters);
 
-        if (\count($parameters) > 0) {
-            $message = \str_replace(\array_keys(Arr::prependKeysWith($parameters, ':')), \array_values($parameters), $message);
+        if (!\str_contains($message, ':')) {
+            return $message;
         }
 
-        return $message;
+        [$message, $args] = \explode(':', $message, 2);
+
+        foreach ($parameters as $key => $value) {
+            if (\is_int($key)) {
+                continue;
+            }
+
+            if (!\is_scalar($value)) {
+                continue;
+            }
+
+            $args = \str_replace(':' . $key, (string) $value, $args);
+        }
+
+        return $message . ':' . $args;
     }
 
     /**
