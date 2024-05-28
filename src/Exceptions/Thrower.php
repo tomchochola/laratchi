@@ -182,7 +182,7 @@ class Thrower
     /**
      * Add error to validator.
      *
-     * @param array<string, string> $params
+     * @param array<array-key, string> $params
      *
      * @return $this
      */
@@ -197,7 +197,7 @@ class Thrower
      * Add errors to validator.
      *
      * @param array<string> $attributes
-     * @param array<string, string> $params
+     * @param array<array-key, string> $params
      *
      * @return $this
      */
