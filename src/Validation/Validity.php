@@ -3992,10 +3992,6 @@ class Validity implements ArrayableContract
 
         if ($this->collection) {
             $rules[] = 'collection';
-
-            if (!\in_array('array', $rules, true)) {
-                $rules[] = 'array';
-            }
         }
 
         if ($this->boolean) {

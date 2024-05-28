@@ -324,4 +324,16 @@ class Validator extends IlluminateValidator
             };
         }, $values);
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getAttributeType(mixed $attribute): string
+    {
+        if ($this->hasRule($attribute, ['collection', 'Collection'])) {
+            return 'array';
+        }
+
+        return parent::getAttributeType($attribute);
+    }
 }
