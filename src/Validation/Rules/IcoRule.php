@@ -38,19 +38,7 @@ class IcoRule implements ValidationRule
 
         if (!$this->validateChecksum($value)) {
             $fail(\mustTransString('validation.regex'));
-
-            return;
         }
-
-        if (!$this->validateAres) {
-            return;
-        }
-
-        if ($this->validateAres($value)) {
-            return;
-        }
-
-        $fail(\mustTransString('validation.regex'));
     }
 
     /**
@@ -75,33 +63,5 @@ class IcoRule implements ValidationRule
         }
 
         return $controll === (int) $value[7];
-    }
-
-    /**
-     * Validate using ares.
-     */
-    protected function validateAres(string $value): bool
-    {
-        $cache = \resolveCacheManager()
-            ->getStore()
-            ->get(static::class . ':' . $value);
-
-        if (\is_bool($cache)) {
-            return $cache;
-        }
-
-        $response = \file_get_contents("https://wwwinfo.mfcr.cz/cgi-bin/ares/darv_std.cgi?ico={$value}");
-
-        if (!\is_string($response)) {
-            \assertNever('ares not responding');
-        }
-
-        $passes = \str_contains($response, 'Shoda_ICO');
-
-        if ($this->cacheDuration !== null) {
-            \resolveCacheManager()->put(static::class . ':' . $value, $passes, $this->cacheDuration);
-        }
-
-        return $passes;
     }
 }
