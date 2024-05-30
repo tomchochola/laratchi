@@ -29,19 +29,17 @@ class MediaSeedSupport
      */
     public static function randomImageUrl(int $width = 800, int $height = 600): string
     {
-        return "https://placehold.co/{$width}x{$height}";
+        return "https://loremflickr.com/{$width}/{$height}";
     }
 
     /**
      * Generate random image url from keywords.
      *
-     * @deprecated use `randomImageUrl` instead
-     *
      * @param array<int, string> $keywords
      */
     public static function imageUrl(array $keywords): string
     {
-        return 'https://placehold.co/800x600';
+        return 'https://loremflickr.com/800/600/' . \implode(',', $keywords) . '/all';
     }
 
     /**
