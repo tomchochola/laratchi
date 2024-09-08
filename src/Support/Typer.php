@@ -1144,6 +1144,7 @@ class Typer
             Panicker::panic(__METHOD__, 'assertion failed', \compact('value'));
         }
 
+        // @phpstan-ignore-next-line
         return $value;
     }
 
@@ -1159,6 +1160,7 @@ class Typer
     public static function assertEmpty(array $value): array
     {
         if (\count($value) === 0) {
+            // @phpstan-ignore-next-line
             return $value;
         }
 

@@ -5,20 +5,11 @@ declare(strict_types=1);
 namespace Tomchochola\Laratchi\Validation;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\ValidatedInput as IlluminateValidatedInput;
 use Tomchochola\Laratchi\Config\Config;
-use Tomchochola\Laratchi\Support\AssertTrait;
-use Tomchochola\Laratchi\Support\ParserTrait;
-use Tomchochola\Laratchi\Support\ParseTrait;
 
-class AllInput extends IlluminateValidatedInput
+class AllInput extends BaseInput
 {
-    use AssertTrait;
-    use ParserTrait;
-    use ParseTrait;
-
     /**
      * @inheritDoc
      *
@@ -226,14 +217,6 @@ class AllInput extends IlluminateValidatedInput
     }
 
     /**
-     * Resolve value from data array.
-     */
-    public function get(string $key, mixed $default = null): mixed
-    {
-        return Arr::get($this->input, $key) ?? $default;
-    }
-
-    /**
      * Make new all input from given data.
      *
      * @param array<mixed> $data
@@ -275,33 +258,5 @@ class AllInput extends IlluminateValidatedInput
         }
 
         return $allInputs;
-    }
-
-    /**
-     * Attribute is null.
-     */
-    public function isNull(string $key): bool
-    {
-        return $this->get($key) === null;
-    }
-
-    /**
-     * Attribute is not null.
-     */
-    public function isNotNull(string $key): bool
-    {
-        return $this->get($key) !== null;
-    }
-
-    /**
-     * Mixed getter.
-     */
-    public function mixed(string|null $key = null): mixed
-    {
-        if ($key === null) {
-            return $this->input;
-        }
-
-        return Arr::get($this->input, $key);
     }
 }

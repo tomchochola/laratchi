@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 namespace Illuminate\Http\Client {
+  class PendingRequest {}
+}
+
+namespace Illuminate\Http\Client {
   /**
    * @method PendingRequest accept(string $contentType)
    */
