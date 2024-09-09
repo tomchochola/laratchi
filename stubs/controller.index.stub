@@ -71,7 +71,7 @@ class {{ class }} extends Controller
      */
     protected function select(Builder $builder, RequestModeEnum $mode): void
     {
-        $builder->getQuery()->select($builder->qualifyColumn('*'));
+        {{ model }}::querySelect($builder);
     }
 
     /**
@@ -169,11 +169,7 @@ class {{ class }} extends Controller
      */
     protected function selectResource({{ model }} $model): JsonApiResource
     {
-        return new ModelResource($model, static function ({{ model }} $resource): array {
-            return [
-                'title' => $resource->getTitle(),
-            ];
-        });
+        return $model->resource();
     }
 
     /**
@@ -181,11 +177,7 @@ class {{ class }} extends Controller
      */
     protected function indexResource({{ model }} $model): JsonApiResource
     {
-        return new ModelResource($model, static function ({{ model }} $resource): array {
-            return [
-                'title' => $resource->getTitle(),
-            ];
-        });
+        return $model->resource();
     }
 
     /**

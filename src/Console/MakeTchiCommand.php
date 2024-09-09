@@ -299,62 +299,7 @@ class MakeTchiCommand extends GeneratorCommand
                                                     'description' => 'data',
                                                     'type' => 'array',
                                                     'items' => [
-                                                        'oneOf' => [
-                                                            [
-                                                                'allOf' => [
-                                                                    [
-                                                                        '$ref' => '#/components/schemas/Resource',
-                                                                    ],
-                                                                    [
-                                                                        'description' => "{$modelName} index schema",
-                                                                        'type' => 'object',
-                                                                        'required' => ['attributes'],
-                                                                        'properties' => [
-                                                                            'type' => [
-                                                                                'enum' => [$table],
-                                                                            ],
-                                                                            'attributes' => [
-                                                                                'description' => 'attributes',
-                                                                                'type' => 'object',
-                                                                                'required' => ['title'],
-                                                                                'properties' => [
-                                                                                    'title' => [
-                                                                                        '$ref' => '#/components/schemas/string',
-                                                                                    ],
-                                                                                ],
-                                                                            ],
-                                                                        ],
-                                                                    ],
-                                                                ],
-                                                            ],
-                                                            [
-                                                                'allOf' => [
-                                                                    [
-                                                                        '$ref' => '#/components/schemas/Resource',
-                                                                    ],
-                                                                    [
-                                                                        'description' => "{$modelName} select schema",
-                                                                        'type' => 'object',
-                                                                        'required' => ['attributes'],
-                                                                        'properties' => [
-                                                                            'type' => [
-                                                                                'enum' => [$table],
-                                                                            ],
-                                                                            'attributes' => [
-                                                                                'description' => 'attributes',
-                                                                                'type' => 'object',
-                                                                                'required' => ['title'],
-                                                                                'properties' => [
-                                                                                    'title' => [
-                                                                                        '$ref' => '#/components/schemas/string',
-                                                                                    ],
-                                                                                ],
-                                                                            ],
-                                                                        ],
-                                                                    ],
-                                                                ],
-                                                            ],
-                                                        ],
+                                                        '$ref' => "#/components/schemas/{$modelName}",
                                                     ],
                                                 ],
                                                 [
@@ -402,31 +347,7 @@ class MakeTchiCommand extends GeneratorCommand
                                     'required' => ['data'],
                                     'properties' => [
                                         'data' => [
-                                            'allOf' => [
-                                                [
-                                                    '$ref' => '#/components/schemas/Resource',
-                                                ],
-                                                [
-                                                    'description' => "{$modelName} show schema",
-                                                    'type' => 'object',
-                                                    'required' => ['attributes'],
-                                                    'properties' => [
-                                                        'type' => [
-                                                            'enum' => [$table],
-                                                        ],
-                                                        'attributes' => [
-                                                            'description' => 'attributes',
-                                                            'type' => 'object',
-                                                            'required' => ['title'],
-                                                            'properties' => [
-                                                                'title' => [
-                                                                    '$ref' => '#/components/schemas/string',
-                                                                ],
-                                                            ],
-                                                        ],
-                                                    ],
-                                                ],
-                                            ],
+                                            '$ref' => "#/components/schemas/{$modelName}",
                                         ],
                                     ],
                                 ],
@@ -590,13 +511,13 @@ class MakeTchiCommand extends GeneratorCommand
             ],
         ];
 
-        $json['components']['schemas']["{$modelName}Embed"] = [
+        $json['components']['schemas']["{$modelName}"] = [
             'allOf' => [
                 [
                     '$ref' => '#/components/schemas/Resource',
                 ],
                 [
-                    'description' => "{$modelName} embed schema",
+                    'description' => "{$modelName} schema",
                     'type' => 'object',
                     'required' => ['attributes'],
                     'properties' => [
@@ -776,11 +697,7 @@ class MakeTchiCommand extends GeneratorCommand
 
         $routes = $this->files->get($path);
 
-        $routes = \str_replace(
-            'declare(strict_types=1);',
-            "declare(strict_types=1);\n\nresolveRouteRegistrar()\n    ->prefix('v1/{$table}')\n    ->group(static function (): void {\n        resolveRouteRegistrar()->post('store', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreController::class);\n        resolveRouteRegistrar()->get('index', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexController::class);\n        resolveRouteRegistrar()->get('show', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowController::class);\n        resolveRouteRegistrar()->post('update', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateController::class);\n        resolveRouteRegistrar()->post('destroy', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyController::class);\n    });",
-            $routes,
-        );
+        $routes = $routes . "\n\nResolver::resolveRouteRegistrar()\n    ->prefix('v1/{$table}')\n    ->group(static function (Router \$router): void {\n        \$router->post('store', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreController::class);\n        \$router->get('index', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexController::class);\n        \$router->get('show', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowController::class);\n        \$router->post('update', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateController::class);\n        \$router->post('destroy', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyController::class);\n    });";
 
         $this->files->put($path, $routes);
     }
@@ -806,7 +723,7 @@ class MakeTchiCommand extends GeneratorCommand
 
         $testCase = \str_replace(
             "\n}\n",
-            "\n\n    /**\n     * {$modelName} embed structure.\n     */\n    protected function structure{$modelName}Embed(): JsonApiValidator\n    {\n        \$validity = new \\{$qualifiedValidityName}();\n\n        return \$this->structure('{$table}', [\n            'title' => \$validity->title()->required(),\n        ]);\n    }\n}\n",
+            "\n\n    /**\n     * {$modelName} structure.\n     */\n    protected function structure{$modelName}(): JsonApiValidator\n    {\n        \$validity = new \\{$qualifiedValidityName}();\n\n        return \$this->structure('{$table}', [\n            'user_id' => \$validity->userId()->required(),\n            'title' => \$validity->title()->required(),\n            'created_at' => \$validity->createdAt()->required(),\n            'updated_at' => \$validity->updatedAt()->required(),\n        ]);\n    }\n}\n",
             $testCase,
         );
 

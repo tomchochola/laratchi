@@ -27,17 +27,11 @@ class {{ class }} extends Controller
         $model = {{ model }}::mustFindByKeyXorRouteKey($validated->mustParseNullableInt('id'), $validated->mustParseNullableString('slug'), static function (Builder $builder) use (
             $auth,
         ): void {
-            $builder
-                ->getQuery()
-                ->where($builder->qualifyColumn('user_id'), $auth->getKey())
-                ->select($builder->qualifyColumn('*'));
+            {{ model }}::querySelect($builder);
+            {{ model }}::scopeUserId($builder, [$auth->getKey()]);
         });
 
-        return (new ModelResource($model, static function ({{ model }} $resource): array {
-            return [
-                'title' => $resource->getTitle(),
-            ];
-        }))->response();
+        return $model->resource()->response();
     }
 
     /**

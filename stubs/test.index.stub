@@ -127,11 +127,7 @@ class {{ class }} extends TestCase
      */
     protected function structure{{ model }}Index(): JsonApiValidator
     {
-        $validity = new {{ validity }}();
-
-        return $this->structure('{{ table }}', [
-            'title' => $validity->title()->required(),
-        ]);
+        return $this->structure{{ model }}();
     }
 
     /**
@@ -139,10 +135,6 @@ class {{ class }} extends TestCase
      */
     protected function structure{{ model }}Select(): JsonApiValidator
     {
-        $validity = new {{ validity }}();
-
-        return $this->structure('{{ table }}', [
-            'title' => $validity->title()->required(),
-        ]);
+        return $this->structure{{ model }}();
     }
 }

@@ -28,7 +28,9 @@ class {{ class }} extends TransactionController
         $this->validateUnique($request, $validated);
 
         foreach ($validated->parsers('data') as $parser) {
-            {{ model }}::mustFindByKey($parser->mustParseInt('id'))->update($parser->only(['title']));
+            $model = {{ model }}::mustFindByKey($parser->mustParseInt('id'));
+
+            $model->update($parser->only(['title']));
         }
 
         return Resolver::resolveResponseFactory()->noContent();
