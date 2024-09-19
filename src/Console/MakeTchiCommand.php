@@ -697,7 +697,9 @@ class MakeTchiCommand extends GeneratorCommand
 
         $routes = $this->files->get($path);
 
-        $routes = $routes . "\n\nResolver::resolveRouteRegistrar()\n    ->prefix('v1/{$table}')\n    ->group(static function (Router \$router): void {\n        \$router->post('store', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreController::class);\n        \$router->get('index', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexController::class);\n        \$router->get('show', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowController::class);\n        \$router->post('update', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateController::class);\n        \$router->post('destroy', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyController::class);\n    });";
+        $routes =
+            $routes .
+            "\n\nResolver::resolveRouteRegistrar()\n    ->prefix('v1/{$table}')\n    ->group(static function (Router \$router): void {\n        \$router->post('store', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}StoreController::class);\n        \$router->get('index', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}IndexController::class);\n        \$router->get('show', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}ShowController::class);\n        \$router->post('update', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}UpdateController::class);\n        \$router->post('destroy', App\\Http\\Controllers\\Api\\{$modelName}\\{$modelName}DestroyController::class);\n    });";
 
         $this->files->put($path, $routes);
     }
