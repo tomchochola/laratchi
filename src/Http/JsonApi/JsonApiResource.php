@@ -186,7 +186,7 @@ abstract class JsonApiResource
         $meta = $resource->meta();
         $relationships = $resource->relationships();
 
-        if ($attributes === null && $meta === null && $relationships === null) {
+        if (($attributes === null || \count($attributes) === 0) && ($meta === null || \count($meta) === 0) && ($relationships === null || \count($relationships) === 0)) {
             return;
         }
 
@@ -194,15 +194,15 @@ abstract class JsonApiResource
 
         $data = $resource->header();
 
-        if ($attributes !== null) {
+        if ($attributes !== null && \count($attributes) !== 0) {
             $data['attributes'] = $attributes;
         }
 
-        if ($meta !== null) {
+        if ($meta !== null && \count($meta) !== 0) {
             $data['meta'] = $meta;
         }
 
-        if ($relationships !== null) {
+        if ($relationships !== null && \count($relationships) !== 0) {
             $data['relationships'] = $this->encodeRelationships($relationships, $included);
         }
 
