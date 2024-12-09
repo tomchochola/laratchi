@@ -211,14 +211,14 @@ class JsonApiValidator
     public function headerRules(): array
     {
         $rules = [
-            'id' => Validity::make()->nullable()->filled()->id(),
+            'id' => Validity::make()->nullable()->filled()->string(null),
             'type' => Validity::make()
                 ->nullable()
                 ->filled()
                 ->string(null)
                 ->if($this->type !== null)
                 ->in([$this->type]),
-            'slug' => Validity::make()->nullable()->filled()->slug(),
+            'slug' => Validity::make()->nullable()->filled()->string(null),
         ];
 
         if (\count($this->meta) > 0) {
