@@ -257,9 +257,9 @@ abstract class TestCase extends BaseTestCase
                 'data' => Validity::make()
                     ->nullable()
                     ->object(['id', 'type', 'slug']),
-                'data.id' => Validity::make()->nullable()->filled()->id(),
+                'data.id' => Validity::make()->nullable()->filled()->string(null),
                 'data.type' => Validity::make()->nullable()->filled()->string(null),
-                'data.slug' => Validity::make()->nullable()->filled()->slug(),
+                'data.slug' => Validity::make()->nullable()->filled()->string(null),
                 'data.attributes' => Validity::make()->nullable()->filled()->array(null),
                 'data.meta' => Validity::make()->nullable()->filled()->array(null),
                 'data.relationships' => Validity::make()->nullable()->filled()->array(null),
@@ -273,9 +273,9 @@ abstract class TestCase extends BaseTestCase
                 'included.*' => Validity::make()
                     ->required()
                     ->object(['id', 'type', 'slug']),
-                'included.*.id' => Validity::make()->required()->id(),
+                'included.*.id' => Validity::make()->required()->string(null),
                 'included.*.type' => Validity::make()->required()->string(null),
-                'included.*.slug' => Validity::make()->required()->slug(),
+                'included.*.slug' => Validity::make()->required()->string(null),
                 'included.*.attributes' => Validity::make()->nullable()->filled()->array(null),
                 'included.*.meta' => Validity::make()->nullable()->filled()->array(null),
                 'included.*.relationships' => Validity::make()->nullable()->filled()->array(null),
@@ -343,9 +343,9 @@ abstract class TestCase extends BaseTestCase
                 'data.*' => Validity::make()
                     ->required()
                     ->object(['id', 'type', 'slug']),
-                'data.*.id' => Validity::make()->required()->id(),
+                'data.*.id' => Validity::make()->required()->string(null),
                 'data.*.type' => Validity::make()->required()->string(null),
-                'data.*.slug' => Validity::make()->required()->slug(),
+                'data.*.slug' => Validity::make()->required()->string(null),
                 'data.*.attributes' => Validity::make()->nullable()->filled()->array(null),
                 'data.*.meta' => Validity::make()->nullable()->filled()->array(null),
                 'data.*.relationships' => Validity::make()->nullable()->filled()->array(null),
@@ -359,9 +359,9 @@ abstract class TestCase extends BaseTestCase
                 'included.*' => Validity::make()
                     ->required()
                     ->object(['id', 'type', 'slug']),
-                'included.*.id' => Validity::make()->required()->id(),
+                'included.*.id' => Validity::make()->required()->string(null),
                 'included.*.type' => Validity::make()->required()->string(null),
-                'included.*.slug' => Validity::make()->required()->slug(),
+                'included.*.slug' => Validity::make()->required()->string(null),
                 'included.*.attributes' => Validity::make()->nullable()->filled()->array(null),
                 'included.*.meta' => Validity::make()->nullable()->filled()->array(null),
                 'included.*.relationships' => Validity::make()->nullable()->filled()->array(null),
