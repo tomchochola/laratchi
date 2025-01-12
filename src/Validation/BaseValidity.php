@@ -6,6 +6,7 @@ namespace Tomchochola\Laratchi\Validation;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Tomchochola\Laratchi\Enums\RequestModeEnum;
 
 class BaseValidity
@@ -139,7 +140,7 @@ class BaseValidity
      *
      * @param array<string>|null $sort
      * @param array<int>|bool $mode
-     * @param Closure(): Builder|null $dataId
+     * @param Closure(): Builder<Model>|null $dataId
      *
      * @return array<string, mixed>
      */

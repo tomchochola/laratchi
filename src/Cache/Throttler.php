@@ -34,9 +34,9 @@ class Throttler
      *
      * @param Closure(): never|Closure(): Response|Closure(int): never|Closure(int): Response|null $responseCallback
      */
-    public static function default(string $key = '', int $maxAttempts = 3, int $decayMinutes = 60, Closure|null $responseCallback = null): self
+    public static function default(string $key = '', int $maxAttempts = 3, int $decaySeconds = 3600, Closure|null $responseCallback = null): self
     {
-        return new self(Limit::default($key, $maxAttempts, $decayMinutes, $responseCallback));
+        return new self(Limit::default($key, $maxAttempts, $decaySeconds, $responseCallback));
     }
 
     /**
@@ -127,7 +127,7 @@ class Throttler
      */
     public function hit(): static
     {
-        $this->limiter->hit($this->hash(), $this->limit->decayMinutes * 60);
+        $this->limiter->hit($this->hash(), $this->limit->decaySeconds);
 
         return $this;
     }

@@ -16,9 +16,9 @@ class Limit extends IlluminateLimit
      *
      * @param Closure(): never|Closure(): Response|Closure(int): never|Closure(int): Response|null $responseCallback
      */
-    public function __construct(string $key, int $maxAttempts, int $decayMinutes, Closure|null $responseCallback = null)
+    public function __construct(string $key, int $maxAttempts, int $decaySeconds, Closure|null $responseCallback = null)
     {
-        parent::__construct($key, $maxAttempts, $decayMinutes);
+        parent::__construct($key, $maxAttempts, $decaySeconds);
 
         $this->responseCallback = $responseCallback;
     }
@@ -28,8 +28,8 @@ class Limit extends IlluminateLimit
      *
      * @param Closure(): never|Closure(): Response|Closure(int): never|Closure(int): Response|null $responseCallback
      */
-    public static function default(string $key = '', int $maxAttempts = 3, int $decayMinutes = 60, Closure|null $responseCallback = null): self
+    public static function default(string $key = '', int $maxAttempts = 3, int $decaySeconds = 3600, Closure|null $responseCallback = null): self
     {
-        return new self(RequestSignature::default($key)->hash(), $maxAttempts, $decayMinutes, $responseCallback);
+        return new self(RequestSignature::default($key)->hash(), $maxAttempts, $decaySeconds, $responseCallback);
     }
 }

@@ -64,9 +64,9 @@ class FormRequest extends IlluminateFormRequest
      *
      * @param Closure(int): never|Closure(int): Response|null $responseCallback
      */
-    public function throttler(string $key, int $maxAttempts, int $decayMinutes, Closure|null $responseCallback = null): Throttler
+    public function throttler(string $key, int $maxAttempts, int $decaySeconds, Closure|null $responseCallback = null): Throttler
     {
-        return new Throttler(new Limit($this->signature()->defaults()->key($key)->hash(), $maxAttempts, $decayMinutes, $responseCallback));
+        return new Throttler(new Limit($this->signature()->defaults()->key($key)->hash(), $maxAttempts, $decaySeconds, $responseCallback));
     }
 
     /**

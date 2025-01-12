@@ -190,6 +190,8 @@ class User extends IlluminateUser implements HasLocalePreferenceContract
 
     /**
      * Database token relationship.
+     *
+     * @return HasMany<DatabaseToken, $this>
      */
     public function databaseTokens(): HasMany
     {

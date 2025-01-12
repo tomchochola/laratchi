@@ -112,6 +112,7 @@ abstract class JsonApiResource
 
         $data = ['data' => $this->data($included)];
 
+        // @phpstan-ignore-next-line
         if ($included->isNotEmpty()) {
             $data['included'] = $included->values()->all();
         }

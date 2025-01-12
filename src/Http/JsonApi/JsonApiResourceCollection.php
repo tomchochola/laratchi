@@ -19,7 +19,7 @@ class JsonApiResourceCollection
      * @template T
      * @template B
      *
-     * @param Collection<array-key, T>|CursorPaginator|Paginator $collection
+     * @param Collection<array-key, T>|CursorPaginator<array-key, T>|Paginator<array-key, T> $collection
      * @param Closure(B): JsonApiResource $closureMap
      */
     public function __construct(public Collection|CursorPaginator|Paginator $collection, public Closure $closureMap) {}
@@ -44,6 +44,7 @@ class JsonApiResourceCollection
                 ->all(),
         ];
 
+        // @phpstan-ignore-next-line
         if ($included->isNotEmpty()) {
             $data['included'] = $included->values()->all();
         }

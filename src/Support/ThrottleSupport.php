@@ -37,7 +37,7 @@ class ThrottleSupport
 
         return [
             static function () use ($key, $rateLimiter, $limit): void {
-                $rateLimiter->hit($key, $limit->decayMinutes * 60);
+                $rateLimiter->hit($key, $limit->decaySeconds);
             },
             static function () use ($key, $rateLimiter): void {
                 $rateLimiter->clear($key);

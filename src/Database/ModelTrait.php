@@ -39,7 +39,7 @@ trait ModelTrait
     /**
      * Find instance by key.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      */
     public static function findByKey(int $key, Closure|null $closure = null): static|null
     {
@@ -55,7 +55,7 @@ trait ModelTrait
     /**
      * Mandatory find instance by key.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      * @param ?Closure(): never $onError
      */
     public static function mustFindByKey(int $key, Closure|null $closure = null, Closure|null $onError = null): static
@@ -76,7 +76,7 @@ trait ModelTrait
     /**
      * Find instance by route key.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      */
     public static function findByRouteKey(string $key, Closure|null $closure = null): static|null
     {
@@ -96,7 +96,7 @@ trait ModelTrait
     /**
      * Mandatory find instance by route key.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      * @param ?Closure(): never $onError
      */
     public static function mustFindByRouteKey(string $key, Closure|null $closure = null, Closure|null $onError = null): static
@@ -117,7 +117,7 @@ trait ModelTrait
     /**
      * Resolve model.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      */
     public static function resolve(int|null $id = null, string|null $slug = null, Closure|null $closure = null): static|null
     {
@@ -139,7 +139,7 @@ trait ModelTrait
     /**
      * Must resolve model.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      * @param ?Closure(): never $onError
      */
     public static function mustResolve(int|null $id = null, string|null $slug = null, Closure|null $closure = null, Closure|null $onError = null): static
@@ -170,7 +170,7 @@ trait ModelTrait
     /**
      * Resolve from request.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      */
     public static function resolveFromRequest(FormRequest $request, Closure|null $closure = null, string|null $idKey = 'id', string|null $routeKey = 'slug'): static|null
     {
@@ -180,7 +180,7 @@ trait ModelTrait
     /**
      * Must resolve from request.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      */
     public static function mustResolveFromRequest(FormRequest $request, Closure|null $closure = null, string|null $idKey = 'id', string|null $routeKey = 'slug'): static
     {
@@ -236,6 +236,7 @@ trait ModelTrait
     /**
      * Scope by keys.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $ids
      */
     public static function scopeKeys(Builder $builder, array $ids): void
@@ -246,6 +247,7 @@ trait ModelTrait
     /**
      * Scope by not keys.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $ids
      */
     public static function scopeNotKeys(Builder $builder, array $ids): void
@@ -256,6 +258,7 @@ trait ModelTrait
     /**
      * Scope by route keys.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $slugs
      */
     public static function scopeRouteKeys(Builder $builder, array $slugs): void
@@ -268,6 +271,7 @@ trait ModelTrait
     /**
      * Scope by not route keys.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $slugs
      */
     public static function scopeNotRouteKeys(Builder $builder, array $slugs): void
@@ -280,6 +284,7 @@ trait ModelTrait
     /**
      * Scope by id/slug.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $values
      */
     public static function scopeIdSlug(Builder $builder, array $values, bool|null $preferId = null): void
@@ -300,6 +305,7 @@ trait ModelTrait
     /**
      * Scope by not id/slug.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $values
      */
     public static function scopeNotIdSlug(Builder $builder, array $values, bool|null $preferId = null): void
@@ -320,7 +326,7 @@ trait ModelTrait
     /**
      * Find instance by id.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      */
     public static function findById(int $key, Closure|null $closure = null): static|null
     {
@@ -330,7 +336,7 @@ trait ModelTrait
     /**
      * Mandatory find instance by key.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      * @param ?Closure(): never $onError
      */
     public static function mustFindById(int $key, Closure|null $closure = null, Closure|null $onError = null): static
@@ -341,7 +347,7 @@ trait ModelTrait
     /**
      * Find instance by slug.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      */
     public static function findBySlug(string $key, Closure|null $closure = null): static|null
     {
@@ -351,7 +357,7 @@ trait ModelTrait
     /**
      * Mandatory find instance by slug.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      * @param ?Closure(): never $onError
      */
     public static function mustFindBySlug(string $key, Closure|null $closure = null, Closure|null $onError = null): static
@@ -362,7 +368,7 @@ trait ModelTrait
     /**
      * Find instance by id/slug.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      */
     public static function findByIdSlug(int|string $value, Closure|null $closure = null, bool|null $preferId = null): static|null
     {
@@ -380,7 +386,7 @@ trait ModelTrait
     /**
      * Mandatory find instance by id/slug.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      * @param ?Closure(): never $onError
      */
     public static function mustFindByIdSlug(int|string $value, Closure|null $closure = null, Closure|null $onError = null, bool|null $preferId = null): static
@@ -402,7 +408,7 @@ trait ModelTrait
      * Find all by key.
      *
      * @param array<mixed> $values
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      *
      * @return Collection<array-key, static>
      */
@@ -423,7 +429,7 @@ trait ModelTrait
      * Find all by slug.
      *
      * @param array<mixed> $values
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      *
      * @return Collection<array-key, static>
      */
@@ -444,7 +450,7 @@ trait ModelTrait
      * Find all by id/slug.
      *
      * @param array<mixed> $values
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      *
      * @return Collection<array-key, static>
      */
@@ -464,7 +470,7 @@ trait ModelTrait
     /**
      * Find by id or slug.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      */
     public static function findByIdOrSlug(int|null $id = null, string|null $slug = null, Closure|null $closure = null): static|null
     {
@@ -486,7 +492,7 @@ trait ModelTrait
     /**
      * Must find by id or slug.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      * @param ?Closure(): never $onError
      */
     public static function mustFindByIdOrSlug(int|null $id = null, string|null $slug = null, Closure|null $closure = null, Closure|null $onError = null): static
@@ -507,7 +513,7 @@ trait ModelTrait
     /**
      * Find by id xor slug.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      */
     public static function findByIdXorSlug(int|null $id = null, string|null $slug = null, Closure|null $closure = null): static|null
     {
@@ -525,7 +531,7 @@ trait ModelTrait
     /**
      * Must find by id xor slug.
      *
-     * @param (Closure(Builder): void)|null $closure
+     * @param (Closure(Builder<static>): void)|null $closure
      * @param ?Closure(): never $onError
      */
     public static function mustFindByIdXorSlug(int|null $id = null, string|null $slug = null, Closure|null $closure = null, Closure|null $onError = null): static
@@ -546,6 +552,7 @@ trait ModelTrait
     /**
      * Scope by id.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $ids
      */
     public static function scopeId(Builder $builder, array $ids): void
@@ -556,6 +563,7 @@ trait ModelTrait
     /**
      * Scope by not id.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $ids
      */
     public static function scopeNotId(Builder $builder, array $ids): void
@@ -566,6 +574,7 @@ trait ModelTrait
     /**
      * Scope by slug.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $slugs
      */
     public static function scopeSlug(Builder $builder, array $slugs): void
@@ -578,6 +587,7 @@ trait ModelTrait
     /**
      * Scope by not slug.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $slugs
      */
     public static function scopeNotSlug(Builder $builder, array $slugs): void
@@ -590,6 +600,7 @@ trait ModelTrait
     /**
      * Scope in.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $values
      */
     public static function scopeIn(Builder $builder, string $column, array $values): void
@@ -600,6 +611,7 @@ trait ModelTrait
     /**
      * Scope by not in.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $values
      */
     public static function scopeNotIn(Builder $builder, string $column, array $values): void
@@ -610,7 +622,8 @@ trait ModelTrait
     /**
      * Scope has.
      *
-     * @param ?Closure(Builder): void $closure
+     * @param Builder<static> $builder
+     * @param ?Closure(Builder<static>): void $closure
      */
     public static function scopeHas(Builder $builder, string $relation, Closure|null $closure = null, string $operator = '>=', int $count = 1): void
     {
@@ -620,7 +633,8 @@ trait ModelTrait
     /**
      * Scope not has.
      *
-     * @param ?Closure(Builder): void $closure
+     * @param Builder<static> $builder
+     * @param ?Closure(Builder<static>): void $closure
      */
     public static function scopeNotHas(Builder $builder, string $relation, Closure|null $closure = null): void
     {
@@ -630,8 +644,9 @@ trait ModelTrait
     /**
      * Scope has id.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $values
-     * @param ?Closure(Builder): void $closure
+     * @param ?Closure(Builder<static>): void $closure
      */
     public static function scopeHasId(Builder $builder, string $relation, array $values, Closure|null $closure = null, string $operator = '>=', int $count = 1): void
     {
@@ -652,8 +667,9 @@ trait ModelTrait
     /**
      * Scope not has.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $values
-     * @param ?Closure(Builder): void $closure
+     * @param ?Closure(Builder<static>): void $closure
      */
     public static function scopeNotHasId(Builder $builder, string $relation, array $values, Closure|null $closure = null): void
     {
@@ -669,6 +685,7 @@ trait ModelTrait
     /**
      * Scope by key.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $keys
      */
     public static function scopeKey(Builder $builder, array $keys): void
@@ -679,6 +696,7 @@ trait ModelTrait
     /**
      * Scope by not key.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $keys
      */
     public static function scopeNotKey(Builder $builder, array $keys): void
@@ -689,6 +707,7 @@ trait ModelTrait
     /**
      * Scope by route key.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $routeKeys
      */
     public static function scopeRouteKey(Builder $builder, array $routeKeys): void
@@ -701,6 +720,7 @@ trait ModelTrait
     /**
      * Scope by not route key.
      *
+     * @param Builder<static> $builder
      * @param array<mixed> $routeKeys
      */
     public static function scopeNotRouteKey(Builder $builder, array $routeKeys): void
@@ -713,7 +733,7 @@ trait ModelTrait
     /**
      * Find by key xor route key.
      *
-     * @param Closure(Builder): void|null $closure
+     * @param Closure(Builder<static>): void|null $closure
      */
     public static function findByKeyXorRouteKey(int|null $key = null, string|null $routeKey = null, Closure|null $closure = null): static|null
     {
@@ -731,7 +751,7 @@ trait ModelTrait
     /**
      * Must find by key xor route key.
      *
-     * @param Closure(Builder): void|null $closure
+     * @param Closure(Builder<static>): void|null $closure
      * @param Closure(): never|null $onError
      */
     public static function mustFindByKeyXorRouteKey(int|null $key = null, string|null $routeKey = null, Closure|null $closure = null, Closure|null $onError = null): static
@@ -752,7 +772,7 @@ trait ModelTrait
     /**
      * Get clean instance.
      *
-     * @param Closure(Builder): void $closure
+     * @param Closure(Builder<static>): void $closure
      */
     public function clean(Closure $closure): static
     {

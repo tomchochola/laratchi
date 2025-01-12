@@ -81,7 +81,7 @@ class MeUpdateController extends TransactionController
      */
     protected function update(MeUpdateRequest $request, User $me): void
     {
-        $me->update($request->data());
+        $me->update($request->payload());
     }
 
     /**

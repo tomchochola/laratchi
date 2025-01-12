@@ -21,9 +21,9 @@ class Controller extends IlluminateController
     public static int $throttle = 5;
 
     /**
-     * Throttle decay in minutes.
+     * Throttle decay in seconds.
      */
-    public static int $decay = 15;
+    public static int $decay = 600;
 
     /**
      * Throw simple throttle errors.

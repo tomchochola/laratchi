@@ -50,7 +50,7 @@ class RegisterRequest extends SecureFormRequest
      *
      * @return array<string, mixed>
      */
-    public function data(): array
+    public function payload(): array
     {
         $password = $this->validatedInput()->string('password');
 

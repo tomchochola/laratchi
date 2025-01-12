@@ -119,9 +119,11 @@ class DatabaseTokenGuard implements GuardContract
     /**
      * @inheritDoc
      */
-    public function setUser(AuthenticatableContract $user): void
+    public function setUser(AuthenticatableContract $user): static
     {
         $this->user = \assertInstance($user, User::class);
+
+        return $this;
     }
 
     /**

@@ -16,6 +16,7 @@ use Illuminate\Testing\TestResponse;
 use JsonSerializable;
 use Stringable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 use Tomchochola\Laratchi\Auth\User;
 use Tomchochola\Laratchi\Config\Config;
 use Tomchochola\Laratchi\Exceptions\Panicker;
@@ -61,6 +62,8 @@ abstract class TestCase extends BaseTestCase
      * @param array<mixed> $cookies
      * @param array<mixed> $files
      * @param array<mixed> $server
+     *
+     * @return TestResponse<Response>
      */
     public function call(mixed $method, mixed $uri, mixed $parameters = [], mixed $cookies = [], mixed $files = [], mixed $server = [], mixed $content = null): TestResponse
     {
@@ -131,6 +134,8 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * Validate json error.
+     *
+     * @param TestResponse<Response> $response
      */
     protected function validateJsonApiError(TestResponse $response, int $status, int $code = 0): void
     {
@@ -162,6 +167,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Validate json validation error.
      *
+     * @param TestResponse<Response> $response
      * @param array<int, string>|array<string, array<int, string>> $errors
      */
     protected function validateJsonApiValidationError(TestResponse $response, array $errors, int $code = 0): void
@@ -220,6 +226,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Json api response validation.
      *
+     * @param TestResponse<Response> $response
      * @param array<int, JsonApiValidator> $includedValidators
      */
     protected function validateJsonApiResponse(TestResponse $response, JsonApiValidator|null $validator, array $includedValidators): void
@@ -306,6 +313,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Json api collection response validation.
      *
+     * @param TestResponse<Response> $response
      * @param array<int, JsonApiValidator> $validators
      * @param array<int, JsonApiValidator> $includedValidators
      */

@@ -95,6 +95,8 @@ class DatabaseToken extends Model
 
     /**
      * Relationship.
+     *
+     * @return BelongsTo<User, $this>
      */
     protected function relationship(string $guardName, User|null $user): BelongsTo
     {

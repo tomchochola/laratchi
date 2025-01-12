@@ -92,7 +92,7 @@ class RegisterController extends TransactionController
     {
         $me = \assertInstance(\resolveUserProvider()->createModel(), User::class);
 
-        $me->fill($request->data());
+        $me->fill($request->payload());
 
         $me->save();
 
